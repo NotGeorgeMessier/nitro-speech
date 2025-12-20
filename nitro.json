@@ -12,7 +12,12 @@
     ],
     "androidCxxLibName": "NitroSpeech"
   },
-  "autolinking": {},
+  "autolinking": {
+    "Math": {
+      "swift": "HybridMath",
+      "kotlin": "HybridMath"
+    }
+  },
   "ignorePaths": [
     "**/node_modules"
   ]

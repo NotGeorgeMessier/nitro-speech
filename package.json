@@ -33,6 +33,7 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\" --fix",
     "lint-ci": "eslint \"**/*.{js,ts,tsx}\" -f @jamesacarr/github-actions",
     "typescript": "tsc",
+    "build": "npm run typecheck && bob build",
     "specs": "tsc --noEmit false && nitrogen --logLevel=\"debug\""
   },
   "keywords": [
@@ -63,6 +64,7 @@
     "react": "19.1.1",
     "react-native": "0.82.0",
     "react-native-nitro-modules": "*",
+    "react-native-builder-bob": "^0.37.0",
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
@@ -103,5 +105,19 @@
     "trailingComma": "es5",
     "useTabs": false,
     "semi": false
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      [
+        "typescript",
+        {
+          "project": "tsconfig.json"
+        }
+      ]
+    ]
   }
 }
