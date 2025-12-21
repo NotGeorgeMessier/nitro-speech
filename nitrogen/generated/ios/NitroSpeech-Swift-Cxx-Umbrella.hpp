@@ -8,14 +8,15 @@
 #pragma once
 
 // Forward declarations of C++ defined types
-// Forward declaration of `HybridMathSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridMathSpec; }
+// Forward declaration of `HybridNitroSpeechSpec` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 
 // Include C++ defined types
-#include "HybridMathSpec.hpp"
+#include "HybridNitroSpeechSpec.hpp"
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <memory>
+#include <string>
 
 // C++ helpers for Swift
 #include "NitroSpeech-Swift-Cxx-Bridge.hpp"
@@ -27,8 +28,8 @@ namespace margelo::nitro::nitrospeech { class HybridMathSpec; }
 #include <NitroModules/DateToChronoDate.hpp>
 
 // Forward declarations of Swift defined types
-// Forward declaration of `HybridMathSpec_cxx` to properly resolve imports.
-namespace NitroSpeech { class HybridMathSpec_cxx; }
+// Forward declaration of `HybridNitroSpeechSpec_cxx` to properly resolve imports.
+namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 
 // Include Swift defined types
 #if __has_include("NitroSpeech-Swift.h")

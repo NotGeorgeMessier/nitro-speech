@@ -15,7 +15,7 @@
 #include <fbjni/fbjni.h>
 #include <NitroModules/HybridObjectRegistry.hpp>
 
-#include "JHybridMathSpec.hpp"
+#include "JHybridNitroSpeechSpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::nitrospeech {
@@ -27,13 +27,13 @@ int initialize(JavaVM* vm) {
 
   return facebook::jni::initialize(vm, [] {
     // Register native JNI methods
-    margelo::nitro::nitrospeech::JHybridMathSpec::registerNatives();
+    margelo::nitro::nitrospeech::JHybridNitroSpeechSpec::registerNatives();
 
     // Register Nitro Hybrid Objects
     HybridObjectRegistry::registerHybridObjectConstructor(
-      "Math",
+      "NitroSpeech",
       []() -> std::shared_ptr<HybridObject> {
-        static DefaultConstructableObject<JHybridMathSpec::javaobject> object("com/margelo/nitro/nitrospeech/HybridMath");
+        static DefaultConstructableObject<JHybridNitroSpeechSpec::javaobject> object("com/margelo/nitro/nitrospeech/HybridNitroSpeech");
         auto instance = object.create();
         return instance->cthis()->shared();
       }

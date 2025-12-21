@@ -8,18 +8,19 @@
 #pragma once
 
 // Forward declarations of C++ defined types
-// Forward declaration of `HybridMathSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridMathSpec; }
+// Forward declaration of `HybridNitroSpeechSpec` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 
 // Forward declarations of Swift defined types
-// Forward declaration of `HybridMathSpec_cxx` to properly resolve imports.
-namespace NitroSpeech { class HybridMathSpec_cxx; }
+// Forward declaration of `HybridNitroSpeechSpec_cxx` to properly resolve imports.
+namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 
 // Include C++ defined types
-#include "HybridMathSpec.hpp"
+#include "HybridNitroSpeechSpec.hpp"
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <memory>
+#include <string>
 
 /**
  * Contains specialized versions of C++ templated types so they can be accessed from Swift,
@@ -27,17 +28,17 @@ namespace NitroSpeech { class HybridMathSpec_cxx; }
  */
 namespace margelo::nitro::nitrospeech::bridge::swift {
 
-  // pragma MARK: std::shared_ptr<HybridMathSpec>
+  // pragma MARK: std::shared_ptr<HybridNitroSpeechSpec>
   /**
-   * Specialized version of `std::shared_ptr<HybridMathSpec>`.
+   * Specialized version of `std::shared_ptr<HybridNitroSpeechSpec>`.
    */
-  using std__shared_ptr_HybridMathSpec_ = std::shared_ptr<HybridMathSpec>;
-  std::shared_ptr<HybridMathSpec> create_std__shared_ptr_HybridMathSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridMathSpec_(std__shared_ptr_HybridMathSpec_ cppType);
+  using std__shared_ptr_HybridNitroSpeechSpec_ = std::shared_ptr<HybridNitroSpeechSpec>;
+  std::shared_ptr<HybridNitroSpeechSpec> create_std__shared_ptr_HybridNitroSpeechSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridNitroSpeechSpec_(std__shared_ptr_HybridNitroSpeechSpec_ cppType);
   
-  // pragma MARK: std::weak_ptr<HybridMathSpec>
-  using std__weak_ptr_HybridMathSpec_ = std::weak_ptr<HybridMathSpec>;
-  inline std__weak_ptr_HybridMathSpec_ weakify_std__shared_ptr_HybridMathSpec_(const std::shared_ptr<HybridMathSpec>& strong) noexcept { return strong; }
+  // pragma MARK: std::weak_ptr<HybridNitroSpeechSpec>
+  using std__weak_ptr_HybridNitroSpeechSpec_ = std::weak_ptr<HybridNitroSpeechSpec>;
+  inline std__weak_ptr_HybridNitroSpeechSpec_ weakify_std__shared_ptr_HybridNitroSpeechSpec_(const std::shared_ptr<HybridNitroSpeechSpec>& strong) noexcept { return strong; }
   
   // pragma MARK: Result<double>
   using Result_double_ = Result<double>;
@@ -46,6 +47,15 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
   }
   inline Result_double_ create_Result_double_(const std::exception_ptr& error) noexcept {
     return Result<double>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::string>
+  using Result_std__string_ = Result<std::string>;
+  inline Result_std__string_ create_Result_std__string_(const std::string& value) noexcept {
+    return Result<std::string>::withValue(value);
+  }
+  inline Result_std__string_ create_Result_std__string_(const std::exception_ptr& error) noexcept {
+    return Result<std::string>::withError(error);
   }
 
 } // namespace margelo::nitro::nitrospeech::bridge::swift

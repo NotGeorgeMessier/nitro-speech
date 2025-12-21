@@ -6,6 +6,7 @@
     "composite": true,
     "outDir": "lib",
     "rootDir": "src",
+    "declaration": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,

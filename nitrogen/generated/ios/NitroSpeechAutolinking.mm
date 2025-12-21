@@ -10,7 +10,7 @@
 #import "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 #import <type_traits>
 
-#include "HybridMathSpecSwift.hpp"
+#include "HybridNitroSpeechSpecSwift.hpp"
 
 @interface NitroSpeechAutolinking : NSObject
 @end
@@ -22,9 +22,9 @@
   using namespace margelo::nitro::nitrospeech;
 
   HybridObjectRegistry::registerHybridObjectConstructor(
-    "Math",
+    "NitroSpeech",
     []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridMathSpec> hybridObject = NitroSpeech::NitroSpeechAutolinking::createMath();
+      std::shared_ptr<HybridNitroSpeechSpec> hybridObject = NitroSpeech::NitroSpeechAutolinking::createNitroSpeech();
       return hybridObject;
     }
   );

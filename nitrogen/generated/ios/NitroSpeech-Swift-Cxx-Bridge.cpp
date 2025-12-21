@@ -8,25 +8,25 @@
 #include "NitroSpeech-Swift-Cxx-Bridge.hpp"
 
 // Include C++ implementation defined types
-#include "HybridMathSpecSwift.hpp"
+#include "HybridNitroSpeechSpecSwift.hpp"
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 #include <NitroModules/NitroDefines.hpp>
 
 namespace margelo::nitro::nitrospeech::bridge::swift {
 
-  // pragma MARK: std::shared_ptr<HybridMathSpec>
-  std::shared_ptr<HybridMathSpec> create_std__shared_ptr_HybridMathSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
-    NitroSpeech::HybridMathSpec_cxx swiftPart = NitroSpeech::HybridMathSpec_cxx::fromUnsafe(swiftUnsafePointer);
-    return std::make_shared<margelo::nitro::nitrospeech::HybridMathSpecSwift>(swiftPart);
+  // pragma MARK: std::shared_ptr<HybridNitroSpeechSpec>
+  std::shared_ptr<HybridNitroSpeechSpec> create_std__shared_ptr_HybridNitroSpeechSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    NitroSpeech::HybridNitroSpeechSpec_cxx swiftPart = NitroSpeech::HybridNitroSpeechSpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::nitrospeech::HybridNitroSpeechSpecSwift>(swiftPart);
   }
-  void* NON_NULL get_std__shared_ptr_HybridMathSpec_(std__shared_ptr_HybridMathSpec_ cppType) {
-    std::shared_ptr<margelo::nitro::nitrospeech::HybridMathSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::nitrospeech::HybridMathSpecSwift>(cppType);
+  void* NON_NULL get_std__shared_ptr_HybridNitroSpeechSpec_(std__shared_ptr_HybridNitroSpeechSpec_ cppType) {
+    std::shared_ptr<margelo::nitro::nitrospeech::HybridNitroSpeechSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::nitrospeech::HybridNitroSpeechSpecSwift>(cppType);
     #ifdef NITRO_DEBUG
     if (swiftWrapper == nullptr) [[unlikely]] {
-      throw std::runtime_error("Class \"HybridMathSpec\" is not implemented in Swift!");
+      throw std::runtime_error("Class \"HybridNitroSpeechSpec\" is not implemented in Swift!");
     }
     #endif
-    NitroSpeech::HybridMathSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    NitroSpeech::HybridNitroSpeechSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
   }
 
