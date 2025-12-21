@@ -139,3 +139,10 @@ dependencies {
   implementation project(":react-native-nitro-modules")
 }
 
+if (isNewArchitectureEnabled()) {
+  react {
+    jsRootDir = file("../src/")
+    libraryName = "NitroSpeech"
+    codegenJavaPackageName = "com.margelo.nitro.nitrospeech"
+  }
+}
