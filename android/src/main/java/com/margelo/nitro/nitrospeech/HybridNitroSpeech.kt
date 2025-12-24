@@ -1,16 +1,6 @@
 package com.margelo.nitro.nitrospeech
 
 import com.margelo.nitro.nitrospeech.HybridNitroSpeechSpec
-import android.content.Context
-import android.os.Build
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.os.VibratorManager
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.view.View
-import android.view.HapticFeedbackConstants
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.NitroModules
