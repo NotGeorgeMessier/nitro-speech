@@ -114,7 +114,69 @@ open class HybridNitroSpeechSpec_cxx {
   }
 
   // Properties
+  public final var onResult: bridge.std__optional_std__function_void_const_std__string_____text_____bool____isFinal______ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_std__function_void_const_std__string_____text_____bool____isFinal______ in
+        if let __unwrappedValue = self.__implementation.onResult {
+          return bridge.create_std__optional_std__function_void_const_std__string_____text_____bool____isFinal______({ () -> bridge.Func_void_std__string_bool in
+            let __closureWrapper = Func_void_std__string_bool(__unwrappedValue)
+            return bridge.create_Func_void_std__string_bool(__closureWrapper.toUnsafe())
+          }())
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.onResult = { () -> ((_ text: String, _ isFinal: Bool) -> Void)? in
+        if bridge.has_value_std__optional_std__function_void_const_std__string_____text_____bool____isFinal______(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__function_void_const_std__string_____text_____bool____isFinal______(newValue)
+          return { () -> (String, Bool) -> Void in
+            let __wrappedFunction = bridge.wrap_Func_void_std__string_bool(__unwrapped)
+            return { (__text: String, __isFinal: Bool) -> Void in
+              __wrappedFunction.call(std.string(__text), __isFinal)
+            }
+          }()
+        } else {
+          return nil
+        }
+      }()
+    }
+  }
   
+  public final var onError: bridge.std__optional_std__function_void_const_std__string_____message______ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_std__function_void_const_std__string_____message______ in
+        if let __unwrappedValue = self.__implementation.onError {
+          return bridge.create_std__optional_std__function_void_const_std__string_____message______({ () -> bridge.Func_void_std__string in
+            let __closureWrapper = Func_void_std__string(__unwrappedValue)
+            return bridge.create_Func_void_std__string(__closureWrapper.toUnsafe())
+          }())
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.onError = { () -> ((_ message: String) -> Void)? in
+        if bridge.has_value_std__optional_std__function_void_const_std__string_____message______(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__function_void_const_std__string_____message______(newValue)
+          return { () -> (String) -> Void in
+            let __wrappedFunction = bridge.wrap_Func_void_std__string(__unwrapped)
+            return { (__message: String) -> Void in
+              __wrappedFunction.call(std.string(__message))
+            }
+          }()
+        } else {
+          return nil
+        }
+      }()
+    }
+  }
 
   // Methods
   @inline(__always)
@@ -150,6 +212,39 @@ open class HybridNitroSpeechSpec_cxx {
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
       return bridge.create_Result_std__string_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func startListening(locale: std.string) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.startListening(locale: String(locale))
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func stopListening() -> bridge.Result_void_ {
+    do {
+      try self.__implementation.stopListening()
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func destroy() -> bridge.Result_void_ {
+    do {
+      try self.__implementation.destroy()
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
     }
   }
 }

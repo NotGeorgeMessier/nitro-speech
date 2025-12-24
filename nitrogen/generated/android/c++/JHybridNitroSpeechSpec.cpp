@@ -10,6 +10,11 @@
 
 
 #include <string>
+#include <functional>
+#include <optional>
+#include "JFunc_void_std__string_bool.hpp"
+#include <NitroModules/JNICallable.hpp>
+#include "JFunc_void_std__string.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -40,7 +45,40 @@ namespace margelo::nitro::nitrospeech {
   }
 
   // Properties
-  
+  std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>> JHybridNitroSpeechSpec::getOnResult() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_std__string_bool::javaobject>()>("getOnResult_cxx");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const std::string& /* text */, bool /* isFinal */)> {
+      if (__result->isInstanceOf(JFunc_void_std__string_bool_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_std__string_bool_cxx::javaobject>(__result);
+        return downcast->cthis()->getFunction();
+      } else {
+        auto __resultRef = jni::make_global(__result);
+        return JNICallable<JFunc_void_std__string_bool, void(std::string, bool)>(std::move(__resultRef));
+      }
+    }()) : std::nullopt;
+  }
+  void JHybridNitroSpeechSpec::setOnResult(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& onResult) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_std__string_bool::javaobject> /* onResult */)>("setOnResult_cxx");
+    method(_javaPart, onResult.has_value() ? JFunc_void_std__string_bool_cxx::fromCpp(onResult.value()) : nullptr);
+  }
+  std::optional<std::function<void(const std::string& /* message */)>> JHybridNitroSpeechSpec::getOnError() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_std__string::javaobject>()>("getOnError_cxx");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const std::string& /* message */)> {
+      if (__result->isInstanceOf(JFunc_void_std__string_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_std__string_cxx::javaobject>(__result);
+        return downcast->cthis()->getFunction();
+      } else {
+        auto __resultRef = jni::make_global(__result);
+        return JNICallable<JFunc_void_std__string, void(std::string)>(std::move(__resultRef));
+      }
+    }()) : std::nullopt;
+  }
+  void JHybridNitroSpeechSpec::setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_std__string::javaobject> /* onError */)>("setOnError_cxx");
+    method(_javaPart, onError.has_value() ? JFunc_void_std__string_cxx::fromCpp(onError.value()) : nullptr);
+  }
 
   // Methods
   double JHybridNitroSpeechSpec::add(double a, double b) {
@@ -57,6 +95,18 @@ namespace margelo::nitro::nitrospeech {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>(jni::alias_ref<jni::JString> /* str */)>("doSomething");
     auto __result = method(_javaPart, jni::make_jstring(str));
     return __result->toStdString();
+  }
+  void JHybridNitroSpeechSpec::startListening(const std::string& locale) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* locale */)>("startListening");
+    method(_javaPart, jni::make_jstring(locale));
+  }
+  void JHybridNitroSpeechSpec::stopListening() {
+    static const auto method = javaClassStatic()->getMethod<void()>("stopListening");
+    method(_javaPart);
+  }
+  void JHybridNitroSpeechSpec::destroy() {
+    static const auto method = javaClassStatic()->getMethod<void()>("destroy");
+    method(_javaPart);
   }
 
 } // namespace margelo::nitro::nitrospeech

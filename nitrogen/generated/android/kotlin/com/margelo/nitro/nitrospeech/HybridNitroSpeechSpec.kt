@@ -42,7 +42,33 @@ abstract class HybridNitroSpeechSpec: HybridObject() {
   }
 
   // Properties
+  abstract var onResult: ((text: String, isFinal: Boolean) -> Unit)?
   
+  private var onResult_cxx: Func_void_std__string_bool?
+    @Keep
+    @DoNotStrip
+    get() {
+      return onResult?.let { Func_void_std__string_bool_java(it) }
+    }
+    @Keep
+    @DoNotStrip
+    set(value) {
+      onResult = value?.let { it }
+    }
+  
+  abstract var onError: ((message: String) -> Unit)?
+  
+  private var onError_cxx: Func_void_std__string?
+    @Keep
+    @DoNotStrip
+    get() {
+      return onError?.let { Func_void_std__string_java(it) }
+    }
+    @Keep
+    @DoNotStrip
+    set(value) {
+      onError = value?.let { it }
+    }
 
   // Methods
   @DoNotStrip
@@ -56,6 +82,18 @@ abstract class HybridNitroSpeechSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun doSomething(str: String): String
+  
+  @DoNotStrip
+  @Keep
+  abstract fun startListening(locale: String): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun stopListening(): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun destroy(): Unit
 
   private external fun initHybrid(): HybridData
 

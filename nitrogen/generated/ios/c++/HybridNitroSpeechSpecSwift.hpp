@@ -15,6 +15,8 @@ namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 
 
 #include <string>
+#include <functional>
+#include <optional>
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 
@@ -56,7 +58,20 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     // Properties
-    
+    inline std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>> getOnResult() noexcept override {
+      auto __result = _swiftPart.getOnResult();
+      return __result;
+    }
+    inline void setOnResult(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& onResult) noexcept override {
+      _swiftPart.setOnResult(onResult);
+    }
+    inline std::optional<std::function<void(const std::string& /* message */)>> getOnError() noexcept override {
+      auto __result = _swiftPart.getOnError();
+      return __result;
+    }
+    inline void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) noexcept override {
+      _swiftPart.setOnError(onError);
+    }
 
   public:
     // Methods
@@ -83,6 +98,24 @@ namespace margelo::nitro::nitrospeech {
       }
       auto __value = std::move(__result.value());
       return __value;
+    }
+    inline void startListening(const std::string& locale) override {
+      auto __result = _swiftPart.startListening(locale);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
+    inline void stopListening() override {
+      auto __result = _swiftPart.stopListening();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
+    inline void destroy() override {
+      auto __result = _swiftPart.destroy();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
     }
 
   private:

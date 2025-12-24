@@ -16,6 +16,8 @@
 #include <NitroModules/HybridObjectRegistry.hpp>
 
 #include "JHybridNitroSpeechSpec.hpp"
+#include "JFunc_void_std__string_bool.hpp"
+#include "JFunc_void_std__string.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::nitrospeech {
@@ -28,6 +30,8 @@ int initialize(JavaVM* vm) {
   return facebook::jni::initialize(vm, [] {
     // Register native JNI methods
     margelo::nitro::nitrospeech::JHybridNitroSpeechSpec::registerNatives();
+    margelo::nitro::nitrospeech::JFunc_void_std__string_bool_cxx::registerNatives();
+    margelo::nitro::nitrospeech::JFunc_void_std__string_cxx::registerNatives();
 
     // Register Nitro Hybrid Objects
     HybridObjectRegistry::registerHybridObjectConstructor(

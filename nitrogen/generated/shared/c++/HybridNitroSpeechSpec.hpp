@@ -16,6 +16,8 @@
 
 
 #include <string>
+#include <functional>
+#include <optional>
 
 namespace margelo::nitro::nitrospeech {
 
@@ -44,13 +46,19 @@ namespace margelo::nitro::nitrospeech {
 
     public:
       // Properties
-      
+      virtual std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>> getOnResult() = 0;
+      virtual void setOnResult(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& onResult) = 0;
+      virtual std::optional<std::function<void(const std::string& /* message */)>> getOnError() = 0;
+      virtual void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) = 0;
 
     public:
       // Methods
       virtual double add(double a, double b) = 0;
       virtual double sub(double a, double b) = 0;
       virtual std::string doSomething(const std::string& str) = 0;
+      virtual void startListening(const std::string& locale) = 0;
+      virtual void stopListening() = 0;
+      virtual void destroy() = 0;
 
     protected:
       // Hybrid Setup

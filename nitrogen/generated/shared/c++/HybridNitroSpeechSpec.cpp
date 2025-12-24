@@ -14,9 +14,16 @@ namespace margelo::nitro::nitrospeech {
     HybridObject::loadHybridMethods();
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
+      prototype.registerHybridGetter("onResult", &HybridNitroSpeechSpec::getOnResult);
+      prototype.registerHybridSetter("onResult", &HybridNitroSpeechSpec::setOnResult);
+      prototype.registerHybridGetter("onError", &HybridNitroSpeechSpec::getOnError);
+      prototype.registerHybridSetter("onError", &HybridNitroSpeechSpec::setOnError);
       prototype.registerHybridMethod("add", &HybridNitroSpeechSpec::add);
       prototype.registerHybridMethod("sub", &HybridNitroSpeechSpec::sub);
       prototype.registerHybridMethod("doSomething", &HybridNitroSpeechSpec::doSomething);
+      prototype.registerHybridMethod("startListening", &HybridNitroSpeechSpec::startListening);
+      prototype.registerHybridMethod("stopListening", &HybridNitroSpeechSpec::stopListening);
+      prototype.registerHybridMethod("destroy", &HybridNitroSpeechSpec::destroy);
     });
   }
 

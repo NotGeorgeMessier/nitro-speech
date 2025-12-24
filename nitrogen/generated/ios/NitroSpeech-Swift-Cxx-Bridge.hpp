@@ -19,7 +19,9 @@ namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 #include "HybridNitroSpeechSpec.hpp"
 #include <NitroModules/Result.hpp>
 #include <exception>
+#include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 
 /**
@@ -28,6 +30,80 @@ namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
  */
 namespace margelo::nitro::nitrospeech::bridge::swift {
 
+  // pragma MARK: std::function<void(const std::string& /* text */, bool /* isFinal */)>
+  /**
+   * Specialized version of `std::function<void(const std::string&, bool)>`.
+   */
+  using Func_void_std__string_bool = std::function<void(const std::string& /* text */, bool /* isFinal */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::string& / * text * /, bool / * isFinal * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__string_bool_Wrapper final {
+  public:
+    explicit Func_void_std__string_bool_Wrapper(std::function<void(const std::string& /* text */, bool /* isFinal */)>&& func): _function(std::make_unique<std::function<void(const std::string& /* text */, bool /* isFinal */)>>(std::move(func))) {}
+    inline void call(std::string text, bool isFinal) const noexcept {
+      _function->operator()(text, isFinal);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::string& /* text */, bool /* isFinal */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__string_bool create_Func_void_std__string_bool(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__string_bool_Wrapper wrap_Func_void_std__string_bool(Func_void_std__string_bool value) noexcept {
+    return Func_void_std__string_bool_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(const std::string& / * text * /, bool / * isFinal * /)>>`.
+   */
+  using std__optional_std__function_void_const_std__string_____text_____bool____isFinal______ = std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>;
+  inline std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>> create_std__optional_std__function_void_const_std__string_____text_____bool____isFinal______(const std::function<void(const std::string& /* text */, bool /* isFinal */)>& value) noexcept {
+    return std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_const_std__string_____text_____bool____isFinal______(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::function<void(const std::string& /* text */, bool /* isFinal */)> get_std__optional_std__function_void_const_std__string_____text_____bool____isFinal______(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& optional) noexcept {
+    return *optional;
+  }
+  
+  // pragma MARK: std::function<void(const std::string& /* message */)>
+  /**
+   * Specialized version of `std::function<void(const std::string&)>`.
+   */
+  using Func_void_std__string = std::function<void(const std::string& /* message */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::string& / * message * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__string_Wrapper final {
+  public:
+    explicit Func_void_std__string_Wrapper(std::function<void(const std::string& /* message */)>&& func): _function(std::make_unique<std::function<void(const std::string& /* message */)>>(std::move(func))) {}
+    inline void call(std::string message) const noexcept {
+      _function->operator()(message);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::string& /* message */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__string create_Func_void_std__string(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__string_Wrapper wrap_Func_void_std__string(Func_void_std__string value) noexcept {
+    return Func_void_std__string_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::function<void(const std::string& /* message */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(const std::string& / * message * /)>>`.
+   */
+  using std__optional_std__function_void_const_std__string_____message______ = std::optional<std::function<void(const std::string& /* message */)>>;
+  inline std::optional<std::function<void(const std::string& /* message */)>> create_std__optional_std__function_void_const_std__string_____message______(const std::function<void(const std::string& /* message */)>& value) noexcept {
+    return std::optional<std::function<void(const std::string& /* message */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_const_std__string_____message______(const std::optional<std::function<void(const std::string& /* message */)>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::function<void(const std::string& /* message */)> get_std__optional_std__function_void_const_std__string_____message______(const std::optional<std::function<void(const std::string& /* message */)>>& optional) noexcept {
+    return *optional;
+  }
+  
   // pragma MARK: std::shared_ptr<HybridNitroSpeechSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridNitroSpeechSpec>`.
@@ -56,6 +132,15 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
   }
   inline Result_std__string_ create_Result_std__string_(const std::exception_ptr& error) noexcept {
     return Result<std::string>::withError(error);
+  }
+  
+  // pragma MARK: Result<void>
+  using Result_void_ = Result<void>;
+  inline Result_void_ create_Result_void_() noexcept {
+    return Result<void>::withValue();
+  }
+  inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
+    return Result<void>::withError(error);
   }
 
 } // namespace margelo::nitro::nitrospeech::bridge::swift
