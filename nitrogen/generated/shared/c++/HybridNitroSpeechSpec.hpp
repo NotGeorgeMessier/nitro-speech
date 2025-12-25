@@ -50,13 +50,12 @@ namespace margelo::nitro::nitrospeech {
       virtual void setOnResult(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& onResult) = 0;
       virtual std::optional<std::function<void(const std::string& /* message */)>> getOnError() = 0;
       virtual void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) = 0;
+      virtual std::optional<std::function<void()>> getOnPermissionDenied() = 0;
+      virtual void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) = 0;
 
     public:
       // Methods
-      virtual double add(double a, double b) = 0;
-      virtual double sub(double a, double b) = 0;
-      virtual std::string doSomething(const std::string& str) = 0;
-      virtual void startListening(const std::string& locale) = 0;
+      virtual void startListening(const std::string& locale, bool recognizeOnDevice) = 0;
       virtual void stopListening() = 0;
       virtual void destroy() = 0;
 

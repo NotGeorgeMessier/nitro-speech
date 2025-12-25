@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 class AudioPermissionRequester (
   private val activity: Activity
 ) {
+  private val recordAudioPermission = Manifest.permission.RECORD_AUDIO
   private val componentActivity = activity as? ComponentActivity ?: error("Host activity must be a ComponentActivity")
 
   private var callback: ((Boolean) -> Unit)? = null
@@ -24,7 +25,7 @@ class AudioPermissionRequester (
     val audioGranted =
       ContextCompat.checkSelfPermission(
         activity,
-        Manifest.permission.RECORD_AUDIO
+        recordAudioPermission
       ) == PackageManager.PERMISSION_GRANTED
 
     if (audioGranted) {
@@ -33,6 +34,6 @@ class AudioPermissionRequester (
     }
 
     callback = onResult
-    launcher.launch(Manifest.permission.RECORD_AUDIO)
+    launcher.launch(recordAudioPermission)
   }
 }

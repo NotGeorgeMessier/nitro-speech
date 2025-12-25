@@ -13,12 +13,10 @@ public protocol HybridNitroSpeechSpec_protocol: HybridObject {
   // Properties
   var onResult: ((_ text: String, _ isFinal: Bool) -> Void)? { get set }
   var onError: ((_ message: String) -> Void)? { get set }
+  var onPermissionDenied: (() -> Void)? { get set }
 
   // Methods
-  func add(a: Double, b: Double) throws -> Double
-  func sub(a: Double, b: Double) throws -> Double
-  func doSomething(str: String) throws -> String
-  func startListening(locale: String) throws -> Void
+  func startListening(locale: String, recognizeOnDevice: Bool) throws -> Void
   func stopListening() throws -> Void
   func destroy() throws -> Void
 }

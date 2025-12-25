@@ -69,23 +69,25 @@ abstract class HybridNitroSpeechSpec: HybridObject() {
     set(value) {
       onError = value?.let { it }
     }
+  
+  abstract var onPermissionDenied: (() -> Unit)?
+  
+  private var onPermissionDenied_cxx: Func_void?
+    @Keep
+    @DoNotStrip
+    get() {
+      return onPermissionDenied?.let { Func_void_java(it) }
+    }
+    @Keep
+    @DoNotStrip
+    set(value) {
+      onPermissionDenied = value?.let { it }
+    }
 
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun add(a: Double, b: Double): Double
-  
-  @DoNotStrip
-  @Keep
-  abstract fun sub(a: Double, b: Double): Double
-  
-  @DoNotStrip
-  @Keep
-  abstract fun doSomething(str: String): String
-  
-  @DoNotStrip
-  @Keep
-  abstract fun startListening(locale: String): Unit
+  abstract fun startListening(locale: String, recognizeOnDevice: Boolean): Unit
   
   @DoNotStrip
   @Keep

@@ -72,35 +72,18 @@ namespace margelo::nitro::nitrospeech {
     inline void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) noexcept override {
       _swiftPart.setOnError(onError);
     }
+    inline std::optional<std::function<void()>> getOnPermissionDenied() noexcept override {
+      auto __result = _swiftPart.getOnPermissionDenied();
+      return __result;
+    }
+    inline void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) noexcept override {
+      _swiftPart.setOnPermissionDenied(onPermissionDenied);
+    }
 
   public:
     // Methods
-    inline double add(double a, double b) override {
-      auto __result = _swiftPart.add(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b));
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-      auto __value = std::move(__result.value());
-      return __value;
-    }
-    inline double sub(double a, double b) override {
-      auto __result = _swiftPart.sub(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b));
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-      auto __value = std::move(__result.value());
-      return __value;
-    }
-    inline std::string doSomething(const std::string& str) override {
-      auto __result = _swiftPart.doSomething(str);
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-      auto __value = std::move(__result.value());
-      return __value;
-    }
-    inline void startListening(const std::string& locale) override {
-      auto __result = _swiftPart.startListening(locale);
+    inline void startListening(const std::string& locale, bool recognizeOnDevice) override {
+      auto __result = _swiftPart.startListening(locale, std::forward<decltype(recognizeOnDevice)>(recognizeOnDevice));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

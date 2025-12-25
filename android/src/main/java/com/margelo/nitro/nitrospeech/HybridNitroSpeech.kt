@@ -1,9 +1,8 @@
 package com.margelo.nitro.nitrospeech
 
-import android.Manifest
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,10 +10,8 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
-import androidx.activity.ComponentActivity
 import com.margelo.nitro.nitrospeech.HybridNitroSpeechSpec
 import androidx.annotation.Keep
-import androidx.core.content.ContextCompat
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.NitroModules
 
@@ -29,37 +26,19 @@ class HybridNitroSpeech: HybridNitroSpeechSpec() {
 
   override var onResult: ((text: String, isFinal: Boolean) -> Unit)? = null
   override var onError: ((error: String) -> Unit)? = null
+  override var onPermissionDenied: (() -> Unit)? = null
 
   @DoNotStrip
   @Keep
-  override fun add(
-    a: Double,
-    b: Double
-  ): Double {
-    return a + b
-  }
-
-  @DoNotStrip
-  @Keep
-  override fun sub(
-    a: Double,
-    b: Double
-  ): Double {
-    return a - b
-  }
-
-  @DoNotStrip
-  @Keep
-  override fun doSomething(str: String): String {
-    return "Hello, im doing $str"
-  }
-
-  @DoNotStrip
-  @Keep
-  override fun startListening(locale: String) {
-    val activity = NitroModules.applicationContext?.currentActivity
+  override fun startListening(locale: String, recognizeOnDevice: Boolean) {
+    val context = NitroModules.applicationContext
+    if (context == null) {
+      onError?.invoke("Context not available")
+      return
+    }
+    val activity = context.currentActivity
     if (activity == null) {
-      onError?.invoke("No activity found")
+      onError?.invoke("Activity not found")
       return
     }
 
@@ -69,10 +48,10 @@ class HybridNitroSpeech: HybridNitroSpeechSpec() {
 
     permissionRequester?.checkAndRequest { granted ->
       if (!granted) {
-        onError?.invoke("Permission is not granted")
+        onPermissionDenied?.invoke()
         return@checkAndRequest
       }
-      start(locale)
+      start(context, locale, recognizeOnDevice)
     }
   }
 
@@ -84,7 +63,7 @@ class HybridNitroSpeech: HybridNitroSpeechSpec() {
         speechRecognizer?.stopListening()
         Log.d(TAG, "stopListening called")
       } catch (e: Exception) {
-        onError?.invoke(e.message ?: "Unknown error")
+        onError?.invoke(e.message ?: "Unknown error at stopListening")
       }
     }
   }
@@ -98,7 +77,41 @@ class HybridNitroSpeech: HybridNitroSpeechSpec() {
         speechRecognizer = null
         Log.d(TAG, "destroy called")
       } catch (e: Exception) {
-        // Ignore
+        onError?.invoke(e.message ?: "Unknown error at destroy")
+      }
+    }
+  }
+
+  private fun start(context: Context ,locale: String, recognizeOnDevice: Boolean) {
+    mainHandler.post {
+      try {
+        if (speechRecognizer == null) {
+          if (recognizeOnDevice && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SpeechRecognizer.isOnDeviceRecognitionAvailable(context)) {
+            speechRecognizer = SpeechRecognizer.createOnDeviceSpeechRecognizer(context)
+          } else {
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
+          }
+          speechRecognizer?.setRecognitionListener(createRecognitionListener())
+        }
+
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, locale)
+        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+        intent.putExtra(RecognizerIntent.EXTRA_RESULTS, true)
+        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 60000)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          intent.putExtra(RecognizerIntent.EXTRA_MASK_OFFENSIVE_WORDS, false)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+          intent.putExtra(RecognizerIntent.EXTRA_REQUEST_WORD_CONFIDENCE, true)
+        }
+
+        speechRecognizer?.startListening(intent)
+        Log.d(TAG, "startListening called with locale: $locale")
+      } catch (e: Exception) {
+        onError?.invoke(e.message ?: "Unknown error")
       }
     }
   }
@@ -130,6 +143,7 @@ class HybridNitroSpeech: HybridNitroSpeechSpec() {
       override fun onResults(results: Bundle?) {
         val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
         if (!matches.isNullOrEmpty()) {
+          Log.d(TAG, "isFinal: true, $matches")
           onResult?.invoke(matches[0], true)
         }
       }
@@ -137,38 +151,12 @@ class HybridNitroSpeech: HybridNitroSpeechSpec() {
       override fun onPartialResults(partialResults: Bundle?) {
         val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
         if (!matches.isNullOrEmpty()) {
+          Log.d(TAG, "isFinal: false, $matches")
           onResult?.invoke(matches[0], false)
         }
       }
 
       override fun onEvent(eventType: Int, params: Bundle?) {}
-    }
-  }
-
-  private fun start(locale: String) {
-    val context = NitroModules.applicationContext
-    if (context == null) {
-      onError?.invoke("Context not available")
-      return
-    }
-
-    mainHandler.post {
-      try {
-        if (speechRecognizer == null) {
-          speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
-          speechRecognizer?.setRecognitionListener(createRecognitionListener())
-        }
-
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, locale)
-        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-
-        speechRecognizer?.startListening(intent)
-        Log.d(TAG, "startListening called with locale: $locale")
-      } catch (e: Exception) {
-        onError?.invoke(e.message ?: "Unknown error")
-      }
     }
   }
 }

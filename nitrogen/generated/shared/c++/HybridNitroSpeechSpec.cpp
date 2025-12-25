@@ -18,9 +18,8 @@ namespace margelo::nitro::nitrospeech {
       prototype.registerHybridSetter("onResult", &HybridNitroSpeechSpec::setOnResult);
       prototype.registerHybridGetter("onError", &HybridNitroSpeechSpec::getOnError);
       prototype.registerHybridSetter("onError", &HybridNitroSpeechSpec::setOnError);
-      prototype.registerHybridMethod("add", &HybridNitroSpeechSpec::add);
-      prototype.registerHybridMethod("sub", &HybridNitroSpeechSpec::sub);
-      prototype.registerHybridMethod("doSomething", &HybridNitroSpeechSpec::doSomething);
+      prototype.registerHybridGetter("onPermissionDenied", &HybridNitroSpeechSpec::getOnPermissionDenied);
+      prototype.registerHybridSetter("onPermissionDenied", &HybridNitroSpeechSpec::setOnPermissionDenied);
       prototype.registerHybridMethod("startListening", &HybridNitroSpeechSpec::startListening);
       prototype.registerHybridMethod("stopListening", &HybridNitroSpeechSpec::stopListening);
       prototype.registerHybridMethod("destroy", &HybridNitroSpeechSpec::destroy);

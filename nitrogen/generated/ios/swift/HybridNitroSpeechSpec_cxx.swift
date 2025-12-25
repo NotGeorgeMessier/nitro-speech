@@ -177,48 +177,44 @@ open class HybridNitroSpeechSpec_cxx {
       }()
     }
   }
+  
+  public final var onPermissionDenied: bridge.std__optional_std__function_void____ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_std__function_void____ in
+        if let __unwrappedValue = self.__implementation.onPermissionDenied {
+          return bridge.create_std__optional_std__function_void____({ () -> bridge.Func_void in
+            let __closureWrapper = Func_void(__unwrappedValue)
+            return bridge.create_Func_void(__closureWrapper.toUnsafe())
+          }())
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.onPermissionDenied = { () -> (() -> Void)? in
+        if bridge.has_value_std__optional_std__function_void____(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__function_void____(newValue)
+          return { () -> () -> Void in
+            let __wrappedFunction = bridge.wrap_Func_void(__unwrapped)
+            return { () -> Void in
+              __wrappedFunction.call()
+            }
+          }()
+        } else {
+          return nil
+        }
+      }()
+    }
+  }
 
   // Methods
   @inline(__always)
-  public final func add(a: Double, b: Double) -> bridge.Result_double_ {
+  public final func startListening(locale: std.string, recognizeOnDevice: Bool) -> bridge.Result_void_ {
     do {
-      let __result = try self.__implementation.add(a: a, b: b)
-      let __resultCpp = __result
-      return bridge.create_Result_double_(__resultCpp)
-    } catch (let __error) {
-      let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_double_(__exceptionPtr)
-    }
-  }
-  
-  @inline(__always)
-  public final func sub(a: Double, b: Double) -> bridge.Result_double_ {
-    do {
-      let __result = try self.__implementation.sub(a: a, b: b)
-      let __resultCpp = __result
-      return bridge.create_Result_double_(__resultCpp)
-    } catch (let __error) {
-      let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_double_(__exceptionPtr)
-    }
-  }
-  
-  @inline(__always)
-  public final func doSomething(str: std.string) -> bridge.Result_std__string_ {
-    do {
-      let __result = try self.__implementation.doSomething(str: String(str))
-      let __resultCpp = std.string(__result)
-      return bridge.create_Result_std__string_(__resultCpp)
-    } catch (let __error) {
-      let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_std__string_(__exceptionPtr)
-    }
-  }
-  
-  @inline(__always)
-  public final func startListening(locale: std.string) -> bridge.Result_void_ {
-    do {
-      try self.__implementation.startListening(locale: String(locale))
+      try self.__implementation.startListening(locale: String(locale), recognizeOnDevice: recognizeOnDevice)
       return bridge.create_Result_void_()
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()

@@ -15,6 +15,7 @@
 #include "JFunc_void_std__string_bool.hpp"
 #include <NitroModules/JNICallable.hpp>
 #include "JFunc_void_std__string.hpp"
+#include "JFunc_void.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -79,26 +80,28 @@ namespace margelo::nitro::nitrospeech {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_std__string::javaobject> /* onError */)>("setOnError_cxx");
     method(_javaPart, onError.has_value() ? JFunc_void_std__string_cxx::fromCpp(onError.value()) : nullptr);
   }
+  std::optional<std::function<void()>> JHybridNitroSpeechSpec::getOnPermissionDenied() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>()>("getOnPermissionDenied_cxx");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void()> {
+      if (__result->isInstanceOf(JFunc_void_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_cxx::javaobject>(__result);
+        return downcast->cthis()->getFunction();
+      } else {
+        auto __resultRef = jni::make_global(__result);
+        return JNICallable<JFunc_void, void()>(std::move(__resultRef));
+      }
+    }()) : std::nullopt;
+  }
+  void JHybridNitroSpeechSpec::setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void::javaobject> /* onPermissionDenied */)>("setOnPermissionDenied_cxx");
+    method(_javaPart, onPermissionDenied.has_value() ? JFunc_void_cxx::fromCpp(onPermissionDenied.value()) : nullptr);
+  }
 
   // Methods
-  double JHybridNitroSpeechSpec::add(double a, double b) {
-    static const auto method = javaClassStatic()->getMethod<double(double /* a */, double /* b */)>("add");
-    auto __result = method(_javaPart, a, b);
-    return __result;
-  }
-  double JHybridNitroSpeechSpec::sub(double a, double b) {
-    static const auto method = javaClassStatic()->getMethod<double(double /* a */, double /* b */)>("sub");
-    auto __result = method(_javaPart, a, b);
-    return __result;
-  }
-  std::string JHybridNitroSpeechSpec::doSomething(const std::string& str) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<jni::JString>(jni::alias_ref<jni::JString> /* str */)>("doSomething");
-    auto __result = method(_javaPart, jni::make_jstring(str));
-    return __result->toStdString();
-  }
-  void JHybridNitroSpeechSpec::startListening(const std::string& locale) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* locale */)>("startListening");
-    method(_javaPart, jni::make_jstring(locale));
+  void JHybridNitroSpeechSpec::startListening(const std::string& locale, bool recognizeOnDevice) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* locale */, jboolean /* recognizeOnDevice */)>("startListening");
+    method(_javaPart, jni::make_jstring(locale), recognizeOnDevice);
   }
   void JHybridNitroSpeechSpec::stopListening() {
     static const auto method = javaClassStatic()->getMethod<void()>("stopListening");

@@ -54,13 +54,12 @@ namespace margelo::nitro::nitrospeech {
     void setOnResult(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& onResult) override;
     std::optional<std::function<void(const std::string& /* message */)>> getOnError() override;
     void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) override;
+    std::optional<std::function<void()>> getOnPermissionDenied() override;
+    void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) override;
 
   public:
     // Methods
-    double add(double a, double b) override;
-    double sub(double a, double b) override;
-    std::string doSomething(const std::string& str) override;
-    void startListening(const std::string& locale) override;
+    void startListening(const std::string& locale, bool recognizeOnDevice) override;
     void stopListening() override;
     void destroy() override;
 
