@@ -11,7 +11,7 @@ import NitroModules
 /// See ``HybridNitroSpeechSpec``
 public protocol HybridNitroSpeechSpec_protocol: HybridObject {
   // Properties
-  var onResult: ((_ text: String, _ isFinal: Bool) -> Void)? { get set }
+  var onResult: ((_ resultBatches: [String], _ isFinal: Bool) -> Void)? { get set }
   var onError: ((_ message: String) -> Void)? { get set }
   var onPermissionDenied: (() -> Void)? { get set }
 

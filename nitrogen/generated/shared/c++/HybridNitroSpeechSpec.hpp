@@ -16,6 +16,7 @@
 
 
 #include <string>
+#include <vector>
 #include <functional>
 #include <optional>
 
@@ -46,8 +47,8 @@ namespace margelo::nitro::nitrospeech {
 
     public:
       // Properties
-      virtual std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>> getOnResult() = 0;
-      virtual void setOnResult(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& onResult) = 0;
+      virtual std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>> getOnResult() = 0;
+      virtual void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>& onResult) = 0;
       virtual std::optional<std::function<void(const std::string& /* message */)>> getOnError() = 0;
       virtual void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) = 0;
       virtual std::optional<std::function<void()>> getOnPermissionDenied() = 0;

@@ -19,6 +19,7 @@ namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 #include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
 // C++ helpers for Swift
 #include "NitroSpeech-Swift-Cxx-Bridge.hpp"

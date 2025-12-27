@@ -42,13 +42,13 @@ abstract class HybridNitroSpeechSpec: HybridObject() {
   }
 
   // Properties
-  abstract var onResult: ((text: String, isFinal: Boolean) -> Unit)?
+  abstract var onResult: ((resultBatches: Array<String>, isFinal: Boolean) -> Unit)?
   
-  private var onResult_cxx: Func_void_std__string_bool?
+  private var onResult_cxx: Func_void_std__vector_std__string__bool?
     @Keep
     @DoNotStrip
     get() {
-      return onResult?.let { Func_void_std__string_bool_java(it) }
+      return onResult?.let { Func_void_std__vector_std__string__bool_java(it) }
     }
     @Keep
     @DoNotStrip

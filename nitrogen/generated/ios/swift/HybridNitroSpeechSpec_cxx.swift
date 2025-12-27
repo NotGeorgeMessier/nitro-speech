@@ -114,14 +114,14 @@ open class HybridNitroSpeechSpec_cxx {
   }
 
   // Properties
-  public final var onResult: bridge.std__optional_std__function_void_const_std__string_____text_____bool____isFinal______ {
+  public final var onResult: bridge.std__optional_std__function_void_const_std__vector_std__string______resultBatches_____bool____isFinal______ {
     @inline(__always)
     get {
-      return { () -> bridge.std__optional_std__function_void_const_std__string_____text_____bool____isFinal______ in
+      return { () -> bridge.std__optional_std__function_void_const_std__vector_std__string______resultBatches_____bool____isFinal______ in
         if let __unwrappedValue = self.__implementation.onResult {
-          return bridge.create_std__optional_std__function_void_const_std__string_____text_____bool____isFinal______({ () -> bridge.Func_void_std__string_bool in
-            let __closureWrapper = Func_void_std__string_bool(__unwrappedValue)
-            return bridge.create_Func_void_std__string_bool(__closureWrapper.toUnsafe())
+          return bridge.create_std__optional_std__function_void_const_std__vector_std__string______resultBatches_____bool____isFinal______({ () -> bridge.Func_void_std__vector_std__string__bool in
+            let __closureWrapper = Func_void_std__vector_std__string__bool(__unwrappedValue)
+            return bridge.create_Func_void_std__vector_std__string__bool(__closureWrapper.toUnsafe())
           }())
         } else {
           return .init()
@@ -130,13 +130,19 @@ open class HybridNitroSpeechSpec_cxx {
     }
     @inline(__always)
     set {
-      self.__implementation.onResult = { () -> ((_ text: String, _ isFinal: Bool) -> Void)? in
-        if bridge.has_value_std__optional_std__function_void_const_std__string_____text_____bool____isFinal______(newValue) {
-          let __unwrapped = bridge.get_std__optional_std__function_void_const_std__string_____text_____bool____isFinal______(newValue)
-          return { () -> (String, Bool) -> Void in
-            let __wrappedFunction = bridge.wrap_Func_void_std__string_bool(__unwrapped)
-            return { (__text: String, __isFinal: Bool) -> Void in
-              __wrappedFunction.call(std.string(__text), __isFinal)
+      self.__implementation.onResult = { () -> ((_ resultBatches: [String], _ isFinal: Bool) -> Void)? in
+        if bridge.has_value_std__optional_std__function_void_const_std__vector_std__string______resultBatches_____bool____isFinal______(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__function_void_const_std__vector_std__string______resultBatches_____bool____isFinal______(newValue)
+          return { () -> ([String], Bool) -> Void in
+            let __wrappedFunction = bridge.wrap_Func_void_std__vector_std__string__bool(__unwrapped)
+            return { (__resultBatches: [String], __isFinal: Bool) -> Void in
+              __wrappedFunction.call({ () -> bridge.std__vector_std__string_ in
+                var __vector = bridge.create_std__vector_std__string_(__resultBatches.count)
+                for __item in __resultBatches {
+                  __vector.push_back(std.string(__item))
+                }
+                return __vector
+              }(), __isFinal)
             }
           }()
         } else {

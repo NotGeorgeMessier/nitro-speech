@@ -23,6 +23,7 @@ namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 #include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
 /**
  * Contains specialized versions of C++ templated types so they can be accessed from Swift,
@@ -30,40 +31,51 @@ namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
  */
 namespace margelo::nitro::nitrospeech::bridge::swift {
 
-  // pragma MARK: std::function<void(const std::string& /* text */, bool /* isFinal */)>
+  // pragma MARK: std::vector<std::string>
   /**
-   * Specialized version of `std::function<void(const std::string&, bool)>`.
+   * Specialized version of `std::vector<std::string>`.
    */
-  using Func_void_std__string_bool = std::function<void(const std::string& /* text */, bool /* isFinal */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::string& / * text * /, bool / * isFinal * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__string_bool_Wrapper final {
-  public:
-    explicit Func_void_std__string_bool_Wrapper(std::function<void(const std::string& /* text */, bool /* isFinal */)>&& func): _function(std::make_unique<std::function<void(const std::string& /* text */, bool /* isFinal */)>>(std::move(func))) {}
-    inline void call(std::string text, bool isFinal) const noexcept {
-      _function->operator()(text, isFinal);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::string& /* text */, bool /* isFinal */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__string_bool create_Func_void_std__string_bool(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__string_bool_Wrapper wrap_Func_void_std__string_bool(Func_void_std__string_bool value) noexcept {
-    return Func_void_std__string_bool_Wrapper(std::move(value));
+  using std__vector_std__string_ = std::vector<std::string>;
+  inline std::vector<std::string> create_std__vector_std__string_(size_t size) noexcept {
+    std::vector<std::string> vector;
+    vector.reserve(size);
+    return vector;
   }
   
-  // pragma MARK: std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>
+  // pragma MARK: std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>
   /**
-   * Specialized version of `std::optional<std::function<void(const std::string& / * text * /, bool / * isFinal * /)>>`.
+   * Specialized version of `std::function<void(const std::vector<std::string>&, bool)>`.
    */
-  using std__optional_std__function_void_const_std__string_____text_____bool____isFinal______ = std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>;
-  inline std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>> create_std__optional_std__function_void_const_std__string_____text_____bool____isFinal______(const std::function<void(const std::string& /* text */, bool /* isFinal */)>& value) noexcept {
-    return std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>(value);
+  using Func_void_std__vector_std__string__bool = std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::vector<std::string>& / * resultBatches * /, bool / * isFinal * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__vector_std__string__bool_Wrapper final {
+  public:
+    explicit Func_void_std__vector_std__string__bool_Wrapper(std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>&& func): _function(std::make_unique<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>(std::move(func))) {}
+    inline void call(std::vector<std::string> resultBatches, bool isFinal) const noexcept {
+      _function->operator()(resultBatches, isFinal);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__vector_std__string__bool create_Func_void_std__vector_std__string__bool(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__vector_std__string__bool_Wrapper wrap_Func_void_std__vector_std__string__bool(Func_void_std__vector_std__string__bool value) noexcept {
+    return Func_void_std__vector_std__string__bool_Wrapper(std::move(value));
   }
-  inline bool has_value_std__optional_std__function_void_const_std__string_____text_____bool____isFinal______(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& optional) noexcept {
+  
+  // pragma MARK: std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(const std::vector<std::string>& / * resultBatches * /, bool / * isFinal * /)>>`.
+   */
+  using std__optional_std__function_void_const_std__vector_std__string______resultBatches_____bool____isFinal______ = std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>;
+  inline std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>> create_std__optional_std__function_void_const_std__vector_std__string______resultBatches_____bool____isFinal______(const std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>& value) noexcept {
+    return std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_const_std__vector_std__string______resultBatches_____bool____isFinal______(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>& optional) noexcept {
     return optional.has_value();
   }
-  inline std::function<void(const std::string& /* text */, bool /* isFinal */)> get_std__optional_std__function_void_const_std__string_____text_____bool____isFinal______(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& optional) noexcept {
+  inline std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)> get_std__optional_std__function_void_const_std__vector_std__string______resultBatches_____bool____isFinal______(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>& optional) noexcept {
     return *optional;
   }
   

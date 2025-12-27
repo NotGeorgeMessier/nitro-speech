@@ -10,7 +10,7 @@ export interface NitroSpeech extends HybridObject<{
   destroy(): void
 
   // Callbacks for speech recognition events
-  onResult?: (text: string, isFinal: boolean) => void
+  onResult?: (resultBatches: string[], isFinal: boolean) => void
   onError?: (message: string) => void
   onPermissionDenied?: () => void
 }

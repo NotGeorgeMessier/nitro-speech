@@ -15,6 +15,7 @@ namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 
 
 #include <string>
+#include <vector>
 #include <functional>
 #include <optional>
 
@@ -58,11 +59,11 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     // Properties
-    inline std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>> getOnResult() noexcept override {
+    inline std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>> getOnResult() noexcept override {
       auto __result = _swiftPart.getOnResult();
       return __result;
     }
-    inline void setOnResult(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& onResult) noexcept override {
+    inline void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>& onResult) noexcept override {
       _swiftPart.setOnResult(onResult);
     }
     inline std::optional<std::function<void(const std::string& /* message */)>> getOnError() noexcept override {

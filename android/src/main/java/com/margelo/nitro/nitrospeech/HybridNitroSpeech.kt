@@ -20,11 +20,12 @@ class HybridNitroSpeech: HybridNitroSpeechSpec() {
     private const val TAG = "HybridNitroSpeech"
   }
 
+  private var resultBatches: ArrayList<String>? = null
   private var permissionRequester: AudioPermissionRequester? = null
   private var speechRecognizer: SpeechRecognizer? = null
   private val mainHandler = Handler(Looper.getMainLooper())
 
-  override var onResult: ((text: String, isFinal: Boolean) -> Unit)? = null
+  override var onResult: ((resultBatches: Array<String>, isFinal: Boolean) -> Unit)? = null
   override var onError: ((error: String) -> Unit)? = null
   override var onPermissionDenied: (() -> Unit)? = null
 
@@ -58,19 +59,22 @@ class HybridNitroSpeech: HybridNitroSpeechSpec() {
   @DoNotStrip
   @Keep
   override fun stopListening() {
-    mainHandler.post {
+    onResult?.invoke(resultBatches?.toTypedArray() ?: emptyArray(), true)
+    mainHandler.postDelayed({
       try {
         speechRecognizer?.stopListening()
         Log.d(TAG, "stopListening called")
       } catch (e: Exception) {
         onError?.invoke(e.message ?: "Unknown error at stopListening")
       }
-    }
+    }, 100)
   }
+
 
   @DoNotStrip
   @Keep
   override fun destroy() {
+    resultBatches = null
     mainHandler.post {
       try {
         speechRecognizer?.destroy()
@@ -83,6 +87,7 @@ class HybridNitroSpeech: HybridNitroSpeechSpec() {
   }
 
   private fun start(context: Context ,locale: String, recognizeOnDevice: Boolean) {
+    resultBatches = null
     mainHandler.post {
       try {
         if (speechRecognizer == null) {
@@ -99,13 +104,11 @@ class HybridNitroSpeech: HybridNitroSpeechSpec() {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, locale)
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
         intent.putExtra(RecognizerIntent.EXTRA_RESULTS, true)
+        // set 60s to avoid cutting early
         intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 60000)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           intent.putExtra(RecognizerIntent.EXTRA_MASK_OFFENSIVE_WORDS, false)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-          intent.putExtra(RecognizerIntent.EXTRA_REQUEST_WORD_CONFIDENCE, true)
         }
 
         speechRecognizer?.startListening(intent)
@@ -144,16 +147,36 @@ class HybridNitroSpeech: HybridNitroSpeechSpec() {
         val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
         if (!matches.isNullOrEmpty()) {
           Log.d(TAG, "isFinal: true, $matches")
-          onResult?.invoke(matches[0], true)
+          onResult?.invoke(matches.slice(0..0).toTypedArray(), true)
         }
       }
 
       override fun onPartialResults(partialResults: Bundle?) {
         val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-        if (!matches.isNullOrEmpty()) {
-          Log.d(TAG, "isFinal: false, $matches")
-          onResult?.invoke(matches[0], false)
+        if (matches.isNullOrEmpty() || matches[0] == "") {
+          Log.d(TAG, "onPartialResults[0], skip, NO RECOGNIZE")
+          return
         }
+
+        Log.d(TAG, "onPartialResults[0], add ${matches[0]}")
+        var currentBatches = resultBatches
+        if (currentBatches.isNullOrEmpty()) {
+          Log.d(TAG, "onPartialResults[1], EMPTY BATCHES | add first")
+          currentBatches = arrayListOf(matches[0])
+        } else {
+          Log.d(TAG, "onPartialResults[1], current batches $currentBatches")
+          val prevBatchLength = currentBatches[currentBatches.lastIndex].length
+          val matchLength = matches[0].length
+          if (matchLength + 3 >= prevBatchLength) {
+            Log.d(TAG, "onPartialResults[2], continue batch, replace ${currentBatches.lastIndex}")
+            currentBatches[currentBatches.lastIndex] = matches[0]
+          } else {
+            Log.d(TAG, "onPartialResults[2], append new batch")
+            currentBatches.add(matches[0])
+          }
+        }
+        resultBatches = currentBatches
+        onResult?.invoke(currentBatches.toTypedArray(), false)
       }
 
       override fun onEvent(eventType: Int, params: Bundle?) {}

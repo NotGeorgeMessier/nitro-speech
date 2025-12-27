@@ -10,9 +10,10 @@
 
 
 #include <string>
+#include <vector>
 #include <functional>
 #include <optional>
-#include "JFunc_void_std__string_bool.hpp"
+#include "JFunc_void_std__vector_std__string__bool.hpp"
 #include <NitroModules/JNICallable.hpp>
 #include "JFunc_void_std__string.hpp"
 #include "JFunc_void.hpp"
@@ -46,22 +47,22 @@ namespace margelo::nitro::nitrospeech {
   }
 
   // Properties
-  std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>> JHybridNitroSpeechSpec::getOnResult() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_std__string_bool::javaobject>()>("getOnResult_cxx");
+  std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>> JHybridNitroSpeechSpec::getOnResult() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_std__vector_std__string__bool::javaobject>()>("getOnResult_cxx");
     auto __result = method(_javaPart);
-    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const std::string& /* text */, bool /* isFinal */)> {
-      if (__result->isInstanceOf(JFunc_void_std__string_bool_cxx::javaClassStatic())) [[likely]] {
-        auto downcast = jni::static_ref_cast<JFunc_void_std__string_bool_cxx::javaobject>(__result);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)> {
+      if (__result->isInstanceOf(JFunc_void_std__vector_std__string__bool_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_std__vector_std__string__bool_cxx::javaobject>(__result);
         return downcast->cthis()->getFunction();
       } else {
         auto __resultRef = jni::make_global(__result);
-        return JNICallable<JFunc_void_std__string_bool, void(std::string, bool)>(std::move(__resultRef));
+        return JNICallable<JFunc_void_std__vector_std__string__bool, void(std::vector<std::string>, bool)>(std::move(__resultRef));
       }
     }()) : std::nullopt;
   }
-  void JHybridNitroSpeechSpec::setOnResult(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& onResult) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_std__string_bool::javaobject> /* onResult */)>("setOnResult_cxx");
-    method(_javaPart, onResult.has_value() ? JFunc_void_std__string_bool_cxx::fromCpp(onResult.value()) : nullptr);
+  void JHybridNitroSpeechSpec::setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>& onResult) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_std__vector_std__string__bool::javaobject> /* onResult */)>("setOnResult_cxx");
+    method(_javaPart, onResult.has_value() ? JFunc_void_std__vector_std__string__bool_cxx::fromCpp(onResult.value()) : nullptr);
   }
   std::optional<std::function<void(const std::string& /* message */)>> JHybridNitroSpeechSpec::getOnError() {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_std__string::javaobject>()>("getOnError_cxx");

@@ -50,8 +50,8 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     // Properties
-    std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>> getOnResult() override;
-    void setOnResult(const std::optional<std::function<void(const std::string& /* text */, bool /* isFinal */)>>& onResult) override;
+    std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>> getOnResult() override;
+    void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>& onResult) override;
     std::optional<std::function<void(const std::string& /* message */)>> getOnError() override;
     void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) override;
     std::optional<std::function<void()>> getOnPermissionDenied() override;
