@@ -11,14 +11,11 @@ import NitroModules
 /// See ``HybridNitroSpeechSpec``
 public protocol HybridNitroSpeechSpec_protocol: HybridObject {
   // Properties
-  var onResult: ((_ resultBatches: [String], _ isFinal: Bool) -> Void)? { get set }
-  var onError: ((_ message: String) -> Void)? { get set }
-  var onPermissionDenied: (() -> Void)? { get set }
+  var recognizer: (any HybridRecognizerSpec) { get set }
+  var math: (any HybridMathSpec) { get set }
 
   // Methods
-  func startListening(locale: String, recognizeOnDevice: Bool) throws -> Void
-  func stopListening() throws -> Void
-  func destroy() throws -> Void
+  
 }
 
 public extension HybridNitroSpeechSpec_protocol {

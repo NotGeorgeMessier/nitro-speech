@@ -12,12 +12,14 @@
 // Forward declaration of `HybridNitroSpeechSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 
+// Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
+// Forward declaration of `HybridMathSpec` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { class HybridMathSpec; }
 
-
-#include <string>
-#include <vector>
-#include <functional>
-#include <optional>
+#include <memory>
+#include "HybridRecognizerSpec.hpp"
+#include "HybridMathSpec.hpp"
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 
@@ -59,48 +61,24 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     // Properties
-    inline std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>> getOnResult() noexcept override {
-      auto __result = _swiftPart.getOnResult();
+    inline std::shared_ptr<HybridRecognizerSpec> getRecognizer() noexcept override {
+      auto __result = _swiftPart.getRecognizer();
       return __result;
     }
-    inline void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>& onResult) noexcept override {
-      _swiftPart.setOnResult(onResult);
+    inline void setRecognizer(const std::shared_ptr<HybridRecognizerSpec>& recognizer) noexcept override {
+      _swiftPart.setRecognizer(recognizer);
     }
-    inline std::optional<std::function<void(const std::string& /* message */)>> getOnError() noexcept override {
-      auto __result = _swiftPart.getOnError();
+    inline std::shared_ptr<HybridMathSpec> getMath() noexcept override {
+      auto __result = _swiftPart.getMath();
       return __result;
     }
-    inline void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) noexcept override {
-      _swiftPart.setOnError(onError);
-    }
-    inline std::optional<std::function<void()>> getOnPermissionDenied() noexcept override {
-      auto __result = _swiftPart.getOnPermissionDenied();
-      return __result;
-    }
-    inline void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) noexcept override {
-      _swiftPart.setOnPermissionDenied(onPermissionDenied);
+    inline void setMath(const std::shared_ptr<HybridMathSpec>& math) noexcept override {
+      _swiftPart.setMath(math);
     }
 
   public:
     // Methods
-    inline void startListening(const std::string& locale, bool recognizeOnDevice) override {
-      auto __result = _swiftPart.startListening(locale, std::forward<decltype(recognizeOnDevice)>(recognizeOnDevice));
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-    }
-    inline void stopListening() override {
-      auto __result = _swiftPart.stopListening();
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-    }
-    inline void destroy() override {
-      auto __result = _swiftPart.destroy();
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-    }
+    
 
   private:
     NitroSpeech::HybridNitroSpeechSpec_cxx _swiftPart;

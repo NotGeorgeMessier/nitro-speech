@@ -13,12 +13,14 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
+// Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
+// Forward declaration of `HybridMathSpec` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { class HybridMathSpec; }
 
-
-#include <string>
-#include <vector>
-#include <functional>
-#include <optional>
+#include <memory>
+#include "HybridRecognizerSpec.hpp"
+#include "HybridMathSpec.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -47,18 +49,14 @@ namespace margelo::nitro::nitrospeech {
 
     public:
       // Properties
-      virtual std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>> getOnResult() = 0;
-      virtual void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>& onResult) = 0;
-      virtual std::optional<std::function<void(const std::string& /* message */)>> getOnError() = 0;
-      virtual void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) = 0;
-      virtual std::optional<std::function<void()>> getOnPermissionDenied() = 0;
-      virtual void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) = 0;
+      virtual std::shared_ptr<HybridRecognizerSpec> getRecognizer() = 0;
+      virtual void setRecognizer(const std::shared_ptr<HybridRecognizerSpec>& recognizer) = 0;
+      virtual std::shared_ptr<HybridMathSpec> getMath() = 0;
+      virtual void setMath(const std::shared_ptr<HybridMathSpec>& math) = 0;
 
     public:
       // Methods
-      virtual void startListening(const std::string& locale, bool recognizeOnDevice) = 0;
-      virtual void stopListening() = 0;
-      virtual void destroy() = 0;
+      
 
     protected:
       // Hybrid Setup

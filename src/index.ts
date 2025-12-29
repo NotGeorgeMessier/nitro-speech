@@ -1,5 +1,8 @@
 import { NitroModules } from 'react-native-nitro-modules'
 import type { NitroSpeech as NitroSpeechSpec } from './specs/NitroSpeech.nitro'
 
-export const NitroSpeech =
+const NitroSpeech =
   NitroModules.createHybridObject<NitroSpeechSpec>('NitroSpeech')
+
+export const Recognizer = NitroSpeech.recognizer
+export const Math = NitroSpeech.math
