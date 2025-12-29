@@ -56,27 +56,27 @@ abstract class HybridRecognizerSpec: HybridObject() {
       onReadyForSpeech = value?.let { it }
     }
   
-  abstract var onEndOfSpeech: (() -> Unit)?
+  abstract var onRecordingStopped: (() -> Unit)?
   
-  private var onEndOfSpeech_cxx: Func_void?
+  private var onRecordingStopped_cxx: Func_void?
     @Keep
     @DoNotStrip
     get() {
-      return onEndOfSpeech?.let { Func_void_java(it) }
+      return onRecordingStopped?.let { Func_void_java(it) }
     }
     @Keep
     @DoNotStrip
     set(value) {
-      onEndOfSpeech = value?.let { it }
+      onRecordingStopped = value?.let { it }
     }
   
-  abstract var onResult: ((resultBatches: Array<String>, isFinal: Boolean) -> Unit)?
+  abstract var onResult: ((resultBatches: Array<String>) -> Unit)?
   
-  private var onResult_cxx: Func_void_std__vector_std__string__bool?
+  private var onResult_cxx: Func_void_std__vector_std__string_?
     @Keep
     @DoNotStrip
     get() {
-      return onResult?.let { Func_void_std__vector_std__string__bool_java(it) }
+      return onResult?.let { Func_void_std__vector_std__string__java(it) }
     }
     @Keep
     @DoNotStrip

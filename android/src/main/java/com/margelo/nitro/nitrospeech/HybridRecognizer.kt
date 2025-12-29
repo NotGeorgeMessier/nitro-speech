@@ -11,7 +11,6 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
 import androidx.annotation.Keep
-import androidx.annotation.RequiresApi
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.NitroModules
 import com.margelo.nitro.nitrospeech.HybridRecognizerSpec
@@ -24,13 +23,13 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   private var config: Params? = null
   private var resultBatches: ArrayList<String>? = null
-  private var permissionRequester: AudioPermissionRequester? = null
+  private var audioRecordingDetector: AudioRecordingDetector? = null
   private var speechRecognizer: SpeechRecognizer? = null
   private val mainHandler = Handler(Looper.getMainLooper())
 
   override var onReadyForSpeech: (() -> Unit)? = null
-  override var onEndOfSpeech: (() -> Unit)? = null
-  override var onResult: ((resultBatches: Array<String>, isFinal: Boolean) -> Unit)? = null
+  override var onRecordingStopped: (() -> Unit)? = null
+  override var onResult: ((resultBatches: Array<String>) -> Unit)? = null
   override var onError: ((error: String) -> Unit)? = null
   override var onPermissionDenied: (() -> Unit)? = null
 
@@ -40,20 +39,17 @@ class HybridRecognizer: HybridRecognizerSpec() {
     Log.d(TAG, "startListening: ${params.toString()}")
     val context = NitroModules.applicationContext
     if (context == null) {
-      onError?.invoke("Context not available")
+      onFinishRecognition("Error at startListening: Context not available")
       return
     }
     val activity = context.currentActivity
     if (activity == null) {
-      onError?.invoke("Activity not found")
+      onFinishRecognition("Error at startListening: Activity not found")
       return
     }
 
-    if (permissionRequester == null) {
-      permissionRequester = AudioPermissionRequester(activity)
-    }
-
-    permissionRequester?.checkAndRequest { granted ->
+    val permissionRequester = AudioPermissionRequester(activity)
+    permissionRequester.checkAndRequest { granted ->
       if (!granted) {
         onPermissionDenied?.invoke()
         return@checkAndRequest
@@ -66,13 +62,14 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @DoNotStrip
   @Keep
   override fun stopListening() {
-    onResult?.invoke(resultBatches?.toTypedArray() ?: emptyArray(), true)
+    audioRecordingDetector?.stop()
     mainHandler.postDelayed({
       try {
+        onFinishRecognition(resultBatches)
         speechRecognizer?.stopListening()
         Log.d(TAG, "stopListening called")
       } catch (e: Exception) {
-        onError?.invoke(e.message ?: "Unknown error at stopListening")
+        onFinishRecognition("Error at stopListening.mainHandler.postDelayed: ${e.message ?: "Unknown error"}")
       }
     }, 100)
   }
@@ -82,19 +79,22 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @Keep
   override fun destroy() {
     resultBatches = null
+    audioRecordingDetector?.stop()
+    audioRecordingDetector = null
     mainHandler.postDelayed({
       try {
         speechRecognizer?.destroy()
         speechRecognizer = null
         Log.d(TAG, "destroy called")
       } catch (e: Exception) {
-        onError?.invoke(e.message ?: "Unknown error at destroy")
+        onFinishRecognition("Error at destroy.mainHandler.postDelayed: ${e.message ?: "Unknown error"}")
       }
     }, 100)
   }
 
   private fun start(context: Context) {
     resultBatches = null
+    audioRecordingDetector = null
     mainHandler.post {
       try {
         if (speechRecognizer == null) {
@@ -111,15 +111,16 @@ class HybridRecognizer: HybridRecognizerSpec() {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, config?.locale ?: "en-US")
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
         // set 60s to avoid cutting early
-        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, config?.autoFinishRecognitionMs ?: 60000)
+//        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, config?.autoFinishRecognitionMs ?: 60000)
 
         if (config?.maskOffensiveWords != true && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           intent.putExtra(RecognizerIntent.EXTRA_MASK_OFFENSIVE_WORDS, false)
         }
 
+        audioRecordingDetector = AudioRecordingDetector(onRecordingStopped)
         speechRecognizer?.startListening(intent)
       } catch (e: Exception) {
-        onError?.invoke(e.message ?: "Unknown error")
+        onFinishRecognition("Error at start.mainHandler.post: ${e.message ?: "Unknown error"}")
       }
     }
     mainHandler.postDelayed({
@@ -131,13 +132,11 @@ class HybridRecognizer: HybridRecognizerSpec() {
     return object : RecognitionListener {
       override fun onReadyForSpeech(params: Bundle?) {}
       override fun onBeginningOfSpeech() {}
-      override fun onRmsChanged(rmsdB: Float) {}
-      override fun onBufferReceived(buffer: ByteArray?) {
-        Log.d(TAG, "onEndOfSpeech")
+      override fun onRmsChanged(rmsdB: Float) {
+        audioRecordingDetector?.indicateRmsChange()
       }
-      override fun onEndOfSpeech() {
-        Log.d(TAG, "onEndOfSpeech")
-      }
+      override fun onBufferReceived(buffer: ByteArray?) {}
+      override fun onEndOfSpeech() {}
 
 
       override fun onError(error: Int) {
@@ -153,15 +152,14 @@ class HybridRecognizer: HybridRecognizerSpec() {
           SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech input"
           else -> "Unknown error"
         }
-        onEndOfSpeech?.invoke()
-        onError?.invoke(message)
+        onFinishRecognition("Error at RecognitionListener: $message")
       }
 
       override fun onResults(results: Bundle?) {
         val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
         if (!matches.isNullOrEmpty()) {
-          Log.d(TAG, "isFinal: true, $matches")
-          onResult?.invoke(matches.slice(0..0).toTypedArray(), true)
+          Log.d(TAG, "onResults: $matches")
+          onFinishRecognition(arrayListOf(matches[0]))
         }
       }
 
@@ -191,13 +189,20 @@ class HybridRecognizer: HybridRecognizerSpec() {
           }
         }
         resultBatches = currentBatches
-        onResult?.invoke(currentBatches.toTypedArray(), false)
+        onResult?.invoke(currentBatches.toTypedArray())
       }
 
-      override fun onEvent(eventType: Int, params: Bundle?) {
-        Log.d(TAG, "$eventType onEvent")
-      }
+      override fun onEvent(eventType: Int, params: Bundle?) {}
     }
+  }
+
+  private fun onFinishRecognition(errorMessage: String){
+    onRecordingStopped?.invoke()
+    onError?.invoke(errorMessage)
+  }
+  private fun onFinishRecognition(result: ArrayList<String>?) {
+    onRecordingStopped?.invoke()
+    onResult?.invoke(result?.toTypedArray() ?: emptyArray())
   }
 
   // Filters out 2 or more repeating words in a row, like "and and"

@@ -52,10 +52,10 @@ namespace margelo::nitro::nitrospeech {
     // Properties
     std::optional<std::function<void()>> getOnReadyForSpeech() override;
     void setOnReadyForSpeech(const std::optional<std::function<void()>>& onReadyForSpeech) override;
-    std::optional<std::function<void()>> getOnEndOfSpeech() override;
-    void setOnEndOfSpeech(const std::optional<std::function<void()>>& onEndOfSpeech) override;
-    std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>> getOnResult() override;
-    void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>& onResult) override;
+    std::optional<std::function<void()>> getOnRecordingStopped() override;
+    void setOnRecordingStopped(const std::optional<std::function<void()>>& onRecordingStopped) override;
+    std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>> getOnResult() override;
+    void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>& onResult) override;
     std::optional<std::function<void(const std::string& /* message */)>> getOnError() override;
     void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) override;
     std::optional<std::function<void()>> getOnPermissionDenied() override;

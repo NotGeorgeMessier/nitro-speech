@@ -16,7 +16,7 @@ namespace margelo::nitro::nitrospeech { struct Params; }
 #include <NitroModules/JNICallable.hpp>
 #include <string>
 #include <vector>
-#include "JFunc_void_std__vector_std__string__bool.hpp"
+#include "JFunc_void_std__vector_std__string_.hpp"
 #include "JFunc_void_std__string.hpp"
 #include "Params.hpp"
 #include "JParams.hpp"
@@ -67,8 +67,8 @@ namespace margelo::nitro::nitrospeech {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void::javaobject> /* onReadyForSpeech */)>("setOnReadyForSpeech_cxx");
     method(_javaPart, onReadyForSpeech.has_value() ? JFunc_void_cxx::fromCpp(onReadyForSpeech.value()) : nullptr);
   }
-  std::optional<std::function<void()>> JHybridRecognizerSpec::getOnEndOfSpeech() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>()>("getOnEndOfSpeech_cxx");
+  std::optional<std::function<void()>> JHybridRecognizerSpec::getOnRecordingStopped() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>()>("getOnRecordingStopped_cxx");
     auto __result = method(_javaPart);
     return __result != nullptr ? std::make_optional([&]() -> std::function<void()> {
       if (__result->isInstanceOf(JFunc_void_cxx::javaClassStatic())) [[likely]] {
@@ -80,26 +80,26 @@ namespace margelo::nitro::nitrospeech {
       }
     }()) : std::nullopt;
   }
-  void JHybridRecognizerSpec::setOnEndOfSpeech(const std::optional<std::function<void()>>& onEndOfSpeech) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void::javaobject> /* onEndOfSpeech */)>("setOnEndOfSpeech_cxx");
-    method(_javaPart, onEndOfSpeech.has_value() ? JFunc_void_cxx::fromCpp(onEndOfSpeech.value()) : nullptr);
+  void JHybridRecognizerSpec::setOnRecordingStopped(const std::optional<std::function<void()>>& onRecordingStopped) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void::javaobject> /* onRecordingStopped */)>("setOnRecordingStopped_cxx");
+    method(_javaPart, onRecordingStopped.has_value() ? JFunc_void_cxx::fromCpp(onRecordingStopped.value()) : nullptr);
   }
-  std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>> JHybridRecognizerSpec::getOnResult() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_std__vector_std__string__bool::javaobject>()>("getOnResult_cxx");
+  std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>> JHybridRecognizerSpec::getOnResult() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_std__vector_std__string_::javaobject>()>("getOnResult_cxx");
     auto __result = method(_javaPart);
-    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)> {
-      if (__result->isInstanceOf(JFunc_void_std__vector_std__string__bool_cxx::javaClassStatic())) [[likely]] {
-        auto downcast = jni::static_ref_cast<JFunc_void_std__vector_std__string__bool_cxx::javaobject>(__result);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const std::vector<std::string>& /* resultBatches */)> {
+      if (__result->isInstanceOf(JFunc_void_std__vector_std__string__cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_std__vector_std__string__cxx::javaobject>(__result);
         return downcast->cthis()->getFunction();
       } else {
         auto __resultRef = jni::make_global(__result);
-        return JNICallable<JFunc_void_std__vector_std__string__bool, void(std::vector<std::string>, bool)>(std::move(__resultRef));
+        return JNICallable<JFunc_void_std__vector_std__string_, void(std::vector<std::string>)>(std::move(__resultRef));
       }
     }()) : std::nullopt;
   }
-  void JHybridRecognizerSpec::setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>& onResult) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_std__vector_std__string__bool::javaobject> /* onResult */)>("setOnResult_cxx");
-    method(_javaPart, onResult.has_value() ? JFunc_void_std__vector_std__string__bool_cxx::fromCpp(onResult.value()) : nullptr);
+  void JHybridRecognizerSpec::setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>& onResult) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_std__vector_std__string_::javaobject> /* onResult */)>("setOnResult_cxx");
+    method(_javaPart, onResult.has_value() ? JFunc_void_std__vector_std__string__cxx::fromCpp(onResult.value()) : nullptr);
   }
   std::optional<std::function<void(const std::string& /* message */)>> JHybridRecognizerSpec::getOnError() {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_std__string::javaobject>()>("getOnError_cxx");

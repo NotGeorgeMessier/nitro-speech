@@ -44,11 +44,25 @@ export interface Recognizer extends HybridObject<{
   stopListening(): void
   destroy(): void
 
-  // Callbacks for speech recognition events
+  /**
+   * User's speech is ready to be recognized.
+   */
   onReadyForSpeech?: () => void
-  onEndOfSpeech?: () => void
-  onResult?: (resultBatches: string[], isFinal: boolean) => void
+  /**
+   * Audio recording has stopped.
+   */
+  onRecordingStopped?: () => void
+  /**
+   * Called each time either a new batch has been added or the last batch has been updated.
+   */
+  onResult?: (resultBatches: string[]) => void
+  /**
+   * Error of the speech recognition.
+   */
   onError?: (message: string) => void
+  /**
+   * Permission to record audio has been denied.
+   */
   onPermissionDenied?: () => void
 }
 

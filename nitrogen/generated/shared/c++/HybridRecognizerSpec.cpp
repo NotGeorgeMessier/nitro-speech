@@ -16,8 +16,8 @@ namespace margelo::nitro::nitrospeech {
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridGetter("onReadyForSpeech", &HybridRecognizerSpec::getOnReadyForSpeech);
       prototype.registerHybridSetter("onReadyForSpeech", &HybridRecognizerSpec::setOnReadyForSpeech);
-      prototype.registerHybridGetter("onEndOfSpeech", &HybridRecognizerSpec::getOnEndOfSpeech);
-      prototype.registerHybridSetter("onEndOfSpeech", &HybridRecognizerSpec::setOnEndOfSpeech);
+      prototype.registerHybridGetter("onRecordingStopped", &HybridRecognizerSpec::getOnRecordingStopped);
+      prototype.registerHybridSetter("onRecordingStopped", &HybridRecognizerSpec::setOnRecordingStopped);
       prototype.registerHybridGetter("onResult", &HybridRecognizerSpec::getOnResult);
       prototype.registerHybridSetter("onResult", &HybridRecognizerSpec::setOnResult);
       prototype.registerHybridGetter("onError", &HybridRecognizerSpec::getOnError);

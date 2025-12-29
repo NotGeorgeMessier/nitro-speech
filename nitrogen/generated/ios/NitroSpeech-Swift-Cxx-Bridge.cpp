@@ -24,11 +24,11 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     };
   }
   
-  // pragma MARK: std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>
-  Func_void_std__vector_std__string__bool create_Func_void_std__vector_std__string__bool(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroSpeech::Func_void_std__vector_std__string__bool::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::vector<std::string>& resultBatches, bool isFinal) mutable -> void {
-      swiftClosure.call(resultBatches, isFinal);
+  // pragma MARK: std::function<void(const std::vector<std::string>& /* resultBatches */)>
+  Func_void_std__vector_std__string_ create_Func_void_std__vector_std__string_(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroSpeech::Func_void_std__vector_std__string_::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::vector<std::string>& resultBatches) mutable -> void {
+      swiftClosure.call(resultBatches);
     };
   }
   

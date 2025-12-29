@@ -68,18 +68,18 @@ namespace margelo::nitro::nitrospeech {
     inline void setOnReadyForSpeech(const std::optional<std::function<void()>>& onReadyForSpeech) noexcept override {
       _swiftPart.setOnReadyForSpeech(onReadyForSpeech);
     }
-    inline std::optional<std::function<void()>> getOnEndOfSpeech() noexcept override {
-      auto __result = _swiftPart.getOnEndOfSpeech();
+    inline std::optional<std::function<void()>> getOnRecordingStopped() noexcept override {
+      auto __result = _swiftPart.getOnRecordingStopped();
       return __result;
     }
-    inline void setOnEndOfSpeech(const std::optional<std::function<void()>>& onEndOfSpeech) noexcept override {
-      _swiftPart.setOnEndOfSpeech(onEndOfSpeech);
+    inline void setOnRecordingStopped(const std::optional<std::function<void()>>& onRecordingStopped) noexcept override {
+      _swiftPart.setOnRecordingStopped(onRecordingStopped);
     }
-    inline std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>> getOnResult() noexcept override {
+    inline std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>> getOnResult() noexcept override {
       auto __result = _swiftPart.getOnResult();
       return __result;
     }
-    inline void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */, bool /* isFinal */)>>& onResult) noexcept override {
+    inline void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>& onResult) noexcept override {
       _swiftPart.setOnResult(onResult);
     }
     inline std::optional<std::function<void(const std::string& /* message */)>> getOnError() noexcept override {
