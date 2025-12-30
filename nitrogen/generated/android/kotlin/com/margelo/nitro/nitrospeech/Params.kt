@@ -28,13 +28,13 @@ data class Params(
   val autoFinishRecognitionMs: Double?,
   @DoNotStrip
   @Keep
-  val maskOffensiveWords: Boolean?,
-  @DoNotStrip
-  @Keep
   val disableRepeatingFilter: Boolean?,
   @DoNotStrip
   @Keep
-  val disableBatchHandling: Boolean?
+  val disableBatchHandling: Boolean?,
+  @DoNotStrip
+  @Keep
+  val androidMaskOffensiveWords: Boolean?
 ) {
   /* primary constructor */
 
@@ -46,8 +46,8 @@ data class Params(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(locale: String?, recognizeOnDevice: Boolean?, autoFinishRecognitionMs: Double?, maskOffensiveWords: Boolean?, disableRepeatingFilter: Boolean?, disableBatchHandling: Boolean?): Params {
-      return Params(locale, recognizeOnDevice, autoFinishRecognitionMs, maskOffensiveWords, disableRepeatingFilter, disableBatchHandling)
+    private fun fromCpp(locale: String?, recognizeOnDevice: Boolean?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Boolean?, disableBatchHandling: Boolean?, androidMaskOffensiveWords: Boolean?): Params {
+      return Params(locale, recognizeOnDevice, autoFinishRecognitionMs, disableRepeatingFilter, disableBatchHandling, androidMaskOffensiveWords)
     }
   }
 }

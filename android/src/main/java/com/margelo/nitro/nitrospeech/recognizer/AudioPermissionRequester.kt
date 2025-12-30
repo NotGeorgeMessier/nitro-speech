@@ -1,4 +1,4 @@
-package com.margelo.nitro.nitrospeech
+package com.margelo.nitro.nitrospeech.recognizer
 
 import android.Manifest
 import android.app.Activity

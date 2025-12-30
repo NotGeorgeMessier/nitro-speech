@@ -19,7 +19,7 @@ public extension Params {
   /**
    * Create a new instance of `Params`.
    */
-  init(locale: String?, recognizeOnDevice: Bool?, autoFinishRecognitionMs: Double?, maskOffensiveWords: Bool?, disableRepeatingFilter: Bool?, disableBatchHandling: Bool?) {
+  init(locale: String?, recognizeOnDevice: Bool?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Bool?, disableBatchHandling: Bool?, androidMaskOffensiveWords: Bool?) {
     self.init({ () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = locale {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
@@ -39,12 +39,6 @@ public extension Params {
         return .init()
       }
     }(), { () -> bridge.std__optional_bool_ in
-      if let __unwrappedValue = maskOffensiveWords {
-        return bridge.create_std__optional_bool_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_bool_ in
       if let __unwrappedValue = disableRepeatingFilter {
         return bridge.create_std__optional_bool_(__unwrappedValue)
       } else {
@@ -52,6 +46,12 @@ public extension Params {
       }
     }(), { () -> bridge.std__optional_bool_ in
       if let __unwrappedValue = disableBatchHandling {
+        return bridge.create_std__optional_bool_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_bool_ in
+      if let __unwrappedValue = androidMaskOffensiveWords {
         return bridge.create_std__optional_bool_(__unwrappedValue)
       } else {
         return .init()
@@ -124,30 +124,6 @@ public extension Params {
     }
   }
   
-  var maskOffensiveWords: Bool? {
-    @inline(__always)
-    get {
-      return { () -> Bool? in
-        if bridge.has_value_std__optional_bool_(self.__maskOffensiveWords) {
-          let __unwrapped = bridge.get_std__optional_bool_(self.__maskOffensiveWords)
-          return __unwrapped
-        } else {
-          return nil
-        }
-      }()
-    }
-    @inline(__always)
-    set {
-      self.__maskOffensiveWords = { () -> bridge.std__optional_bool_ in
-        if let __unwrappedValue = newValue {
-          return bridge.create_std__optional_bool_(__unwrappedValue)
-        } else {
-          return .init()
-        }
-      }()
-    }
-  }
-  
   var disableRepeatingFilter: Bool? {
     @inline(__always)
     get {
@@ -187,6 +163,30 @@ public extension Params {
     @inline(__always)
     set {
       self.__disableBatchHandling = { () -> bridge.std__optional_bool_ in
+        if let __unwrappedValue = newValue {
+          return bridge.create_std__optional_bool_(__unwrappedValue)
+        } else {
+          return .init()
+        }
+      }()
+    }
+  }
+  
+  var androidMaskOffensiveWords: Bool? {
+    @inline(__always)
+    get {
+      return { () -> Bool? in
+        if bridge.has_value_std__optional_bool_(self.__androidMaskOffensiveWords) {
+          let __unwrapped = bridge.get_std__optional_bool_(self.__androidMaskOffensiveWords)
+          return __unwrapped
+        } else {
+          return nil
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__androidMaskOffensiveWords = { () -> bridge.std__optional_bool_ in
         if let __unwrappedValue = newValue {
           return bridge.create_std__optional_bool_(__unwrappedValue)
         } else {

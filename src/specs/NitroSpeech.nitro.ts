@@ -10,15 +10,9 @@ interface Params {
    */
   recognizeOnDevice?: boolean
   /**
-   * Default - 60s
+   * Default - 8s
    */
   autoFinishRecognitionMs?: number
-  /**
-   * Default - true
-   *
-   * Min Android 13
-   */
-  maskOffensiveWords?: boolean
   /**
    * Default - false
    *
@@ -33,6 +27,12 @@ interface Params {
    * Will add lots of batches with empty or similar content to the result.
    */
   disableBatchHandling?: boolean
+  /**
+   * Default - false
+   *
+   * Mask offensive words.
+   */
+  androidMaskOffensiveWords?: boolean
 }
 
 export interface Recognizer extends HybridObject<{

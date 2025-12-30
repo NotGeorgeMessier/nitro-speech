@@ -38,13 +38,13 @@ namespace margelo::nitro::nitrospeech {
     std::optional<std::string> locale     SWIFT_PRIVATE;
     std::optional<bool> recognizeOnDevice     SWIFT_PRIVATE;
     std::optional<double> autoFinishRecognitionMs     SWIFT_PRIVATE;
-    std::optional<bool> maskOffensiveWords     SWIFT_PRIVATE;
     std::optional<bool> disableRepeatingFilter     SWIFT_PRIVATE;
     std::optional<bool> disableBatchHandling     SWIFT_PRIVATE;
+    std::optional<bool> androidMaskOffensiveWords     SWIFT_PRIVATE;
 
   public:
     Params() = default;
-    explicit Params(std::optional<std::string> locale, std::optional<bool> recognizeOnDevice, std::optional<double> autoFinishRecognitionMs, std::optional<bool> maskOffensiveWords, std::optional<bool> disableRepeatingFilter, std::optional<bool> disableBatchHandling): locale(locale), recognizeOnDevice(recognizeOnDevice), autoFinishRecognitionMs(autoFinishRecognitionMs), maskOffensiveWords(maskOffensiveWords), disableRepeatingFilter(disableRepeatingFilter), disableBatchHandling(disableBatchHandling) {}
+    explicit Params(std::optional<std::string> locale, std::optional<bool> recognizeOnDevice, std::optional<double> autoFinishRecognitionMs, std::optional<bool> disableRepeatingFilter, std::optional<bool> disableBatchHandling, std::optional<bool> androidMaskOffensiveWords): locale(locale), recognizeOnDevice(recognizeOnDevice), autoFinishRecognitionMs(autoFinishRecognitionMs), disableRepeatingFilter(disableRepeatingFilter), disableBatchHandling(disableBatchHandling), androidMaskOffensiveWords(androidMaskOffensiveWords) {}
   };
 
 } // namespace margelo::nitro::nitrospeech
@@ -60,9 +60,9 @@ namespace margelo::nitro {
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, "locale")),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "recognizeOnDevice")),
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, "autoFinishRecognitionMs")),
-        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "maskOffensiveWords")),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "disableRepeatingFilter")),
-        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "disableBatchHandling"))
+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "disableBatchHandling")),
+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "androidMaskOffensiveWords"))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::nitrospeech::Params& arg) {
@@ -70,9 +70,9 @@ namespace margelo::nitro {
       obj.setProperty(runtime, "locale", JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.locale));
       obj.setProperty(runtime, "recognizeOnDevice", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.recognizeOnDevice));
       obj.setProperty(runtime, "autoFinishRecognitionMs", JSIConverter<std::optional<double>>::toJSI(runtime, arg.autoFinishRecognitionMs));
-      obj.setProperty(runtime, "maskOffensiveWords", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.maskOffensiveWords));
       obj.setProperty(runtime, "disableRepeatingFilter", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.disableRepeatingFilter));
       obj.setProperty(runtime, "disableBatchHandling", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.disableBatchHandling));
+      obj.setProperty(runtime, "androidMaskOffensiveWords", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.androidMaskOffensiveWords));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -86,9 +86,9 @@ namespace margelo::nitro {
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, "locale"))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "recognizeOnDevice"))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, "autoFinishRecognitionMs"))) return false;
-      if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "maskOffensiveWords"))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "disableRepeatingFilter"))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "disableBatchHandling"))) return false;
+      if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "androidMaskOffensiveWords"))) return false;
       return true;
     }
   };

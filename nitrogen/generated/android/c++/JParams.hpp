@@ -38,19 +38,19 @@ namespace margelo::nitro::nitrospeech {
       jni::local_ref<jni::JBoolean> recognizeOnDevice = this->getFieldValue(fieldRecognizeOnDevice);
       static const auto fieldAutoFinishRecognitionMs = clazz->getField<jni::JDouble>("autoFinishRecognitionMs");
       jni::local_ref<jni::JDouble> autoFinishRecognitionMs = this->getFieldValue(fieldAutoFinishRecognitionMs);
-      static const auto fieldMaskOffensiveWords = clazz->getField<jni::JBoolean>("maskOffensiveWords");
-      jni::local_ref<jni::JBoolean> maskOffensiveWords = this->getFieldValue(fieldMaskOffensiveWords);
       static const auto fieldDisableRepeatingFilter = clazz->getField<jni::JBoolean>("disableRepeatingFilter");
       jni::local_ref<jni::JBoolean> disableRepeatingFilter = this->getFieldValue(fieldDisableRepeatingFilter);
       static const auto fieldDisableBatchHandling = clazz->getField<jni::JBoolean>("disableBatchHandling");
       jni::local_ref<jni::JBoolean> disableBatchHandling = this->getFieldValue(fieldDisableBatchHandling);
+      static const auto fieldAndroidMaskOffensiveWords = clazz->getField<jni::JBoolean>("androidMaskOffensiveWords");
+      jni::local_ref<jni::JBoolean> androidMaskOffensiveWords = this->getFieldValue(fieldAndroidMaskOffensiveWords);
       return Params(
         locale != nullptr ? std::make_optional(locale->toStdString()) : std::nullopt,
         recognizeOnDevice != nullptr ? std::make_optional(static_cast<bool>(recognizeOnDevice->value())) : std::nullopt,
         autoFinishRecognitionMs != nullptr ? std::make_optional(autoFinishRecognitionMs->value()) : std::nullopt,
-        maskOffensiveWords != nullptr ? std::make_optional(static_cast<bool>(maskOffensiveWords->value())) : std::nullopt,
         disableRepeatingFilter != nullptr ? std::make_optional(static_cast<bool>(disableRepeatingFilter->value())) : std::nullopt,
-        disableBatchHandling != nullptr ? std::make_optional(static_cast<bool>(disableBatchHandling->value())) : std::nullopt
+        disableBatchHandling != nullptr ? std::make_optional(static_cast<bool>(disableBatchHandling->value())) : std::nullopt,
+        androidMaskOffensiveWords != nullptr ? std::make_optional(static_cast<bool>(androidMaskOffensiveWords->value())) : std::nullopt
       );
     }
 
@@ -68,9 +68,9 @@ namespace margelo::nitro::nitrospeech {
         value.locale.has_value() ? jni::make_jstring(value.locale.value()) : nullptr,
         value.recognizeOnDevice.has_value() ? jni::JBoolean::valueOf(value.recognizeOnDevice.value()) : nullptr,
         value.autoFinishRecognitionMs.has_value() ? jni::JDouble::valueOf(value.autoFinishRecognitionMs.value()) : nullptr,
-        value.maskOffensiveWords.has_value() ? jni::JBoolean::valueOf(value.maskOffensiveWords.value()) : nullptr,
         value.disableRepeatingFilter.has_value() ? jni::JBoolean::valueOf(value.disableRepeatingFilter.value()) : nullptr,
-        value.disableBatchHandling.has_value() ? jni::JBoolean::valueOf(value.disableBatchHandling.value()) : nullptr
+        value.disableBatchHandling.has_value() ? jni::JBoolean::valueOf(value.disableBatchHandling.value()) : nullptr,
+        value.androidMaskOffensiveWords.has_value() ? jni::JBoolean::valueOf(value.androidMaskOffensiveWords.value()) : nullptr
       );
     }
   };
