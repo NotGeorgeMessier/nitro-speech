@@ -122,7 +122,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, config?.locale ?: "en-US")
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
         // set 60s to avoid cutting early
-        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 80000L)
+        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 60000)
 
         if (config?.androidMaskOffensiveWords != true && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           intent.putExtra(RecognizerIntent.EXTRA_MASK_OFFENSIVE_WORDS, false)
