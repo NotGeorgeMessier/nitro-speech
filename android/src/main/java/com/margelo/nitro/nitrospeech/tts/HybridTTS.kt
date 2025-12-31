@@ -1,12 +1,12 @@
-package com.margelo.nitro.nitrospeech
+package com.margelo.nitro.nitrospeech.tts
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
-import com.margelo.nitro.nitrospeech.HybridMathSpec
+import com.margelo.nitro.nitrospeech.HybridTTSSpec
 
-class HybridMath: HybridMathSpec() {
+class HybridTTS: HybridTTSSpec() {
   companion object {
-    private const val TAG = "HybridMath"
+    private const val TAG = "HybridTTS"
   }
 
   @DoNotStrip

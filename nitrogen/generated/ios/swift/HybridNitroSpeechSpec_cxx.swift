@@ -132,20 +132,20 @@ open class HybridNitroSpeechSpec_cxx {
     }
   }
   
-  public final var math: bridge.std__shared_ptr_HybridMathSpec_ {
+  public final var tts: bridge.std__shared_ptr_HybridTTSSpec_ {
     @inline(__always)
     get {
-      return { () -> bridge.std__shared_ptr_HybridMathSpec_ in
-        let __cxxWrapped = self.__implementation.math.getCxxWrapper()
+      return { () -> bridge.std__shared_ptr_HybridTTSSpec_ in
+        let __cxxWrapped = self.__implementation.tts.getCxxWrapper()
         return __cxxWrapped.getCxxPart()
       }()
     }
     @inline(__always)
     set {
-      self.__implementation.math = { () -> HybridMathSpec in
-        let __unsafePointer = bridge.get_std__shared_ptr_HybridMathSpec_(newValue)
-        let __instance = HybridMathSpec_cxx.fromUnsafe(__unsafePointer)
-        return __instance.getHybridMathSpec()
+      self.__implementation.tts = { () -> HybridTTSSpec in
+        let __unsafePointer = bridge.get_std__shared_ptr_HybridTTSSpec_(newValue)
+        let __instance = HybridTTSSpec_cxx.fromUnsafe(__unsafePointer)
+        return __instance.getHybridTTSSpec()
       }()
     }
   }

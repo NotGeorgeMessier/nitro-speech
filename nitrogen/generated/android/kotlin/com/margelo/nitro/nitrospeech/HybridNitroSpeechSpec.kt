@@ -52,7 +52,7 @@ abstract class HybridNitroSpeechSpec: HybridObject() {
   @get:Keep
   @set:DoNotStrip
   @set:Keep
-  abstract var math: HybridMathSpec
+  abstract var tts: HybridTTSSpec
 
   // Methods
   

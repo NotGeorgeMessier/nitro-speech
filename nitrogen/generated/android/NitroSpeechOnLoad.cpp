@@ -19,7 +19,7 @@
 #include "JFunc_void.hpp"
 #include "JFunc_void_std__vector_std__string_.hpp"
 #include "JFunc_void_std__string.hpp"
-#include "JHybridMathSpec.hpp"
+#include "JHybridTTSSpec.hpp"
 #include "JHybridNitroSpeechSpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
@@ -36,7 +36,7 @@ int initialize(JavaVM* vm) {
     margelo::nitro::nitrospeech::JFunc_void_cxx::registerNatives();
     margelo::nitro::nitrospeech::JFunc_void_std__vector_std__string__cxx::registerNatives();
     margelo::nitro::nitrospeech::JFunc_void_std__string_cxx::registerNatives();
-    margelo::nitro::nitrospeech::JHybridMathSpec::registerNatives();
+    margelo::nitro::nitrospeech::JHybridTTSSpec::registerNatives();
     margelo::nitro::nitrospeech::JHybridNitroSpeechSpec::registerNatives();
 
     // Register Nitro Hybrid Objects

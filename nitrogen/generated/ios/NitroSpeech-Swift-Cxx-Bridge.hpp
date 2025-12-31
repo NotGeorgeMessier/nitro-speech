@@ -8,25 +8,25 @@
 #pragma once
 
 // Forward declarations of C++ defined types
-// Forward declaration of `HybridMathSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridMathSpec; }
 // Forward declaration of `HybridNitroSpeechSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
+// Forward declaration of `HybridTTSSpec` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { class HybridTTSSpec; }
 
 // Forward declarations of Swift defined types
-// Forward declaration of `HybridMathSpec_cxx` to properly resolve imports.
-namespace NitroSpeech { class HybridMathSpec_cxx; }
 // Forward declaration of `HybridNitroSpeechSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 // Forward declaration of `HybridRecognizerSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
+// Forward declaration of `HybridTTSSpec_cxx` to properly resolve imports.
+namespace NitroSpeech { class HybridTTSSpec_cxx; }
 
 // Include C++ defined types
-#include "HybridMathSpec.hpp"
 #include "HybridNitroSpeechSpec.hpp"
 #include "HybridRecognizerSpec.hpp"
+#include "HybridTTSSpec.hpp"
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <functional>
@@ -229,17 +229,17 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return Result<void>::withError(error);
   }
   
-  // pragma MARK: std::shared_ptr<HybridMathSpec>
+  // pragma MARK: std::shared_ptr<HybridTTSSpec>
   /**
-   * Specialized version of `std::shared_ptr<HybridMathSpec>`.
+   * Specialized version of `std::shared_ptr<HybridTTSSpec>`.
    */
-  using std__shared_ptr_HybridMathSpec_ = std::shared_ptr<HybridMathSpec>;
-  std::shared_ptr<HybridMathSpec> create_std__shared_ptr_HybridMathSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridMathSpec_(std__shared_ptr_HybridMathSpec_ cppType);
+  using std__shared_ptr_HybridTTSSpec_ = std::shared_ptr<HybridTTSSpec>;
+  std::shared_ptr<HybridTTSSpec> create_std__shared_ptr_HybridTTSSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridTTSSpec_(std__shared_ptr_HybridTTSSpec_ cppType);
   
-  // pragma MARK: std::weak_ptr<HybridMathSpec>
-  using std__weak_ptr_HybridMathSpec_ = std::weak_ptr<HybridMathSpec>;
-  inline std__weak_ptr_HybridMathSpec_ weakify_std__shared_ptr_HybridMathSpec_(const std::shared_ptr<HybridMathSpec>& strong) noexcept { return strong; }
+  // pragma MARK: std::weak_ptr<HybridTTSSpec>
+  using std__weak_ptr_HybridTTSSpec_ = std::weak_ptr<HybridTTSSpec>;
+  inline std__weak_ptr_HybridTTSSpec_ weakify_std__shared_ptr_HybridTTSSpec_(const std::shared_ptr<HybridTTSSpec>& strong) noexcept { return strong; }
   
   // pragma MARK: Result<double>
   using Result_double_ = Result<double>;

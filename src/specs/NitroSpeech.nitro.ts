@@ -87,7 +87,7 @@ export interface Recognizer extends HybridObject<{
   onPermissionDenied?: () => void
 }
 
-export interface Math extends HybridObject<{
+export interface TTS extends HybridObject<{
   ios: 'swift'
   android: 'kotlin'
 }> {
@@ -99,5 +99,5 @@ export interface NitroSpeech extends HybridObject<{
   android: 'kotlin'
 }> {
   recognizer: Recognizer
-  math: Math
+  tts: TTS
 }

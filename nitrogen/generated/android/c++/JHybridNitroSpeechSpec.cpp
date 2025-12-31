@@ -9,14 +9,14 @@
 
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
-// Forward declaration of `HybridMathSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridMathSpec; }
+// Forward declaration of `HybridTTSSpec` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { class HybridTTSSpec; }
 
 #include <memory>
 #include "HybridRecognizerSpec.hpp"
 #include "JHybridRecognizerSpec.hpp"
-#include "HybridMathSpec.hpp"
-#include "JHybridMathSpec.hpp"
+#include "HybridTTSSpec.hpp"
+#include "JHybridTTSSpec.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -56,14 +56,14 @@ namespace margelo::nitro::nitrospeech {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridRecognizerSpec::javaobject> /* recognizer */)>("setRecognizer");
     method(_javaPart, std::dynamic_pointer_cast<JHybridRecognizerSpec>(recognizer)->getJavaPart());
   }
-  std::shared_ptr<HybridMathSpec> JHybridNitroSpeechSpec::getMath() {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridMathSpec::javaobject>()>("getMath");
+  std::shared_ptr<HybridTTSSpec> JHybridNitroSpeechSpec::getTts() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JHybridTTSSpec::javaobject>()>("getTts");
     auto __result = method(_javaPart);
-    return __result->cthis()->shared_cast<JHybridMathSpec>();
+    return __result->cthis()->shared_cast<JHybridTTSSpec>();
   }
-  void JHybridNitroSpeechSpec::setMath(const std::shared_ptr<HybridMathSpec>& math) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridMathSpec::javaobject> /* math */)>("setMath");
-    method(_javaPart, std::dynamic_pointer_cast<JHybridMathSpec>(math)->getJavaPart());
+  void JHybridNitroSpeechSpec::setTts(const std::shared_ptr<HybridTTSSpec>& tts) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JHybridTTSSpec::javaobject> /* tts */)>("setTts");
+    method(_javaPart, std::dynamic_pointer_cast<JHybridTTSSpec>(tts)->getJavaPart());
   }
 
   // Methods
