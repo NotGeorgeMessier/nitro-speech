@@ -12,7 +12,7 @@ class HybridRecognizer : HybridRecognizerSpec {
     
     var onPermissionDenied: (() -> Void)?
     
-    func startListening(params: Params) {
+    func startListening(params: SpeechToTextParams) {
         onReadyForSpeech?()
         return;
     }

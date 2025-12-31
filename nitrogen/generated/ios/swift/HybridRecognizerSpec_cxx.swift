@@ -282,7 +282,7 @@ open class HybridRecognizerSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func startListening(params: Params) -> bridge.Result_void_ {
+  public final func startListening(params: SpeechToTextParams) -> bridge.Result_void_ {
     do {
       try self.__implementation.startListening(params: params)
       return bridge.create_Result_void_()

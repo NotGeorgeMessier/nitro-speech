@@ -63,7 +63,7 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     // Methods
-    void startListening(const Params& params) override;
+    void startListening(const SpeechToTextParams& params) override;
     void stopListening() override;
     void destroy() override;
 

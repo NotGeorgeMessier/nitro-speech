@@ -12,7 +12,7 @@ import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.NitroModules
 import com.margelo.nitro.nitrospeech.HybridRecognizerSpec
-import com.margelo.nitro.nitrospeech.Params
+import com.margelo.nitro.nitrospeech.SpeechToTextParams
 
 class HybridRecognizer: HybridRecognizerSpec() {
   companion object {
@@ -21,7 +21,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   }
 
   private var isActive: Boolean = false
-  private var config: Params? = null
+  private var config: SpeechToTextParams? = null
   private var autoStopper: AutoStopper? = null
   private var speechRecognizer: SpeechRecognizer? = null
   private val mainHandler = Handler(Looper.getMainLooper())
@@ -34,7 +34,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   @DoNotStrip
   @Keep
-  override fun startListening(params: Params) {
+  override fun startListening(params: SpeechToTextParams) {
     Log.d(TAG, "startListening: $params")
     if (isActive) {
       onFinishRecognition(
@@ -117,15 +117,21 @@ class HybridRecognizer: HybridRecognizerSpec() {
         }
         speechRecognizer?.setRecognitionListener(recognitionListenerSession.createRecognitionListener())
 
+        val languageModel = if (config?.androidUseWebSearchModel == true) RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH else RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, languageModel)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, config?.locale ?: "en-US")
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
         // set 60s to avoid cutting early
-        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 60000)
+        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 300000)
 
         if (config?.androidMaskOffensiveWords != true && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           intent.putExtra(RecognizerIntent.EXTRA_MASK_OFFENSIVE_WORDS, false)
+        }
+
+        if (config?.androidFormattingPreferQuality == true && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          intent.putExtra(RecognizerIntent.EXTRA_ENABLE_FORMATTING, RecognizerIntent.FORMATTING_OPTIMIZE_QUALITY)
         }
 
         speechRecognizer?.startListening(intent)

@@ -115,7 +115,7 @@ abstract class HybridRecognizerSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun startListening(params: Params): Unit
+  abstract fun startListening(params: SpeechToTextParams): Unit
   
   @DoNotStrip
   @Keep

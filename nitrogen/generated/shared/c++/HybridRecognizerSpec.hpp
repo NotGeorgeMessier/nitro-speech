@@ -13,14 +13,14 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
-// Forward declaration of `Params` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct Params; }
+// Forward declaration of `SpeechToTextParams` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 
 #include <functional>
 #include <optional>
 #include <string>
 #include <vector>
-#include "Params.hpp"
+#include "SpeechToTextParams.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -62,7 +62,7 @@ namespace margelo::nitro::nitrospeech {
 
     public:
       // Methods
-      virtual void startListening(const Params& params) = 0;
+      virtual void startListening(const SpeechToTextParams& params) = 0;
       virtual void stopListening() = 0;
       virtual void destroy() = 0;
 

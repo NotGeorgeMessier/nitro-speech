@@ -7,8 +7,8 @@
 
 #include "JHybridRecognizerSpec.hpp"
 
-// Forward declaration of `Params` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct Params; }
+// Forward declaration of `SpeechToTextParams` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 
 #include <functional>
 #include <optional>
@@ -18,8 +18,8 @@ namespace margelo::nitro::nitrospeech { struct Params; }
 #include <vector>
 #include "JFunc_void_std__vector_std__string_.hpp"
 #include "JFunc_void_std__string.hpp"
-#include "Params.hpp"
-#include "JParams.hpp"
+#include "SpeechToTextParams.hpp"
+#include "JSpeechToTextParams.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -137,9 +137,9 @@ namespace margelo::nitro::nitrospeech {
   }
 
   // Methods
-  void JHybridRecognizerSpec::startListening(const Params& params) {
-    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JParams> /* params */)>("startListening");
-    method(_javaPart, JParams::fromCpp(params));
+  void JHybridRecognizerSpec::startListening(const SpeechToTextParams& params) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JSpeechToTextParams> /* params */)>("startListening");
+    method(_javaPart, JSpeechToTextParams::fromCpp(params));
   }
   void JHybridRecognizerSpec::stopListening() {
     static const auto method = javaClassStatic()->getMethod<void()>("stopListening");

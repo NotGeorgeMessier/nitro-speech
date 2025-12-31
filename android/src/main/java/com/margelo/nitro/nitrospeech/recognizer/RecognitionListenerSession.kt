@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.SpeechRecognizer
 import android.util.Log
-import com.margelo.nitro.nitrospeech.Params
+import com.margelo.nitro.nitrospeech.SpeechToTextParams
 
 class RecognitionListenerSession (
     private val autoStopper: AutoStopper?,
-    private val config: Params?,
+    private val config: SpeechToTextParams?,
     private val onFinishRecognition: (result: ArrayList<String>?, errorMessage: String?, recordingStopped: Boolean) -> Unit,
 ) {
     companion object {

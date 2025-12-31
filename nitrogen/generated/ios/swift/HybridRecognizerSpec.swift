@@ -18,7 +18,7 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
   var onPermissionDenied: (() -> Void)? { get set }
 
   // Methods
-  func startListening(params: Params) throws -> Void
+  func startListening(params: SpeechToTextParams) throws -> Void
   func stopListening() throws -> Void
   func destroy() throws -> Void
 }

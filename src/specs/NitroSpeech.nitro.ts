@@ -1,6 +1,33 @@
 import { type HybridObject } from 'react-native-nitro-modules'
 
-interface Params {
+interface ParamsAndroid {
+  /**
+   * Default - false
+   *
+   * Min Android 13
+   */
+  androidMaskOffensiveWords?: boolean
+  /**
+   * Default - false
+   *
+   * Prefer quality over latency (may break autofinish timing, depends on engine)
+   *
+   * Min Android 13
+   */
+  androidFormattingPreferQuality?: boolean
+  /**
+   * Default - false
+   *
+   * Language model based on web search terms. (may not work on some devices)
+   *
+   * Default - free form model
+   */
+  androidUseWebSearchModel?: boolean
+}
+
+interface ParamsIOS {}
+
+export interface SpeechToTextParams extends ParamsAndroid, ParamsIOS {
   /**
    * Default - "en-US"
    */
@@ -27,12 +54,6 @@ interface Params {
    * Will add lots of batches with empty or similar content to the result.
    */
   disableBatchHandling?: boolean
-  /**
-   * Default - false
-   *
-   * Mask offensive words.
-   */
-  androidMaskOffensiveWords?: boolean
 }
 
 export interface Recognizer extends HybridObject<{
@@ -40,7 +61,7 @@ export interface Recognizer extends HybridObject<{
   android: 'kotlin'
 }> {
   // Speech-to-text methods
-  startListening(params: Params): void
+  startListening(params: SpeechToTextParams): void
   stopListening(): void
   destroy(): void
 
@@ -49,7 +70,7 @@ export interface Recognizer extends HybridObject<{
    */
   onReadyForSpeech?: () => void
   /**
-   * Audio recording has stopped.
+   * Audio recording has stopped. (may be called multiple times for one recording)
    */
   onRecordingStopped?: () => void
   /**

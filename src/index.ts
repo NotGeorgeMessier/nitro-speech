@@ -6,3 +6,4 @@ const NitroSpeech =
 
 export const Recognizer = NitroSpeech.recognizer
 export const Math = NitroSpeech.math
+export type { SpeechToTextParams } from './specs/NitroSpeech.nitro'

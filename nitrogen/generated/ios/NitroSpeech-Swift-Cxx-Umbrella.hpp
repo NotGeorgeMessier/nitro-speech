@@ -14,14 +14,14 @@ namespace margelo::nitro::nitrospeech { class HybridMathSpec; }
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
-// Forward declaration of `Params` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct Params; }
+// Forward declaration of `SpeechToTextParams` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 
 // Include C++ defined types
 #include "HybridMathSpec.hpp"
 #include "HybridNitroSpeechSpec.hpp"
 #include "HybridRecognizerSpec.hpp"
-#include "Params.hpp"
+#include "SpeechToTextParams.hpp"
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <functional>

@@ -12,14 +12,14 @@
 // Forward declaration of `HybridRecognizerSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 
-// Forward declaration of `Params` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct Params; }
+// Forward declaration of `SpeechToTextParams` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 
 #include <functional>
 #include <optional>
 #include <string>
 #include <vector>
-#include "Params.hpp"
+#include "SpeechToTextParams.hpp"
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 
@@ -99,7 +99,7 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     // Methods
-    inline void startListening(const Params& params) override {
+    inline void startListening(const SpeechToTextParams& params) override {
       auto __result = _swiftPart.startListening(std::forward<decltype(params)>(params));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
