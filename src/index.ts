@@ -5,5 +5,5 @@ const NitroSpeech =
   NitroModules.createHybridObject<NitroSpeechSpec>('NitroSpeech')
 
 export const Recognizer = NitroSpeech.recognizer
-export const Math = NitroSpeech.math
-export type { SpeechToTextParams } from './specs/NitroSpeech.nitro'
+export const TTS = NitroSpeech.tts
+export type { SpeechToTextParams, TTSParams } from './specs/NitroSpeech.nitro'

@@ -5,5 +5,5 @@ class HybridNitroSpeech : HybridNitroSpeechSpec {
 
     var recognizer: HybridRecognizerSpec = HybridRecognizer()
     
-    var math: HybridMathSpec = HybridMath()
+    var tts: HybridTTSSpec = HybridTTS()
 }

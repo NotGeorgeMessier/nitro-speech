@@ -87,11 +87,25 @@ export interface Recognizer extends HybridObject<{
   onPermissionDenied?: () => void
 }
 
+export interface TTSParams {
+  rate?: number
+  pitch?: number
+  volume?: number
+  ducking?: boolean
+  locale?: string
+}
+
 export interface TTS extends HybridObject<{
   ios: 'swift'
   android: 'kotlin'
 }> {
   add(a: number, b: number): number
+
+  speak(text: string, params: TTSParams): void
+  isSpeaking(): Promise<boolean>
+  stop(): void
+  pause(): Promise<boolean>
+  resume(): Promise<boolean>
 }
 
 export interface NitroSpeech extends HybridObject<{
