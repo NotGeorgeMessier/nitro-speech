@@ -19,16 +19,10 @@ public extension SpeechToTextParams {
   /**
    * Create a new instance of `SpeechToTextParams`.
    */
-  init(locale: String?, recognizeOnDevice: Bool?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Bool?, disableBatchHandling: Bool?, androidMaskOffensiveWords: Bool?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?) {
+  init(locale: String?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Bool?, contextualStrings: [String]?, androidMaskOffensiveWords: Bool?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?) {
     self.init({ () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = locale {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_bool_ in
-      if let __unwrappedValue = recognizeOnDevice {
-        return bridge.create_std__optional_bool_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -44,9 +38,15 @@ public extension SpeechToTextParams {
       } else {
         return .init()
       }
-    }(), { () -> bridge.std__optional_bool_ in
-      if let __unwrappedValue = disableBatchHandling {
-        return bridge.create_std__optional_bool_(__unwrappedValue)
+    }(), { () -> bridge.std__optional_std__vector_std__string__ in
+      if let __unwrappedValue = contextualStrings {
+        return bridge.create_std__optional_std__vector_std__string__({ () -> bridge.std__vector_std__string_ in
+          var __vector = bridge.create_std__vector_std__string_(__unwrappedValue.count)
+          for __item in __unwrappedValue {
+            __vector.push_back(std.string(__item))
+          }
+          return __vector
+        }())
       } else {
         return .init()
       }
@@ -64,6 +64,18 @@ public extension SpeechToTextParams {
       }
     }(), { () -> bridge.std__optional_bool_ in
       if let __unwrappedValue = androidUseWebSearchModel {
+        return bridge.create_std__optional_bool_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_bool_ in
+      if let __unwrappedValue = androidDisableBatchHandling {
+        return bridge.create_std__optional_bool_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_bool_ in
+      if let __unwrappedValue = iosAddPunctuation {
         return bridge.create_std__optional_bool_(__unwrappedValue)
       } else {
         return .init()
@@ -88,30 +100,6 @@ public extension SpeechToTextParams {
       self.__locale = { () -> bridge.std__optional_std__string_ in
         if let __unwrappedValue = newValue {
           return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
-        } else {
-          return .init()
-        }
-      }()
-    }
-  }
-  
-  var recognizeOnDevice: Bool? {
-    @inline(__always)
-    get {
-      return { () -> Bool? in
-        if bridge.has_value_std__optional_bool_(self.__recognizeOnDevice) {
-          let __unwrapped = bridge.get_std__optional_bool_(self.__recognizeOnDevice)
-          return __unwrapped
-        } else {
-          return nil
-        }
-      }()
-    }
-    @inline(__always)
-    set {
-      self.__recognizeOnDevice = { () -> bridge.std__optional_bool_ in
-        if let __unwrappedValue = newValue {
-          return bridge.create_std__optional_bool_(__unwrappedValue)
         } else {
           return .init()
         }
@@ -160,13 +148,13 @@ public extension SpeechToTextParams {
     }
   }
   
-  var disableBatchHandling: Bool? {
+  var contextualStrings: [String]? {
     @inline(__always)
     get {
-      return { () -> Bool? in
-        if bridge.has_value_std__optional_bool_(self.__disableBatchHandling) {
-          let __unwrapped = bridge.get_std__optional_bool_(self.__disableBatchHandling)
-          return __unwrapped
+      return { () -> [String]? in
+        if bridge.has_value_std__optional_std__vector_std__string__(self.__contextualStrings) {
+          let __unwrapped = bridge.get_std__optional_std__vector_std__string__(self.__contextualStrings)
+          return __unwrapped.map({ __item in String(__item) })
         } else {
           return nil
         }
@@ -174,9 +162,15 @@ public extension SpeechToTextParams {
     }
     @inline(__always)
     set {
-      self.__disableBatchHandling = { () -> bridge.std__optional_bool_ in
+      self.__contextualStrings = { () -> bridge.std__optional_std__vector_std__string__ in
         if let __unwrappedValue = newValue {
-          return bridge.create_std__optional_bool_(__unwrappedValue)
+          return bridge.create_std__optional_std__vector_std__string__({ () -> bridge.std__vector_std__string_ in
+            var __vector = bridge.create_std__vector_std__string_(__unwrappedValue.count)
+            for __item in __unwrappedValue {
+              __vector.push_back(std.string(__item))
+            }
+            return __vector
+          }())
         } else {
           return .init()
         }
@@ -247,6 +241,54 @@ public extension SpeechToTextParams {
     @inline(__always)
     set {
       self.__androidUseWebSearchModel = { () -> bridge.std__optional_bool_ in
+        if let __unwrappedValue = newValue {
+          return bridge.create_std__optional_bool_(__unwrappedValue)
+        } else {
+          return .init()
+        }
+      }()
+    }
+  }
+  
+  var androidDisableBatchHandling: Bool? {
+    @inline(__always)
+    get {
+      return { () -> Bool? in
+        if bridge.has_value_std__optional_bool_(self.__androidDisableBatchHandling) {
+          let __unwrapped = bridge.get_std__optional_bool_(self.__androidDisableBatchHandling)
+          return __unwrapped
+        } else {
+          return nil
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__androidDisableBatchHandling = { () -> bridge.std__optional_bool_ in
+        if let __unwrappedValue = newValue {
+          return bridge.create_std__optional_bool_(__unwrappedValue)
+        } else {
+          return .init()
+        }
+      }()
+    }
+  }
+  
+  var iosAddPunctuation: Bool? {
+    @inline(__always)
+    get {
+      return { () -> Bool? in
+        if bridge.has_value_std__optional_bool_(self.__iosAddPunctuation) {
+          let __unwrapped = bridge.get_std__optional_bool_(self.__iosAddPunctuation)
+          return __unwrapped
+        } else {
+          return nil
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__iosAddPunctuation = { () -> bridge.std__optional_bool_ in
         if let __unwrappedValue = newValue {
           return bridge.create_std__optional_bool_(__unwrappedValue)
         } else {

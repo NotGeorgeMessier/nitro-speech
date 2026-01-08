@@ -76,12 +76,12 @@ class RecognitionListenerSession (
                     val prevBatchLength = currentBatches[currentBatches.lastIndex].length
                     val match = if (config?.disableRepeatingFilter == true) matches[0] else repeatingFilter(matches[0])
                     val matchLength = match.length
-                    if (config?.disableBatchHandling == true || matchLength + 3 < prevBatchLength) {
-                    Log.d(TAG, "onPartialResults[2], append new batch")
-                    currentBatches.add(match)
+                    if (config?.androidDisableBatchHandling == true || matchLength + 3 < prevBatchLength) {
+                        Log.d(TAG, "onPartialResults[2], append new batch")
+                        currentBatches.add(match)
                     } else {
-                    Log.d(TAG, "onPartialResults[2], update batch, replace #${currentBatches.lastIndex}")
-                    currentBatches[currentBatches.lastIndex] = match
+                        Log.d(TAG, "onPartialResults[2], update batch, replace #${currentBatches.lastIndex}")
+                        currentBatches[currentBatches.lastIndex] = match
                     }
                 }
                 resultBatches = currentBatches
@@ -97,9 +97,9 @@ class RecognitionListenerSession (
         val words = text.split(Regex("\\s+")).toMutableList()
         var joiner = words[0]
         for (i in words.indices) {
-        if (i == 0) continue
-        if (words[i] == words[i-1]) continue
-        joiner += " ${words[i]}"
+            if (i == 0) continue
+            if (words[i] == words[i-1]) continue
+            joiner += " ${words[i]}"
         }
         return joiner
     }

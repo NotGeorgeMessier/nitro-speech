@@ -23,19 +23,32 @@ interface ParamsAndroid {
    * Default - free form model
    */
   androidUseWebSearchModel?: boolean
+  /**
+   * Default - false.
+   *
+   * If required to handle batches non-default way.
+   *
+   * Will add lots of batches with empty or similar content to the result.
+   */
+  androidDisableBatchHandling?: boolean
 }
 
-interface ParamsIOS {}
+interface ParamsIOS {
+  /**
+   * Default - true
+   *
+   * Adds punctuation to speech recognition results
+   *
+   * Min iOS 16
+   */
+  iosAddPunctuation?: boolean
+}
 
 export interface SpeechToTextParams extends ParamsAndroid, ParamsIOS {
   /**
    * Default - "en-US"
    */
   locale?: string
-  /**
-   * Default - false
-   */
-  recognizeOnDevice?: boolean
   /**
    * Default - 8s
    */
@@ -47,13 +60,11 @@ export interface SpeechToTextParams extends ParamsAndroid, ParamsIOS {
    */
   disableRepeatingFilter?: boolean
   /**
-   * Default - false.
+   * Default - empty array
    *
-   * If required to handle batches non-default way.
-   *
-   * Will add lots of batches with empty or similar content to the result.
+   * An array of strings that should be recognized, even if they are not in the system vocabulary.
    */
-  disableBatchHandling?: boolean
+  contextualStrings?: string[]
 }
 
 export interface Recognizer extends HybridObject<{

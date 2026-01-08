@@ -22,16 +22,13 @@ data class SpeechToTextParams(
   val locale: String?,
   @DoNotStrip
   @Keep
-  val recognizeOnDevice: Boolean?,
-  @DoNotStrip
-  @Keep
   val autoFinishRecognitionMs: Double?,
   @DoNotStrip
   @Keep
   val disableRepeatingFilter: Boolean?,
   @DoNotStrip
   @Keep
-  val disableBatchHandling: Boolean?,
+  val contextualStrings: Array<String>?,
   @DoNotStrip
   @Keep
   val androidMaskOffensiveWords: Boolean?,
@@ -40,7 +37,13 @@ data class SpeechToTextParams(
   val androidFormattingPreferQuality: Boolean?,
   @DoNotStrip
   @Keep
-  val androidUseWebSearchModel: Boolean?
+  val androidUseWebSearchModel: Boolean?,
+  @DoNotStrip
+  @Keep
+  val androidDisableBatchHandling: Boolean?,
+  @DoNotStrip
+  @Keep
+  val iosAddPunctuation: Boolean?
 ) {
   /* primary constructor */
 
@@ -52,8 +55,8 @@ data class SpeechToTextParams(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(locale: String?, recognizeOnDevice: Boolean?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Boolean?, disableBatchHandling: Boolean?, androidMaskOffensiveWords: Boolean?, androidFormattingPreferQuality: Boolean?, androidUseWebSearchModel: Boolean?): SpeechToTextParams {
-      return SpeechToTextParams(locale, recognizeOnDevice, autoFinishRecognitionMs, disableRepeatingFilter, disableBatchHandling, androidMaskOffensiveWords, androidFormattingPreferQuality, androidUseWebSearchModel)
+    private fun fromCpp(locale: String?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Boolean?, contextualStrings: Array<String>?, androidMaskOffensiveWords: Boolean?, androidFormattingPreferQuality: Boolean?, androidUseWebSearchModel: Boolean?, androidDisableBatchHandling: Boolean?, iosAddPunctuation: Boolean?): SpeechToTextParams {
+      return SpeechToTextParams(locale, autoFinishRecognitionMs, disableRepeatingFilter, contextualStrings, androidMaskOffensiveWords, androidFormattingPreferQuality, androidUseWebSearchModel, androidDisableBatchHandling, iosAddPunctuation)
     }
   }
 }

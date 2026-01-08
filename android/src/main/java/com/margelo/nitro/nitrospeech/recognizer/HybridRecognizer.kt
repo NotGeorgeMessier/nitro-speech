@@ -96,11 +96,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   private fun start(context: Context) {
     mainHandler.post {
       try {
-        if (config?.recognizeOnDevice == true && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SpeechRecognizer.isOnDeviceRecognitionAvailable(context)) {
-          speechRecognizer = SpeechRecognizer.createOnDeviceSpeechRecognizer(context)
-        } else {
-          speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
-        }
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
         val silenceThreshold = config?.autoFinishRecognitionMs?.toLong() ?: 8000
         autoStopper = AutoStopper(
             silenceThreshold,
@@ -134,11 +130,20 @@ class HybridRecognizer: HybridRecognizerSpec() {
           intent.putExtra(RecognizerIntent.EXTRA_ENABLE_FORMATTING, RecognizerIntent.FORMATTING_OPTIMIZE_QUALITY)
         }
 
+        val contextualStrings = config?.contextualStrings
+        if (!contextualStrings.isNullOrEmpty() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.putExtra(
+                RecognizerIntent.EXTRA_BIASING_STRINGS,
+                ArrayList(contextualStrings.toList()),
+            )
+        }
+
         speechRecognizer?.startListening(intent)
         isActive = true
         mainHandler.postDelayed({
           if (isActive) {
             onReadyForSpeech?.invoke()
+            onFinishRecognition(arrayListOf(), null, false)
           }
         }, 500)
       } catch (e: Exception) {

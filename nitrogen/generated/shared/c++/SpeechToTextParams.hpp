@@ -27,6 +27,7 @@
 
 #include <string>
 #include <optional>
+#include <vector>
 
 namespace margelo::nitro::nitrospeech {
 
@@ -36,17 +37,18 @@ namespace margelo::nitro::nitrospeech {
   struct SpeechToTextParams {
   public:
     std::optional<std::string> locale     SWIFT_PRIVATE;
-    std::optional<bool> recognizeOnDevice     SWIFT_PRIVATE;
     std::optional<double> autoFinishRecognitionMs     SWIFT_PRIVATE;
     std::optional<bool> disableRepeatingFilter     SWIFT_PRIVATE;
-    std::optional<bool> disableBatchHandling     SWIFT_PRIVATE;
+    std::optional<std::vector<std::string>> contextualStrings     SWIFT_PRIVATE;
     std::optional<bool> androidMaskOffensiveWords     SWIFT_PRIVATE;
     std::optional<bool> androidFormattingPreferQuality     SWIFT_PRIVATE;
     std::optional<bool> androidUseWebSearchModel     SWIFT_PRIVATE;
+    std::optional<bool> androidDisableBatchHandling     SWIFT_PRIVATE;
+    std::optional<bool> iosAddPunctuation     SWIFT_PRIVATE;
 
   public:
     SpeechToTextParams() = default;
-    explicit SpeechToTextParams(std::optional<std::string> locale, std::optional<bool> recognizeOnDevice, std::optional<double> autoFinishRecognitionMs, std::optional<bool> disableRepeatingFilter, std::optional<bool> disableBatchHandling, std::optional<bool> androidMaskOffensiveWords, std::optional<bool> androidFormattingPreferQuality, std::optional<bool> androidUseWebSearchModel): locale(locale), recognizeOnDevice(recognizeOnDevice), autoFinishRecognitionMs(autoFinishRecognitionMs), disableRepeatingFilter(disableRepeatingFilter), disableBatchHandling(disableBatchHandling), androidMaskOffensiveWords(androidMaskOffensiveWords), androidFormattingPreferQuality(androidFormattingPreferQuality), androidUseWebSearchModel(androidUseWebSearchModel) {}
+    explicit SpeechToTextParams(std::optional<std::string> locale, std::optional<double> autoFinishRecognitionMs, std::optional<bool> disableRepeatingFilter, std::optional<std::vector<std::string>> contextualStrings, std::optional<bool> androidMaskOffensiveWords, std::optional<bool> androidFormattingPreferQuality, std::optional<bool> androidUseWebSearchModel, std::optional<bool> androidDisableBatchHandling, std::optional<bool> iosAddPunctuation): locale(locale), autoFinishRecognitionMs(autoFinishRecognitionMs), disableRepeatingFilter(disableRepeatingFilter), contextualStrings(contextualStrings), androidMaskOffensiveWords(androidMaskOffensiveWords), androidFormattingPreferQuality(androidFormattingPreferQuality), androidUseWebSearchModel(androidUseWebSearchModel), androidDisableBatchHandling(androidDisableBatchHandling), iosAddPunctuation(iosAddPunctuation) {}
   };
 
 } // namespace margelo::nitro::nitrospeech
@@ -60,25 +62,27 @@ namespace margelo::nitro {
       jsi::Object obj = arg.asObject(runtime);
       return margelo::nitro::nitrospeech::SpeechToTextParams(
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, "locale")),
-        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "recognizeOnDevice")),
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, "autoFinishRecognitionMs")),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "disableRepeatingFilter")),
-        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "disableBatchHandling")),
+        JSIConverter<std::optional<std::vector<std::string>>>::fromJSI(runtime, obj.getProperty(runtime, "contextualStrings")),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "androidMaskOffensiveWords")),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "androidFormattingPreferQuality")),
-        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "androidUseWebSearchModel"))
+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "androidUseWebSearchModel")),
+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "androidDisableBatchHandling")),
+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "iosAddPunctuation"))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::nitrospeech::SpeechToTextParams& arg) {
       jsi::Object obj(runtime);
       obj.setProperty(runtime, "locale", JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.locale));
-      obj.setProperty(runtime, "recognizeOnDevice", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.recognizeOnDevice));
       obj.setProperty(runtime, "autoFinishRecognitionMs", JSIConverter<std::optional<double>>::toJSI(runtime, arg.autoFinishRecognitionMs));
       obj.setProperty(runtime, "disableRepeatingFilter", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.disableRepeatingFilter));
-      obj.setProperty(runtime, "disableBatchHandling", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.disableBatchHandling));
+      obj.setProperty(runtime, "contextualStrings", JSIConverter<std::optional<std::vector<std::string>>>::toJSI(runtime, arg.contextualStrings));
       obj.setProperty(runtime, "androidMaskOffensiveWords", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.androidMaskOffensiveWords));
       obj.setProperty(runtime, "androidFormattingPreferQuality", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.androidFormattingPreferQuality));
       obj.setProperty(runtime, "androidUseWebSearchModel", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.androidUseWebSearchModel));
+      obj.setProperty(runtime, "androidDisableBatchHandling", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.androidDisableBatchHandling));
+      obj.setProperty(runtime, "iosAddPunctuation", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.iosAddPunctuation));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -90,13 +94,14 @@ namespace margelo::nitro {
         return false;
       }
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, "locale"))) return false;
-      if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "recognizeOnDevice"))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, "autoFinishRecognitionMs"))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "disableRepeatingFilter"))) return false;
-      if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "disableBatchHandling"))) return false;
+      if (!JSIConverter<std::optional<std::vector<std::string>>>::canConvert(runtime, obj.getProperty(runtime, "contextualStrings"))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "androidMaskOffensiveWords"))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "androidFormattingPreferQuality"))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "androidUseWebSearchModel"))) return false;
+      if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "androidDisableBatchHandling"))) return false;
+      if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "iosAddPunctuation"))) return false;
       return true;
     }
   };

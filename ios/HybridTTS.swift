@@ -11,7 +11,7 @@ class HybridTTS : HybridTTSSpec {
     }
     
     func isSpeaking() throws -> Promise<Bool> {
-        return Promise.resolved(false)
+        return Promise.resolved(withResult: false)
     }
     
     func stop() throws -> Void {
@@ -19,10 +19,10 @@ class HybridTTS : HybridTTSSpec {
     }
     
     func pause() throws -> Promise<Bool> {
-        return Promise.resolved(false)
+        return Promise.resolved(withResult: false)
     }
     
     func resume() throws -> Promise<Bool> {
-        return Promise.resolved(false)
+        return Promise.resolved(withResult: false)
     }
 }

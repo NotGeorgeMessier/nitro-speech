@@ -12,6 +12,7 @@
 
 #include <optional>
 #include <string>
+#include <vector>
 
 namespace margelo::nitro::nitrospeech {
 
@@ -34,29 +35,41 @@ namespace margelo::nitro::nitrospeech {
       static const auto clazz = javaClassStatic();
       static const auto fieldLocale = clazz->getField<jni::JString>("locale");
       jni::local_ref<jni::JString> locale = this->getFieldValue(fieldLocale);
-      static const auto fieldRecognizeOnDevice = clazz->getField<jni::JBoolean>("recognizeOnDevice");
-      jni::local_ref<jni::JBoolean> recognizeOnDevice = this->getFieldValue(fieldRecognizeOnDevice);
       static const auto fieldAutoFinishRecognitionMs = clazz->getField<jni::JDouble>("autoFinishRecognitionMs");
       jni::local_ref<jni::JDouble> autoFinishRecognitionMs = this->getFieldValue(fieldAutoFinishRecognitionMs);
       static const auto fieldDisableRepeatingFilter = clazz->getField<jni::JBoolean>("disableRepeatingFilter");
       jni::local_ref<jni::JBoolean> disableRepeatingFilter = this->getFieldValue(fieldDisableRepeatingFilter);
-      static const auto fieldDisableBatchHandling = clazz->getField<jni::JBoolean>("disableBatchHandling");
-      jni::local_ref<jni::JBoolean> disableBatchHandling = this->getFieldValue(fieldDisableBatchHandling);
+      static const auto fieldContextualStrings = clazz->getField<jni::JArrayClass<jni::JString>>("contextualStrings");
+      jni::local_ref<jni::JArrayClass<jni::JString>> contextualStrings = this->getFieldValue(fieldContextualStrings);
       static const auto fieldAndroidMaskOffensiveWords = clazz->getField<jni::JBoolean>("androidMaskOffensiveWords");
       jni::local_ref<jni::JBoolean> androidMaskOffensiveWords = this->getFieldValue(fieldAndroidMaskOffensiveWords);
       static const auto fieldAndroidFormattingPreferQuality = clazz->getField<jni::JBoolean>("androidFormattingPreferQuality");
       jni::local_ref<jni::JBoolean> androidFormattingPreferQuality = this->getFieldValue(fieldAndroidFormattingPreferQuality);
       static const auto fieldAndroidUseWebSearchModel = clazz->getField<jni::JBoolean>("androidUseWebSearchModel");
       jni::local_ref<jni::JBoolean> androidUseWebSearchModel = this->getFieldValue(fieldAndroidUseWebSearchModel);
+      static const auto fieldAndroidDisableBatchHandling = clazz->getField<jni::JBoolean>("androidDisableBatchHandling");
+      jni::local_ref<jni::JBoolean> androidDisableBatchHandling = this->getFieldValue(fieldAndroidDisableBatchHandling);
+      static const auto fieldIosAddPunctuation = clazz->getField<jni::JBoolean>("iosAddPunctuation");
+      jni::local_ref<jni::JBoolean> iosAddPunctuation = this->getFieldValue(fieldIosAddPunctuation);
       return SpeechToTextParams(
         locale != nullptr ? std::make_optional(locale->toStdString()) : std::nullopt,
-        recognizeOnDevice != nullptr ? std::make_optional(static_cast<bool>(recognizeOnDevice->value())) : std::nullopt,
         autoFinishRecognitionMs != nullptr ? std::make_optional(autoFinishRecognitionMs->value()) : std::nullopt,
         disableRepeatingFilter != nullptr ? std::make_optional(static_cast<bool>(disableRepeatingFilter->value())) : std::nullopt,
-        disableBatchHandling != nullptr ? std::make_optional(static_cast<bool>(disableBatchHandling->value())) : std::nullopt,
+        contextualStrings != nullptr ? std::make_optional([&]() {
+          size_t __size = contextualStrings->size();
+          std::vector<std::string> __vector;
+          __vector.reserve(__size);
+          for (size_t __i = 0; __i < __size; __i++) {
+            auto __element = contextualStrings->getElement(__i);
+            __vector.push_back(__element->toStdString());
+          }
+          return __vector;
+        }()) : std::nullopt,
         androidMaskOffensiveWords != nullptr ? std::make_optional(static_cast<bool>(androidMaskOffensiveWords->value())) : std::nullopt,
         androidFormattingPreferQuality != nullptr ? std::make_optional(static_cast<bool>(androidFormattingPreferQuality->value())) : std::nullopt,
-        androidUseWebSearchModel != nullptr ? std::make_optional(static_cast<bool>(androidUseWebSearchModel->value())) : std::nullopt
+        androidUseWebSearchModel != nullptr ? std::make_optional(static_cast<bool>(androidUseWebSearchModel->value())) : std::nullopt,
+        androidDisableBatchHandling != nullptr ? std::make_optional(static_cast<bool>(androidDisableBatchHandling->value())) : std::nullopt,
+        iosAddPunctuation != nullptr ? std::make_optional(static_cast<bool>(iosAddPunctuation->value())) : std::nullopt
       );
     }
 
@@ -66,19 +79,29 @@ namespace margelo::nitro::nitrospeech {
      */
     [[maybe_unused]]
     static jni::local_ref<JSpeechToTextParams::javaobject> fromCpp(const SpeechToTextParams& value) {
-      using JSignature = JSpeechToTextParams(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>);
+      using JSignature = JSpeechToTextParams(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         value.locale.has_value() ? jni::make_jstring(value.locale.value()) : nullptr,
-        value.recognizeOnDevice.has_value() ? jni::JBoolean::valueOf(value.recognizeOnDevice.value()) : nullptr,
         value.autoFinishRecognitionMs.has_value() ? jni::JDouble::valueOf(value.autoFinishRecognitionMs.value()) : nullptr,
         value.disableRepeatingFilter.has_value() ? jni::JBoolean::valueOf(value.disableRepeatingFilter.value()) : nullptr,
-        value.disableBatchHandling.has_value() ? jni::JBoolean::valueOf(value.disableBatchHandling.value()) : nullptr,
+        value.contextualStrings.has_value() ? [&]() {
+          size_t __size = value.contextualStrings.value().size();
+          jni::local_ref<jni::JArrayClass<jni::JString>> __array = jni::JArrayClass<jni::JString>::newArray(__size);
+          for (size_t __i = 0; __i < __size; __i++) {
+            const auto& __element = value.contextualStrings.value()[__i];
+            auto __elementJni = jni::make_jstring(__element);
+            __array->setElement(__i, *__elementJni);
+          }
+          return __array;
+        }() : nullptr,
         value.androidMaskOffensiveWords.has_value() ? jni::JBoolean::valueOf(value.androidMaskOffensiveWords.value()) : nullptr,
         value.androidFormattingPreferQuality.has_value() ? jni::JBoolean::valueOf(value.androidFormattingPreferQuality.value()) : nullptr,
-        value.androidUseWebSearchModel.has_value() ? jni::JBoolean::valueOf(value.androidUseWebSearchModel.value()) : nullptr
+        value.androidUseWebSearchModel.has_value() ? jni::JBoolean::valueOf(value.androidUseWebSearchModel.value()) : nullptr,
+        value.androidDisableBatchHandling.has_value() ? jni::JBoolean::valueOf(value.androidDisableBatchHandling.value()) : nullptr,
+        value.iosAddPunctuation.has_value() ? jni::JBoolean::valueOf(value.iosAddPunctuation.value()) : nullptr
       );
     }
   };
