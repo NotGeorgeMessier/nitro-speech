@@ -78,9 +78,7 @@ class HybridRecognizer: HybridRecognizerSpec {
             return
         }
         
-        // Set up auto-stopper with timeout (default 8 seconds)
-        let timeoutMs = params.autoFinishRecognitionMs ?? 8000
-        autoStopper = AutoStopper(silenceThresholdMs: timeoutMs) { [weak self] in
+        autoStopper = AutoStopper(silenceThresholdMs: params.autoFinishRecognitionMs) { [weak self] in
             self?.onRecordingStopped?()
             self?.stopListening()
         }
@@ -120,7 +118,6 @@ class HybridRecognizer: HybridRecognizerSpec {
             guard let self = self else { return }
             
             if let result = result {
-                // Indicate activity on partial results
                 self.autoStopper?.indicateRecordingActivity(from: "partial results")
                 
                 var transcription = result.bestTranscription.formattedString
@@ -151,8 +148,6 @@ class HybridRecognizer: HybridRecognizerSpec {
         
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
             self?.recognitionRequest?.append(buffer)
-            // Indicate activity on audio input
-            self?.autoStopper?.indicateRecordingActivity(from: "audio input")
         }
         
         // Observe app going to background
