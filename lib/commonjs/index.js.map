@@ -1,0 +1,1 @@
+{"version":3,"names":["_reactNativeNitroModules","require","NitroSpeech","NitroModules","createHybridObject","Recognizer","exports","recognizer"],"sourceRoot":"../../src","sources":["index.ts"],"mappings":";;;;;;AAAA,IAAAA,wBAAA,GAAAC,OAAA;AAGA,MAAMC,WAAW,GACfC,qCAAY,CAACC,kBAAkB,CAAkB,aAAa,CAAC;AAE1D,MAAMC,UAAU,GAAAC,OAAA,CAAAD,UAAA,GAAGH,WAAW,CAACK,UAAU","ignoreList":[]}

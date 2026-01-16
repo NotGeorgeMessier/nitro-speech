@@ -1,0 +1,1 @@
+{"version":3,"names":["NitroModules","NitroSpeech","createHybridObject","Recognizer","recognizer"],"sourceRoot":"../../src","sources":["index.ts"],"mappings":";;AAAA,SAASA,YAAY,QAAQ,4BAA4B;AAGzD,MAAMC,WAAW,GACfD,YAAY,CAACE,kBAAkB,CAAkB,aAAa,CAAC;AAEjE,OAAO,MAAMC,UAAU,GAAGF,WAAW,CAACG,UAAU","ignoreList":[]}
