@@ -47,12 +47,6 @@ abstract class HybridNitroSpeechSpec: HybridObject() {
   @set:DoNotStrip
   @set:Keep
   abstract var recognizer: HybridRecognizerSpec
-  
-  @get:DoNotStrip
-  @get:Keep
-  @set:DoNotStrip
-  @set:Keep
-  abstract var tts: HybridTTSSpec
 
   // Methods
   

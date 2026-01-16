@@ -29,6 +29,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
   override var onReadyForSpeech: (() -> Unit)? = null
   override var onRecordingStopped: (() -> Unit)? = null
   override var onResult: ((resultBatches: Array<String>) -> Unit)? = null
+
+  override var onAutoFinishProgress: ((timeLeftMs: Double) -> Unit)? = null
   override var onError: ((error: String) -> Unit)? = null
   override var onPermissionDenied: (() -> Unit)? = null
 
@@ -119,7 +121,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, languageModel)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, config?.locale ?: "en-US")
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-        // set 60s to avoid cutting early
+        // set many secs to avoid cutting early
         intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 300000)
 
         if (config?.androidMaskOffensiveWords != true && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

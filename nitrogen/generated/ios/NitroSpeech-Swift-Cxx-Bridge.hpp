@@ -12,23 +12,16 @@
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
-// Forward declaration of `HybridTTSSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridTTSSpec; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridNitroSpeechSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 // Forward declaration of `HybridRecognizerSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
-// Forward declaration of `HybridTTSSpec_cxx` to properly resolve imports.
-namespace NitroSpeech { class HybridTTSSpec_cxx; }
 
 // Include C++ defined types
 #include "HybridNitroSpeechSpec.hpp"
 #include "HybridRecognizerSpec.hpp"
-#include "HybridTTSSpec.hpp"
-#include <NitroModules/Promise.hpp>
-#include <NitroModules/PromiseHolder.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <functional>
@@ -188,6 +181,43 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return *optional;
   }
   
+  // pragma MARK: std::function<void(double /* timeLeftMs */)>
+  /**
+   * Specialized version of `std::function<void(double)>`.
+   */
+  using Func_void_double = std::function<void(double /* timeLeftMs */)>;
+  /**
+   * Wrapper class for a `std::function<void(double / * timeLeftMs * /)>`, this can be used from Swift.
+   */
+  class Func_void_double_Wrapper final {
+  public:
+    explicit Func_void_double_Wrapper(std::function<void(double /* timeLeftMs */)>&& func): _function(std::make_unique<std::function<void(double /* timeLeftMs */)>>(std::move(func))) {}
+    inline void call(double timeLeftMs) const noexcept {
+      _function->operator()(timeLeftMs);
+    }
+  private:
+    std::unique_ptr<std::function<void(double /* timeLeftMs */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_double create_Func_void_double(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_double_Wrapper wrap_Func_void_double(Func_void_double value) noexcept {
+    return Func_void_double_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::function<void(double /* timeLeftMs */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(double / * timeLeftMs * /)>>`.
+   */
+  using std__optional_std__function_void_double____timeLeftMs______ = std::optional<std::function<void(double /* timeLeftMs */)>>;
+  inline std::optional<std::function<void(double /* timeLeftMs */)>> create_std__optional_std__function_void_double____timeLeftMs______(const std::function<void(double /* timeLeftMs */)>& value) noexcept {
+    return std::optional<std::function<void(double /* timeLeftMs */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_double____timeLeftMs______(const std::optional<std::function<void(double /* timeLeftMs */)>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::function<void(double /* timeLeftMs */)> get_std__optional_std__function_void_double____timeLeftMs______(const std::optional<std::function<void(double /* timeLeftMs */)>>& optional) noexcept {
+    return *optional;
+  }
+  
   // pragma MARK: std::function<void(const std::string& /* message */)>
   /**
    * Specialized version of `std::function<void(const std::string&)>`.
@@ -244,92 +274,6 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
   }
   inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
     return Result<void>::withError(error);
-  }
-  
-  // pragma MARK: std::shared_ptr<Promise<bool>>
-  /**
-   * Specialized version of `std::shared_ptr<Promise<bool>>`.
-   */
-  using std__shared_ptr_Promise_bool__ = std::shared_ptr<Promise<bool>>;
-  inline std::shared_ptr<Promise<bool>> create_std__shared_ptr_Promise_bool__() noexcept {
-    return Promise<bool>::create();
-  }
-  inline PromiseHolder<bool> wrap_std__shared_ptr_Promise_bool__(std::shared_ptr<Promise<bool>> promise) noexcept {
-    return PromiseHolder<bool>(std::move(promise));
-  }
-  
-  // pragma MARK: std::function<void(bool /* result */)>
-  /**
-   * Specialized version of `std::function<void(bool)>`.
-   */
-  using Func_void_bool = std::function<void(bool /* result */)>;
-  /**
-   * Wrapper class for a `std::function<void(bool / * result * /)>`, this can be used from Swift.
-   */
-  class Func_void_bool_Wrapper final {
-  public:
-    explicit Func_void_bool_Wrapper(std::function<void(bool /* result */)>&& func): _function(std::make_unique<std::function<void(bool /* result */)>>(std::move(func))) {}
-    inline void call(bool result) const noexcept {
-      _function->operator()(result);
-    }
-  private:
-    std::unique_ptr<std::function<void(bool /* result */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_bool_Wrapper wrap_Func_void_bool(Func_void_bool value) noexcept {
-    return Func_void_bool_Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  /**
-   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
-   */
-  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__exception_ptr_Wrapper final {
-  public:
-    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
-    inline void call(std::exception_ptr error) const noexcept {
-      _function->operator()(error);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
-    return Func_void_std__exception_ptr_Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::shared_ptr<HybridTTSSpec>
-  /**
-   * Specialized version of `std::shared_ptr<HybridTTSSpec>`.
-   */
-  using std__shared_ptr_HybridTTSSpec_ = std::shared_ptr<HybridTTSSpec>;
-  std::shared_ptr<HybridTTSSpec> create_std__shared_ptr_HybridTTSSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridTTSSpec_(std__shared_ptr_HybridTTSSpec_ cppType);
-  
-  // pragma MARK: std::weak_ptr<HybridTTSSpec>
-  using std__weak_ptr_HybridTTSSpec_ = std::weak_ptr<HybridTTSSpec>;
-  inline std__weak_ptr_HybridTTSSpec_ weakify_std__shared_ptr_HybridTTSSpec_(const std::shared_ptr<HybridTTSSpec>& strong) noexcept { return strong; }
-  
-  // pragma MARK: Result<double>
-  using Result_double_ = Result<double>;
-  inline Result_double_ create_Result_double_(double value) noexcept {
-    return Result<double>::withValue(std::move(value));
-  }
-  inline Result_double_ create_Result_double_(const std::exception_ptr& error) noexcept {
-    return Result<double>::withError(error);
-  }
-  
-  // pragma MARK: Result<std::shared_ptr<Promise<bool>>>
-  using Result_std__shared_ptr_Promise_bool___ = Result<std::shared_ptr<Promise<bool>>>;
-  inline Result_std__shared_ptr_Promise_bool___ create_Result_std__shared_ptr_Promise_bool___(const std::shared_ptr<Promise<bool>>& value) noexcept {
-    return Result<std::shared_ptr<Promise<bool>>>::withValue(value);
-  }
-  inline Result_std__shared_ptr_Promise_bool___ create_Result_std__shared_ptr_Promise_bool___(const std::exception_ptr& error) noexcept {
-    return Result<std::shared_ptr<Promise<bool>>>::withError(error);
   }
   
   // pragma MARK: std::shared_ptr<HybridNitroSpeechSpec>

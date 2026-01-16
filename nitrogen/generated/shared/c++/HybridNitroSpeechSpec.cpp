@@ -16,8 +16,6 @@ namespace margelo::nitro::nitrospeech {
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridGetter("recognizer", &HybridNitroSpeechSpec::getRecognizer);
       prototype.registerHybridSetter("recognizer", &HybridNitroSpeechSpec::setRecognizer);
-      prototype.registerHybridGetter("tts", &HybridNitroSpeechSpec::getTts);
-      prototype.registerHybridSetter("tts", &HybridNitroSpeechSpec::setTts);
     });
   }
 

@@ -12,20 +12,13 @@
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
-// Forward declaration of `HybridTTSSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridTTSSpec; }
 // Forward declaration of `SpeechToTextParams` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
-// Forward declaration of `TTSParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct TTSParams; }
 
 // Include C++ defined types
 #include "HybridNitroSpeechSpec.hpp"
 #include "HybridRecognizerSpec.hpp"
-#include "HybridTTSSpec.hpp"
 #include "SpeechToTextParams.hpp"
-#include "TTSParams.hpp"
-#include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <functional>
@@ -48,8 +41,6 @@ namespace margelo::nitro::nitrospeech { struct TTSParams; }
 namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 // Forward declaration of `HybridRecognizerSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
-// Forward declaration of `HybridTTSSpec_cxx` to properly resolve imports.
-namespace NitroSpeech { class HybridTTSSpec_cxx; }
 
 // Include Swift defined types
 #if __has_include("NitroSpeech-Swift.h")

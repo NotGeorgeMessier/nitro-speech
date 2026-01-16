@@ -216,6 +216,38 @@ open class HybridRecognizerSpec_cxx {
     }
   }
   
+  public final var onAutoFinishProgress: bridge.std__optional_std__function_void_double____timeLeftMs______ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_std__function_void_double____timeLeftMs______ in
+        if let __unwrappedValue = self.__implementation.onAutoFinishProgress {
+          return bridge.create_std__optional_std__function_void_double____timeLeftMs______({ () -> bridge.Func_void_double in
+            let __closureWrapper = Func_void_double(__unwrappedValue)
+            return bridge.create_Func_void_double(__closureWrapper.toUnsafe())
+          }())
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.onAutoFinishProgress = { () -> ((_ timeLeftMs: Double) -> Void)? in
+        if bridge.has_value_std__optional_std__function_void_double____timeLeftMs______(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__function_void_double____timeLeftMs______(newValue)
+          return { () -> (Double) -> Void in
+            let __wrappedFunction = bridge.wrap_Func_void_double(__unwrapped)
+            return { (__timeLeftMs: Double) -> Void in
+              __wrappedFunction.call(__timeLeftMs)
+            }
+          }()
+        } else {
+          return nil
+        }
+      }()
+    }
+  }
+  
   public final var onError: bridge.std__optional_std__function_void_const_std__string_____message______ {
     @inline(__always)
     get {

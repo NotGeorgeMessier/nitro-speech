@@ -84,6 +84,20 @@ abstract class HybridRecognizerSpec: HybridObject() {
       onResult = value?.let { it }
     }
   
+  abstract var onAutoFinishProgress: ((timeLeftMs: Double) -> Unit)?
+  
+  private var onAutoFinishProgress_cxx: Func_void_double?
+    @Keep
+    @DoNotStrip
+    get() {
+      return onAutoFinishProgress?.let { Func_void_double_java(it) }
+    }
+    @Keep
+    @DoNotStrip
+    set(value) {
+      onAutoFinishProgress = value?.let { it }
+    }
+  
   abstract var onError: ((message: String) -> Unit)?
   
   private var onError_cxx: Func_void_std__string?

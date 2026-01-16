@@ -2,39 +2,53 @@ import Foundation
 import os.log
 
 class AutoStopper {
-    private let silenceThreshold: TimeInterval
+    private let silenceThresholdMs: Double
     private let onTimeout: () -> Void
-    private var workItem: DispatchWorkItem?
+    private let onProgress: (Double) -> Void
+    private var progressWorkItem: DispatchWorkItem?
+    private var elapsedSeconds: Int = 0
     private var isStopped = false
     private let logger = Logger(subsystem: "com.margelo.nitro.nitrospeech", category: "AutoStopper")
     
-    init(silenceThresholdMs: Double?, onTimeout: @escaping () -> Void) {
-        if let silenceThresholdMs = silenceThresholdMs {
-            self.silenceThreshold = (silenceThresholdMs / 1000.0) + 2
-        } else {
-            // 8 seconds default + 2 seconds buffer
-            self.silenceThreshold = 10.0
-        }
+    init(silenceThresholdMs: Double, onProgress: @escaping (Double) -> Void, onTimeout: @escaping () -> Void) {
+        // Default 8 seconds
+        self.silenceThresholdMs = silenceThresholdMs
+        self.onProgress = onProgress
         self.onTimeout = onTimeout
     }
     
     func indicateRecordingActivity(from: String) {
         logger.info("indicateRecordingActivity: \(from)")
-        workItem?.cancel()
+        self.onProgress(self.silenceThresholdMs)
+        progressWorkItem?.cancel()
+        elapsedSeconds = 0
         if isStopped { return }
         
+        scheduleNextTick()
+    }
+    
+    private func scheduleNextTick() {
         let item = DispatchWorkItem { [weak self] in
             guard let self = self, !self.isStopped else { return }
-            self.onTimeout()
+            
+            self.elapsedSeconds += 1
+            let elapsedMs = Double(self.elapsedSeconds) * 1000
+            let timeLeftMs = self.silenceThresholdMs - elapsedMs
+            
+            if timeLeftMs <= 0 {
+                self.onTimeout()
+            } else {
+                self.onProgress(timeLeftMs)
+                self.scheduleNextTick()
+            }
         }
-        workItem = item
-        DispatchQueue.main.asyncAfter(deadline: .now() + silenceThreshold, execute: item)
+        progressWorkItem = item
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: item)
     }
     
     func stop() {
         isStopped = true
-        workItem?.cancel()
-        workItem = nil
+        progressWorkItem?.cancel()
+        progressWorkItem = nil
     }
 }
-

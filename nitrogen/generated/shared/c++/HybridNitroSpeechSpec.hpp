@@ -15,12 +15,9 @@
 
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
-// Forward declaration of `HybridTTSSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridTTSSpec; }
 
 #include <memory>
 #include "HybridRecognizerSpec.hpp"
-#include "HybridTTSSpec.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -51,8 +48,6 @@ namespace margelo::nitro::nitrospeech {
       // Properties
       virtual std::shared_ptr<HybridRecognizerSpec> getRecognizer() = 0;
       virtual void setRecognizer(const std::shared_ptr<HybridRecognizerSpec>& recognizer) = 0;
-      virtual std::shared_ptr<HybridTTSSpec> getTts() = 0;
-      virtual void setTts(const std::shared_ptr<HybridTTSSpec>& tts) = 0;
 
     public:
       // Methods

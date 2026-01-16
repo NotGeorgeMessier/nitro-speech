@@ -17,6 +17,7 @@ namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 #include <string>
 #include <vector>
 #include "JFunc_void_std__vector_std__string_.hpp"
+#include "JFunc_void_double.hpp"
 #include "JFunc_void_std__string.hpp"
 #include "SpeechToTextParams.hpp"
 #include "JSpeechToTextParams.hpp"
@@ -100,6 +101,23 @@ namespace margelo::nitro::nitrospeech {
   void JHybridRecognizerSpec::setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>& onResult) {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_std__vector_std__string_::javaobject> /* onResult */)>("setOnResult_cxx");
     method(_javaPart, onResult.has_value() ? JFunc_void_std__vector_std__string__cxx::fromCpp(onResult.value()) : nullptr);
+  }
+  std::optional<std::function<void(double /* timeLeftMs */)>> JHybridRecognizerSpec::getOnAutoFinishProgress() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_double::javaobject>()>("getOnAutoFinishProgress_cxx");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(double /* timeLeftMs */)> {
+      if (__result->isInstanceOf(JFunc_void_double_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_double_cxx::javaobject>(__result);
+        return downcast->cthis()->getFunction();
+      } else {
+        auto __resultRef = jni::make_global(__result);
+        return JNICallable<JFunc_void_double, void(double)>(std::move(__resultRef));
+      }
+    }()) : std::nullopt;
+  }
+  void JHybridRecognizerSpec::setOnAutoFinishProgress(const std::optional<std::function<void(double /* timeLeftMs */)>>& onAutoFinishProgress) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_double::javaobject> /* onAutoFinishProgress */)>("setOnAutoFinishProgress_cxx");
+    method(_javaPart, onAutoFinishProgress.has_value() ? JFunc_void_double_cxx::fromCpp(onAutoFinishProgress.value()) : nullptr);
   }
   std::optional<std::function<void(const std::string& /* message */)>> JHybridRecognizerSpec::getOnError() {
     static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_std__string::javaobject>()>("getOnError_cxx");

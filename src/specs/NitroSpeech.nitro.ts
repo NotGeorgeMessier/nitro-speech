@@ -89,6 +89,14 @@ export interface Recognizer extends HybridObject<{
    */
   onResult?: (resultBatches: string[]) => void
   /**
+   * Called each second while auto finish is in progress.
+   *
+   * Time left in milliseconds. Always more than 1000ms.
+   *
+   * TODO: Add for android
+   */
+  onAutoFinishProgress?: (timeLeftMs: number) => void
+  /**
    * Error of the speech recognition.
    */
   onError?: (message: string) => void
@@ -98,31 +106,9 @@ export interface Recognizer extends HybridObject<{
   onPermissionDenied?: () => void
 }
 
-export interface TTSParams {
-  rate?: number
-  pitch?: number
-  volume?: number
-  ducking?: boolean
-  locale?: string
-}
-
-export interface TTS extends HybridObject<{
-  ios: 'swift'
-  android: 'kotlin'
-}> {
-  add(a: number, b: number): number
-
-  speak(text: string, params: TTSParams): void
-  isSpeaking(): Promise<boolean>
-  stop(): void
-  pause(): Promise<boolean>
-  resume(): Promise<boolean>
-}
-
 export interface NitroSpeech extends HybridObject<{
   ios: 'swift'
   android: 'kotlin'
 }> {
   recognizer: Recognizer
-  tts: TTS
 }

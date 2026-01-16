@@ -14,12 +14,9 @@ namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
-// Forward declaration of `HybridTTSSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridTTSSpec; }
 
 #include <memory>
 #include "HybridRecognizerSpec.hpp"
-#include "HybridTTSSpec.hpp"
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 
@@ -67,13 +64,6 @@ namespace margelo::nitro::nitrospeech {
     }
     inline void setRecognizer(const std::shared_ptr<HybridRecognizerSpec>& recognizer) noexcept override {
       _swiftPart.setRecognizer(recognizer);
-    }
-    inline std::shared_ptr<HybridTTSSpec> getTts() noexcept override {
-      auto __result = _swiftPart.getTts();
-      return __result;
-    }
-    inline void setTts(const std::shared_ptr<HybridTTSSpec>& tts) noexcept override {
-      _swiftPart.setTts(tts);
     }
 
   public:

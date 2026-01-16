@@ -56,6 +56,8 @@ namespace margelo::nitro::nitrospeech {
     void setOnRecordingStopped(const std::optional<std::function<void()>>& onRecordingStopped) override;
     std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>> getOnResult() override;
     void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>& onResult) override;
+    std::optional<std::function<void(double /* timeLeftMs */)>> getOnAutoFinishProgress() override;
+    void setOnAutoFinishProgress(const std::optional<std::function<void(double /* timeLeftMs */)>>& onAutoFinishProgress) override;
     std::optional<std::function<void(const std::string& /* message */)>> getOnError() override;
     void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) override;
     std::optional<std::function<void()>> getOnPermissionDenied() override;

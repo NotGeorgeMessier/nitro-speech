@@ -82,6 +82,13 @@ namespace margelo::nitro::nitrospeech {
     inline void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>& onResult) noexcept override {
       _swiftPart.setOnResult(onResult);
     }
+    inline std::optional<std::function<void(double /* timeLeftMs */)>> getOnAutoFinishProgress() noexcept override {
+      auto __result = _swiftPart.getOnAutoFinishProgress();
+      return __result;
+    }
+    inline void setOnAutoFinishProgress(const std::optional<std::function<void(double /* timeLeftMs */)>>& onAutoFinishProgress) noexcept override {
+      _swiftPart.setOnAutoFinishProgress(onAutoFinishProgress);
+    }
     inline std::optional<std::function<void(const std::string& /* message */)>> getOnError() noexcept override {
       auto __result = _swiftPart.getOnError();
       return __result;

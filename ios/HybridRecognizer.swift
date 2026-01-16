@@ -3,9 +3,12 @@ import Speech
 import NitroModules
 
 class HybridRecognizer: HybridRecognizerSpec {
+    private static let defaultAutoFinishRecognitionMs = 8000.0
+    
     var onReadyForSpeech: (() -> Void)?
     var onRecordingStopped: (() -> Void)?
     var onResult: (([String]) -> Void)?
+    var onAutoFinishProgress: ((Double) -> Void)?
     var onError: ((String) -> Void)?
     var onPermissionDenied: (() -> Void)?
     
@@ -78,10 +81,16 @@ class HybridRecognizer: HybridRecognizerSpec {
             return
         }
         
-        autoStopper = AutoStopper(silenceThresholdMs: params.autoFinishRecognitionMs) { [weak self] in
-            self?.onRecordingStopped?()
-            self?.stopListening()
-        }
+        autoStopper = AutoStopper(
+            silenceThresholdMs: params.autoFinishRecognitionMs ?? Self.defaultAutoFinishRecognitionMs,
+            onProgress: { [weak self] timeLeftMs in
+                self?.onAutoFinishProgress?(timeLeftMs)
+            },
+            onTimeout: { [weak self] in
+                self?.onRecordingStopped?()
+                self?.stopListening()
+            }
+        )
         
         do {
             let audioSession = AVAudioSession.sharedInstance()

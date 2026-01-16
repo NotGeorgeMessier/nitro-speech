@@ -52,8 +52,6 @@ namespace margelo::nitro::nitrospeech {
     // Properties
     std::shared_ptr<HybridRecognizerSpec> getRecognizer() override;
     void setRecognizer(const std::shared_ptr<HybridRecognizerSpec>& recognizer) override;
-    std::shared_ptr<HybridTTSSpec> getTts() override;
-    void setTts(const std::shared_ptr<HybridTTSSpec>& tts) override;
 
   public:
     // Methods

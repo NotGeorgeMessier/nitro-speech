@@ -12,7 +12,6 @@ import NitroModules
 public protocol HybridNitroSpeechSpec_protocol: HybridObject {
   // Properties
   var recognizer: (any HybridRecognizerSpec) { get set }
-  var tts: (any HybridTTSSpec) { get set }
 
   // Methods
   

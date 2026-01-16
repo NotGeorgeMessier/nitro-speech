@@ -20,6 +20,8 @@ namespace margelo::nitro::nitrospeech {
       prototype.registerHybridSetter("onRecordingStopped", &HybridRecognizerSpec::setOnRecordingStopped);
       prototype.registerHybridGetter("onResult", &HybridRecognizerSpec::getOnResult);
       prototype.registerHybridSetter("onResult", &HybridRecognizerSpec::setOnResult);
+      prototype.registerHybridGetter("onAutoFinishProgress", &HybridRecognizerSpec::getOnAutoFinishProgress);
+      prototype.registerHybridSetter("onAutoFinishProgress", &HybridRecognizerSpec::setOnAutoFinishProgress);
       prototype.registerHybridGetter("onError", &HybridRecognizerSpec::getOnError);
       prototype.registerHybridSetter("onError", &HybridRecognizerSpec::setOnError);
       prototype.registerHybridGetter("onPermissionDenied", &HybridRecognizerSpec::getOnPermissionDenied);

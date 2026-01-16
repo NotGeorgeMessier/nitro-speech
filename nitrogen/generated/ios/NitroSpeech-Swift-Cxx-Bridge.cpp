@@ -10,7 +10,6 @@
 // Include C++ implementation defined types
 #include "HybridNitroSpeechSpecSwift.hpp"
 #include "HybridRecognizerSpecSwift.hpp"
-#include "HybridTTSSpecSwift.hpp"
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 #include <NitroModules/NitroDefines.hpp>
 
@@ -29,6 +28,14 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     auto swiftClosure = NitroSpeech::Func_void_std__vector_std__string_::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](const std::vector<std::string>& resultBatches) mutable -> void {
       swiftClosure.call(resultBatches);
+    };
+  }
+  
+  // pragma MARK: std::function<void(double /* timeLeftMs */)>
+  Func_void_double create_Func_void_double(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroSpeech::Func_void_double::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](double timeLeftMs) mutable -> void {
+      swiftClosure.call(timeLeftMs);
     };
   }
   
@@ -53,38 +60,6 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     }
     #endif
     NitroSpeech::HybridRecognizerSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
-    return swiftPart.toUnsafe();
-  }
-  
-  // pragma MARK: std::function<void(bool /* result */)>
-  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroSpeech::Func_void_bool::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](bool result) mutable -> void {
-      swiftClosure.call(result);
-    };
-  }
-  
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroSpeech::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
-      swiftClosure.call(error);
-    };
-  }
-  
-  // pragma MARK: std::shared_ptr<HybridTTSSpec>
-  std::shared_ptr<HybridTTSSpec> create_std__shared_ptr_HybridTTSSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
-    NitroSpeech::HybridTTSSpec_cxx swiftPart = NitroSpeech::HybridTTSSpec_cxx::fromUnsafe(swiftUnsafePointer);
-    return std::make_shared<margelo::nitro::nitrospeech::HybridTTSSpecSwift>(swiftPart);
-  }
-  void* NON_NULL get_std__shared_ptr_HybridTTSSpec_(std__shared_ptr_HybridTTSSpec_ cppType) {
-    std::shared_ptr<margelo::nitro::nitrospeech::HybridTTSSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::nitrospeech::HybridTTSSpecSwift>(cppType);
-    #ifdef NITRO_DEBUG
-    if (swiftWrapper == nullptr) [[unlikely]] {
-      throw std::runtime_error("Class \"HybridTTSSpec\" is not implemented in Swift!");
-    }
-    #endif
-    NitroSpeech::HybridTTSSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
   }
   
