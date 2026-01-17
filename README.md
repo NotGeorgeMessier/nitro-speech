@@ -59,8 +59,8 @@ Recognizer.onReadyForSpeech = () => {
   console.log('Listening...');
 };
 
-Recognizer.onResult = (text) => {
-  console.log('Result:', text.join('\n'));
+Recognizer.onResult = (textBatches) => {
+  console.log('Result:', textBatches.join('\n'));
 };
 
 Recognizer.onRecordingStopped = () => {
