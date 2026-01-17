@@ -4,7 +4,7 @@
 > 
 > This library is under active development.
 
-Speech recognition and text-to-speech for React Native, powered by [Nitro Modules](https://github.com/mrousavy/nitro).
+Speech recognition for React Native, powered by [Nitro Modules](https://github.com/mrousavy/nitro).
 
 ## Installation
 
