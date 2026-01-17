@@ -9,11 +9,11 @@ Speech recognition for React Native, powered by [Nitro Modules](https://github.c
 ## Installation
 
 ```bash
-npm install nitro-speech react-native-nitro-modules
+npm install @gmessier/nitro-speech react-native-nitro-modules
 # or
-yarn add nitro-speech react-native-nitro-modules
+yarn add @gmessier/nitro-speech react-native-nitro-modules
 # or 
-bun add nitro-speech react-native-nitro-modules
+bun add @gmessier/nitro-speech react-native-nitro-modules
 ```
 
 ### iOS

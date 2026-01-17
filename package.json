@@ -1,6 +1,6 @@
 {
   "name": "@gmessier/nitro-speech",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "nitro-speech",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -47,6 +47,7 @@
     "url": "git+https://github.com/NotGeorgeMessier/nitro-speech"
   },
   "author": "George Messier",
+  "homepage": "https://github.com/NotGeorgeMessier/nitro-speech",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
