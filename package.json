@@ -1,6 +1,6 @@
 {
-  "name": "nitro-speech",
-  "version": "0.0.1",
+  "name": "@gmessier/nitro-speech",
+  "version": "0.0.2",
   "description": "nitro-speech",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -38,18 +38,16 @@
   },
   "keywords": [
     "react-native",
+    "speech",
+    "recognition",
     "nitro"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mrousavy/nitro.git"
+    "url": "git+https://github.com/NotGeorgeMessier/nitro-speech"
   },
-  "author": "Marc Rousavy <me@mrousavy.com> (https://github.com/mrousavy)",
+  "author": "George Messier",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mrousavy/nitro/issues"
-  },
-  "homepage": "https://github.com/mrousavy/nitro#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
