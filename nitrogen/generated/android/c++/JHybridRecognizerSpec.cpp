@@ -163,9 +163,5 @@ namespace margelo::nitro::nitrospeech {
     static const auto method = javaClassStatic()->getMethod<void()>("stopListening");
     method(_javaPart);
   }
-  void JHybridRecognizerSpec::destroy() {
-    static const auto method = javaClassStatic()->getMethod<void()>("destroy");
-    method(_javaPart);
-  }
 
 } // namespace margelo::nitro::nitrospeech

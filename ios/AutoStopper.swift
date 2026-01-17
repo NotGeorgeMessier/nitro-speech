@@ -11,7 +11,6 @@ class AutoStopper {
     private let logger = Logger(subsystem: "com.margelo.nitro.nitrospeech", category: "AutoStopper")
     
     init(silenceThresholdMs: Double, onProgress: @escaping (Double) -> Void, onTimeout: @escaping () -> Void) {
-        // Default 8 seconds
         self.silenceThresholdMs = silenceThresholdMs
         self.onProgress = onProgress
         self.onTimeout = onTimeout
@@ -50,5 +49,9 @@ class AutoStopper {
         isStopped = true
         progressWorkItem?.cancel()
         progressWorkItem = nil
+    }
+    
+    deinit {
+        stop()
     }
 }

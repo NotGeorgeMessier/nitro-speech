@@ -12,7 +12,6 @@ class HybridRecognizer: HybridRecognizerSpec {
     var onError: ((String) -> Void)?
     var onPermissionDenied: (() -> Void)?
     
-    private var speechRecognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var audioEngine: AVAudioEngine?
@@ -45,17 +44,9 @@ class HybridRecognizer: HybridRecognizerSpec {
     }
     
     func stopListening() {
-        autoStopper?.stop()
-        recognitionRequest?.endAudio()
+        guard isActive else { return }
         cleanup()
         onRecordingStopped?()
-    }
-    
-    func destroy() {
-        autoStopper?.stop()
-        autoStopper = nil
-        recognitionTask?.cancel()
-        cleanup()
     }
 
     private func requestMicrophonePermission(params: SpeechToTextParams) {
@@ -74,9 +65,7 @@ class HybridRecognizer: HybridRecognizerSpec {
     
     private func startRecognition(params: SpeechToTextParams) {
         let locale = Locale(identifier: params.locale ?? "en-US")
-        speechRecognizer = SFSpeechRecognizer(locale: locale)
-        
-        guard let speechRecognizer = speechRecognizer, speechRecognizer.isAvailable else {
+        guard let speechRecognizer = SFSpeechRecognizer(locale: locale), speechRecognizer.isAvailable else {
             onError?("Speech recognizer not available")
             return
         }
@@ -87,7 +76,6 @@ class HybridRecognizer: HybridRecognizerSpec {
                 self?.onAutoFinishProgress?(timeLeftMs)
             },
             onTimeout: { [weak self] in
-                self?.onRecordingStopped?()
                 self?.stopListening()
             }
         )
@@ -123,6 +111,8 @@ class HybridRecognizer: HybridRecognizerSpec {
             }
         }
         
+        let disableRepeatingFilter = params.disableRepeatingFilter ?? false
+        
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { [weak self] result, error in
             guard let self = self else { return }
             
@@ -131,24 +121,20 @@ class HybridRecognizer: HybridRecognizerSpec {
                 
                 var transcription = result.bestTranscription.formattedString
                 if !transcription.isEmpty {
-                    if !(params.disableRepeatingFilter ?? false) {
+                    if !disableRepeatingFilter {
                         transcription = self.repeatingFilter(text: transcription)
                     }
                     self.onResult?([transcription])
                 }
                 
                 if result.isFinal {
-                    self.autoStopper?.stop()
-                    self.cleanup()
-                    self.onRecordingStopped?()
+                    self.stopListening()
                 }
             }
             
             if let error = error {
-                self.autoStopper?.stop()
-                self.cleanup()
                 self.onError?("Recognition error: \(error.localizedDescription)")
-                self.onRecordingStopped?()
+                self.stopListening()
             }
         }
         
@@ -179,13 +165,23 @@ class HybridRecognizer: HybridRecognizerSpec {
     }
     
     private func cleanup() {
+        autoStopper?.stop()
+        autoStopper = nil
+        
         appStateObserver?.stop()
         appStateObserver = nil
         
-        if let audioEngine = audioEngine, audioEngine.isRunning {
-            audioEngine.stop()
+        recognitionRequest?.endAudio()
+        recognitionTask?.cancel()
+        
+        if let audioEngine = audioEngine {
+            if audioEngine.isRunning {
+                audioEngine.stop()
+            }
             audioEngine.inputNode.removeTap(onBus: 0)
         }
+        
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         
         recognitionRequest = nil
         recognitionTask = nil

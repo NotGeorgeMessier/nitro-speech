@@ -66,7 +66,6 @@ namespace margelo::nitro::nitrospeech {
       // Methods
       virtual void startListening(const SpeechToTextParams& params) = 0;
       virtual void stopListening() = 0;
-      virtual void destroy() = 0;
 
     protected:
       // Hybrid Setup

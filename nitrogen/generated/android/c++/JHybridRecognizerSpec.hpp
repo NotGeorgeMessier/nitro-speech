@@ -67,7 +67,6 @@ namespace margelo::nitro::nitrospeech {
     // Methods
     void startListening(const SpeechToTextParams& params) override;
     void stopListening() override;
-    void destroy() override;
 
   private:
     friend HybridBase;

@@ -134,10 +134,6 @@ abstract class HybridRecognizerSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun stopListening(): Unit
-  
-  @DoNotStrip
-  @Keep
-  abstract fun destroy(): Unit
 
   private external fun initHybrid(): HybridData
 

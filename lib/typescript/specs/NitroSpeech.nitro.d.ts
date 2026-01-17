@@ -69,7 +69,6 @@ export interface Recognizer extends HybridObject<{
 }> {
     startListening(params: SpeechToTextParams): void;
     stopListening(): void;
-    destroy(): void;
     /**
      * User's speech is ready to be recognized.
      */

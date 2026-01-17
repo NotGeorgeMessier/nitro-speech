@@ -118,12 +118,6 @@ namespace margelo::nitro::nitrospeech {
         std::rethrow_exception(__result.error());
       }
     }
-    inline void destroy() override {
-      auto __result = _swiftPart.destroy();
-      if (__result.hasError()) [[unlikely]] {
-        std::rethrow_exception(__result.error());
-      }
-    }
 
   private:
     NitroSpeech::HybridRecognizerSpec_cxx _swiftPart;
