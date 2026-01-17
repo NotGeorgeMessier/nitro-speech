@@ -49,6 +49,41 @@ Add the following keys to your app's `Info.plist`:
 
 Both permissions are required for speech recognition to work on iOS.
 
+## Usage
+
+```typescript
+import { Recognizer } from '@gmessier/nitro-speech';
+
+// Set up callbacks
+Recognizer.onReadyForSpeech = () => {
+  console.log('Listening...');
+};
+
+Recognizer.onResult = (text) => {
+  console.log('Result:', text.join('\n'));
+};
+
+Recognizer.onRecordingStopped = () => {
+  console.log('Stopped');
+};
+
+Recognizer.onAutoFinishProgress = (timeLeftMs) => {
+  console.log('Auto-stop in:', timeLeftMs, 'ms');
+};
+
+Recognizer.onError = (error) => {
+  console.log('Error:', error);
+};
+
+// Start listening
+Recognizer.startListening({
+  locale: 'en-US',
+});
+
+// Stop listening
+Recognizer.stopListening();
+```
+
 ## TODO
 
 - [ ] (Android) Timer till the auto finish is called
