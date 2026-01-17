@@ -1,6 +1,30 @@
-# react-native-nitro-speech
+# nitro-speech
 
+> **⚠️ Work in Progress**
+> 
+> This library is under active development.
 
+Speech recognition and text-to-speech for React Native, powered by [Nitro Modules](https://github.com/mrousavy/nitro).
+
+## Installation
+
+```bash
+npm install nitro-speech react-native-nitro-modules
+# or
+yarn add nitro-speech react-native-nitro-modules
+# or 
+bun add nitro-speech react-native-nitro-modules
+```
+
+### iOS
+
+```bash
+cd ios && pod install
+```
+
+### Android
+
+No additional setup required.
 
 ## Permissions
 
@@ -24,3 +48,8 @@ Add the following keys to your app's `Info.plist`:
 ```
 
 Both permissions are required for speech recognition to work on iOS.
+
+## TODO
+
+- [ ] (Android) Timer till the auto finish is called
+- [ ] (Android) Cleanup when app loses the focus

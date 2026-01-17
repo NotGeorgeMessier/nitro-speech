@@ -80,19 +80,12 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @DoNotStrip
   @Keep
   override fun stopListening() {
-    autoStopper?.stop()
+    Log.d(TAG, "stopListening called")
+    if (!isActive) return
     onFinishRecognition(null, null, true)
-    stop()
-  }
-
-
-  @DoNotStrip
-  @Keep
-  override fun destroy() {
-    autoStopper?.stop()
-    autoStopper = null
-    onFinishRecognition(null, null, true)
-    destroyRecognizer()
+    mainHandler.postDelayed({
+      cleanup()
+    }, POST_RECOGNITION_DELAY)
   }
 
   private fun start(context: Context) {
@@ -103,9 +96,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
         autoStopper = AutoStopper(
             silenceThreshold,
         ) {
-            onRecordingStopped?.invoke()
-            stop()
-            destroyRecognizer()
+            stopListening()
         }
         val recognitionListenerSession = RecognitionListenerSession(
           autoStopper,
@@ -158,37 +149,22 @@ class HybridRecognizer: HybridRecognizerSpec() {
     }
   }
 
-  private fun stop() {
-    mainHandler.postDelayed({
-      try {
-        speechRecognizer?.stopListening()
-        Log.d(TAG, "stopListening called")
-        isActive = false
-      } catch (e: Exception) {
-        onFinishRecognition(
-          null,
-          "Error at stopListening.mainHandler.postDelayed: ${e.message ?: "Unknown error"}",
-          true
-        )
-      }
-    }, POST_RECOGNITION_DELAY)
-  }
-
-  private fun destroyRecognizer() {
-    mainHandler.postDelayed({
-      try {
-        speechRecognizer?.destroy()
-        speechRecognizer = null
-        Log.d(TAG, "destroy called")
-        isActive = false
-      } catch (e: Exception) {
-        onFinishRecognition(
-          null,
-          "Error at destroy.mainHandler.postDelayed: ${e.message ?: "Unknown error"}",
-          true
-        )
-      }
-    }, POST_RECOGNITION_DELAY)
+  private fun cleanup() {
+    try {
+      Log.d(TAG, "stopListening called")
+      autoStopper?.stop()
+      autoStopper = null
+      speechRecognizer?.stopListening()
+      speechRecognizer?.destroy()
+      speechRecognizer = null
+      isActive = false
+    } catch (e: Exception) {
+      onFinishRecognition(
+        null,
+        "Error at stopListening.mainHandler.postDelayed: ${e.message ?: "Unknown error"}",
+        true
+      )
+    }
   }
 
   private fun onFinishRecognition(result: ArrayList<String>?, errorMessage: String?, recordingStopped: Boolean) {
