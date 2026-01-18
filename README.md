@@ -84,6 +84,16 @@ Recognizer.startListening({
 Recognizer.stopListening();
 ```
 
+## Troubleshooting
+
+### Android Gradle sync issues
+
+If you're having issues with Android Gradle sync, try running the prebuild for the core Nitro library:
+
+```bash
+cd android && ./gradlew :react-native-nitro-modules:preBuild
+```
+
 ## TODO
 
 - [ ] (Android) Timer till the auto finish is called
