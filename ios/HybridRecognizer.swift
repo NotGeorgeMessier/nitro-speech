@@ -18,6 +18,7 @@ class HybridRecognizer: HybridRecognizerSpec {
     private var autoStopper: AutoStopper?
     private var appStateObserver: AppStateObserver?
     private var isActive: Bool = false
+    private var isStopping: Bool = false
     
     func startListening(params: SpeechToTextParams) {
         if isActive {
@@ -44,9 +45,12 @@ class HybridRecognizer: HybridRecognizerSpec {
     }
     
     func stopListening() {
-        guard isActive else { return }
-        cleanup()
-        onRecordingStopped?()
+        guard isActive, !isStopping else { return }
+        isStopping = true
+        
+        // Signal end of audio and request graceful finish
+        recognitionRequest?.endAudio()
+        recognitionTask?.finish()
     }
 
     private func requestMicrophonePermission(params: SpeechToTextParams) {
@@ -64,6 +68,8 @@ class HybridRecognizer: HybridRecognizerSpec {
     }
     
     private func startRecognition(params: SpeechToTextParams) {
+        isStopping = false
+        
         let locale = Locale(identifier: params.locale ?? "en-US")
         guard let speechRecognizer = SFSpeechRecognizer(locale: locale), speechRecognizer.isAvailable else {
             onError?("Speech recognizer not available")
@@ -117,24 +123,31 @@ class HybridRecognizer: HybridRecognizerSpec {
             guard let self = self else { return }
             
             if let result = result {
-                self.autoStopper?.indicateRecordingActivity(from: "partial results")
-                
-                var transcription = result.bestTranscription.formattedString
-                if !transcription.isEmpty {
-                    if !disableRepeatingFilter {
-                        transcription = self.repeatingFilter(text: transcription)
+                // Only process partial results if not stopping
+                if !self.isStopping {
+                    self.autoStopper?.indicateRecordingActivity(from: "partial results")
+                    
+                    var transcription = result.bestTranscription.formattedString
+                    if !transcription.isEmpty {
+                        if !disableRepeatingFilter {
+                            transcription = self.repeatingFilter(text: transcription)
+                        }
+                        self.onResult?([transcription])
                     }
-                    self.onResult?([transcription])
                 }
                 
+                // Task completed - cleanup whether natural or manual stop
                 if result.isFinal {
-                    self.stopListening()
+                    self.cleanup()
                 }
             }
             
             if let error = error {
-                self.onError?("Recognition error: \(error.localizedDescription)")
-                self.stopListening()
+                // Only report error if not intentionally stopping
+                if !self.isStopping {
+                    self.onError?("Recognition error: \(error.localizedDescription)")
+                }
+                self.cleanup()
             }
         }
         
@@ -159,27 +172,24 @@ class HybridRecognizer: HybridRecognizerSpec {
             onReadyForSpeech?()
             onResult?([])
         } catch {
-            cleanup()
+            cleanup(notifyCallback: false)
             onError?("Failed to start audio engine: \(error.localizedDescription)")
         }
     }
     
-    private func cleanup() {
+    private func cleanup(notifyCallback: Bool = true) {
+        let wasActive = isActive
+        
         autoStopper?.stop()
         autoStopper = nil
         
         appStateObserver?.stop()
         appStateObserver = nil
         
-        recognitionRequest?.endAudio()
-        recognitionTask?.cancel()
-        
-        if let audioEngine = audioEngine {
-            if audioEngine.isRunning {
-                audioEngine.stop()
-            }
-            audioEngine.inputNode.removeTap(onBus: 0)
+        if let audioEngine = audioEngine, audioEngine.isRunning {
+            audioEngine.stop()
         }
+        audioEngine?.inputNode.removeTap(onBus: 0)
         
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         
@@ -187,6 +197,11 @@ class HybridRecognizer: HybridRecognizerSpec {
         recognitionTask = nil
         audioEngine = nil
         isActive = false
+        isStopping = false
+        
+        if notifyCallback && wasActive {
+            onRecordingStopped?()
+        }
     }
 
     private func repeatingFilter(text: String) -> String {

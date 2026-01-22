@@ -49,6 +49,23 @@ Add the following keys to your app's `Info.plist`:
 
 Both permissions are required for speech recognition to work on iOS.
 
+## Features
+
+| Feature | Description | iOS | Android |
+|---------|-------------|-----|---------|
+| **Real-time transcription** | Get partial results as the user speaks, enabling live UI updates | ✅ | ✅ |
+| **Auto-stop on silence** | Automatically stops recognition after configurable inactivity period (default: 8s) | ✅ (flag) | ✅ (flag) |
+| **Auto-finish progress** | Progress callbacks showing countdown until auto-stop | ✅ | ❌ *(TODO)* |
+| **Locale support** | Configure speech recognizer for different languages | ✅ (flag) | ✅ (flag) |
+| **Background handling** | Auto-stop when app loses focus/goes to background | ✅ | Not Safe *(TODO)* |
+| **Contextual strings** | Domain-specific vocabulary for improved accuracy | ✅ (flag) | ✅ (flag) |
+| **Repeating word filter** | Removes consecutive duplicate words from artifacts | ✅ (flag) | ✅ (flag) |
+| **Permission handling** | Dedicated `onPermissionDenied` callback | ✅ | ✅ |
+| **Automatic punctuation** | Adds punctuation to transcription (iOS 16+) | ✅ (flag) | Auto |
+| **Language model selection** | Choose between web search vs free-form models | ❌ | ✅ (flag) |
+| **Offensive word masking** | Control whether offensive words are masked | Auto | ✅ (flag) |
+| **Formatting quality** | Prefer quality vs speed in formatting | ❌ | ✅ (flag) |
+
 ## Usage
 
 ```typescript

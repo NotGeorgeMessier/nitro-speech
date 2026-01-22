@@ -71,12 +71,23 @@ export interface Recognizer extends HybridObject<{
   ios: 'swift'
   android: 'kotlin'
 }> {
-  // Speech-to-text methods
+  /**
+   * Tries to start the speech recognition.
+   *
+   * Not guaranteed to start the speech recognition.
+   */
   startListening(params: SpeechToTextParams): void
+  /**
+   * Stops the speech recognition. if not started, does nothing.
+   *
+   * Not a sync operation for android, delay about 250ms to polish the result.
+   *
+   * Use onRecordingStopped to handle the stop event.
+   */
   stopListening(): void
 
   /**
-   * User's speech is ready to be recognized.
+   * The speech recognition has started.
    */
   onReadyForSpeech?: () => void
   /**
