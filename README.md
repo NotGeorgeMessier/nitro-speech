@@ -68,6 +68,48 @@ Both permissions are required for speech recognition to work on iOS.
 
 ## Usage
 
+### Recommended: useRecognizer Hook
+
+```typescript
+import { useRecognizer } from '@gmessier/nitro-speech';
+
+function MyComponent() {
+  const { startListening, stopListening } = useRecognizer({
+    onReadyForSpeech: () => {
+      console.log('Listening...');
+    },
+    onResult: (textBatches) => {
+      console.log('Result:', textBatches.join('\n'));
+    },
+    onRecordingStopped: () => {
+      console.log('Stopped');
+    },
+    onAutoFinishProgress: (timeLeftMs) => {
+      console.log('Auto-stop in:', timeLeftMs, 'ms');
+    },
+    onError: (error) => {
+      console.log('Error:', error);
+    },
+    onPermissionDenied: () => {
+      console.log('Permission denied');
+    },
+  });
+
+  return (
+    <div>
+      <button onClick={() => startListening({ locale: 'en-US' })}>
+        Start Listening
+      </button>
+      <button onClick={stopListening}>
+        Stop Listening
+      </button>
+    </div>
+  );
+}
+```
+
+### Alternative: Static Recognizer (Not Safe)
+
 ```typescript
 import { Recognizer } from '@gmessier/nitro-speech';
 
@@ -100,6 +142,12 @@ Recognizer.startListening({
 // Stop listening
 Recognizer.stopListening();
 ```
+
+### ⚠️ About dispose()
+
+The `Recognizer.dispose()` method is **NOT SAFE** and should rarely be used. Hybrid Objects in Nitro are typically managed by the JS garbage collector automatically. Only call `dispose()` in performance-critical scenarios where you need to eagerly destroy objects.
+
+**See:** [Nitro dispose() documentation](https://nitro.margelo.com/docs/hybrid-objects#dispose)
 
 ## Troubleshooting
 
