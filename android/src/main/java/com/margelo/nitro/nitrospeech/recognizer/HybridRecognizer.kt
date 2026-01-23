@@ -88,6 +88,10 @@ class HybridRecognizer: HybridRecognizerSpec() {
     }, POST_RECOGNITION_DELAY)
   }
 
+  override fun dispose() {
+    stopListening()
+  }
+
   private fun start(context: Context) {
     mainHandler.post {
       try {

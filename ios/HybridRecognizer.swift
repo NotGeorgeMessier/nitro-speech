@@ -52,6 +52,10 @@ class HybridRecognizer: HybridRecognizerSpec {
         recognitionRequest?.endAudio()
         recognitionTask?.finish()
     }
+    
+    func dispose() {
+        stopListening()
+    }
 
     private func requestMicrophonePermission(params: SpeechToTextParams) {
         AVAudioSession.sharedInstance().requestRecordPermission { [weak self] granted in
