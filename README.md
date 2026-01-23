@@ -96,14 +96,14 @@ function MyComponent() {
   });
 
   return (
-    <div>
-      <button onClick={() => startListening({ locale: 'en-US' })}>
-        Start Listening
-      </button>
-      <button onClick={stopListening}>
-        Stop Listening
-      </button>
-    </div>
+    <View>
+      <TouchableOpacity onPress={() => startListening({ locale: 'en-US' })}>
+        <Text>Start Listening</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={stopListening}>
+        <Text>Stop Listening</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 ```
