@@ -66,6 +66,8 @@ namespace margelo::nitro::nitrospeech {
       // Methods
       virtual void startListening(const SpeechToTextParams& params) = 0;
       virtual void stopListening() = 0;
+      virtual void addAutoFinishTime(std::optional<double> additionalTimeMs) = 0;
+      virtual void updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) = 0;
 
     protected:
       // Hybrid Setup

@@ -26,7 +26,10 @@ type RecognizerCallbacks = Pick<
 
 type RecognizerHandlers = Pick<
   RecognizerSpec,
-  'startListening' | 'stopListening'
+  | 'startListening'
+  | 'stopListening'
+  | 'addAutoFinishTime'
+  | 'updateAutoFinishTime'
 >
 
 const recognizerStartListening = (params: SpeechToTextParams) => {
@@ -35,6 +38,17 @@ const recognizerStartListening = (params: SpeechToTextParams) => {
 
 const recognizerStopListening = () => {
   Recognizer.stopListening()
+}
+
+const recognizerAddAutoFinishTime = (additionalTimeMs?: number) => {
+  Recognizer.addAutoFinishTime(additionalTimeMs)
+}
+
+const recognizerUpdateAutoFinishTime = (
+  newTimeMs: number,
+  withRefresh?: boolean
+) => {
+  Recognizer.updateAutoFinishTime(newTimeMs, withRefresh)
 }
 
 /**
@@ -81,6 +95,8 @@ export const useRecognizer = (
   return {
     startListening: recognizerStartListening,
     stopListening: recognizerStopListening,
+    addAutoFinishTime: recognizerAddAutoFinishTime,
+    updateAutoFinishTime: recognizerUpdateAutoFinishTime,
   }
 }
 

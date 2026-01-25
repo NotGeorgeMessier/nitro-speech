@@ -21,6 +21,8 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
   // Methods
   func startListening(params: SpeechToTextParams) throws -> Void
   func stopListening() throws -> Void
+  func addAutoFinishTime(additionalTimeMs: Double?) throws -> Void
+  func updateAutoFinishTime(newTimeMs: Double, withRefresh: Bool?) throws -> Void
 }
 
 public extension HybridRecognizerSpec_protocol {

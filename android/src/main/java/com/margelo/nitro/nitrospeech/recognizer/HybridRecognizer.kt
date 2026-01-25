@@ -88,6 +88,25 @@ class HybridRecognizer: HybridRecognizerSpec() {
     }, POST_RECOGNITION_DELAY)
   }
 
+  @DoNotStrip
+  @Keep
+  override fun addAutoFinishTime(additionalTimeMs: Double?) {
+    Log.d(TAG, "stopListening called")
+    if (!isActive) return
+    autoStopper?.indicateRecordingActivity()
+  }
+
+  @DoNotStrip
+  @Keep
+  override fun updateAutoFinishTime(newTimeMs: Double, withRefresh: Boolean?) {
+    Log.d(TAG, "updateAutoFinishTime: $newTimeMs")
+    if (!isActive) return
+    autoStopper?.updateSilenceThreshold(newTimeMs.toLong())
+    if (withRefresh == true) {
+      autoStopper?.indicateRecordingActivity()
+    }
+  }
+
   override fun dispose() {
     stopListening()
   }

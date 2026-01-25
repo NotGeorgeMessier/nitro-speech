@@ -53,6 +53,28 @@ class HybridRecognizer: HybridRecognizerSpec {
         recognitionTask?.finish()
     }
     
+    func addAutoFinishTime(additionalTimeMs: Double?) {
+        guard isActive, !isStopping else { return }
+        
+        autoStopper?.indicateRecordingActivity(
+            from: "refreshAutoFinish",
+            addMsToThreshold: additionalTimeMs
+        )
+    }
+    
+    func updateAutoFinishTime(newTimeMs: Double, withRefresh: Bool?) {
+        guard isActive, !isStopping else { return }
+        
+        autoStopper?.updateSilenceThreshold(newThresholdMs: newTimeMs)
+        
+        if withRefresh == true {
+            autoStopper?.indicateRecordingActivity(
+                from: "updateAutoFinishTime",
+                addMsToThreshold: nil
+            )
+        }
+    }
+    
     func dispose() {
         stopListening()
     }
@@ -129,7 +151,10 @@ class HybridRecognizer: HybridRecognizerSpec {
             if let result = result {
                 // Only process partial results if not stopping
                 if !self.isStopping {
-                    self.autoStopper?.indicateRecordingActivity(from: "partial results")
+                    self.autoStopper?.indicateRecordingActivity(
+                        from: "partial results",
+                        addMsToThreshold: nil
+                    )
                     
                     var transcription = result.bestTranscription.formattedString
                     if !transcription.isEmpty {
@@ -172,7 +197,10 @@ class HybridRecognizer: HybridRecognizerSpec {
             audioEngine.prepare()
             try audioEngine.start()
             isActive = true
-            autoStopper?.indicateRecordingActivity(from: "startListening")
+            autoStopper?.indicateRecordingActivity(
+                from: "startListening",
+                addMsToThreshold: nil
+            )
             onReadyForSpeech?()
             onResult?([])
         } catch {

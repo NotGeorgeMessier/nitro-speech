@@ -28,6 +28,8 @@ namespace margelo::nitro::nitrospeech {
       prototype.registerHybridSetter("onPermissionDenied", &HybridRecognizerSpec::setOnPermissionDenied);
       prototype.registerHybridMethod("startListening", &HybridRecognizerSpec::startListening);
       prototype.registerHybridMethod("stopListening", &HybridRecognizerSpec::stopListening);
+      prototype.registerHybridMethod("addAutoFinishTime", &HybridRecognizerSpec::addAutoFinishTime);
+      prototype.registerHybridMethod("updateAutoFinishTime", &HybridRecognizerSpec::updateAutoFinishTime);
     });
   }
 

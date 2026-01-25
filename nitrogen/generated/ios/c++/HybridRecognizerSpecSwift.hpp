@@ -118,6 +118,18 @@ namespace margelo::nitro::nitrospeech {
         std::rethrow_exception(__result.error());
       }
     }
+    inline void addAutoFinishTime(std::optional<double> additionalTimeMs) override {
+      auto __result = _swiftPart.addAutoFinishTime(additionalTimeMs);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
+    inline void updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) override {
+      auto __result = _swiftPart.updateAutoFinishTime(std::forward<decltype(newTimeMs)>(newTimeMs), withRefresh);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
 
   private:
     NitroSpeech::HybridRecognizerSpec_cxx _swiftPart;

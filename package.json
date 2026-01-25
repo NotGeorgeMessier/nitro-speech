@@ -1,6 +1,6 @@
 {
   "name": "@gmessier/nitro-speech",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "nitro-speech",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",

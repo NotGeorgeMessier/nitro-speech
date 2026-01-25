@@ -134,6 +134,14 @@ abstract class HybridRecognizerSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun stopListening(): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun addAutoFinishTime(additionalTimeMs: Double?): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun updateAutoFinishTime(newTimeMs: Double, withRefresh: Boolean?): Unit
 
   private external fun initHybrid(): HybridData
 

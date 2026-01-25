@@ -74,7 +74,12 @@ Both permissions are required for speech recognition to work on iOS.
 import { useRecognizer } from '@gmessier/nitro-speech';
 
 function MyComponent() {
-  const { startListening, stopListening } = useRecognizer({
+  const { 
+    startListening, 
+    stopListening, 
+    addAutoFinishTime, 
+    updateAutoFinishTime 
+  } = useRecognizer({
     onReadyForSpeech: () => {
       console.log('Listening...');
     },
@@ -97,11 +102,27 @@ function MyComponent() {
 
   return (
     <View>
-      <TouchableOpacity onPress={() => startListening({ locale: 'en-US' })}>
+      <TouchableOpacity onPress={() => startListening({ 
+        locale: 'en-US',
+        autoFinishRecognitionMs: 8000,
+        contextualStrings: ['custom', 'words'],
+        // iOS specific
+        iosAddPunctuation: true,
+        // Android specific
+        androidMaskOffensiveWords: false,
+        androidFormattingPreferQuality: false,
+        androidUseWebSearchModel: false,
+      })}>
         <Text>Start Listening</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={stopListening}>
         <Text>Stop Listening</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => addAutoFinishTime(5000)}>
+        <Text>Add 5s to Timer</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => updateAutoFinishTime(10000)}>
+        <Text>Update Timer to 10s</Text>
       </TouchableOpacity>
     </View>
   );
@@ -134,6 +155,10 @@ Recognizer.onError = (error) => {
   console.log('Error:', error);
 };
 
+Recognizer.onPermissionDenied = () => {
+  console.log('Permission denied');
+};
+
 // Start listening
 Recognizer.startListening({
   locale: 'en-US',
@@ -141,6 +166,14 @@ Recognizer.startListening({
 
 // Stop listening
 Recognizer.stopListening();
+
+// Manually add time to auto finish timer
+Recognizer.addAutoFinishTime(5000); // Add 5 seconds
+Recognizer.addAutoFinishTime(); // Reset to original time
+
+// Update auto finish time
+Recognizer.updateAutoFinishTime(10000); // Set to 10 seconds
+Recognizer.updateAutoFinishTime(10000, true); // Set to 10 seconds and refresh progress
 ```
 
 ### ⚠️ About dispose()

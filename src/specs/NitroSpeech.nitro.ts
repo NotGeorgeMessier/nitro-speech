@@ -87,6 +87,25 @@ export interface Recognizer extends HybridObject<{
   stopListening(): void
 
   /**
+   * Manually adds time to the auto finish progress.
+   *
+   * If you want to give the user ability to manually increase time before timer calls stop.
+   *
+   * @param additionalTimeMs - time in ms to add to the current auto finish timer. If not set, will reset the timer to the original auto finish time.
+   */
+  addAutoFinishTime(additionalTimeMs?: number): void
+
+  /**
+   * Updates the auto finish time.
+   *
+   * Applies changes only within the current recognition session.
+   *
+   * @param newTimeMs - new time in ms for the auto finish timer.
+   * @param withRefresh - if true, will refresh the auto finish progress.
+   */
+  updateAutoFinishTime(newTimeMs: number, withRefresh?: boolean): void
+
+  /**
    * The speech recognition has started.
    */
   onReadyForSpeech?: () => void

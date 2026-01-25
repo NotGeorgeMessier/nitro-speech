@@ -163,5 +163,13 @@ namespace margelo::nitro::nitrospeech {
     static const auto method = javaClassStatic()->getMethod<void()>("stopListening");
     method(_javaPart);
   }
+  void JHybridRecognizerSpec::addAutoFinishTime(std::optional<double> additionalTimeMs) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JDouble> /* additionalTimeMs */)>("addAutoFinishTime");
+    method(_javaPart, additionalTimeMs.has_value() ? jni::JDouble::valueOf(additionalTimeMs.value()) : nullptr);
+  }
+  void JHybridRecognizerSpec::updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) {
+    static const auto method = javaClassStatic()->getMethod<void(double /* newTimeMs */, jni::alias_ref<jni::JBoolean> /* withRefresh */)>("updateAutoFinishTime");
+    method(_javaPart, newTimeMs, withRefresh.has_value() ? jni::JBoolean::valueOf(withRefresh.value()) : nullptr);
+  }
 
 } // namespace margelo::nitro::nitrospeech

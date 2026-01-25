@@ -334,4 +334,33 @@ open class HybridRecognizerSpec_cxx {
       return bridge.create_Result_void_(__exceptionPtr)
     }
   }
+  
+  @inline(__always)
+  public final func addAutoFinishTime(additionalTimeMs: bridge.std__optional_double_) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.addAutoFinishTime(additionalTimeMs: additionalTimeMs.value)
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func updateAutoFinishTime(newTimeMs: Double, withRefresh: bridge.std__optional_bool_) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.updateAutoFinishTime(newTimeMs: newTimeMs, withRefresh: { () -> Bool? in
+        if bridge.has_value_std__optional_bool_(withRefresh) {
+          let __unwrapped = bridge.get_std__optional_bool_(withRefresh)
+          return __unwrapped
+        } else {
+          return nil
+        }
+      }())
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
 }

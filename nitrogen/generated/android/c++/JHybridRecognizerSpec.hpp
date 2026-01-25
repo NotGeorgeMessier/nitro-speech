@@ -67,6 +67,8 @@ namespace margelo::nitro::nitrospeech {
     // Methods
     void startListening(const SpeechToTextParams& params) override;
     void stopListening() override;
+    void addAutoFinishTime(std::optional<double> additionalTimeMs) override;
+    void updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) override;
 
   private:
     friend HybridBase;

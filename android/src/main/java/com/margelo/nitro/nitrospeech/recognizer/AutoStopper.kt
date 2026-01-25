@@ -5,7 +5,7 @@ import android.os.Looper
 import android.util.Log
 
 class AutoStopper (
-    private val silenceThreshold: Long,
+    private var silenceThreshold: Long,
     val forceStopRecording: () -> Unit,
 ) {
     companion object {
@@ -31,5 +31,9 @@ class AutoStopper (
     fun stop() {
         isStopped = true
         handler.removeCallbacks(autoStopRecording)
+    }
+
+    fun updateSilenceThreshold(newThreshold: Long) {
+        silenceThreshold = newThreshold
     }
 }

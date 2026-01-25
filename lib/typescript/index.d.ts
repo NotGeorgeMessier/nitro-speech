@@ -4,7 +4,7 @@ import type { Recognizer as RecognizerSpec, SpeechToTextParams } from './specs/N
  */
 export declare const Recognizer: RecognizerSpec;
 type RecognizerCallbacks = Pick<RecognizerSpec, 'onReadyForSpeech' | 'onRecordingStopped' | 'onResult' | 'onAutoFinishProgress' | 'onError' | 'onPermissionDenied'>;
-type RecognizerHandlers = Pick<RecognizerSpec, 'startListening' | 'stopListening'>;
+type RecognizerHandlers = Pick<RecognizerSpec, 'startListening' | 'stopListening' | 'addAutoFinishTime' | 'updateAutoFinishTime'>;
 /**
  * Safe, lifecycle-aware hook to use the recognizer.
  */
