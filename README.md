@@ -1,10 +1,30 @@
 # nitro-speech
 
+[![npm version](https://img.shields.io/npm/v/@gmessier/nitro-speech.svg)](https://www.npmjs.com/package/@gmessier/nitro-speech)
+[![license](https://img.shields.io/npm/l/@gmessier/nitro-speech.svg)](https://github.com/NotGeorgeMessier/nitro-speech/blob/main/LICENSE)
+[![npm downloads](https://img.shields.io/npm/dm/@gmessier/nitro-speech.svg)](https://www.npmjs.com/package/@gmessier/nitro-speech)
+
+> 🐛 [Report Bug](https://github.com/NotGeorgeMessier/nitro-speech/issues) | 💡 [Request Feature](https://github.com/NotGeorgeMessier/nitro-speech/issues)
+
 > **⚠️ Work in Progress**
 > 
-> This library is under active development.
+> This library is under active development. (Last version is stable)
 
 Speech recognition for React Native, powered by [Nitro Modules](https://github.com/mrousavy/nitro).
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Permissions](#permissions)
+- [Features](#features)
+- [Usage](#usage)
+  - [Recommended: useRecognizer Hook](#recommended-userecognizer-hook)
+  - [Alternative: Static Recognizer](#alternative-static-recognizer-not-safe)
+- [API Reference](#api-reference)
+- [Requirements](#requirements)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
+- [TODO](#todo)
 
 ## Installation
 
@@ -15,6 +35,16 @@ yarn add @gmessier/nitro-speech react-native-nitro-modules
 # or 
 bun add @gmessier/nitro-speech react-native-nitro-modules
 ```
+
+### Expo
+
+This library works with Expo. You need to run prebuild to generate native code:
+
+```bash
+npx expo prebuild
+```
+
+**Note**: Make sure New Arch is enabled in your Expo configuration before running prebuild.
 
 ### iOS
 
@@ -54,17 +84,17 @@ Both permissions are required for speech recognition to work on iOS.
 | Feature | Description | iOS | Android |
 |---------|-------------|-----|---------|
 | **Real-time transcription** | Get partial results as the user speaks, enabling live UI updates | ✅ | ✅ |
-| **Auto-stop on silence** | Automatically stops recognition after configurable inactivity period (default: 8s) | ✅ (flag) | ✅ (flag) |
+| **Auto-stop on silence** | Automatically stops recognition after configurable inactivity period (default: 8s) | ✅ | ✅ |
 | **Auto-finish progress** | Progress callbacks showing countdown until auto-stop | ✅ | ❌ *(TODO)* |
-| **Locale support** | Configure speech recognizer for different languages | ✅ (flag) | ✅ (flag) |
+| **Locale support** | Configure speech recognizer for different languages | ✅ | ✅ |
 | **Background handling** | Auto-stop when app loses focus/goes to background | ✅ | Not Safe *(TODO)* |
-| **Contextual strings** | Domain-specific vocabulary for improved accuracy | ✅ (flag) | ✅ (flag) |
-| **Repeating word filter** | Removes consecutive duplicate words from artifacts | ✅ (flag) | ✅ (flag) |
+| **Contextual strings** | Domain-specific vocabulary for improved accuracy | ✅ | ✅ |
+| **Repeating word filter** | Removes consecutive duplicate words from artifacts | ✅ | ✅ |
 | **Permission handling** | Dedicated `onPermissionDenied` callback | ✅ | ✅ |
-| **Automatic punctuation** | Adds punctuation to transcription (iOS 16+) | ✅ (flag) | Auto |
-| **Language model selection** | Choose between web search vs free-form models | ❌ | ✅ (flag) |
-| **Offensive word masking** | Control whether offensive words are masked | Auto | ✅ (flag) |
-| **Formatting quality** | Prefer quality vs speed in formatting | ❌ | ✅ (flag) |
+| **Automatic punctuation** | Adds punctuation to transcription (iOS 16+) | ✅ | Auto |
+| **Language model selection** | Choose between web search vs free-form models | Auto | ✅ |
+| **Offensive word masking** | Control whether offensive words are masked | Auto | ✅ |
+| **Formatting quality** | Prefer quality vs speed in formatting | Auto | ✅ |
 
 ## Usage
 
@@ -182,6 +212,57 @@ The `Recognizer.dispose()` method is **NOT SAFE** and should rarely be used. Hyb
 
 **See:** [Nitro dispose() documentation](https://nitro.margelo.com/docs/hybrid-objects#dispose)
 
+## API Reference
+
+### `useRecognizer(callbacks)`
+
+A React hook that provides lifecycle-aware access to the speech recognizer.
+
+#### Parameters
+
+- `callbacks` (object):
+  - `onReadyForSpeech?: () => void` - Called when speech recognition starts
+  - `onResult?: (textBatches: string[]) => void` - Called with transcription results (array of text batches)
+  - `onRecordingStopped?: () => void` - Called when recording stops
+  - `onAutoFinishProgress?: (timeLeftMs: number) => void` - Called each second during auto-finish countdown
+  - `onError?: (message: string) => void` - Called when an error occurs
+  - `onPermissionDenied?: () => void` - Called if microphone permission is denied
+
+#### Returns
+
+- `startListening(params: SpeechToTextParams)` - Start speech recognition with the given parameters
+- `stopListening()` - Stop speech recognition
+- `addAutoFinishTime(additionalTimeMs?: number)` - Add time to the auto-finish timer (or reset to original if no parameter)
+- `updateAutoFinishTime(newTimeMs: number, withRefresh?: boolean)` - Update the auto-finish timer
+
+### `SpeechToTextParams`
+
+Configuration object for speech recognition.
+
+#### Common Parameters
+
+- `locale?: string` - Language locale (default: `"en-US"`)
+- `autoFinishRecognitionMs?: number` - Auto-stop timeout in milliseconds (default: `8000`)
+- `contextualStrings?: string[]` - Array of domain-specific words for better recognition
+- `disableRepeatingFilter?: boolean` - Disable filter that removes consecutive duplicate words (default: `false`)
+
+#### iOS-Specific Parameters
+
+- `iosAddPunctuation?: boolean` - Add punctuation to results (iOS 16+, default: `true`)
+
+#### Android-Specific Parameters
+
+- `androidMaskOffensiveWords?: boolean` - Mask offensive words (Android 13+, default: `false`)
+- `androidFormattingPreferQuality?: boolean` - Prefer quality over latency (Android 13+, default: `false`)
+- `androidUseWebSearchModel?: boolean` - Use web search language model instead of free-form (default: `false`)
+- `androidDisableBatchHandling?: boolean` - Disable default batch handling (may add many empty batches, default: `false`)
+
+## Requirements
+
+- React Native >= 0.76
+- New Arch Only
+- react-native-nitro-modules
+
 ## Troubleshooting
 
 ### Android Gradle sync issues
@@ -191,6 +272,10 @@ If you're having issues with Android Gradle sync, try running the prebuild for t
 ```bash
 cd android && ./gradlew :react-native-nitro-modules:preBuild
 ```
+
+## License
+
+MIT
 
 ## TODO
 

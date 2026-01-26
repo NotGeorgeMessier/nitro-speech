@@ -1,7 +1,7 @@
 {
   "name": "@gmessier/nitro-speech",
-  "version": "0.0.6",
-  "description": "nitro-speech",
+  "version": "0.0.7",
+  "description": "React Native Speech Recognition Library powered by Nitro Modules",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
   "types": "./lib/typescript/index.d.ts",
@@ -40,15 +40,31 @@
     "react-native",
     "speech",
     "recognition",
-    "nitro"
+    "speech-recognition",
+    "speech-to-text",
+    "stt",
+    "voice",
+    "voice-recognition",
+    "transcription",
+    "audio",
+    "microphone",
+    "nitro",
+    "nitro-modules"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NotGeorgeMessier/nitro-speech"
+    "url": "git+https://github.com/NotGeorgeMessier/nitro-speech.git"
+  },
+  "bugs": {
+    "url": "https://github.com/NotGeorgeMessier/nitro-speech/issues"
   },
   "author": "George Messier",
-  "homepage": "https://github.com/NotGeorgeMessier/nitro-speech",
+  "homepage": "https://github.com/NotGeorgeMessier/nitro-speech#readme",
   "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  },
+  "sideEffects": false,
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
