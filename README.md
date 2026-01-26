@@ -4,8 +4,6 @@
 [![license](https://img.shields.io/npm/l/@gmessier/nitro-speech.svg)](https://github.com/NotGeorgeMessier/nitro-speech/blob/main/LICENSE)
 [![npm downloads](https://img.shields.io/npm/dm/@gmessier/nitro-speech.svg)](https://www.npmjs.com/package/@gmessier/nitro-speech)
 
-> 🐛 [Report Bug](https://github.com/NotGeorgeMessier/nitro-speech/issues) | 💡 [Request Feature](https://github.com/NotGeorgeMessier/nitro-speech/issues)
-
 > **⚠️ Work in Progress**
 > 
 > This library is under active development. (Last version is stable)
@@ -23,8 +21,6 @@ Speech recognition for React Native, powered by [Nitro Modules](https://github.c
 - [API Reference](#api-reference)
 - [Requirements](#requirements)
 - [Troubleshooting](#troubleshooting)
-- [License](#license)
-- [TODO](#todo)
 
 ## Installation
 
@@ -222,7 +218,7 @@ A React hook that provides lifecycle-aware access to the speech recognizer.
 
 - `callbacks` (object):
   - `onReadyForSpeech?: () => void` - Called when speech recognition starts
-  - `onResult?: (textBatches: string[]) => void` - Called with transcription results (array of text batches)
+  - `onResult?: (textBatches: string[]) => void` - Called every time when partial result is ready (array of text batches)
   - `onRecordingStopped?: () => void` - Called when recording stops
   - `onAutoFinishProgress?: (timeLeftMs: number) => void` - Called each second during auto-finish countdown
   - `onError?: (message: string) => void` - Called when an error occurs
