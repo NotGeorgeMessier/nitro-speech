@@ -7,6 +7,11 @@
 > **⚠️ Work in Progress**
 > 
 > This library is under active development. (Last version is stable)
+>
+> If you hit an issue, please open a GitHub issue or reach out to me on Discord / Twitter (X) — response is guaranteed.
+> - GitHub Issues: [NotGeorgeMessier/nitro-speech/issues](https://github.com/NotGeorgeMessier/nitro-speech/issues)
+> - Discord: `gmessier`
+> - Twitter (X): `SufferingGeorge`
 
 Speech recognition for React Native, powered by [Nitro Modules](https://github.com/mrousavy/nitro).
 
