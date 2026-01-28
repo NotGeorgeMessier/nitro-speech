@@ -41,6 +41,7 @@ interface ParamsIOS {
      */
     iosAddPunctuation?: boolean;
 }
+type HapticFeedbackStyle = 'light' | 'medium' | 'heavy';
 export interface SpeechToTextParams extends ParamsAndroid, ParamsIOS {
     /**
      * Default - "en-US"
@@ -62,6 +63,18 @@ export interface SpeechToTextParams extends ParamsAndroid, ParamsIOS {
      * An array of strings that should be recognized, even if they are not in the system vocabulary.
      */
     contextualStrings?: string[];
+    /**
+     * Default - null
+     *
+     * Haptic feedback style when microphone starts recording.
+     */
+    startHapticFeedbackStyle?: HapticFeedbackStyle;
+    /**
+     * Default - null
+     *
+     * Haptic feedback style when microphone stops recording.
+     */
+    stopHapticFeedbackStyle?: HapticFeedbackStyle;
 }
 export interface Recognizer extends HybridObject<{
     ios: 'swift';

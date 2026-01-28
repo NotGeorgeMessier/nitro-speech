@@ -19,7 +19,7 @@ public extension SpeechToTextParams {
   /**
    * Create a new instance of `SpeechToTextParams`.
    */
-  init(locale: String?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Bool?, contextualStrings: [String]?, androidMaskOffensiveWords: Bool?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?) {
+  init(locale: String?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Bool?, contextualStrings: [String]?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, androidMaskOffensiveWords: Bool?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?) {
     self.init({ () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = locale {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
@@ -47,6 +47,18 @@ public extension SpeechToTextParams {
           }
           return __vector
         }())
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_HapticFeedbackStyle_ in
+      if let __unwrappedValue = startHapticFeedbackStyle {
+        return bridge.create_std__optional_HapticFeedbackStyle_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_HapticFeedbackStyle_ in
+      if let __unwrappedValue = stopHapticFeedbackStyle {
+        return bridge.create_std__optional_HapticFeedbackStyle_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -171,6 +183,40 @@ public extension SpeechToTextParams {
             }
             return __vector
           }())
+        } else {
+          return .init()
+        }
+      }()
+    }
+  }
+  
+  var startHapticFeedbackStyle: HapticFeedbackStyle? {
+    @inline(__always)
+    get {
+      return self.__startHapticFeedbackStyle.value
+    }
+    @inline(__always)
+    set {
+      self.__startHapticFeedbackStyle = { () -> bridge.std__optional_HapticFeedbackStyle_ in
+        if let __unwrappedValue = newValue {
+          return bridge.create_std__optional_HapticFeedbackStyle_(__unwrappedValue)
+        } else {
+          return .init()
+        }
+      }()
+    }
+  }
+  
+  var stopHapticFeedbackStyle: HapticFeedbackStyle? {
+    @inline(__always)
+    get {
+      return self.__stopHapticFeedbackStyle.value
+    }
+    @inline(__always)
+    set {
+      self.__stopHapticFeedbackStyle = { () -> bridge.std__optional_HapticFeedbackStyle_ in
+        if let __unwrappedValue = newValue {
+          return bridge.create_std__optional_HapticFeedbackStyle_(__unwrappedValue)
         } else {
           return .init()
         }

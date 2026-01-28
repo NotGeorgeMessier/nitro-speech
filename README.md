@@ -17,6 +17,7 @@ Speech recognition for React Native, powered by [Nitro Modules](https://github.c
 - [Features](#features)
 - [Usage](#usage)
   - [Recommended: useRecognizer Hook](#recommended-userecognizer-hook)
+  - [With React Navigation (important)](#with-react-navigation-important)
   - [Alternative: Static Recognizer](#alternative-static-recognizer-not-safe)
 - [API Reference](#api-reference)
 - [Requirements](#requirements)
@@ -60,6 +61,7 @@ The library declares the required permission in its `AndroidManifest.xml` (merge
 
 ```xml
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.VIBRATE" />
 ```
 
 ### iOS
@@ -87,6 +89,7 @@ Both permissions are required for speech recognition to work on iOS.
 | **Contextual strings** | Domain-specific vocabulary for improved accuracy | ✅ | ✅ |
 | **Repeating word filter** | Removes consecutive duplicate words from artifacts | ✅ | ✅ |
 | **Permission handling** | Dedicated `onPermissionDenied` callback | ✅ | ✅ |
+| **Haptic feedback** | Optional haptics on recording start/stop | ✅ | ✅ |
 | **Automatic punctuation** | Adds punctuation to transcription (iOS 16+) | ✅ | Auto |
 | **Language model selection** | Choose between web search vs free-form models | Auto | ✅ |
 | **Offensive word masking** | Control whether offensive words are masked | Auto | ✅ |
@@ -132,6 +135,9 @@ function MyComponent() {
         locale: 'en-US',
         autoFinishRecognitionMs: 8000,
         contextualStrings: ['custom', 'words'],
+        // Haptics (both platforms)
+        startHapticFeedbackStyle: 'medium',
+        stopHapticFeedbackStyle: 'light',
         // iOS specific
         iosAddPunctuation: true,
         // Android specific
@@ -153,6 +159,24 @@ function MyComponent() {
     </View>
   );
 }
+```
+
+### With React Navigation (important)
+
+React Navigation **doesn’t unmount screens** when you navigate — the screen can stay mounted in the background and come back without remounting. See: [Navigation lifecycle (React Navigation)](https://reactnavigation.org/docs/8.x/navigation-lifecycle/#summary).
+
+Because of that, prefer tying recognition cleanup to **focus state**, not just component unmount. A simple approach is `useIsFocused()` and passing it into `useRecognizer`’s `destroyDeps` so recognition stops when the screen blurs. See: [`useIsFocused` (React Navigation)](https://reactnavigation.org/docs/8.x/use-is-focused).
+
+```typescript
+const isFocused = useIsFocused();
+const { 
+  // ...
+} = useRecognizer(
+  {
+    // ...
+  },
+  [isFocused]
+);
 ```
 
 ### Alternative: Static Recognizer (Not Safe)
@@ -210,7 +234,7 @@ The `Recognizer.dispose()` method is **NOT SAFE** and should rarely be used. Hyb
 
 ## API Reference
 
-### `useRecognizer(callbacks)`
+### `useRecognizer(callbacks, destroyDeps?)`
 
 A React hook that provides lifecycle-aware access to the speech recognizer.
 
@@ -223,6 +247,7 @@ A React hook that provides lifecycle-aware access to the speech recognizer.
   - `onAutoFinishProgress?: (timeLeftMs: number) => void` - Called each second during auto-finish countdown
   - `onError?: (message: string) => void` - Called when an error occurs
   - `onPermissionDenied?: () => void` - Called if microphone permission is denied
+- `destroyDeps` (array, optional) - Additional dependencies for the cleanup effect. When any of these change (or the component unmounts), recognition is stopped.
 
 #### Returns
 
@@ -241,6 +266,8 @@ Configuration object for speech recognition.
 - `autoFinishRecognitionMs?: number` - Auto-stop timeout in milliseconds (default: `8000`)
 - `contextualStrings?: string[]` - Array of domain-specific words for better recognition
 - `disableRepeatingFilter?: boolean` - Disable filter that removes consecutive duplicate words (default: `false`)
+- `startHapticFeedbackStyle?: 'light' | 'medium' | 'heavy'` - Haptic feedback style when microphone starts recording (default: `null` / disabled)
+- `stopHapticFeedbackStyle?: 'light' | 'medium' | 'heavy'` - Haptic feedback style when microphone stops recording (default: `null` / disabled)
 
 #### iOS-Specific Parameters
 

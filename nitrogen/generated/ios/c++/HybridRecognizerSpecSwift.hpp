@@ -14,12 +14,15 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 
 // Forward declaration of `SpeechToTextParams` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
+// Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 
 #include <functional>
 #include <optional>
 #include <string>
 #include <vector>
 #include "SpeechToTextParams.hpp"
+#include "HapticFeedbackStyle.hpp"
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 

@@ -23,11 +23,13 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
-
+// Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 
 #include <string>
 #include <optional>
 #include <vector>
+#include "HapticFeedbackStyle.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -40,6 +42,8 @@ namespace margelo::nitro::nitrospeech {
     std::optional<double> autoFinishRecognitionMs     SWIFT_PRIVATE;
     std::optional<bool> disableRepeatingFilter     SWIFT_PRIVATE;
     std::optional<std::vector<std::string>> contextualStrings     SWIFT_PRIVATE;
+    std::optional<HapticFeedbackStyle> startHapticFeedbackStyle     SWIFT_PRIVATE;
+    std::optional<HapticFeedbackStyle> stopHapticFeedbackStyle     SWIFT_PRIVATE;
     std::optional<bool> androidMaskOffensiveWords     SWIFT_PRIVATE;
     std::optional<bool> androidFormattingPreferQuality     SWIFT_PRIVATE;
     std::optional<bool> androidUseWebSearchModel     SWIFT_PRIVATE;
@@ -48,7 +52,7 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     SpeechToTextParams() = default;
-    explicit SpeechToTextParams(std::optional<std::string> locale, std::optional<double> autoFinishRecognitionMs, std::optional<bool> disableRepeatingFilter, std::optional<std::vector<std::string>> contextualStrings, std::optional<bool> androidMaskOffensiveWords, std::optional<bool> androidFormattingPreferQuality, std::optional<bool> androidUseWebSearchModel, std::optional<bool> androidDisableBatchHandling, std::optional<bool> iosAddPunctuation): locale(locale), autoFinishRecognitionMs(autoFinishRecognitionMs), disableRepeatingFilter(disableRepeatingFilter), contextualStrings(contextualStrings), androidMaskOffensiveWords(androidMaskOffensiveWords), androidFormattingPreferQuality(androidFormattingPreferQuality), androidUseWebSearchModel(androidUseWebSearchModel), androidDisableBatchHandling(androidDisableBatchHandling), iosAddPunctuation(iosAddPunctuation) {}
+    explicit SpeechToTextParams(std::optional<std::string> locale, std::optional<double> autoFinishRecognitionMs, std::optional<bool> disableRepeatingFilter, std::optional<std::vector<std::string>> contextualStrings, std::optional<HapticFeedbackStyle> startHapticFeedbackStyle, std::optional<HapticFeedbackStyle> stopHapticFeedbackStyle, std::optional<bool> androidMaskOffensiveWords, std::optional<bool> androidFormattingPreferQuality, std::optional<bool> androidUseWebSearchModel, std::optional<bool> androidDisableBatchHandling, std::optional<bool> iosAddPunctuation): locale(locale), autoFinishRecognitionMs(autoFinishRecognitionMs), disableRepeatingFilter(disableRepeatingFilter), contextualStrings(contextualStrings), startHapticFeedbackStyle(startHapticFeedbackStyle), stopHapticFeedbackStyle(stopHapticFeedbackStyle), androidMaskOffensiveWords(androidMaskOffensiveWords), androidFormattingPreferQuality(androidFormattingPreferQuality), androidUseWebSearchModel(androidUseWebSearchModel), androidDisableBatchHandling(androidDisableBatchHandling), iosAddPunctuation(iosAddPunctuation) {}
   };
 
 } // namespace margelo::nitro::nitrospeech
@@ -65,6 +69,8 @@ namespace margelo::nitro {
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, "autoFinishRecognitionMs")),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "disableRepeatingFilter")),
         JSIConverter<std::optional<std::vector<std::string>>>::fromJSI(runtime, obj.getProperty(runtime, "contextualStrings")),
+        JSIConverter<std::optional<margelo::nitro::nitrospeech::HapticFeedbackStyle>>::fromJSI(runtime, obj.getProperty(runtime, "startHapticFeedbackStyle")),
+        JSIConverter<std::optional<margelo::nitro::nitrospeech::HapticFeedbackStyle>>::fromJSI(runtime, obj.getProperty(runtime, "stopHapticFeedbackStyle")),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "androidMaskOffensiveWords")),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "androidFormattingPreferQuality")),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, "androidUseWebSearchModel")),
@@ -78,6 +84,8 @@ namespace margelo::nitro {
       obj.setProperty(runtime, "autoFinishRecognitionMs", JSIConverter<std::optional<double>>::toJSI(runtime, arg.autoFinishRecognitionMs));
       obj.setProperty(runtime, "disableRepeatingFilter", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.disableRepeatingFilter));
       obj.setProperty(runtime, "contextualStrings", JSIConverter<std::optional<std::vector<std::string>>>::toJSI(runtime, arg.contextualStrings));
+      obj.setProperty(runtime, "startHapticFeedbackStyle", JSIConverter<std::optional<margelo::nitro::nitrospeech::HapticFeedbackStyle>>::toJSI(runtime, arg.startHapticFeedbackStyle));
+      obj.setProperty(runtime, "stopHapticFeedbackStyle", JSIConverter<std::optional<margelo::nitro::nitrospeech::HapticFeedbackStyle>>::toJSI(runtime, arg.stopHapticFeedbackStyle));
       obj.setProperty(runtime, "androidMaskOffensiveWords", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.androidMaskOffensiveWords));
       obj.setProperty(runtime, "androidFormattingPreferQuality", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.androidFormattingPreferQuality));
       obj.setProperty(runtime, "androidUseWebSearchModel", JSIConverter<std::optional<bool>>::toJSI(runtime, arg.androidUseWebSearchModel));
@@ -97,6 +105,8 @@ namespace margelo::nitro {
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, "autoFinishRecognitionMs"))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "disableRepeatingFilter"))) return false;
       if (!JSIConverter<std::optional<std::vector<std::string>>>::canConvert(runtime, obj.getProperty(runtime, "contextualStrings"))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::nitrospeech::HapticFeedbackStyle>>::canConvert(runtime, obj.getProperty(runtime, "startHapticFeedbackStyle"))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::nitrospeech::HapticFeedbackStyle>>::canConvert(runtime, obj.getProperty(runtime, "stopHapticFeedbackStyle"))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "androidMaskOffensiveWords"))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "androidFormattingPreferQuality"))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, "androidUseWebSearchModel"))) return false;

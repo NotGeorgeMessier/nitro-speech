@@ -8,6 +8,8 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 // Forward declaration of `HybridNitroSpeechSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
@@ -20,6 +22,7 @@ namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 
 // Include C++ defined types
+#include "HapticFeedbackStyle.hpp"
 #include "HybridNitroSpeechSpec.hpp"
 #include "HybridRecognizerSpec.hpp"
 #include <NitroModules/Result.hpp>
@@ -104,6 +107,21 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.has_value();
   }
   inline std::vector<std::string> get_std__optional_std__vector_std__string__(const std::optional<std::vector<std::string>>& optional) noexcept {
+    return *optional;
+  }
+  
+  // pragma MARK: std::optional<HapticFeedbackStyle>
+  /**
+   * Specialized version of `std::optional<HapticFeedbackStyle>`.
+   */
+  using std__optional_HapticFeedbackStyle_ = std::optional<HapticFeedbackStyle>;
+  inline std::optional<HapticFeedbackStyle> create_std__optional_HapticFeedbackStyle_(const HapticFeedbackStyle& value) noexcept {
+    return std::optional<HapticFeedbackStyle>(value);
+  }
+  inline bool has_value_std__optional_HapticFeedbackStyle_(const std::optional<HapticFeedbackStyle>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline HapticFeedbackStyle get_std__optional_HapticFeedbackStyle_(const std::optional<HapticFeedbackStyle>& optional) noexcept {
     return *optional;
   }
   

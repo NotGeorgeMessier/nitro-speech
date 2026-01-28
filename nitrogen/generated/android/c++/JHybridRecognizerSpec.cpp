@@ -9,6 +9,8 @@
 
 // Forward declaration of `SpeechToTextParams` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
+// Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 
 #include <functional>
 #include <optional>
@@ -21,6 +23,8 @@ namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 #include "JFunc_void_std__string.hpp"
 #include "SpeechToTextParams.hpp"
 #include "JSpeechToTextParams.hpp"
+#include "HapticFeedbackStyle.hpp"
+#include "JHapticFeedbackStyle.hpp"
 
 namespace margelo::nitro::nitrospeech {
 

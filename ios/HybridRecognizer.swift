@@ -1,8 +1,10 @@
 import Foundation
 import Speech
 import NitroModules
+import os.log
 
 class HybridRecognizer: HybridRecognizerSpec {
+    private let logger = Logger(subsystem: "com.margelo.nitro.nitrospeech", category: "AutoStopper")
     private static let defaultAutoFinishRecognitionMs = 8000.0
     
     var onReadyForSpeech: (() -> Void)?
@@ -19,10 +21,11 @@ class HybridRecognizer: HybridRecognizerSpec {
     private var appStateObserver: AppStateObserver?
     private var isActive: Bool = false
     private var isStopping: Bool = false
+    private var config: SpeechToTextParams?
     
     func startListening(params: SpeechToTextParams) {
         if isActive {
-            onError?("Previous recognition session is still active")
+//          Previous recognition session is still active
             return
         }
         
@@ -30,9 +33,11 @@ class HybridRecognizer: HybridRecognizerSpec {
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 
+                self.config = params
+                
                 switch authStatus {
                 case .authorized:
-                    self.requestMicrophonePermission(params: params)
+                    self.requestMicrophonePermission()
                 case .denied, .restricted:
                     self.onPermissionDenied?()
                 case .notDetermined:
@@ -47,6 +52,10 @@ class HybridRecognizer: HybridRecognizerSpec {
     func stopListening() {
         guard isActive, !isStopping else { return }
         isStopping = true
+        
+        if let hapticStyle = config?.stopHapticFeedbackStyle {
+            HapticImpact(style: hapticStyle).trigger()
+        }
         
         // Signal end of audio and request graceful finish
         recognitionRequest?.endAudio()
@@ -79,13 +88,13 @@ class HybridRecognizer: HybridRecognizerSpec {
         stopListening()
     }
 
-    private func requestMicrophonePermission(params: SpeechToTextParams) {
+    private func requestMicrophonePermission() {
         AVAudioSession.sharedInstance().requestRecordPermission { [weak self] granted in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 
                 if granted {
-                    self.startRecognition(params: params)
+                    self.startRecognition()
                 } else {
                     self.onPermissionDenied?()
                 }
@@ -93,17 +102,17 @@ class HybridRecognizer: HybridRecognizerSpec {
         }
     }
     
-    private func startRecognition(params: SpeechToTextParams) {
+    private func startRecognition() {
         isStopping = false
         
-        let locale = Locale(identifier: params.locale ?? "en-US")
+        let locale = Locale(identifier: config?.locale ?? "en-US")
         guard let speechRecognizer = SFSpeechRecognizer(locale: locale), speechRecognizer.isAvailable else {
             onError?("Speech recognizer not available")
             return
         }
         
         autoStopper = AutoStopper(
-            silenceThresholdMs: params.autoFinishRecognitionMs ?? Self.defaultAutoFinishRecognitionMs,
+            silenceThresholdMs: config?.autoFinishRecognitionMs ?? Self.defaultAutoFinishRecognitionMs,
             onProgress: { [weak self] timeLeftMs in
                 self?.onAutoFinishProgress?(timeLeftMs)
             },
@@ -115,6 +124,10 @@ class HybridRecognizer: HybridRecognizerSpec {
         do {
             let audioSession = AVAudioSession.sharedInstance()
             try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+            if #available(iOS 13.0, *) {
+                // Without this, iOS may suppress haptics while recording.
+                try audioSession.setAllowHapticsAndSystemSoundsDuringRecording(true)
+            }
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
             onError?("Failed to set up audio session: \(error.localizedDescription)")
@@ -131,19 +144,19 @@ class HybridRecognizer: HybridRecognizerSpec {
         
         recognitionRequest.shouldReportPartialResults = true
         
-        if let contextualStrings = params.contextualStrings, !contextualStrings.isEmpty {
+        if let contextualStrings = config?.contextualStrings, !contextualStrings.isEmpty {
             recognitionRequest.contextualStrings = contextualStrings
         }
         
         if #available(iOS 16, *) {
-            if let addPunctiation = params.iosAddPunctuation, addPunctiation == false {
+            if let addPunctiation = config?.iosAddPunctuation, addPunctiation == false {
                 recognitionRequest.addsPunctuation = false
             } else {
                 recognitionRequest.addsPunctuation = true
             }
         }
         
-        let disableRepeatingFilter = params.disableRepeatingFilter ?? false
+        let disableRepeatingFilter = config?.disableRepeatingFilter ?? false
         
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { [weak self] result, error in
             guard let self = self else { return }
@@ -197,6 +210,11 @@ class HybridRecognizer: HybridRecognizerSpec {
             audioEngine.prepare()
             try audioEngine.start()
             isActive = true
+
+            if let hapticStyle = config?.startHapticFeedbackStyle {
+                HapticImpact(style: hapticStyle).trigger()
+            }
+            
             autoStopper?.indicateRecordingActivity(
                 from: "startListening",
                 addMsToThreshold: nil

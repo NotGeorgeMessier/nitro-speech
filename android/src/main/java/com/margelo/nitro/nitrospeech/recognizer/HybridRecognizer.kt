@@ -84,6 +84,11 @@ class HybridRecognizer: HybridRecognizerSpec() {
     if (!isActive) return
     onFinishRecognition(null, null, true)
     mainHandler.postDelayed({
+      val context = NitroModules.applicationContext
+      val hapticImpact = config?.stopHapticFeedbackStyle
+      if (hapticImpact != null && context != null) {
+        HapticImpact(hapticImpact).trigger(context)
+      }
       cleanup()
     }, POST_RECOGNITION_DELAY)
   }
@@ -156,6 +161,12 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
         speechRecognizer?.startListening(intent)
         isActive = true
+        
+        val hapticImpact = config?.startHapticFeedbackStyle
+        if (hapticImpact != null) {
+          HapticImpact(hapticImpact).trigger(context)
+        }
+
         mainHandler.postDelayed({
           if (isActive) {
             onReadyForSpeech?.invoke()

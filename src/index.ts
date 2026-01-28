@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
 import { NitroModules } from 'react-native-nitro-modules'
 import type {
@@ -53,9 +54,20 @@ const recognizerUpdateAutoFinishTime = (
 
 /**
  * Safe, lifecycle-aware hook to use the recognizer.
+ *
+ * @param callbacks - The callbacks to use for the recognizer.
+ * @param destroyDeps - The additional dependencies to use for the cleanup effect.
+ *
+ * Example: To cleanup when the screen is unfocused.
+ *
+ * ```typescript
+ * const isFocused = useIsFocused()
+ * useRecognizer({ ... }, [isFocused])
+ * ```
  */
 export const useRecognizer = (
-  callbacks: RecognizerCallbacks
+  callbacks: RecognizerCallbacks,
+  destroyDeps: React.DependencyList = []
 ): RecognizerHandlers => {
   React.useEffect(() => {
     Recognizer.onReadyForSpeech = () => {
@@ -90,7 +102,7 @@ export const useRecognizer = (
     return () => {
       Recognizer.stopListening()
     }
-  }, [])
+  }, [...destroyDeps])
 
   return {
     startListening: recognizerStartListening,

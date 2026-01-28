@@ -10,6 +10,8 @@
 #include <fbjni/fbjni.h>
 #include "SpeechToTextParams.hpp"
 
+#include "HapticFeedbackStyle.hpp"
+#include "JHapticFeedbackStyle.hpp"
 #include <optional>
 #include <string>
 #include <vector>
@@ -41,6 +43,10 @@ namespace margelo::nitro::nitrospeech {
       jni::local_ref<jni::JBoolean> disableRepeatingFilter = this->getFieldValue(fieldDisableRepeatingFilter);
       static const auto fieldContextualStrings = clazz->getField<jni::JArrayClass<jni::JString>>("contextualStrings");
       jni::local_ref<jni::JArrayClass<jni::JString>> contextualStrings = this->getFieldValue(fieldContextualStrings);
+      static const auto fieldStartHapticFeedbackStyle = clazz->getField<JHapticFeedbackStyle>("startHapticFeedbackStyle");
+      jni::local_ref<JHapticFeedbackStyle> startHapticFeedbackStyle = this->getFieldValue(fieldStartHapticFeedbackStyle);
+      static const auto fieldStopHapticFeedbackStyle = clazz->getField<JHapticFeedbackStyle>("stopHapticFeedbackStyle");
+      jni::local_ref<JHapticFeedbackStyle> stopHapticFeedbackStyle = this->getFieldValue(fieldStopHapticFeedbackStyle);
       static const auto fieldAndroidMaskOffensiveWords = clazz->getField<jni::JBoolean>("androidMaskOffensiveWords");
       jni::local_ref<jni::JBoolean> androidMaskOffensiveWords = this->getFieldValue(fieldAndroidMaskOffensiveWords);
       static const auto fieldAndroidFormattingPreferQuality = clazz->getField<jni::JBoolean>("androidFormattingPreferQuality");
@@ -65,6 +71,8 @@ namespace margelo::nitro::nitrospeech {
           }
           return __vector;
         }()) : std::nullopt,
+        startHapticFeedbackStyle != nullptr ? std::make_optional(startHapticFeedbackStyle->toCpp()) : std::nullopt,
+        stopHapticFeedbackStyle != nullptr ? std::make_optional(stopHapticFeedbackStyle->toCpp()) : std::nullopt,
         androidMaskOffensiveWords != nullptr ? std::make_optional(static_cast<bool>(androidMaskOffensiveWords->value())) : std::nullopt,
         androidFormattingPreferQuality != nullptr ? std::make_optional(static_cast<bool>(androidFormattingPreferQuality->value())) : std::nullopt,
         androidUseWebSearchModel != nullptr ? std::make_optional(static_cast<bool>(androidUseWebSearchModel->value())) : std::nullopt,
@@ -79,7 +87,7 @@ namespace margelo::nitro::nitrospeech {
      */
     [[maybe_unused]]
     static jni::local_ref<JSpeechToTextParams::javaobject> fromCpp(const SpeechToTextParams& value) {
-      using JSignature = JSpeechToTextParams(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>);
+      using JSignature = JSpeechToTextParams(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
@@ -97,6 +105,8 @@ namespace margelo::nitro::nitrospeech {
           }
           return __array;
         }() : nullptr,
+        value.startHapticFeedbackStyle.has_value() ? JHapticFeedbackStyle::fromCpp(value.startHapticFeedbackStyle.value()) : nullptr,
+        value.stopHapticFeedbackStyle.has_value() ? JHapticFeedbackStyle::fromCpp(value.stopHapticFeedbackStyle.value()) : nullptr,
         value.androidMaskOffensiveWords.has_value() ? jni::JBoolean::valueOf(value.androidMaskOffensiveWords.value()) : nullptr,
         value.androidFormattingPreferQuality.has_value() ? jni::JBoolean::valueOf(value.androidFormattingPreferQuality.value()) : nullptr,
         value.androidUseWebSearchModel.has_value() ? jni::JBoolean::valueOf(value.androidUseWebSearchModel.value()) : nullptr,

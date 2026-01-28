@@ -8,6 +8,8 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 // Forward declaration of `HybridNitroSpeechSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
@@ -16,6 +18,7 @@ namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
 namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 
 // Include C++ defined types
+#include "HapticFeedbackStyle.hpp"
 #include "HybridNitroSpeechSpec.hpp"
 #include "HybridRecognizerSpec.hpp"
 #include "SpeechToTextParams.hpp"
