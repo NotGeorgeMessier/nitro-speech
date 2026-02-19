@@ -11,9 +11,9 @@ const NitroSpeech =
   NitroModules.createHybridObject<NitroSpeechSpec>('NitroSpeech')
 
 /**
- * Unsafe access to the recognizer object for the NitroSpeech module.
+ * Unsafe access to the Recognizer Session.
  */
-export const Recognizer = NitroSpeech.recognizer
+export const RecognizerSession = NitroSpeech.recognizer
 
 type RecognizerCallbacks = Pick<
   RecognizerSpec,
@@ -34,22 +34,22 @@ type RecognizerHandlers = Pick<
 >
 
 const recognizerStartListening = (params: SpeechToTextParams) => {
-  Recognizer.startListening(params)
+  RecognizerSession.startListening(params)
 }
 
 const recognizerStopListening = () => {
-  Recognizer.stopListening()
+  RecognizerSession.stopListening()
 }
 
 const recognizerAddAutoFinishTime = (additionalTimeMs?: number) => {
-  Recognizer.addAutoFinishTime(additionalTimeMs)
+  RecognizerSession.addAutoFinishTime(additionalTimeMs)
 }
 
 const recognizerUpdateAutoFinishTime = (
   newTimeMs: number,
   withRefresh?: boolean
 ) => {
-  Recognizer.updateAutoFinishTime(newTimeMs, withRefresh)
+  RecognizerSession.updateAutoFinishTime(newTimeMs, withRefresh)
 }
 
 /**
@@ -70,37 +70,37 @@ export const useRecognizer = (
   destroyDeps: React.DependencyList = []
 ): RecognizerHandlers => {
   React.useEffect(() => {
-    Recognizer.onReadyForSpeech = () => {
+    RecognizerSession.onReadyForSpeech = () => {
       callbacks.onReadyForSpeech?.()
     }
-    Recognizer.onRecordingStopped = () => {
+    RecognizerSession.onRecordingStopped = () => {
       callbacks.onRecordingStopped?.()
     }
-    Recognizer.onResult = (resultBatches: string[]) => {
+    RecognizerSession.onResult = (resultBatches: string[]) => {
       callbacks.onResult?.(resultBatches)
     }
-    Recognizer.onAutoFinishProgress = (timeLeftMs: number) => {
+    RecognizerSession.onAutoFinishProgress = (timeLeftMs: number) => {
       callbacks.onAutoFinishProgress?.(timeLeftMs)
     }
-    Recognizer.onError = (message: string) => {
+    RecognizerSession.onError = (message: string) => {
       callbacks.onError?.(message)
     }
-    Recognizer.onPermissionDenied = () => {
+    RecognizerSession.onPermissionDenied = () => {
       callbacks.onPermissionDenied?.()
     }
     return () => {
-      Recognizer.onReadyForSpeech = undefined
-      Recognizer.onRecordingStopped = undefined
-      Recognizer.onResult = undefined
-      Recognizer.onAutoFinishProgress = undefined
-      Recognizer.onError = undefined
-      Recognizer.onPermissionDenied = undefined
+      RecognizerSession.onReadyForSpeech = undefined
+      RecognizerSession.onRecordingStopped = undefined
+      RecognizerSession.onResult = undefined
+      RecognizerSession.onAutoFinishProgress = undefined
+      RecognizerSession.onError = undefined
+      RecognizerSession.onPermissionDenied = undefined
     }
   }, [callbacks])
 
   React.useEffect(() => {
     return () => {
-      Recognizer.stopListening()
+      RecognizerSession.stopListening()
     }
   }, [...destroyDeps])
 
@@ -110,6 +110,16 @@ export const useRecognizer = (
     addAutoFinishTime: recognizerAddAutoFinishTime,
     updateAutoFinishTime: recognizerUpdateAutoFinishTime,
   }
+}
+
+/**
+ * Safe reference to the Recognizer methods.
+ */
+export const RecognizerRef = {
+  startListening: recognizerStartListening,
+  stopListening: recognizerStopListening,
+  addAutoFinishTime: recognizerAddAutoFinishTime,
+  updateAutoFinishTime: recognizerUpdateAutoFinishTime,
 }
 
 export type { RecognizerCallbacks, RecognizerHandlers, SpeechToTextParams }

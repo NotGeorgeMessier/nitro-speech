@@ -1,6 +1,6 @@
 {
   "name": "@gmessier/nitro-speech",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "React Native Speech Recognition Library powered by Nitro Modules",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",

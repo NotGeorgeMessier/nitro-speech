@@ -1,9 +1,9 @@
 import React from 'react';
 import type { Recognizer as RecognizerSpec, SpeechToTextParams } from './specs/NitroSpeech.nitro';
 /**
- * Unsafe access to the recognizer object for the NitroSpeech module.
+ * Unsafe access to the Recognizer Session.
  */
-export declare const Recognizer: RecognizerSpec;
+export declare const RecognizerSession: RecognizerSpec;
 type RecognizerCallbacks = Pick<RecognizerSpec, 'onReadyForSpeech' | 'onRecordingStopped' | 'onResult' | 'onAutoFinishProgress' | 'onError' | 'onPermissionDenied'>;
 type RecognizerHandlers = Pick<RecognizerSpec, 'startListening' | 'stopListening' | 'addAutoFinishTime' | 'updateAutoFinishTime'>;
 /**
@@ -20,5 +20,14 @@ type RecognizerHandlers = Pick<RecognizerSpec, 'startListening' | 'stopListening
  * ```
  */
 export declare const useRecognizer: (callbacks: RecognizerCallbacks, destroyDeps?: React.DependencyList) => RecognizerHandlers;
+/**
+ * Safe reference to the Recognizer methods.
+ */
+export declare const RecognizerRef: {
+    startListening: (params: SpeechToTextParams) => void;
+    stopListening: () => void;
+    addAutoFinishTime: (additionalTimeMs?: number) => void;
+    updateAutoFinishTime: (newTimeMs: number, withRefresh?: boolean) => void;
+};
 export type { RecognizerCallbacks, RecognizerHandlers, SpeechToTextParams };
 //# sourceMappingURL=index.d.ts.map

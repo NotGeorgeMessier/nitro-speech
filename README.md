@@ -6,11 +6,28 @@
 
  
 > If you hit an issue, please open a GitHub issue or reach out to me on Discord / Twitter (X) — response is guaranteed.
+>
 > - GitHub Issues: [NotGeorgeMessier/nitro-speech/issues](https://github.com/NotGeorgeMessier/nitro-speech/issues)
 > - Discord: `gmessier`
 > - Twitter (X): `SufferingGeorge`
 
-Speech recognition for React Native, powered by [Nitro Modules](https://github.com/mrousavy/nitro).
+React Native Real-Time Speech Recognition Library, powered by [Nitro Modules](https://github.com/mrousavy/nitro).
+
+#### Key Features:
+
+- Built on Nitro Modules for low-overhead native bridging
+- Configurable Timer for silence (default: 8 sec)
+  - Callback `onAutoFinishProgress` for progress bars, etc...
+  - Method `addAutoFinishTime` for single timer update
+  - Method `updateAutoFinishTime` for constant timer update
+- Optional Haptic Feedback on start and finish
+- Speech-quality configurations:
+  - Result is grouped by speech segments into Batches.
+  - Param `disableRepeatingFilter` for consecutive duplicate-word filtering.
+  - Param `androidDisableBatchHandling` for removing empty recognition result.
+- Embedded Permission handling
+  - Callback `onPermissionDenied` - if user denied the request
+- Everything else that could be found in Expo or other libraries
 
 ## Table of Contents
 
@@ -20,7 +37,8 @@ Speech recognition for React Native, powered by [Nitro Modules](https://github.c
 - [Usage](#usage)
   - [Recommended: useRecognizer Hook](#recommended-userecognizer-hook)
   - [With React Navigation (important)](#with-react-navigation-important)
-  - [Alternative: Static Recognizer](#alternative-static-recognizer-not-safe)
+  - [Cross-component control: RecognizerRef](#cross-component-control-recognizerref)
+  - [Unsafe: RecognizerSession](#unsafe-recognizersession)
 - [API Reference](#api-reference)
 - [Requirements](#requirements)
 - [Troubleshooting](#troubleshooting)
@@ -85,7 +103,7 @@ Both permissions are required for speech recognition to work on iOS.
 |---------|-------------|-----|---------|
 | **Real-time transcription** | Get partial results as the user speaks, enabling live UI updates | ✅ | ✅ |
 | **Auto-stop on silence** | Automatically stops recognition after configurable inactivity period (default: 8s) | ✅ | ✅ |
-| **Auto-finish progress** | Progress callbacks showing countdown until auto-stop | ✅ | ❌ *(TODO)* |
+| **Auto-finish progress** | Progress callbacks showing countdown until auto-stop | ✅ | *(TODO)* |
 | **Haptic feedback** | Optional haptics on recording start/stop | ✅ | ✅ |
 | **Background handling** | Auto-stop when app loses focus/goes to background | ✅ | Not Safe *(TODO)* |
 | **Permission handling** | Dedicated `onPermissionDenied` callback | ✅ | ✅ |
@@ -100,6 +118,9 @@ Both permissions are required for speech recognition to work on iOS.
 ## Usage
 
 ### Recommended: useRecognizer Hook
+
+`useRecognizer` is lifecycle-aware. It calls `stopListening()` during cleanup (unmount or `destroyDeps` change).  
+Because of that, treat it as a **single session owner** setup hook: use it once per recognition session/screen, where you define callbacks.
 
 ```typescript
 import { useRecognizer } from '@gmessier/nitro-speech';
@@ -135,7 +156,9 @@ function MyComponent() {
     <View>
       <TouchableOpacity onPress={() => startListening({ 
         locale: 'en-US',
+        disableRepeatingFilter: false,
         autoFinishRecognitionMs: 8000,
+        
         contextualStrings: ['custom', 'words'],
         // Haptics (both platforms)
         startHapticFeedbackStyle: 'medium',
@@ -146,6 +169,7 @@ function MyComponent() {
         androidMaskOffensiveWords: false,
         androidFormattingPreferQuality: false,
         androidUseWebSearchModel: false,
+        androidDisableBatchHandling: false,
       })}>
         <Text>Start Listening</Text>
       </TouchableOpacity>
@@ -163,11 +187,14 @@ function MyComponent() {
 }
 ```
 
+Use the handlers returned by this single hook instance inside that owner component.  
+For other components, avoid creating another `useRecognizer` instance for the same session.
+
 ### With React Navigation (important)
 
 React Navigation **doesn’t unmount screens** when you navigate — the screen can stay mounted in the background and come back without remounting. See: [Navigation lifecycle (React Navigation)](https://reactnavigation.org/docs/8.x/navigation-lifecycle/#summary).
 
-Because of that, prefer tying recognition cleanup to **focus state**, not just component unmount. A simple approach is `useIsFocused()` and passing it into `useRecognizer`’s `destroyDeps` so recognition stops when the screen blurs. See: [`useIsFocused` (React Navigation)](https://reactnavigation.org/docs/8.x/use-is-focused).
+Because of that, prefer tying recognition cleanup to **focus state**, not just component unmount. A simple approach is `useIsFocused()` and passing it into `useRecognizer`’s `destroyDeps` so recognition stops when the screen blurs. See: `[useIsFocused` (React Navigation)](https://reactnavigation.org/docs/8.x/use-is-focused).
 
 ```typescript
 const isFocused = useIsFocused();
@@ -181,56 +208,73 @@ const {
 );
 ```
 
-### Alternative: Static Recognizer (Not Safe)
+### Cross-component control: RecognizerRef
+
+If you need to call recognizer methods from other components without prop drilling, use `RecognizerRef`.
 
 ```typescript
-import { Recognizer } from '@gmessier/nitro-speech';
+import { RecognizerRef } from '@gmessier/nitro-speech';
+
+RecognizerRef.startListening({ locale: 'en-US' });
+RecognizerRef.addAutoFinishTime(5000);
+RecognizerRef.updateAutoFinishTime(10000, true);
+RecognizerRef.stopListening();
+```
+
+`RecognizerRef` exposes only method handlers and is safe for cross-component method access.
+
+### Unsafe: RecognizerSession
+
+`RecognizerSession` is the hybrid object. It gives direct access to callbacks and control methods, but it is unsafe to orchestrate the full session directly from it.
+
+```typescript
+import { RecognizerSession } from '@gmessier/nitro-speech';
 
 // Set up callbacks
-Recognizer.onReadyForSpeech = () => {
+RecognizerSession.onReadyForSpeech = () => {
   console.log('Listening...');
 };
 
-Recognizer.onResult = (textBatches) => {
+RecognizerSession.onResult = (textBatches) => {
   console.log('Result:', textBatches.join('\n'));
 };
 
-Recognizer.onRecordingStopped = () => {
+RecognizerSession.onRecordingStopped = () => {
   console.log('Stopped');
 };
 
-Recognizer.onAutoFinishProgress = (timeLeftMs) => {
+RecognizerSession.onAutoFinishProgress = (timeLeftMs) => {
   console.log('Auto-stop in:', timeLeftMs, 'ms');
 };
 
-Recognizer.onError = (error) => {
+RecognizerSession.onError = (error) => {
   console.log('Error:', error);
 };
 
-Recognizer.onPermissionDenied = () => {
+RecognizerSession.onPermissionDenied = () => {
   console.log('Permission denied');
 };
 
 // Start listening
-Recognizer.startListening({
+RecognizerSession.startListening({
   locale: 'en-US',
 });
 
 // Stop listening
-Recognizer.stopListening();
+RecognizerSession.stopListening();
 
 // Manually add time to auto finish timer
-Recognizer.addAutoFinishTime(5000); // Add 5 seconds
-Recognizer.addAutoFinishTime(); // Reset to original time
+RecognizerSession.addAutoFinishTime(5000); // Add 5 seconds
+RecognizerSession.addAutoFinishTime(); // Reset to original time
 
 // Update auto finish time
-Recognizer.updateAutoFinishTime(10000); // Set to 10 seconds
-Recognizer.updateAutoFinishTime(10000, true); // Set to 10 seconds and refresh progress
+RecognizerSession.updateAutoFinishTime(10000); // Set to 10 seconds
+RecognizerSession.updateAutoFinishTime(10000, true); // Set to 10 seconds and refresh progress
 ```
 
 ### ⚠️ About dispose()
 
-The `Recognizer.dispose()` method is **NOT SAFE** and should rarely be used. Hybrid Objects in Nitro are typically managed by the JS garbage collector automatically. Only call `dispose()` in performance-critical scenarios where you need to eagerly destroy objects.
+The `RecognizerSession.dispose()` method is **NOT SAFE** and should rarely be used. Hybrid Objects in Nitro are typically managed by the JS garbage collector automatically. Only call `dispose()` in performance-critical scenarios where you need to eagerly destroy objects.
 
 **See:** [Nitro dispose() documentation](https://nitro.margelo.com/docs/hybrid-objects#dispose)
 
@@ -238,7 +282,11 @@ The `Recognizer.dispose()` method is **NOT SAFE** and should rarely be used. Hyb
 
 ### `useRecognizer(callbacks, destroyDeps?)`
 
-A React hook that provides lifecycle-aware access to the speech recognizer.
+#### Usage notes
+
+- Use `useRecognizer` once per session/screen as the session setup owner.
+- Cleanup stops recognition, so mounting multiple instances can unexpectedly end an active session.
+- For method access in non-owner components, use `RecognizerRef`.
 
 #### Parameters
 
@@ -257,6 +305,18 @@ A React hook that provides lifecycle-aware access to the speech recognizer.
 - `stopListening()` - Stop speech recognition
 - `addAutoFinishTime(additionalTimeMs?: number)` - Add time to the auto-finish timer (or reset to original if no parameter)
 - `updateAutoFinishTime(newTimeMs: number, withRefresh?: boolean)` - Update the auto-finish timer
+
+### `RecognizerRef`
+
+- `startListening(params: SpeechToTextParams)`
+- `stopListening()`
+- `addAutoFinishTime(additionalTimeMs?: number)`
+- `updateAutoFinishTime(newTimeMs: number, withRefresh?: boolean)`
+
+### `RecognizerSession`
+
+- Exposes callbacks (`onReadyForSpeech`, `onResult`, etc.) and control methods.
+- Prefer `useRecognizer` (single owner) + `RecognizerRef` for app-level usage.
 
 ### `SpeechToTextParams`
 
