@@ -4,10 +4,7 @@
 [![license](https://img.shields.io/npm/l/@gmessier/nitro-speech.svg)](https://github.com/NotGeorgeMessier/nitro-speech/blob/main/LICENSE)
 [![npm downloads](https://img.shields.io/npm/dm/@gmessier/nitro-speech.svg)](https://www.npmjs.com/package/@gmessier/nitro-speech)
 
-> **⚠️ Work in Progress**
-> 
-> This library is under active development. (Last version is stable)
->
+ 
 > If you hit an issue, please open a GitHub issue or reach out to me on Discord / Twitter (X) — response is guaranteed.
 > - GitHub Issues: [NotGeorgeMessier/nitro-speech/issues](https://github.com/NotGeorgeMessier/nitro-speech/issues)
 > - Discord: `gmessier`
@@ -89,12 +86,12 @@ Both permissions are required for speech recognition to work on iOS.
 | **Real-time transcription** | Get partial results as the user speaks, enabling live UI updates | ✅ | ✅ |
 | **Auto-stop on silence** | Automatically stops recognition after configurable inactivity period (default: 8s) | ✅ | ✅ |
 | **Auto-finish progress** | Progress callbacks showing countdown until auto-stop | ✅ | ❌ *(TODO)* |
-| **Locale support** | Configure speech recognizer for different languages | ✅ | ✅ |
-| **Background handling** | Auto-stop when app loses focus/goes to background | ✅ | Not Safe *(TODO)* |
-| **Contextual strings** | Domain-specific vocabulary for improved accuracy | ✅ | ✅ |
-| **Repeating word filter** | Removes consecutive duplicate words from artifacts | ✅ | ✅ |
-| **Permission handling** | Dedicated `onPermissionDenied` callback | ✅ | ✅ |
 | **Haptic feedback** | Optional haptics on recording start/stop | ✅ | ✅ |
+| **Background handling** | Auto-stop when app loses focus/goes to background | ✅ | Not Safe *(TODO)* |
+| **Permission handling** | Dedicated `onPermissionDenied` callback | ✅ | ✅ |
+| **Repeating word filter** | Removes consecutive duplicate words from artifacts | ✅ | ✅ |
+| **Locale support** | Configure speech recognizer for different languages | ✅ | ✅ |
+| **Contextual strings** | Domain-specific vocabulary for improved accuracy | ✅ | ✅ |
 | **Automatic punctuation** | Adds punctuation to transcription (iOS 16+) | ✅ | Auto |
 | **Language model selection** | Choose between web search vs free-form models | Auto | ✅ |
 | **Offensive word masking** | Control whether offensive words are masked | Auto | ✅ |
