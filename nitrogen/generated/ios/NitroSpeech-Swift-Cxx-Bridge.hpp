@@ -273,6 +273,21 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return *optional;
   }
   
+  // pragma MARK: std::optional<std::function<void(double /* normVolume */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(double / * normVolume * /)>>`.
+   */
+  using std__optional_std__function_void_double____normVolume______ = std::optional<std::function<void(double /* normVolume */)>>;
+  inline std::optional<std::function<void(double /* normVolume */)>> create_std__optional_std__function_void_double____normVolume______(const std::function<void(double /* normVolume */)>& value) noexcept {
+    return std::optional<std::function<void(double /* normVolume */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_double____normVolume______(const std::optional<std::function<void(double /* normVolume */)>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::function<void(double /* normVolume */)> get_std__optional_std__function_void_double____normVolume______(const std::optional<std::function<void(double /* normVolume */)>>& optional) noexcept {
+    return *optional;
+  }
+  
   // pragma MARK: std::shared_ptr<HybridRecognizerSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridRecognizerSpec>`.
@@ -292,6 +307,15 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
   }
   inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
     return Result<void>::withError(error);
+  }
+  
+  // pragma MARK: Result<bool>
+  using Result_bool_ = Result<bool>;
+  inline Result_bool_ create_Result_bool_(bool value) noexcept {
+    return Result<bool>::withValue(std::move(value));
+  }
+  inline Result_bool_ create_Result_bool_(const std::exception_ptr& error) noexcept {
+    return Result<bool>::withError(error);
   }
   
   // pragma MARK: std::shared_ptr<HybridNitroSpeechSpec>

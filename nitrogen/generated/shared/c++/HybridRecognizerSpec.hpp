@@ -61,6 +61,8 @@ namespace margelo::nitro::nitrospeech {
       virtual void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) = 0;
       virtual std::optional<std::function<void()>> getOnPermissionDenied() = 0;
       virtual void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) = 0;
+      virtual std::optional<std::function<void(double /* normVolume */)>> getOnVolumeChange() = 0;
+      virtual void setOnVolumeChange(const std::optional<std::function<void(double /* normVolume */)>>& onVolumeChange) = 0;
 
     public:
       // Methods
@@ -68,6 +70,7 @@ namespace margelo::nitro::nitrospeech {
       virtual void stopListening() = 0;
       virtual void addAutoFinishTime(std::optional<double> additionalTimeMs) = 0;
       virtual void updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) = 0;
+      virtual bool getIsActive() = 0;
 
     protected:
       // Hybrid Setup

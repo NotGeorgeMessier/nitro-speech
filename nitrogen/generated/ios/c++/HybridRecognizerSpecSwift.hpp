@@ -106,6 +106,13 @@ namespace margelo::nitro::nitrospeech {
     inline void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) noexcept override {
       _swiftPart.setOnPermissionDenied(onPermissionDenied);
     }
+    inline std::optional<std::function<void(double /* normVolume */)>> getOnVolumeChange() noexcept override {
+      auto __result = _swiftPart.getOnVolumeChange();
+      return __result;
+    }
+    inline void setOnVolumeChange(const std::optional<std::function<void(double /* normVolume */)>>& onVolumeChange) noexcept override {
+      _swiftPart.setOnVolumeChange(onVolumeChange);
+    }
 
   public:
     // Methods
@@ -132,6 +139,14 @@ namespace margelo::nitro::nitrospeech {
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
+    }
+    inline bool getIsActive() override {
+      auto __result = _swiftPart.getIsActive();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
     }
 
   private:

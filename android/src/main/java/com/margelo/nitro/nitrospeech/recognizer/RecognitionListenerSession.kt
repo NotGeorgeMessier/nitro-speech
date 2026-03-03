@@ -5,17 +5,32 @@ import android.speech.RecognitionListener
 import android.speech.SpeechRecognizer
 import android.util.Log
 import com.margelo.nitro.nitrospeech.SpeechToTextParams
+import kotlin.math.max
+import kotlin.math.roundToInt
 
 class RecognitionListenerSession (
     private val autoStopper: AutoStopper?,
     private val config: SpeechToTextParams?,
+    private val onVolumeChange: ((normVolume: Double) -> Unit)?,
     private val onFinishRecognition: (result: ArrayList<String>?, errorMessage: String?, recordingStopped: Boolean) -> Unit,
 ) {
     companion object {
         private const val TAG = "HybridRecognizer"
+        private const val SPEECH_LEVEL_THRESHOLD = 0.08f
+        private const val FLOOR_RISE_ALPHA = 0.01f
+        private const val FLOOR_FALL_ALPHA = 0.20f
+        private const val PEAK_ATTACK_ALPHA = 0.25f
+        private const val PEAK_DECAY_ALPHA = 0.01f
+        private const val METER_ATTACK = 0.35f
+        private const val METER_RELEASE = 0.08f
+        private const val MIN_SPAN_DB = 6f
+        private const val PRECISION_SCALE = 1_000_000f
     }
 
     private var resultBatches: ArrayList<String>? = null
+    private var noiseFloorDb = Float.NaN
+    private var peakDb = Float.NaN
+    private var levelSmoothed = 0f
 
     fun createRecognitionListener(): RecognitionListener {
         resultBatches = null
@@ -23,7 +38,11 @@ class RecognitionListenerSession (
             override fun onReadyForSpeech(params: Bundle?) {}
             override fun onBeginningOfSpeech() {}
             override fun onRmsChanged(rmsdB: Float) {
-                autoStopper?.indicateRecordingActivity()
+                val normLevel = normalizeRmsDb(rmsdB)
+                onVolumeChange?.invoke(normLevel.toDouble())
+                if (normLevel > SPEECH_LEVEL_THRESHOLD) {
+                    autoStopper?.indicateRecordingActivity()
+                }
             }
             override fun onBufferReceived(buffer: ByteArray?) {}
             override fun onEndOfSpeech() {}
@@ -92,15 +111,62 @@ class RecognitionListenerSession (
         }
     }
 
-    // Filters out 2 or more repeating words in a row, like "and and"
+    // Filters out 2 or more consecutive duplicate words, like "and and"
     private fun repeatingFilter(text: String): String {
-        val words = text.split(Regex("\\s+")).toMutableList()
-        var joiner = words[0]
+        var words = text.split(Regex("\\s+")).filter { it.isNotBlank() }
+        if (words.isEmpty()) {
+            return ""
+        }
+
+        val joiner = StringBuilder()
+
+        // 10 - arbitrary number of last substrings that is still unstable
+        // and needs to be filtered. Prev substrings were handled earlier.
+        if (words.size >= 10) {
+            joiner.append(words.take(words.size - 9).joinToString(" "))
+            words = words.takeLast(10)
+        } else {
+            joiner.append(words.first())
+        }
+
         for (i in words.indices) {
             if (i == 0) continue
-            if (words[i] == words[i-1]) continue
-            joiner += " ${words[i]}"
+            // Always add number-containing strings.
+            if (Regex("\\d+").containsMatchIn(words[i])) {
+                joiner.append(" ").append(words[i])
+                continue
+            }
+
+            // Skip consecutive duplicate strings.
+            if (words[i] == words[i - 1]) continue
+            joiner.append(" ").append(words[i])
         }
-        return joiner
+        return joiner.toString()
+    }
+
+    private fun normalizeRmsDb(rmsdB: Float): Double {
+        if (!rmsdB.isFinite()) {
+            return 0.0
+        }
+
+        if (noiseFloorDb.isNaN()) {
+            noiseFloorDb = rmsdB
+        }
+        if (peakDb.isNaN()) {
+            peakDb = rmsdB + MIN_SPAN_DB
+        }
+
+        val floorAlpha = if (rmsdB < noiseFloorDb) FLOOR_FALL_ALPHA else FLOOR_RISE_ALPHA
+        noiseFloorDb += floorAlpha * (rmsdB - noiseFloorDb)
+
+        val peakAlpha = if (rmsdB > peakDb) PEAK_ATTACK_ALPHA else PEAK_DECAY_ALPHA
+        peakDb += peakAlpha * (rmsdB - peakDb)
+
+        val span = max(peakDb - noiseFloorDb, MIN_SPAN_DB)
+        val raw = ((rmsdB - noiseFloorDb) / span).coerceIn(0f, 1f)
+        val smoothingCoeff = if (raw > levelSmoothed) METER_ATTACK else METER_RELEASE
+        levelSmoothed += smoothingCoeff * (raw - levelSmoothed)
+
+        return ((levelSmoothed * PRECISION_SCALE).roundToInt() / PRECISION_SCALE).toDouble()
     }
   }

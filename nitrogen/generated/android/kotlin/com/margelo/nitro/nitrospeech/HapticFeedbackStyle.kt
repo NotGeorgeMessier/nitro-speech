@@ -18,5 +18,6 @@ import com.facebook.proguard.annotations.DoNotStrip
 enum class HapticFeedbackStyle(@DoNotStrip @Keep val value: Int) {
   LIGHT(0),
   MEDIUM(1),
-  HEAVY(2);
+  HEAVY(2),
+  NONE(3);
 }

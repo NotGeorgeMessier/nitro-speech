@@ -9,7 +9,7 @@ class AutoStopper {
     private var defaultSilenceThresholdMs: Double
     private var silenceThresholdMs: Double
     
-    private var progressWorkItem: DispatchWorkItem?
+    private var progressTask: Task<Void, Never>?
     private var elapsedMs: Double = 0
     private var isStopped = false
     
@@ -21,7 +21,7 @@ class AutoStopper {
     }
     
     func indicateRecordingActivity(from: String, addMsToThreshold: Double?) {
-        logger.info("indicateRecordingActivity: \(from)")
+        logger.info("[IndicateRecordingActivity]: \(from)")
         if let addMsToThreshold = addMsToThreshold {
             self.silenceThresholdMs = addMsToThreshold + self.silenceThresholdMs - self.elapsedMs
         } else {
@@ -29,7 +29,7 @@ class AutoStopper {
         }
 
         self.onProgress(self.silenceThresholdMs)
-        progressWorkItem?.cancel()
+        progressTask?.cancel()
         self.elapsedMs = 0
         if isStopped { return }
         
@@ -37,11 +37,12 @@ class AutoStopper {
     }
     
     private func scheduleNextTick() {
-        let item = DispatchWorkItem { [weak self] in
-            guard let self = self, !self.isStopped else { return }
+        progressTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            guard let self = self, !self.isStopped, !Task.isCancelled else { return }
             
             self.elapsedMs += 1000
-            let timeLeftMs = silenceThresholdMs - elapsedMs
+            let timeLeftMs = self.silenceThresholdMs - self.elapsedMs
             
             if timeLeftMs <= 0 {
                 self.onTimeout()
@@ -50,8 +51,6 @@ class AutoStopper {
                 self.scheduleNextTick()
             }
         }
-        progressWorkItem = item
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: item)
     }
     
     func updateSilenceThreshold(newThresholdMs: Double) {
@@ -60,8 +59,8 @@ class AutoStopper {
     
     func stop() {
         isStopped = true
-        progressWorkItem?.cancel()
-        progressWorkItem = nil
+        progressTask?.cancel()
+        progressTask = nil
     }
     
     deinit {

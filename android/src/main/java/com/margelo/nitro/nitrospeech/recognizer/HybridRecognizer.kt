@@ -33,6 +33,11 @@ class HybridRecognizer: HybridRecognizerSpec() {
   override var onAutoFinishProgress: ((timeLeftMs: Double) -> Unit)? = null
   override var onError: ((error: String) -> Unit)? = null
   override var onPermissionDenied: (() -> Unit)? = null
+  override var onVolumeChange: ((normVolume: Double) -> Unit)? = null
+
+  override fun getIsActive(): Boolean {
+    return isActive
+  }
 
   @DoNotStrip
   @Keep
@@ -86,7 +91,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
     mainHandler.postDelayed({
       val context = NitroModules.applicationContext
       val hapticImpact = config?.stopHapticFeedbackStyle
-      if (hapticImpact != null && context != null) {
+      if (context != null) {
         HapticImpact(hapticImpact).trigger(context)
       }
       cleanup()
@@ -129,6 +134,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
         val recognitionListenerSession = RecognitionListenerSession(
           autoStopper,
           config,
+          onVolumeChange
         ) { result: ArrayList<String>?, errorMessage: String?, recordingStopped: Boolean ->
           onFinishRecognition(result, errorMessage, recordingStopped)
         }
@@ -140,10 +146,10 @@ class HybridRecognizer: HybridRecognizerSpec() {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, languageModel)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, config?.locale ?: "en-US")
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-        // set many secs to avoid cutting early
+        // Set a lot of time to avoid cutting early
         intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 300000)
 
-        if (config?.androidMaskOffensiveWords != true && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (config?.maskOffensiveWords != true && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           intent.putExtra(RecognizerIntent.EXTRA_MASK_OFFENSIVE_WORDS, false)
         }
 
@@ -163,10 +169,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
         isActive = true
         
         val hapticImpact = config?.startHapticFeedbackStyle
-        if (hapticImpact != null) {
-          HapticImpact(hapticImpact).trigger(context)
-        }
 
+        HapticImpact(hapticImpact).trigger(context)
         mainHandler.postDelayed({
           if (isActive) {
             onReadyForSpeech?.invoke()
@@ -192,6 +196,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
       speechRecognizer?.destroy()
       speechRecognizer = null
       isActive = false
+      // Reset voice meter in JS consumers after stop/error cleanup.
+      onVolumeChange?.invoke(0.0)
     } catch (e: Exception) {
       onFinishRecognition(
         null,

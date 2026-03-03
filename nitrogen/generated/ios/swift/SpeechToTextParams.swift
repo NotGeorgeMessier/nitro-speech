@@ -19,7 +19,7 @@ public extension SpeechToTextParams {
   /**
    * Create a new instance of `SpeechToTextParams`.
    */
-  init(locale: String?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Bool?, contextualStrings: [String]?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, androidMaskOffensiveWords: Bool?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?) {
+  init(locale: String?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Bool?, contextualStrings: [String]?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, maskOffensiveWords: Bool?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?) {
     self.init({ () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = locale {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
@@ -63,7 +63,7 @@ public extension SpeechToTextParams {
         return .init()
       }
     }(), { () -> bridge.std__optional_bool_ in
-      if let __unwrappedValue = androidMaskOffensiveWords {
+      if let __unwrappedValue = maskOffensiveWords {
         return bridge.create_std__optional_bool_(__unwrappedValue)
       } else {
         return .init()
@@ -224,12 +224,12 @@ public extension SpeechToTextParams {
     }
   }
   
-  var androidMaskOffensiveWords: Bool? {
+  var maskOffensiveWords: Bool? {
     @inline(__always)
     get {
       return { () -> Bool? in
-        if bridge.has_value_std__optional_bool_(self.__androidMaskOffensiveWords) {
-          let __unwrapped = bridge.get_std__optional_bool_(self.__androidMaskOffensiveWords)
+        if bridge.has_value_std__optional_bool_(self.__maskOffensiveWords) {
+          let __unwrapped = bridge.get_std__optional_bool_(self.__maskOffensiveWords)
           return __unwrapped
         } else {
           return nil
@@ -238,7 +238,7 @@ public extension SpeechToTextParams {
     }
     @inline(__always)
     set {
-      self.__androidMaskOffensiveWords = { () -> bridge.std__optional_bool_ in
+      self.__maskOffensiveWords = { () -> bridge.std__optional_bool_ in
         if let __unwrappedValue = newValue {
           return bridge.create_std__optional_bool_(__unwrappedValue)
         } else {

@@ -62,6 +62,8 @@ namespace margelo::nitro::nitrospeech {
     void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) override;
     std::optional<std::function<void()>> getOnPermissionDenied() override;
     void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) override;
+    std::optional<std::function<void(double /* normVolume */)>> getOnVolumeChange() override;
+    void setOnVolumeChange(const std::optional<std::function<void(double /* normVolume */)>>& onVolumeChange) override;
 
   public:
     // Methods
@@ -69,6 +71,7 @@ namespace margelo::nitro::nitrospeech {
     void stopListening() override;
     void addAutoFinishTime(std::optional<double> additionalTimeMs) override;
     void updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) override;
+    bool getIsActive() override;
 
   private:
     friend HybridBase;

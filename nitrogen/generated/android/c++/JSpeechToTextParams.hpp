@@ -47,8 +47,8 @@ namespace margelo::nitro::nitrospeech {
       jni::local_ref<JHapticFeedbackStyle> startHapticFeedbackStyle = this->getFieldValue(fieldStartHapticFeedbackStyle);
       static const auto fieldStopHapticFeedbackStyle = clazz->getField<JHapticFeedbackStyle>("stopHapticFeedbackStyle");
       jni::local_ref<JHapticFeedbackStyle> stopHapticFeedbackStyle = this->getFieldValue(fieldStopHapticFeedbackStyle);
-      static const auto fieldAndroidMaskOffensiveWords = clazz->getField<jni::JBoolean>("androidMaskOffensiveWords");
-      jni::local_ref<jni::JBoolean> androidMaskOffensiveWords = this->getFieldValue(fieldAndroidMaskOffensiveWords);
+      static const auto fieldMaskOffensiveWords = clazz->getField<jni::JBoolean>("maskOffensiveWords");
+      jni::local_ref<jni::JBoolean> maskOffensiveWords = this->getFieldValue(fieldMaskOffensiveWords);
       static const auto fieldAndroidFormattingPreferQuality = clazz->getField<jni::JBoolean>("androidFormattingPreferQuality");
       jni::local_ref<jni::JBoolean> androidFormattingPreferQuality = this->getFieldValue(fieldAndroidFormattingPreferQuality);
       static const auto fieldAndroidUseWebSearchModel = clazz->getField<jni::JBoolean>("androidUseWebSearchModel");
@@ -73,7 +73,7 @@ namespace margelo::nitro::nitrospeech {
         }()) : std::nullopt,
         startHapticFeedbackStyle != nullptr ? std::make_optional(startHapticFeedbackStyle->toCpp()) : std::nullopt,
         stopHapticFeedbackStyle != nullptr ? std::make_optional(stopHapticFeedbackStyle->toCpp()) : std::nullopt,
-        androidMaskOffensiveWords != nullptr ? std::make_optional(static_cast<bool>(androidMaskOffensiveWords->value())) : std::nullopt,
+        maskOffensiveWords != nullptr ? std::make_optional(static_cast<bool>(maskOffensiveWords->value())) : std::nullopt,
         androidFormattingPreferQuality != nullptr ? std::make_optional(static_cast<bool>(androidFormattingPreferQuality->value())) : std::nullopt,
         androidUseWebSearchModel != nullptr ? std::make_optional(static_cast<bool>(androidUseWebSearchModel->value())) : std::nullopt,
         androidDisableBatchHandling != nullptr ? std::make_optional(static_cast<bool>(androidDisableBatchHandling->value())) : std::nullopt,
@@ -107,7 +107,7 @@ namespace margelo::nitro::nitrospeech {
         }() : nullptr,
         value.startHapticFeedbackStyle.has_value() ? JHapticFeedbackStyle::fromCpp(value.startHapticFeedbackStyle.value()) : nullptr,
         value.stopHapticFeedbackStyle.has_value() ? JHapticFeedbackStyle::fromCpp(value.stopHapticFeedbackStyle.value()) : nullptr,
-        value.androidMaskOffensiveWords.has_value() ? jni::JBoolean::valueOf(value.androidMaskOffensiveWords.value()) : nullptr,
+        value.maskOffensiveWords.has_value() ? jni::JBoolean::valueOf(value.maskOffensiveWords.value()) : nullptr,
         value.androidFormattingPreferQuality.has_value() ? jni::JBoolean::valueOf(value.androidFormattingPreferQuality.value()) : nullptr,
         value.androidUseWebSearchModel.has_value() ? jni::JBoolean::valueOf(value.androidUseWebSearchModel.value()) : nullptr,
         value.androidDisableBatchHandling.has_value() ? jni::JBoolean::valueOf(value.androidDisableBatchHandling.value()) : nullptr,

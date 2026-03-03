@@ -157,6 +157,23 @@ namespace margelo::nitro::nitrospeech {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void::javaobject> /* onPermissionDenied */)>("setOnPermissionDenied_cxx");
     method(_javaPart, onPermissionDenied.has_value() ? JFunc_void_cxx::fromCpp(onPermissionDenied.value()) : nullptr);
   }
+  std::optional<std::function<void(double /* normVolume */)>> JHybridRecognizerSpec::getOnVolumeChange() {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void_double::javaobject>()>("getOnVolumeChange_cxx");
+    auto __result = method(_javaPart);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(double /* normVolume */)> {
+      if (__result->isInstanceOf(JFunc_void_double_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_double_cxx::javaobject>(__result);
+        return downcast->cthis()->getFunction();
+      } else {
+        auto __resultRef = jni::make_global(__result);
+        return JNICallable<JFunc_void_double, void(double)>(std::move(__resultRef));
+      }
+    }()) : std::nullopt;
+  }
+  void JHybridRecognizerSpec::setOnVolumeChange(const std::optional<std::function<void(double /* normVolume */)>>& onVolumeChange) {
+    static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_double::javaobject> /* onVolumeChange */)>("setOnVolumeChange_cxx");
+    method(_javaPart, onVolumeChange.has_value() ? JFunc_void_double_cxx::fromCpp(onVolumeChange.value()) : nullptr);
+  }
 
   // Methods
   void JHybridRecognizerSpec::startListening(const SpeechToTextParams& params) {
@@ -174,6 +191,11 @@ namespace margelo::nitro::nitrospeech {
   void JHybridRecognizerSpec::updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) {
     static const auto method = javaClassStatic()->getMethod<void(double /* newTimeMs */, jni::alias_ref<jni::JBoolean> /* withRefresh */)>("updateAutoFinishTime");
     method(_javaPart, newTimeMs, withRefresh.has_value() ? jni::JBoolean::valueOf(withRefresh.value()) : nullptr);
+  }
+  bool JHybridRecognizerSpec::getIsActive() {
+    static const auto method = javaClassStatic()->getMethod<jboolean()>("getIsActive");
+    auto __result = method(_javaPart);
+    return static_cast<bool>(__result);
   }
 
 } // namespace margelo::nitro::nitrospeech

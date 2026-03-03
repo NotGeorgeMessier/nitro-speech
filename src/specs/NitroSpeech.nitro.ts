@@ -4,15 +4,9 @@ interface ParamsAndroid {
   /**
    * Default - false
    *
-   * Min Android 13
-   */
-  androidMaskOffensiveWords?: boolean
-  /**
-   * Default - false
-   *
    * Prefer quality over latency (may break autofinish timing, depends on engine)
    *
-   * Min Android 13
+   * Android 13+
    */
   androidFormattingPreferQuality?: boolean
   /**
@@ -39,12 +33,12 @@ interface ParamsIOS {
    *
    * Adds punctuation to speech recognition results
    *
-   * Min iOS 16
+   * iOS 16+
    */
   iosAddPunctuation?: boolean
 }
 
-type HapticFeedbackStyle = 'light' | 'medium' | 'heavy'
+type HapticFeedbackStyle = 'light' | 'medium' | 'heavy' | 'none'
 
 export interface SpeechToTextParams extends ParamsAndroid, ParamsIOS {
   /**
@@ -68,17 +62,25 @@ export interface SpeechToTextParams extends ParamsAndroid, ParamsIOS {
    */
   contextualStrings?: string[]
   /**
-   * Default - null
+   * Default - "medium"
    *
    * Haptic feedback style when microphone starts recording.
    */
   startHapticFeedbackStyle?: HapticFeedbackStyle
   /**
-   * Default - null
+   * Default - "medium"
    *
    * Haptic feedback style when microphone stops recording.
    */
   stopHapticFeedbackStyle?: HapticFeedbackStyle
+  /**
+   * Default - false
+   *
+   * Android 13+
+   *
+   * iOS 26+ (iOS <26: always `false`)
+   */
+  maskOffensiveWords?: boolean
 }
 
 export interface Recognizer extends HybridObject<{
@@ -120,11 +122,16 @@ export interface Recognizer extends HybridObject<{
   updateAutoFinishTime(newTimeMs: number, withRefresh?: boolean): void
 
   /**
+   * Returns true if the speech recognition is active.
+   */
+  getIsActive(): boolean
+
+  /**
    * The speech recognition has started.
    */
   onReadyForSpeech?: () => void
   /**
-   * Audio recording has stopped. (may be called multiple times for one recording)
+   * Audio recording has stopped.
    */
   onRecordingStopped?: () => void
   /**
@@ -147,6 +154,12 @@ export interface Recognizer extends HybridObject<{
    * Permission to record audio has been denied.
    */
   onPermissionDenied?: () => void
+  /**
+   * Called with arbitrary frequency (many times per second) while audio recording is active.
+   *
+   * Voice input volume normalized to a range of 0 to 1.
+   */
+  onVolumeChange?: (normVolume: number) => void
 }
 
 export interface NitroSpeech extends HybridObject<{

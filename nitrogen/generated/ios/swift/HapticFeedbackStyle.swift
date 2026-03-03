@@ -23,6 +23,8 @@ public extension HapticFeedbackStyle {
         self = .medium
       case "heavy":
         self = .heavy
+      case "none":
+        self = .none
       default:
         return nil
     }
@@ -39,6 +41,8 @@ public extension HapticFeedbackStyle {
         return "medium"
       case .heavy:
         return "heavy"
+      case .none:
+        return "none"
     }
   }
 }

@@ -16,11 +16,13 @@ React Native Real-Time Speech Recognition Library, powered by [Nitro Modules](ht
 #### Key Features:
 
 - Built on Nitro Modules for low-overhead native bridging
+- Uses newest advanced Speech-to-Text API for iOS 26+ (with fallback to legacy SpeechRecognition for older versions)
 - Configurable Timer for silence (default: 8 sec)
   - Callback `onAutoFinishProgress` for progress bars, etc...
   - Method `addAutoFinishTime` for single timer update
   - Method `updateAutoFinishTime` for constant timer update
-- Optional Haptic Feedback on start and finish
+- Configurable Haptic Feedback on start and finish
+- Flexible `useVoiceInputVolume` hook to display user input volume in UI animations
 - Speech-quality configurations:
   - Result is grouped by speech segments into Batches.
   - Param `disableRepeatingFilter` for consecutive duplicate-word filtering.
@@ -38,6 +40,7 @@ React Native Real-Time Speech Recognition Library, powered by [Nitro Modules](ht
   - [Recommended: useRecognizer Hook](#recommended-userecognizer-hook)
   - [With React Navigation (important)](#with-react-navigation-important)
   - [Cross-component control: RecognizerRef](#cross-component-control-recognizerref)
+  - [Voice input volume](#voice-input-volume)
   - [Unsafe: RecognizerSession](#unsafe-recognizersession)
 - [API Reference](#api-reference)
 - [Requirements](#requirements)
@@ -107,6 +110,7 @@ Both permissions are required for speech recognition to work on iOS.
 | **Haptic feedback** | Optional haptics on recording start/stop | ✅ | ✅ |
 | **Background handling** | Auto-stop when app loses focus/goes to background | ✅ | Not Safe *(TODO)* |
 | **Permission handling** | Dedicated `onPermissionDenied` callback | ✅ | ✅ |
+| **Voice input volume** | Normalized voice input level for UI meters (`useVoiceInputVolume`) | ✅ | ✅ |
 | **Repeating word filter** | Removes consecutive duplicate words from artifacts | ✅ | ✅ |
 | **Locale support** | Configure speech recognizer for different languages | ✅ | ✅ |
 | **Contextual strings** | Domain-specific vocabulary for improved accuracy | ✅ | ✅ |
@@ -166,7 +170,7 @@ function MyComponent() {
         // iOS specific
         iosAddPunctuation: true,
         // Android specific
-        androidMaskOffensiveWords: false,
+        maskOffensiveWords: false,
         androidFormattingPreferQuality: false,
         androidUseWebSearchModel: false,
         androidDisableBatchHandling: false,
@@ -218,17 +222,58 @@ import { RecognizerRef } from '@gmessier/nitro-speech';
 RecognizerRef.startListening({ locale: 'en-US' });
 RecognizerRef.addAutoFinishTime(5000);
 RecognizerRef.updateAutoFinishTime(10000, true);
+RecognizerRef.getIsActive();
 RecognizerRef.stopListening();
 ```
 
 `RecognizerRef` exposes only method handlers and is safe for cross-component method access.
+
+### Voice input volume
+
+#### useVoiceInputVolume
+
+By default you have access to `useVoiceInputVolume` to read normalized voice input level (`0..1`) for UI meters.
+⚠️ **Technical limitation**: this approach re-renders component a lot.
+
+```typescript
+import { useVoiceInputVolume } from '@gmessier/nitro-speech';
+
+function VoiceMeter() {
+  const volume = useVoiceInputVolume();
+  return <Text>{volume.toFixed(2)}</Text>;
+}
+```
+
+#### Reanimated: useSharedValue, worklets, UI thread
+
+As a better alternative you can control volume via SharedValue and apply it only on UI thread with Reanimated
+This way you will avoid re-renders since the volume will be stored on UI thread
+
+```typescript
+function VoiceMeter() {
+  const sharedVolume = useSharedValue(0)
+  const {
+    // ...
+  } = useRecognizer(
+    {
+      // ...
+      onVolumeChange: (normVolume) => {
+        "worklet";
+        sharedVolume.value = normValue
+      },
+      // ...
+    }
+  );
+}
+```
+
 
 ### Unsafe: RecognizerSession
 
 `RecognizerSession` is the hybrid object. It gives direct access to callbacks and control methods, but it is unsafe to orchestrate the full session directly from it.
 
 ```typescript
-import { RecognizerSession } from '@gmessier/nitro-speech';
+import { RecognizerSession, unsafe_onVolumeChange } from '@gmessier/nitro-speech';
 
 // Set up callbacks
 RecognizerSession.onReadyForSpeech = () => {
@@ -254,6 +299,13 @@ RecognizerSession.onError = (error) => {
 RecognizerSession.onPermissionDenied = () => {
   console.log('Permission denied');
 };
+
+RecognizerSession.onVolumeChange = (volume) => {
+  console.log('new volume: ', volume);
+};
+// OR use unsafe_onVolumeChange to enable useVoiceInputVolume hook manually
+RecognizerSession.onVolumeChange = unsafe_onVolumeChange
+
 
 // Start listening
 RecognizerSession.startListening({
@@ -305,6 +357,7 @@ The `RecognizerSession.dispose()` method is **NOT SAFE** and should rarely be us
 - `stopListening()` - Stop speech recognition
 - `addAutoFinishTime(additionalTimeMs?: number)` - Add time to the auto-finish timer (or reset to original if no parameter)
 - `updateAutoFinishTime(newTimeMs: number, withRefresh?: boolean)` - Update the auto-finish timer
+- `getIsActive()` - Returns true if the speech recognition is active
 
 ### `RecognizerRef`
 
@@ -312,6 +365,11 @@ The `RecognizerSession.dispose()` method is **NOT SAFE** and should rarely be us
 - `stopListening()`
 - `addAutoFinishTime(additionalTimeMs?: number)`
 - `updateAutoFinishTime(newTimeMs: number, withRefresh?: boolean)`
+- `getIsActive()`
+
+### `useVoiceInputVolume`
+
+- `useVoiceInputVolume(): number`
 
 ### `RecognizerSession`
 
@@ -328,8 +386,9 @@ Configuration object for speech recognition.
 - `autoFinishRecognitionMs?: number` - Auto-stop timeout in milliseconds (default: `8000`)
 - `contextualStrings?: string[]` - Array of domain-specific words for better recognition
 - `disableRepeatingFilter?: boolean` - Disable filter that removes consecutive duplicate words (default: `false`)
-- `startHapticFeedbackStyle?: 'light' | 'medium' | 'heavy'` - Haptic feedback style when microphone starts recording (default: `null` / disabled)
-- `stopHapticFeedbackStyle?: 'light' | 'medium' | 'heavy'` - Haptic feedback style when microphone stops recording (default: `null` / disabled)
+- `startHapticFeedbackStyle?: 'light' | 'medium' | 'heavy' | 'none'` - Haptic feedback style when microphone starts recording (default: `"medium"`)
+- `stopHapticFeedbackStyle?: 'light' | 'medium' | 'heavy' | 'none'` - Haptic feedback style when microphone stops recording (default: `"medium"`)
+- `maskOffensiveWords?: boolean` - Mask offensive words with asterisks. (Android 13+, iOS 26+, default: `false`. iOS <26: always `false`)
 
 #### iOS-Specific Parameters
 
@@ -337,7 +396,6 @@ Configuration object for speech recognition.
 
 #### Android-Specific Parameters
 
-- `androidMaskOffensiveWords?: boolean` - Mask offensive words (Android 13+, default: `false`)
 - `androidFormattingPreferQuality?: boolean` - Prefer quality over latency (Android 13+, default: `false`)
 - `androidUseWebSearchModel?: boolean` - Use web search language model instead of free-form (default: `false`)
 - `androidDisableBatchHandling?: boolean` - Disable default batch handling (may add many empty batches, default: `false`)
@@ -361,8 +419,3 @@ cd android && ./gradlew :react-native-nitro-modules:preBuild
 ## License
 
 MIT
-
-## TODO
-
-- [ ] (Android) Timer till the auto finish is called
-- [ ] (Android) Cleanup when app loses the focus

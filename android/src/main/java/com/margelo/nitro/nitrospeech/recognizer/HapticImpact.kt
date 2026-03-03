@@ -8,7 +8,7 @@ import android.os.VibratorManager
 import com.margelo.nitro.nitrospeech.HapticFeedbackStyle
 
 class HapticImpact(
-  private val style: HapticFeedbackStyle = HapticFeedbackStyle.MEDIUM,
+  private val style: HapticFeedbackStyle?
 ) {
   private data class LegacyOneShot(
     val durationMs: Long,
@@ -16,6 +16,10 @@ class HapticImpact(
   )
 
   fun trigger(context: Context) {
+    if (style == HapticFeedbackStyle.NONE) {
+      return
+    }
+
     val vibrator = getVibrator(context) ?: return
     if (!vibrator.hasVibrator()) return
 
@@ -25,7 +29,10 @@ class HapticImpact(
           HapticFeedbackStyle.LIGHT -> VibrationEffect.EFFECT_TICK
           HapticFeedbackStyle.MEDIUM -> VibrationEffect.EFFECT_CLICK
           HapticFeedbackStyle.HEAVY -> VibrationEffect.EFFECT_HEAVY_CLICK
+          null -> VibrationEffect.EFFECT_CLICK
+          else -> null
         }
+        if (effect == null) { return }
         vibrator.vibrate(VibrationEffect.createPredefined(effect))
         return
       }
@@ -34,7 +41,10 @@ class HapticImpact(
         HapticFeedbackStyle.LIGHT -> LegacyOneShot(durationMs = 12L, amplitude = 50)
         HapticFeedbackStyle.MEDIUM -> LegacyOneShot(durationMs = 18L, amplitude = 100)
         HapticFeedbackStyle.HEAVY -> LegacyOneShot(durationMs = 28L, amplitude = 180)
+        null -> LegacyOneShot(durationMs = 18L, amplitude = 100)
+        else -> null
       }
+      if (legacyOneShot == null) { return }
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         vibrator.vibrate(
           VibrationEffect.createOneShot(

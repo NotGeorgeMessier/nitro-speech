@@ -125,6 +125,20 @@ abstract class HybridRecognizerSpec: HybridObject() {
     set(value) {
       onPermissionDenied = value?.let { it }
     }
+  
+  abstract var onVolumeChange: ((normVolume: Double) -> Unit)?
+  
+  private var onVolumeChange_cxx: Func_void_double?
+    @Keep
+    @DoNotStrip
+    get() {
+      return onVolumeChange?.let { Func_void_double_java(it) }
+    }
+    @Keep
+    @DoNotStrip
+    set(value) {
+      onVolumeChange = value?.let { it }
+    }
 
   // Methods
   @DoNotStrip
@@ -142,6 +156,10 @@ abstract class HybridRecognizerSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun updateAutoFinishTime(newTimeMs: Double, withRefresh: Boolean?): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun getIsActive(): Boolean
 
   private external fun initHybrid(): HybridData
 

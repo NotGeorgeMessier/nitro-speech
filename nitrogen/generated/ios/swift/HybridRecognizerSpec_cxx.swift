@@ -311,6 +311,38 @@ open class HybridRecognizerSpec_cxx {
       }()
     }
   }
+  
+  public final var onVolumeChange: bridge.std__optional_std__function_void_double____normVolume______ {
+    @inline(__always)
+    get {
+      return { () -> bridge.std__optional_std__function_void_double____normVolume______ in
+        if let __unwrappedValue = self.__implementation.onVolumeChange {
+          return bridge.create_std__optional_std__function_void_double____normVolume______({ () -> bridge.Func_void_double in
+            let __closureWrapper = Func_void_double(__unwrappedValue)
+            return bridge.create_Func_void_double(__closureWrapper.toUnsafe())
+          }())
+        } else {
+          return .init()
+        }
+      }()
+    }
+    @inline(__always)
+    set {
+      self.__implementation.onVolumeChange = { () -> ((_ normVolume: Double) -> Void)? in
+        if bridge.has_value_std__optional_std__function_void_double____normVolume______(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__function_void_double____normVolume______(newValue)
+          return { () -> (Double) -> Void in
+            let __wrappedFunction = bridge.wrap_Func_void_double(__unwrapped)
+            return { (__normVolume: Double) -> Void in
+              __wrappedFunction.call(__normVolume)
+            }
+          }()
+        } else {
+          return nil
+        }
+      }()
+    }
+  }
 
   // Methods
   @inline(__always)
@@ -361,6 +393,18 @@ open class HybridRecognizerSpec_cxx {
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
       return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func getIsActive() -> bridge.Result_bool_ {
+    do {
+      let __result = try self.__implementation.getIsActive()
+      let __resultCpp = __result
+      return bridge.create_Result_bool_(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_bool_(__exceptionPtr)
     }
   }
 }

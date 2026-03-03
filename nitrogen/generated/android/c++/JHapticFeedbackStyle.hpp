@@ -44,6 +44,7 @@ namespace margelo::nitro::nitrospeech {
       static const auto fieldLIGHT = clazz->getStaticField<JHapticFeedbackStyle>("LIGHT");
       static const auto fieldMEDIUM = clazz->getStaticField<JHapticFeedbackStyle>("MEDIUM");
       static const auto fieldHEAVY = clazz->getStaticField<JHapticFeedbackStyle>("HEAVY");
+      static const auto fieldNONE = clazz->getStaticField<JHapticFeedbackStyle>("NONE");
       
       switch (value) {
         case HapticFeedbackStyle::LIGHT:
@@ -52,6 +53,8 @@ namespace margelo::nitro::nitrospeech {
           return clazz->getStaticFieldValue(fieldMEDIUM);
         case HapticFeedbackStyle::HEAVY:
           return clazz->getStaticFieldValue(fieldHEAVY);
+        case HapticFeedbackStyle::NONE:
+          return clazz->getStaticFieldValue(fieldNONE);
         default:
           std::string stringValue = std::to_string(static_cast<int>(value));
           throw std::invalid_argument("Invalid enum value (" + stringValue + "!");

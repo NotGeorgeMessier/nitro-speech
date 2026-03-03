@@ -32,6 +32,7 @@ namespace margelo::nitro::nitrospeech {
     LIGHT      SWIFT_NAME(light) = 0,
     MEDIUM      SWIFT_NAME(medium) = 1,
     HEAVY      SWIFT_NAME(heavy) = 2,
+    NONE      SWIFT_NAME(none) = 3,
   } CLOSED_ENUM;
 
 } // namespace margelo::nitro::nitrospeech
@@ -47,6 +48,7 @@ namespace margelo::nitro {
         case hashString("light"): return margelo::nitro::nitrospeech::HapticFeedbackStyle::LIGHT;
         case hashString("medium"): return margelo::nitro::nitrospeech::HapticFeedbackStyle::MEDIUM;
         case hashString("heavy"): return margelo::nitro::nitrospeech::HapticFeedbackStyle::HEAVY;
+        case hashString("none"): return margelo::nitro::nitrospeech::HapticFeedbackStyle::NONE;
         default: [[unlikely]]
           throw std::invalid_argument("Cannot convert \"" + unionValue + "\" to enum HapticFeedbackStyle - invalid value!");
       }
@@ -56,6 +58,7 @@ namespace margelo::nitro {
         case margelo::nitro::nitrospeech::HapticFeedbackStyle::LIGHT: return JSIConverter<std::string>::toJSI(runtime, "light");
         case margelo::nitro::nitrospeech::HapticFeedbackStyle::MEDIUM: return JSIConverter<std::string>::toJSI(runtime, "medium");
         case margelo::nitro::nitrospeech::HapticFeedbackStyle::HEAVY: return JSIConverter<std::string>::toJSI(runtime, "heavy");
+        case margelo::nitro::nitrospeech::HapticFeedbackStyle::NONE: return JSIConverter<std::string>::toJSI(runtime, "none");
         default: [[unlikely]]
           throw std::invalid_argument("Cannot convert HapticFeedbackStyle to JS - invalid value: "
                                     + std::to_string(static_cast<int>(arg)) + "!");
@@ -70,6 +73,7 @@ namespace margelo::nitro {
         case hashString("light"):
         case hashString("medium"):
         case hashString("heavy"):
+        case hashString("none"):
           return true;
         default:
           return false;

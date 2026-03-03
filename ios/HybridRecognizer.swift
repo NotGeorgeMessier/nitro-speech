@@ -2,10 +2,12 @@ import Foundation
 import Speech
 import NitroModules
 import os.log
+import AVFoundation
 
 class HybridRecognizer: HybridRecognizerSpec {
-    private let logger = Logger(subsystem: "com.margelo.nitro.nitrospeech", category: "AutoStopper")
-    private static let defaultAutoFinishRecognitionMs = 8000.0
+    internal let logger = Logger(subsystem: "com.margelo.nitro.nitrospeech", category: "Recognizer")
+    internal static let defaultAutoFinishRecognitionMs = 8000.0
+    internal static let speechRmsThreshold: Float = 0.005623
     
     var onReadyForSpeech: (() -> Void)?
     var onRecordingStopped: (() -> Void)?
@@ -13,24 +15,28 @@ class HybridRecognizer: HybridRecognizerSpec {
     var onAutoFinishProgress: ((Double) -> Void)?
     var onError: ((String) -> Void)?
     var onPermissionDenied: (() -> Void)?
+    var onVolumeChange: ((Double) -> Void)?
     
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-    private var recognitionTask: SFSpeechRecognitionTask?
-    private var audioEngine: AVAudioEngine?
-    private var autoStopper: AutoStopper?
-    private var appStateObserver: AppStateObserver?
-    private var isActive: Bool = false
-    private var isStopping: Bool = false
-    private var config: SpeechToTextParams?
+    internal var audioEngine: AVAudioEngine?
+    
+    internal var autoStopper: AutoStopper?
+    internal var appStateObserver: AppStateObserver?
+    internal var isActive: Bool = false
+    internal var isStopping: Bool = false
+    internal var config: SpeechToTextParams?
+    internal var levelSmoothed: Float = 0
+    
+    func getIsActive() -> Bool {
+        return self.isActive
+    }
     
     func startListening(params: SpeechToTextParams) {
         if isActive {
-//          Previous recognition session is still active
             return
         }
         
         SFSpeechRecognizer.requestAuthorization { [weak self] authStatus in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 guard let self = self else { return }
                 
                 self.config = params
@@ -48,18 +54,20 @@ class HybridRecognizer: HybridRecognizerSpec {
             }
         }
     }
+
+    func dispose() {
+        stopListening()
+    }
     
     func stopListening() {
         guard isActive, !isStopping else { return }
         isStopping = true
         
-        if let hapticStyle = config?.stopHapticFeedbackStyle {
-            HapticImpact(style: hapticStyle).trigger()
-        }
-        
-        // Signal end of audio and request graceful finish
-        recognitionRequest?.endAudio()
-        recognitionTask?.finish()
+        self.stopHapticFeedback()
+    }
+    
+    internal func handleInternalStopTrigger() {
+        self.stopListening()
     }
     
     func addAutoFinishTime(additionalTimeMs: Double?) {
@@ -83,183 +91,147 @@ class HybridRecognizer: HybridRecognizerSpec {
             )
         }
     }
-    
-    func dispose() {
-        stopListening()
-    }
 
-    private func requestMicrophonePermission() {
-        AVAudioSession.sharedInstance().requestRecordPermission { [weak self] granted in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                
-                if granted {
-                    self.startRecognition()
-                } else {
-                    self.onPermissionDenied?()
-                }
-            }
+    internal func requestMicrophonePermission() {}
+    
+    internal func startRecognitionSetup() -> Bool {
+        isStopping = false
+        isActive = true
+        
+        initAutoStop()
+        monitorAppState()
+        guard startAudioSession() else {
+            cleanup(from: "startRecognitionSetup")
+            return false
         }
+        
+        return true
     }
     
-    private func startRecognition() {
+    internal func startRecognitionFeedback() {
+        self.startHapticFeedback()
+        autoStopper?.indicateRecordingActivity(
+            from: "startListening",
+            addMsToThreshold: nil
+        )
+        onReadyForSpeech?()
+        onResult?([])
+    }
+    
+    internal func startRecognition() {}
+    internal func startRecognition() async {}
+    
+    internal func cleanup(from: String) {
+        logger.info("cleanup called from: \(from)")
+        deinitAutoStop()
+        stopMonitorAppState()
+        stopAudioSession()
+        stopAudioEngine()
+        levelSmoothed = 0
+        isActive = false
         isStopping = false
-        
-        let locale = Locale(identifier: config?.locale ?? "en-US")
-        guard let speechRecognizer = SFSpeechRecognizer(locale: locale), speechRecognizer.isAvailable else {
-            onError?("Speech recognizer not available")
-            return
+        onVolumeChange?(0)
+    }
+    
+    internal func stopAudioEngine() {
+        if let audioEngine = audioEngine, audioEngine.isRunning {
+            audioEngine.stop()
         }
-        
+        audioEngine?.inputNode.removeTap(onBus: 0)
+        audioEngine = nil
+    }
+    
+    internal func monitorAppState() {
+        appStateObserver = AppStateObserver { [weak self] in
+            guard let self = self, self.isActive else { return }
+            self.handleInternalStopTrigger()
+        }
+    }
+    internal func stopMonitorAppState () {
+        appStateObserver?.stop()
+        appStateObserver = nil
+    }
+    
+    internal func initAutoStop() {
         autoStopper = AutoStopper(
             silenceThresholdMs: config?.autoFinishRecognitionMs ?? Self.defaultAutoFinishRecognitionMs,
             onProgress: { [weak self] timeLeftMs in
                 self?.onAutoFinishProgress?(timeLeftMs)
             },
             onTimeout: { [weak self] in
-                self?.stopListening()
+                self?.handleInternalStopTrigger()
             }
         )
-        
+    }
+    internal func deinitAutoStop () {
+        autoStopper?.stop()
+        autoStopper = nil
+    }
+    
+    internal func startAudioSession() -> Bool {
         do {
             let audioSession = AVAudioSession.sharedInstance()
             try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-            if #available(iOS 13.0, *) {
-                // Without this, iOS may suppress haptics while recording.
-                try audioSession.setAllowHapticsAndSystemSoundsDuringRecording(true)
-            }
+            // Without this, iOS may suppress haptics while recording.
+            try audioSession.setAllowHapticsAndSystemSoundsDuringRecording(true)
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            return true
         } catch {
-            onError?("Failed to set up audio session: \(error.localizedDescription)")
-            return
+            onError?("Failed to activate audio session: \(error.localizedDescription)")
+            return false
         }
-        
-        audioEngine = AVAudioEngine()
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        
-        guard let recognitionRequest = recognitionRequest, let audioEngine = audioEngine else {
-            onError?("Failed to create recognition request or audio engine")
-            return
-        }
-        
-        recognitionRequest.shouldReportPartialResults = true
-        
-        if let contextualStrings = config?.contextualStrings, !contextualStrings.isEmpty {
-            recognitionRequest.contextualStrings = contextualStrings
-        }
-        
-        if #available(iOS 16, *) {
-            if let addPunctiation = config?.iosAddPunctuation, addPunctiation == false {
-                recognitionRequest.addsPunctuation = false
-            } else {
-                recognitionRequest.addsPunctuation = true
-            }
-        }
-        
-        let disableRepeatingFilter = config?.disableRepeatingFilter ?? false
-        
-        recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { [weak self] result, error in
-            guard let self = self else { return }
-            
-            if let result = result {
-                // Only process partial results if not stopping
-                if !self.isStopping {
-                    self.autoStopper?.indicateRecordingActivity(
-                        from: "partial results",
-                        addMsToThreshold: nil
-                    )
-                    
-                    var transcription = result.bestTranscription.formattedString
-                    if !transcription.isEmpty {
-                        if !disableRepeatingFilter {
-                            transcription = self.repeatingFilter(text: transcription)
-                        }
-                        self.onResult?([transcription])
-                    }
-                }
-                
-                // Task completed - cleanup whether natural or manual stop
-                if result.isFinal {
-                    self.cleanup()
-                }
-            }
-            
-            if let error = error {
-                // Only report error if not intentionally stopping
-                if !self.isStopping {
-                    self.onError?("Recognition error: \(error.localizedDescription)")
-                }
-                self.cleanup()
-            }
-        }
-        
-        let inputNode = audioEngine.inputNode
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
-            self?.recognitionRequest?.append(buffer)
-        }
-        
-        // Observe app going to background
-        appStateObserver = AppStateObserver { [weak self] in
-            guard let self = self, self.isActive else { return }
-            self.stopListening()
-        }
-        
+    }
+    internal func stopAudioSession () {
         do {
-            audioEngine.prepare()
-            try audioEngine.start()
-            isActive = true
-
-            if let hapticStyle = config?.startHapticFeedbackStyle {
-                HapticImpact(style: hapticStyle).trigger()
-            }
-            
-            autoStopper?.indicateRecordingActivity(
-                from: "startListening",
-                addMsToThreshold: nil
-            )
-            onReadyForSpeech?()
-            onResult?([])
+            try AVAudioSession.sharedInstance().setActive(false)
         } catch {
-            cleanup(notifyCallback: false)
-            onError?("Failed to start audio engine: \(error.localizedDescription)")
+            logger.info("Failed to deactivate audio session: \(error.localizedDescription)")
+            return
         }
     }
     
-    private func cleanup(notifyCallback: Bool = true) {
-        let wasActive = isActive
-        
-        autoStopper?.stop()
-        autoStopper = nil
-        
-        appStateObserver?.stop()
-        appStateObserver = nil
-        
-        if let audioEngine = audioEngine, audioEngine.isRunning {
-            audioEngine.stop()
+    internal func startHapticFeedback() {
+        if let hapticStyle = config?.startHapticFeedbackStyle {
+            HapticImpact(style: hapticStyle).trigger()
         }
-        audioEngine?.inputNode.removeTap(onBus: 0)
-        
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-        
-        recognitionRequest = nil
-        recognitionTask = nil
-        audioEngine = nil
-        isActive = false
-        isStopping = false
-        
-        if notifyCallback && wasActive {
-            onRecordingStopped?()
+    }
+    internal func stopHapticFeedback () {
+        if let hapticStyle = config?.stopHapticFeedbackStyle {
+            HapticImpact(style: hapticStyle).trigger()
+        }
+    }
+    
+    internal func trackPartialActivity() {
+        if !self.isStopping {
+            self.autoStopper?.indicateRecordingActivity(
+                from: "partial results",
+                addMsToThreshold: nil
+            )
         }
     }
 
-    private func repeatingFilter(text: String) -> String {
-        let words = text.split { $0.isWhitespace }.map { String($0) }
-        var joiner = words[0]
-        for i in words.indices {
-            if i == 0 || words[i] == words[i-1] {continue}
-            joiner += " \(words[i])"
+    internal func repeatingFilter(text: String) -> String {
+        var subStrings = text.split { $0.isWhitespace }.map { String($0) }
+        var joiner = ""
+        // 10 - arbitrary number of last substrings that is still unstable
+        // and needs to be filtered. Prev substrings were handled earlier.
+        if subStrings.count >= 10 {
+            joiner = subStrings.prefix(subStrings.count - 9).joined(separator: " ")
+            subStrings = Array(subStrings.suffix(10))
+        } else {
+            joiner = subStrings.first ?? ""
+        }
+        for i in subStrings.indices {
+            if i == 0 { continue }
+            // Always add number-contained strings
+            if #available(iOS 16.0, *), subStrings[i].contains(/\d+/) {
+                joiner += " \(subStrings[i])"
+                continue
+            }
+            
+            // Skip consecutive duplicate strings
+            if subStrings[i] == subStrings[i-1] { continue }
+            joiner += " \(subStrings[i])"
         }
         return joiner
     }
