@@ -13,16 +13,24 @@
 
 React Native Real-Time Speech Recognition Library, powered by [Nitro Modules](https://github.com/mrousavy/nitro).
 
+#### Compatibility:
+‼️ Newest versions of `@gmessier/nitro-speech` requires [react-native-nitro-modules 0.35.0 or higher](https://github.com/mrousavy/nitro/releases/tag/v0.35.0).
+
+| Compatibility | Supported versions |
+|---|---|
+| `react-native-nitro-modules <= 0.34.*` | `@gmessier/nitro-speech <= 0.2.*` |
+| `react-native-nitro-modules >= 0.35.*` | `@gmessier/nitro-speech >= 0.3.*` |
+
 #### Key Features:
 
 - Built on Nitro Modules for low-overhead native bridging
-- Uses newest advanced Speech-to-Text API for iOS 26+ (with fallback to legacy SpeechRecognition for older versions)
+- Uses newest advanced `SpeechAnalyzer` and `SpeechTranscriber` API for iOS 26+ (with fallback to legacy `SFSpeechRecognition` for older versions)
 - Configurable Timer for silence (default: 8 sec)
   - Callback `onAutoFinishProgress` for progress bars, etc...
   - Method `addAutoFinishTime` for single timer update
   - Method `updateAutoFinishTime` for constant timer update
 - Configurable Haptic Feedback on start and finish
-- Flexible `useVoiceInputVolume` hook to display user input volume in UI animations
+- Flexible `onVolumeChange` to display input volume in UI with built-in `useVoiceInputVolume` hook
 - Speech-quality configurations:
   - Result is grouped by speech segments into Batches.
   - Param `disableRepeatingFilter` for consecutive duplicate-word filtering.
@@ -246,7 +254,7 @@ function VoiceMeter() {
 
 #### Reanimated: useSharedValue, worklets, UI thread
 
-As a better alternative you can control volume via SharedValue and apply it only on UI thread with Reanimated
+As a better alternative you can control volume via SharedValue and apply it only on UI thread with Reanimated.
 This way you will avoid re-renders since the volume will be stored on UI thread
 
 ```typescript
