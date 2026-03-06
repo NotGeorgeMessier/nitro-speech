@@ -29,6 +29,7 @@ class HapticImpact(
           HapticFeedbackStyle.LIGHT -> VibrationEffect.EFFECT_TICK
           HapticFeedbackStyle.MEDIUM -> VibrationEffect.EFFECT_CLICK
           HapticFeedbackStyle.HEAVY -> VibrationEffect.EFFECT_HEAVY_CLICK
+          // Default to medium
           null -> VibrationEffect.EFFECT_CLICK
           else -> null
         }
@@ -41,6 +42,7 @@ class HapticImpact(
         HapticFeedbackStyle.LIGHT -> LegacyOneShot(durationMs = 12L, amplitude = 50)
         HapticFeedbackStyle.MEDIUM -> LegacyOneShot(durationMs = 18L, amplitude = 100)
         HapticFeedbackStyle.HEAVY -> LegacyOneShot(durationMs = 28L, amplitude = 180)
+        // Default to medium
         null -> LegacyOneShot(durationMs = 18L, amplitude = 100)
         else -> null
       }

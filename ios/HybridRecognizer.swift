@@ -193,11 +193,15 @@ class HybridRecognizer: HybridRecognizerSpec {
     internal func startHapticFeedback() {
         if let hapticStyle = config?.startHapticFeedbackStyle {
             HapticImpact(style: hapticStyle).trigger()
+        } else {
+            HapticImpact(style: .medium).trigger()
         }
     }
     internal func stopHapticFeedback () {
         if let hapticStyle = config?.stopHapticFeedbackStyle {
             HapticImpact(style: hapticStyle).trigger()
+        } else {
+            HapticImpact(style: .medium).trigger()
         }
     }
     
