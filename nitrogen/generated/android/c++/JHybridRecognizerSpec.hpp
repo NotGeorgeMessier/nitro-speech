@@ -72,6 +72,7 @@ namespace margelo::nitro::nitrospeech {
     void addAutoFinishTime(std::optional<double> additionalTimeMs) override;
     void updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) override;
     bool getIsActive() override;
+    std::vector<std::string> getSupportedLocalesIOS() override;
 
   private:
     jni::global_ref<JHybridRecognizerSpec::JavaPart> _javaPart;

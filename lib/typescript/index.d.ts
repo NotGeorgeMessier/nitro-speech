@@ -5,7 +5,7 @@ import type { Recognizer as RecognizerSpec, SpeechToTextParams } from './specs/N
  */
 export declare const RecognizerSession: RecognizerSpec;
 type RecognizerCallbacks = Pick<RecognizerSpec, 'onReadyForSpeech' | 'onRecordingStopped' | 'onResult' | 'onAutoFinishProgress' | 'onError' | 'onPermissionDenied' | 'onVolumeChange'>;
-type RecognizerHandlers = Pick<RecognizerSpec, 'startListening' | 'stopListening' | 'addAutoFinishTime' | 'updateAutoFinishTime' | 'getIsActive'>;
+type RecognizerHandlers = Pick<RecognizerSpec, 'startListening' | 'stopListening' | 'addAutoFinishTime' | 'updateAutoFinishTime' | 'getIsActive' | 'getSupportedLocalesIOS'>;
 /**
  * Subscription to the voice input volume changes
  *

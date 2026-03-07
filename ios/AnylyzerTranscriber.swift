@@ -16,6 +16,20 @@ class AnalyzerTranscriber: HybridRecognizer {
     private var recognizerTask: Task<(), Error>?
     private var lastBatchStartTime: Float64? = nil
     private var resultBatches: [String] = []
+
+    override init() {
+        super.init()
+        Task { [weak self] in
+            guard let self else { return }
+            let speechLocales = await SpeechTranscriber.supportedLocales
+            let dictationLocales = await DictationTranscriber.supportedLocales
+            let intersection = Array(
+                Set(speechLocales).intersection(Set(dictationLocales))
+            ).map { loc in loc.identifier }
+            
+            self.supportedLocales = intersection
+        }
+    }
     
     override func dispose() {
         super.dispose()
@@ -74,12 +88,21 @@ class AnalyzerTranscriber: HybridRecognizer {
         if config?.maskOffensiveWords == true {
             speechTranscriptionOptions.insert(.etiquetteReplacements)
         }
-        speechTranscriber = SpeechTranscriber(
-            locale: locale,
-            transcriptionOptions: speechTranscriptionOptions,
-            reportingOptions: [.volatileResults, .fastResults],
-            attributeOptions: [.audioTimeRange]
-        )
+        // no punctuation means "short-form" and better to use DictationTranscriber
+        // iosPreset default: "general"
+        // atypical speech only available in dictation
+        let forceDictationTranscriber =
+            config?.iosAddPunctuation == false
+            || config?.iosPreset == IosPreset.shortform
+            || config?.iosAtypicalSpeech == true
+        if !forceDictationTranscriber {
+            speechTranscriber = SpeechTranscriber(
+                locale: locale,
+                transcriptionOptions: speechTranscriptionOptions,
+                reportingOptions: [.volatileResults, .fastResults],
+                attributeOptions: [.audioTimeRange]
+            )
+        }
         if speechTranscriber == nil || !SpeechTranscriber.isAvailable {
             // Punctuation is true by default
             var dictationTranscriptionOptions: Set<DictationTranscriber.TranscriptionOption> = [
@@ -88,12 +111,20 @@ class AnalyzerTranscriber: HybridRecognizer {
             if config?.maskOffensiveWords == true {
                 dictationTranscriptionOptions.insert(.etiquetteReplacements)
             }
-            if config?.iosAddPunctuation == false {
+            if config?.iosAddPunctuation == false
+                || config?.iosPreset == IosPreset.shortform {
                 dictationTranscriptionOptions.remove(.punctuation)
+            }
+            var contentHints: Set<DictationTranscriber.ContentHint> = [
+                .shortForm,
+                .farField,
+            ]
+            if config?.iosAtypicalSpeech == true {
+                contentHints.insert(.atypicalSpeech)
             }
             dictationTranscriber = DictationTranscriber(
                 locale: locale,
-                contentHints: [.shortForm],
+                contentHints: contentHints,
                 transcriptionOptions: dictationTranscriptionOptions,
                 reportingOptions: [.frequentFinalization, .volatileResults],
                 attributeOptions: [.audioTimeRange]
@@ -103,10 +134,10 @@ class AnalyzerTranscriber: HybridRecognizer {
         var modules: [any SpeechModule]
         if let speechTranscriber {
             modules = [speechTranscriber]
-            logger.info("[SpeechTranscriber] Activated")
+            logger("[SpeechTranscriber] Activated")
         } else if let dictationTranscriber {
             modules = [dictationTranscriber]
-            logger.info("[DictationTranscriber] Activated")
+            logger("[DictationTranscriber] Activated")
         } else {
             onError?("Failed to create Transcriber")
             self.cleanup(from: "startRecognition.Transcriber")
@@ -152,12 +183,12 @@ class AnalyzerTranscriber: HybridRecognizer {
                         onVolumeChange?(volume)
                     }
 
-                     if let rms, rms > Self.speechRmsThreshold {
-                         self.autoStopper?.indicateRecordingActivity(
-                             from: "rms change",
-                             addMsToThreshold: nil
-                         )
-                     }
+//                     if let rms, rms > Self.speechRmsThreshold {
+//                         self.autoStopper?.indicateRecordingActivity(
+//                             from: "rms change",
+//                             addMsToThreshold: nil
+//                         )
+//                     }
                     outputContinuation?.yield(buffer)
                 }
                 
@@ -315,14 +346,14 @@ class AnalyzerTranscriber: HybridRecognizer {
         if !disableRepeatingFilter {
             newBatch = self.repeatingFilter(text: newBatch)
         }
-        logger.info("[1] lastBatch: \(self.resultBatches.last ?? "") | newBatch: \(newBatch)")
+        logger("[1] lastBatch: \(self.resultBatches.last ?? "") | newBatch: \(newBatch)")
         if resultBatches.isEmpty {
             resultBatches.append(newBatch)
         } else if CMTimeGetSeconds(rangeStart) == lastBatchStartTime || isFinal {
-            logger.info("[2] replace, isFinal: \(isFinal)")
+            logger("[2] replace, isFinal: \(isFinal)")
             resultBatches[resultBatches.count - 1] = newBatch
         } else {
-            logger.info("[2] add new batch")
+            logger("[2] add new batch")
             resultBatches.append(newBatch)
         }
         lastBatchStartTime = CMTimeGetSeconds(rangeStart)

@@ -11,7 +11,9 @@
 #include "SpeechToTextParams.hpp"
 
 #include "HapticFeedbackStyle.hpp"
+#include "IosPreset.hpp"
 #include "JHapticFeedbackStyle.hpp"
+#include "JIosPreset.hpp"
 #include <optional>
 #include <string>
 #include <vector>
@@ -57,6 +59,10 @@ namespace margelo::nitro::nitrospeech {
       jni::local_ref<jni::JBoolean> androidDisableBatchHandling = this->getFieldValue(fieldAndroidDisableBatchHandling);
       static const auto fieldIosAddPunctuation = clazz->getField<jni::JBoolean>("iosAddPunctuation");
       jni::local_ref<jni::JBoolean> iosAddPunctuation = this->getFieldValue(fieldIosAddPunctuation);
+      static const auto fieldIosPreset = clazz->getField<JIosPreset>("iosPreset");
+      jni::local_ref<JIosPreset> iosPreset = this->getFieldValue(fieldIosPreset);
+      static const auto fieldIosAtypicalSpeech = clazz->getField<jni::JBoolean>("iosAtypicalSpeech");
+      jni::local_ref<jni::JBoolean> iosAtypicalSpeech = this->getFieldValue(fieldIosAtypicalSpeech);
       return SpeechToTextParams(
         locale != nullptr ? std::make_optional(locale->toStdString()) : std::nullopt,
         autoFinishRecognitionMs != nullptr ? std::make_optional(autoFinishRecognitionMs->value()) : std::nullopt,
@@ -77,7 +83,9 @@ namespace margelo::nitro::nitrospeech {
         androidFormattingPreferQuality != nullptr ? std::make_optional(static_cast<bool>(androidFormattingPreferQuality->value())) : std::nullopt,
         androidUseWebSearchModel != nullptr ? std::make_optional(static_cast<bool>(androidUseWebSearchModel->value())) : std::nullopt,
         androidDisableBatchHandling != nullptr ? std::make_optional(static_cast<bool>(androidDisableBatchHandling->value())) : std::nullopt,
-        iosAddPunctuation != nullptr ? std::make_optional(static_cast<bool>(iosAddPunctuation->value())) : std::nullopt
+        iosAddPunctuation != nullptr ? std::make_optional(static_cast<bool>(iosAddPunctuation->value())) : std::nullopt,
+        iosPreset != nullptr ? std::make_optional(iosPreset->toCpp()) : std::nullopt,
+        iosAtypicalSpeech != nullptr ? std::make_optional(static_cast<bool>(iosAtypicalSpeech->value())) : std::nullopt
       );
     }
 
@@ -87,7 +95,7 @@ namespace margelo::nitro::nitrospeech {
      */
     [[maybe_unused]]
     static jni::local_ref<JSpeechToTextParams::javaobject> fromCpp(const SpeechToTextParams& value) {
-      using JSignature = JSpeechToTextParams(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>);
+      using JSignature = JSpeechToTextParams(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<JIosPreset>, jni::alias_ref<jni::JBoolean>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
@@ -111,7 +119,9 @@ namespace margelo::nitro::nitrospeech {
         value.androidFormattingPreferQuality.has_value() ? jni::JBoolean::valueOf(value.androidFormattingPreferQuality.value()) : nullptr,
         value.androidUseWebSearchModel.has_value() ? jni::JBoolean::valueOf(value.androidUseWebSearchModel.value()) : nullptr,
         value.androidDisableBatchHandling.has_value() ? jni::JBoolean::valueOf(value.androidDisableBatchHandling.value()) : nullptr,
-        value.iosAddPunctuation.has_value() ? jni::JBoolean::valueOf(value.iosAddPunctuation.value()) : nullptr
+        value.iosAddPunctuation.has_value() ? jni::JBoolean::valueOf(value.iosAddPunctuation.value()) : nullptr,
+        value.iosPreset.has_value() ? JIosPreset::fromCpp(value.iosPreset.value()) : nullptr,
+        value.iosAtypicalSpeech.has_value() ? jni::JBoolean::valueOf(value.iosAtypicalSpeech.value()) : nullptr
       );
     }
   };

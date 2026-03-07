@@ -33,6 +33,7 @@ namespace margelo::nitro::nitrospeech {
       prototype.registerHybridMethod("addAutoFinishTime", &HybridRecognizerSpec::addAutoFinishTime);
       prototype.registerHybridMethod("updateAutoFinishTime", &HybridRecognizerSpec::updateAutoFinishTime);
       prototype.registerHybridMethod("getIsActive", &HybridRecognizerSpec::getIsActive);
+      prototype.registerHybridMethod("getSupportedLocalesIOS", &HybridRecognizerSpec::getSupportedLocalesIOS);
     });
   }
 

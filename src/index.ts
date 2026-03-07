@@ -32,6 +32,7 @@ type RecognizerHandlers = Pick<
   | 'addAutoFinishTime'
   | 'updateAutoFinishTime'
   | 'getIsActive'
+  | 'getSupportedLocalesIOS'
 >
 
 const recognizerStartListening = (params: SpeechToTextParams) => {
@@ -55,6 +56,10 @@ const recognizerUpdateAutoFinishTime = (
 
 const recognizerGetIsActive = () => {
   return RecognizerSession.getIsActive()
+}
+
+const recognizerGetSupportedLocalesIOS = () => {
+  return RecognizerSession.getSupportedLocalesIOS()
 }
 
 const subscribers = new Set<RecognizerSpec['onVolumeChange']>()
@@ -165,6 +170,7 @@ export const useRecognizer = (
     addAutoFinishTime: recognizerAddAutoFinishTime,
     updateAutoFinishTime: recognizerUpdateAutoFinishTime,
     getIsActive: recognizerGetIsActive,
+    getSupportedLocalesIOS: recognizerGetSupportedLocalesIOS,
   }
 }
 
@@ -177,6 +183,7 @@ export const RecognizerRef: RecognizerHandlers = {
   addAutoFinishTime: recognizerAddAutoFinishTime,
   updateAutoFinishTime: recognizerUpdateAutoFinishTime,
   getIsActive: recognizerGetIsActive,
+  getSupportedLocalesIOS: recognizerGetSupportedLocalesIOS,
 }
 
 export type { RecognizerCallbacks, RecognizerHandlers, SpeechToTextParams }

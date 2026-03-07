@@ -49,7 +49,13 @@ data class SpeechToTextParams(
   val androidDisableBatchHandling: Boolean?,
   @DoNotStrip
   @Keep
-  val iosAddPunctuation: Boolean?
+  val iosAddPunctuation: Boolean?,
+  @DoNotStrip
+  @Keep
+  val iosPreset: IosPreset?,
+  @DoNotStrip
+  @Keep
+  val iosAtypicalSpeech: Boolean?
 ) {
   /* primary constructor */
 
@@ -61,8 +67,8 @@ data class SpeechToTextParams(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(locale: String?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Boolean?, contextualStrings: Array<String>?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, maskOffensiveWords: Boolean?, androidFormattingPreferQuality: Boolean?, androidUseWebSearchModel: Boolean?, androidDisableBatchHandling: Boolean?, iosAddPunctuation: Boolean?): SpeechToTextParams {
-      return SpeechToTextParams(locale, autoFinishRecognitionMs, disableRepeatingFilter, contextualStrings, startHapticFeedbackStyle, stopHapticFeedbackStyle, maskOffensiveWords, androidFormattingPreferQuality, androidUseWebSearchModel, androidDisableBatchHandling, iosAddPunctuation)
+    private fun fromCpp(locale: String?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Boolean?, contextualStrings: Array<String>?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, maskOffensiveWords: Boolean?, androidFormattingPreferQuality: Boolean?, androidUseWebSearchModel: Boolean?, androidDisableBatchHandling: Boolean?, iosAddPunctuation: Boolean?, iosPreset: IosPreset?, iosAtypicalSpeech: Boolean?): SpeechToTextParams {
+      return SpeechToTextParams(locale, autoFinishRecognitionMs, disableRepeatingFilter, contextualStrings, startHapticFeedbackStyle, stopHapticFeedbackStyle, maskOffensiveWords, androidFormattingPreferQuality, androidUseWebSearchModel, androidDisableBatchHandling, iosAddPunctuation, iosPreset, iosAtypicalSpeech)
     }
   }
 }

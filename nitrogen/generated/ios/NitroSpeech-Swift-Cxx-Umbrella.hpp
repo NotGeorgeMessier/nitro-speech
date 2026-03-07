@@ -14,6 +14,8 @@ namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
+// Forward declaration of `IosPreset` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 // Forward declaration of `SpeechToTextParams` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 
@@ -21,6 +23,7 @@ namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 #include "HapticFeedbackStyle.hpp"
 #include "HybridNitroSpeechSpec.hpp"
 #include "HybridRecognizerSpec.hpp"
+#include "IosPreset.hpp"
 #include "SpeechToTextParams.hpp"
 #include <NitroModules/Result.hpp>
 #include <exception>

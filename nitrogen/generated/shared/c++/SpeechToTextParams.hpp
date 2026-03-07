@@ -30,11 +30,14 @@
 
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
+// Forward declaration of `IosPreset` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 
 #include <string>
 #include <optional>
 #include <vector>
 #include "HapticFeedbackStyle.hpp"
+#include "IosPreset.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -54,10 +57,12 @@ namespace margelo::nitro::nitrospeech {
     std::optional<bool> androidUseWebSearchModel     SWIFT_PRIVATE;
     std::optional<bool> androidDisableBatchHandling     SWIFT_PRIVATE;
     std::optional<bool> iosAddPunctuation     SWIFT_PRIVATE;
+    std::optional<IosPreset> iosPreset     SWIFT_PRIVATE;
+    std::optional<bool> iosAtypicalSpeech     SWIFT_PRIVATE;
 
   public:
     SpeechToTextParams() = default;
-    explicit SpeechToTextParams(std::optional<std::string> locale, std::optional<double> autoFinishRecognitionMs, std::optional<bool> disableRepeatingFilter, std::optional<std::vector<std::string>> contextualStrings, std::optional<HapticFeedbackStyle> startHapticFeedbackStyle, std::optional<HapticFeedbackStyle> stopHapticFeedbackStyle, std::optional<bool> maskOffensiveWords, std::optional<bool> androidFormattingPreferQuality, std::optional<bool> androidUseWebSearchModel, std::optional<bool> androidDisableBatchHandling, std::optional<bool> iosAddPunctuation): locale(locale), autoFinishRecognitionMs(autoFinishRecognitionMs), disableRepeatingFilter(disableRepeatingFilter), contextualStrings(contextualStrings), startHapticFeedbackStyle(startHapticFeedbackStyle), stopHapticFeedbackStyle(stopHapticFeedbackStyle), maskOffensiveWords(maskOffensiveWords), androidFormattingPreferQuality(androidFormattingPreferQuality), androidUseWebSearchModel(androidUseWebSearchModel), androidDisableBatchHandling(androidDisableBatchHandling), iosAddPunctuation(iosAddPunctuation) {}
+    explicit SpeechToTextParams(std::optional<std::string> locale, std::optional<double> autoFinishRecognitionMs, std::optional<bool> disableRepeatingFilter, std::optional<std::vector<std::string>> contextualStrings, std::optional<HapticFeedbackStyle> startHapticFeedbackStyle, std::optional<HapticFeedbackStyle> stopHapticFeedbackStyle, std::optional<bool> maskOffensiveWords, std::optional<bool> androidFormattingPreferQuality, std::optional<bool> androidUseWebSearchModel, std::optional<bool> androidDisableBatchHandling, std::optional<bool> iosAddPunctuation, std::optional<IosPreset> iosPreset, std::optional<bool> iosAtypicalSpeech): locale(locale), autoFinishRecognitionMs(autoFinishRecognitionMs), disableRepeatingFilter(disableRepeatingFilter), contextualStrings(contextualStrings), startHapticFeedbackStyle(startHapticFeedbackStyle), stopHapticFeedbackStyle(stopHapticFeedbackStyle), maskOffensiveWords(maskOffensiveWords), androidFormattingPreferQuality(androidFormattingPreferQuality), androidUseWebSearchModel(androidUseWebSearchModel), androidDisableBatchHandling(androidDisableBatchHandling), iosAddPunctuation(iosAddPunctuation), iosPreset(iosPreset), iosAtypicalSpeech(iosAtypicalSpeech) {}
 
   public:
     friend bool operator==(const SpeechToTextParams& lhs, const SpeechToTextParams& rhs) = default;
@@ -83,7 +88,9 @@ namespace margelo::nitro {
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "androidFormattingPreferQuality"))),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "androidUseWebSearchModel"))),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "androidDisableBatchHandling"))),
-        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "iosAddPunctuation")))
+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "iosAddPunctuation"))),
+        JSIConverter<std::optional<margelo::nitro::nitrospeech::IosPreset>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "iosPreset"))),
+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "iosAtypicalSpeech")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::nitrospeech::SpeechToTextParams& arg) {
@@ -99,6 +106,8 @@ namespace margelo::nitro {
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "androidUseWebSearchModel"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.androidUseWebSearchModel));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "androidDisableBatchHandling"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.androidDisableBatchHandling));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "iosAddPunctuation"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.iosAddPunctuation));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "iosPreset"), JSIConverter<std::optional<margelo::nitro::nitrospeech::IosPreset>>::toJSI(runtime, arg.iosPreset));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "iosAtypicalSpeech"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.iosAtypicalSpeech));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -120,6 +129,8 @@ namespace margelo::nitro {
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "androidUseWebSearchModel")))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "androidDisableBatchHandling")))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "iosAddPunctuation")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::nitrospeech::IosPreset>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "iosPreset")))) return false;
+      if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "iosAtypicalSpeech")))) return false;
       return true;
     }
   };

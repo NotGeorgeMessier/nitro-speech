@@ -24,6 +24,7 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
   func addAutoFinishTime(additionalTimeMs: Double?) throws -> Void
   func updateAutoFinishTime(newTimeMs: Double, withRefresh: Bool?) throws -> Void
   func getIsActive() throws -> Bool
+  func getSupportedLocalesIOS() throws -> [String]
 }
 
 public extension HybridRecognizerSpec_protocol {

@@ -11,6 +11,8 @@
 namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
+// Forward declaration of `IosPreset` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 
 #include <functional>
 #include <optional>
@@ -25,6 +27,8 @@ namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 #include "JSpeechToTextParams.hpp"
 #include "HapticFeedbackStyle.hpp"
 #include "JHapticFeedbackStyle.hpp"
+#include "IosPreset.hpp"
+#include "JIosPreset.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -197,6 +201,20 @@ namespace margelo::nitro::nitrospeech {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean()>("getIsActive");
     auto __result = method(_javaPart);
     return static_cast<bool>(__result);
+  }
+  std::vector<std::string> JHybridRecognizerSpec::getSupportedLocalesIOS() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JArrayClass<jni::JString>>()>("getSupportedLocalesIOS");
+    auto __result = method(_javaPart);
+    return [&]() {
+      size_t __size = __result->size();
+      std::vector<std::string> __vector;
+      __vector.reserve(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        auto __element = __result->getElement(__i);
+        __vector.push_back(__element->toStdString());
+      }
+      return __vector;
+    }();
   }
 
 } // namespace margelo::nitro::nitrospeech

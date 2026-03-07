@@ -7,6 +7,11 @@ class LegacySpeechRecognizer: HybridRecognizer {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     
+    override init() {
+        super.init()
+        self.supportedLocales = SFSpeechRecognizer.supportedLocales().map {loc in loc.identifier}
+    }
+    
     override func dispose() {
         super.dispose()
         self.stopListening()

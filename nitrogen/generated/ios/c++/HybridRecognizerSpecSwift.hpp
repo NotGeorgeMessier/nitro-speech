@@ -16,6 +16,8 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
+// Forward declaration of `IosPreset` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 
 #include <functional>
 #include <optional>
@@ -23,6 +25,7 @@ namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 #include <vector>
 #include "SpeechToTextParams.hpp"
 #include "HapticFeedbackStyle.hpp"
+#include "IosPreset.hpp"
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 
@@ -148,6 +151,14 @@ namespace margelo::nitro::nitrospeech {
     }
     inline bool getIsActive() override {
       auto __result = _swiftPart.getIsActive();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::vector<std::string> getSupportedLocalesIOS() override {
+      auto __result = _swiftPart.getSupportedLocalesIOS();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

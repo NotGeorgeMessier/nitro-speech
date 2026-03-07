@@ -14,6 +14,8 @@ namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
+// Forward declaration of `IosPreset` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridNitroSpeechSpec_cxx` to properly resolve imports.
@@ -25,6 +27,7 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 #include "HapticFeedbackStyle.hpp"
 #include "HybridNitroSpeechSpec.hpp"
 #include "HybridRecognizerSpec.hpp"
+#include "IosPreset.hpp"
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <functional>
@@ -122,6 +125,21 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.has_value();
   }
   inline HapticFeedbackStyle get_std__optional_HapticFeedbackStyle_(const std::optional<HapticFeedbackStyle>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<IosPreset>
+  /**
+   * Specialized version of `std::optional<IosPreset>`.
+   */
+  using std__optional_IosPreset_ = std::optional<IosPreset>;
+  inline std::optional<IosPreset> create_std__optional_IosPreset_(const IosPreset& value) noexcept {
+    return std::optional<IosPreset>(value);
+  }
+  inline bool has_value_std__optional_IosPreset_(const std::optional<IosPreset>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline IosPreset get_std__optional_IosPreset_(const std::optional<IosPreset>& optional) noexcept {
     return optional.value();
   }
   
@@ -316,6 +334,15 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
   }
   inline Result_bool_ create_Result_bool_(const std::exception_ptr& error) noexcept {
     return Result<bool>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::vector<std::string>>
+  using Result_std__vector_std__string__ = Result<std::vector<std::string>>;
+  inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::vector<std::string>& value) noexcept {
+    return Result<std::vector<std::string>>::withValue(value);
+  }
+  inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::exception_ptr& error) noexcept {
+    return Result<std::vector<std::string>>::withError(error);
   }
   
   // pragma MARK: std::shared_ptr<HybridNitroSpeechSpec>

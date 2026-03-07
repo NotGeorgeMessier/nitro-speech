@@ -27,6 +27,8 @@ interface ParamsAndroid {
   androidDisableBatchHandling?: boolean
 }
 
+type IosPreset = 'shortForm' | 'general'
+
 interface ParamsIOS {
   /**
    * Default - true
@@ -36,6 +38,24 @@ interface ParamsIOS {
    * iOS 16+
    */
   iosAddPunctuation?: boolean
+  /**
+   * Default - "general"
+   *
+   * "shortForm" - for a short phrase or sentence, also disables punctuation
+   *
+   * "general" - for longer speeches, more accurate but delayed response
+   *
+   * iOS 26+:
+   */
+  iosPreset?: IosPreset
+  /**
+   * Default - false
+   *
+   * A processing hint indicating that the audio is from a speaker with a heavy accent, lisp, or other confounding factor.
+   *
+   * iOS 26+
+   */
+  iosAtypicalSpeech?: boolean
 }
 
 type HapticFeedbackStyle = 'light' | 'medium' | 'heavy' | 'none'
@@ -125,6 +145,13 @@ export interface Recognizer extends HybridObject<{
    * Returns true if the speech recognition is active.
    */
   getIsActive(): boolean
+
+  /**
+   * Returns a list of supported locales. for iOS only.
+   *
+   * No available API for Android.
+   */
+  getSupportedLocalesIOS(): string[]
 
   /**
    * The speech recognition has started.

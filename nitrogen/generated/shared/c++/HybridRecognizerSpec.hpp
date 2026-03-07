@@ -71,6 +71,7 @@ namespace margelo::nitro::nitrospeech {
       virtual void addAutoFinishTime(std::optional<double> additionalTimeMs) = 0;
       virtual void updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) = 0;
       virtual bool getIsActive() = 0;
+      virtual std::vector<std::string> getSupportedLocalesIOS() = 0;
 
     protected:
       // Hybrid Setup

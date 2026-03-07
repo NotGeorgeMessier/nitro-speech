@@ -18,7 +18,7 @@ public extension SpeechToTextParams {
   /**
    * Create a new instance of `SpeechToTextParams`.
    */
-  init(locale: String?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Bool?, contextualStrings: [String]?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, maskOffensiveWords: Bool?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?) {
+  init(locale: String?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Bool?, contextualStrings: [String]?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, maskOffensiveWords: Bool?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?, iosPreset: IosPreset?, iosAtypicalSpeech: Bool?) {
     self.init({ () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = locale {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
@@ -87,6 +87,18 @@ public extension SpeechToTextParams {
       }
     }(), { () -> bridge.std__optional_bool_ in
       if let __unwrappedValue = iosAddPunctuation {
+        return bridge.create_std__optional_bool_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_IosPreset_ in
+      if let __unwrappedValue = iosPreset {
+        return bridge.create_std__optional_IosPreset_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_bool_ in
+      if let __unwrappedValue = iosAtypicalSpeech {
         return bridge.create_std__optional_bool_(__unwrappedValue)
       } else {
         return .init()
@@ -205,6 +217,23 @@ public extension SpeechToTextParams {
     return { () -> Bool? in
       if bridge.has_value_std__optional_bool_(self.__iosAddPunctuation) {
         let __unwrapped = bridge.get_std__optional_bool_(self.__iosAddPunctuation)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
+  var iosPreset: IosPreset? {
+    return self.__iosPreset.value
+  }
+  
+  @inline(__always)
+  var iosAtypicalSpeech: Bool? {
+    return { () -> Bool? in
+      if bridge.has_value_std__optional_bool_(self.__iosAtypicalSpeech) {
+        let __unwrapped = bridge.get_std__optional_bool_(self.__iosAtypicalSpeech)
         return __unwrapped
       } else {
         return nil

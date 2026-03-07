@@ -5,7 +5,13 @@ import os.log
 import AVFoundation
 
 class HybridRecognizer: HybridRecognizerSpec {
-    internal let logger = Logger(subsystem: "com.margelo.nitro.nitrospeech", category: "Recognizer")
+    internal static let isDebug = true
+    internal func logger(_ string: String) -> Void {
+        if Self.isDebug {
+            Logger(subsystem: "com.margelo.nitro.nitrospeech", category: "Recognizer").info("\(string)")
+        }
+    }
+
     internal static let defaultAutoFinishRecognitionMs = 8000.0
     internal static let speechRmsThreshold: Float = 0.005623
     
@@ -25,6 +31,7 @@ class HybridRecognizer: HybridRecognizerSpec {
     internal var isStopping: Bool = false
     internal var config: SpeechToTextParams?
     internal var levelSmoothed: Float = 0
+    internal var supportedLocales: [String] = []
     
     func getIsActive() -> Bool {
         return self.isActive
@@ -91,6 +98,10 @@ class HybridRecognizer: HybridRecognizerSpec {
             )
         }
     }
+    
+    func getSupportedLocalesIOS() -> [String] {
+        return self.supportedLocales
+    }
 
     internal func requestMicrophonePermission() {}
     
@@ -122,7 +133,7 @@ class HybridRecognizer: HybridRecognizerSpec {
     internal func startRecognition() async {}
     
     internal func cleanup(from: String) {
-        logger.info("cleanup called from: \(from)")
+        logger("[cleanup]: \(from)")
         deinitAutoStop()
         stopMonitorAppState()
         stopAudioSession()
@@ -185,7 +196,7 @@ class HybridRecognizer: HybridRecognizerSpec {
         do {
             try AVAudioSession.sharedInstance().setActive(false)
         } catch {
-            logger.info("Failed to deactivate audio session: \(error.localizedDescription)")
+            logger("Failed to deactivate audio session: \(error.localizedDescription)")
             return
         }
     }
@@ -216,6 +227,17 @@ class HybridRecognizer: HybridRecognizerSpec {
 
     internal func repeatingFilter(text: String) -> String {
         var subStrings = text.split { $0.isWhitespace }.map { String($0) }
+        // filter out unnecessary punctiation
+        if #available(iOS 16.0, *) {
+            var shift = 0
+            //
+            while !subStrings[shift].contains(/\w+/) {
+                shift += 1
+            }
+            if shift > 0 {
+                subStrings = Array(subStrings.suffix(subStrings.count - shift))
+            }
+        }
         var joiner = ""
         // 10 - arbitrary number of last substrings that is still unstable
         // and needs to be filtered. Prev substrings were handled earlier.

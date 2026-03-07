@@ -5,7 +5,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/@gmessier/nitro-speech.svg)](https://www.npmjs.com/package/@gmessier/nitro-speech)
 
  
-> If you hit an issue, please open a GitHub issue or reach out to me on Discord / Twitter (X) — response is guaranteed.
+> If you hit an issue or want to request a feature, please open a GitHub issue or reach out to me on Discord / Twitter (X) — response is guaranteed.
 >
 > - GitHub Issues: [NotGeorgeMessier/nitro-speech/issues](https://github.com/NotGeorgeMessier/nitro-speech/issues)
 > - Discord: `gmessier`
@@ -121,8 +121,11 @@ Both permissions are required for speech recognition to work on iOS.
 | **Voice input volume** | Normalized voice input level for UI meters (`useVoiceInputVolume`) | ✅ | ✅ |
 | **Repeating word filter** | Removes consecutive duplicate words from artifacts | ✅ | ✅ |
 | **Locale support** | Configure speech recognizer for different languages | ✅ | ✅ |
+| **Sync getSupportedLocalesIOS** | Supported locales for iOS (No available API for Android) | ✅ | X |
 | **Contextual strings** | Domain-specific vocabulary for improved accuracy | ✅ | ✅ |
 | **Automatic punctuation** | Adds punctuation to transcription (iOS 16+) | ✅ | Auto |
+| **iOS transcription presets** | Tune recognition for short phrases vs general conversation | ✅ | Auto |
+| **Atypical speech hint** | Hint iOS that speech may include accent, lisp, or other confounding traits | ✅ | Auto |
 | **Language model selection** | Choose between web search vs free-form models | Auto | ✅ |
 | **Offensive word masking** | Control whether offensive words are masked | Auto | ✅ |
 | **Formatting quality** | Prefer quality vs speed in formatting | Auto | ✅ |
@@ -142,7 +145,9 @@ function MyComponent() {
     startListening, 
     stopListening, 
     addAutoFinishTime, 
-    updateAutoFinishTime 
+    updateAutoFinishTime,
+    getSupportedLocalesIOS,
+    getIsActive,
   } = useRecognizer({
     onReadyForSpeech: () => {
       console.log('Listening...');
@@ -177,6 +182,8 @@ function MyComponent() {
         stopHapticFeedbackStyle: 'light',
         // iOS specific
         iosAddPunctuation: true,
+        iosPreset: 'general',
+        iosAtypicalSpeech: false,
         // Android specific
         maskOffensiveWords: false,
         androidFormattingPreferQuality: false,
@@ -201,6 +208,8 @@ function MyComponent() {
 
 Use the handlers returned by this single hook instance inside that owner component.  
 For other components, avoid creating another `useRecognizer` instance for the same session.
+
+On iOS 26+, the recognizer prefers the newer `SpeechTranscriber` path for general dictation. Setting `iosPreset: 'shortForm'`, `iosAddPunctuation: false`, or `iosAtypicalSpeech: true` switches behavior to a dictation-oriented path that is better suited for short utterances or non-standard speech patterns.
 
 ### With React Navigation (important)
 
@@ -227,6 +236,7 @@ If you need to call recognizer methods from other components without prop drilli
 ```typescript
 import { RecognizerRef } from '@gmessier/nitro-speech';
 
+RecognizerRef.getSupportedLocalesIOS();
 RecognizerRef.startListening({ locale: 'en-US' });
 RecognizerRef.addAutoFinishTime(5000);
 RecognizerRef.updateAutoFinishTime(10000, true);
@@ -366,6 +376,7 @@ The `RecognizerSession.dispose()` method is **NOT SAFE** and should rarely be us
 - `addAutoFinishTime(additionalTimeMs?: number)` - Add time to the auto-finish timer (or reset to original if no parameter)
 - `updateAutoFinishTime(newTimeMs: number, withRefresh?: boolean)` - Update the auto-finish timer
 - `getIsActive()` - Returns true if the speech recognition is active
+- `getSupportedLocalesIOS()` Returns supported locale strings on iOS. On Android - empty array.
 
 ### `RecognizerRef`
 
@@ -374,6 +385,7 @@ The `RecognizerSession.dispose()` method is **NOT SAFE** and should rarely be us
 - `addAutoFinishTime(additionalTimeMs?: number)`
 - `updateAutoFinishTime(newTimeMs: number, withRefresh?: boolean)`
 - `getIsActive()`
+- `getSupportedLocalesIOS()`
 
 ### `useVoiceInputVolume`
 
@@ -401,6 +413,8 @@ Configuration object for speech recognition.
 #### iOS-Specific Parameters
 
 - `iosAddPunctuation?: boolean` - Add punctuation to results (iOS 16+, default: `true`)
+- `iosPreset?: 'shortForm' | 'general'` - iOS 26+ transcription preset. Use `'shortForm'` for short phrases or commands; it also disables punctuation. Use `'general'` for longer speech with more natural formatting (default: `'general'`)
+- `iosAtypicalSpeech?: boolean` - iOS 26+ hint for speakers with heavy accent, lisp, or other confounding speech traits (default: `false`)
 
 #### Android-Specific Parameters
 

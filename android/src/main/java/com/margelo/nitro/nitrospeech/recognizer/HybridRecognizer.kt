@@ -117,6 +117,12 @@ class HybridRecognizer: HybridRecognizerSpec() {
     }
   }
 
+  @DoNotStrip
+  @Keep
+  override fun getSupportedLocalesIOS(): Array<String> {
+    return emptyArray()
+  }
+
   override fun dispose() {
     stopListening()
   }
