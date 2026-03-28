@@ -1,7 +1,7 @@
 {
-  "name": "@gmessier/nitro-speech",
-  "version": "0.3.1",
-  "description": "React Native Speech Recognition Library powered by Nitro Modules",
+  "name": "@gmessier/rfgtgyh-test-temp-nitro",
+  "version": "0.0.1",
+  "description": "Test package for detecting Nitro Modules issues",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
   "types": "./lib/typescript/index.d.ts",
@@ -37,22 +37,7 @@
     "specs": "tsc --noEmit false && nitrogen --logLevel=\"debug\""
   },
   "keywords": [
-    "react-native",
-    "speech",
-    "recognition",
-    "speech-recognition",
-    "speech-to-text",
-    "SpeechAnalyzer",
-    "SpeechTranscriber",
-    "DictationTranscriber",
-    "stt",
-    "voice",
-    "voice-recognition",
-    "transcription",
-    "audio",
-    "microphone",
-    "nitro",
-    "nitro-modules"
+    "react-native"
   ],
   "repository": {
     "type": "git",

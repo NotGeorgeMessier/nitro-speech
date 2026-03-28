@@ -8,58 +8,26 @@
 #include "NitroSpeech-Swift-Cxx-Bridge.hpp"
 
 // Include C++ implementation defined types
+#include "HybridEqualizerSpecSwift.hpp"
 #include "HybridNitroSpeechSpecSwift.hpp"
-#include "HybridRecognizerSpecSwift.hpp"
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 #include <NitroModules/NitroDefines.hpp>
 
 namespace margelo::nitro::nitrospeech::bridge::swift {
 
-  // pragma MARK: std::function<void()>
-  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroSpeech::Func_void::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)]() mutable -> void {
-      swiftClosure.call();
-    };
+  // pragma MARK: std::shared_ptr<HybridEqualizerSpec>
+  std::shared_ptr<HybridEqualizerSpec> create_std__shared_ptr_HybridEqualizerSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    NitroSpeech::HybridEqualizerSpec_cxx swiftPart = NitroSpeech::HybridEqualizerSpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::nitrospeech::HybridEqualizerSpecSwift>(swiftPart);
   }
-  
-  // pragma MARK: std::function<void(const std::vector<std::string>& /* resultBatches */)>
-  Func_void_std__vector_std__string_ create_Func_void_std__vector_std__string_(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroSpeech::Func_void_std__vector_std__string_::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::vector<std::string>& resultBatches) mutable -> void {
-      swiftClosure.call(resultBatches);
-    };
-  }
-  
-  // pragma MARK: std::function<void(double /* timeLeftMs */)>
-  Func_void_double create_Func_void_double(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroSpeech::Func_void_double::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](double timeLeftMs) mutable -> void {
-      swiftClosure.call(timeLeftMs);
-    };
-  }
-  
-  // pragma MARK: std::function<void(const std::string& /* message */)>
-  Func_void_std__string create_Func_void_std__string(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroSpeech::Func_void_std__string::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::string& message) mutable -> void {
-      swiftClosure.call(message);
-    };
-  }
-  
-  // pragma MARK: std::shared_ptr<HybridRecognizerSpec>
-  std::shared_ptr<HybridRecognizerSpec> create_std__shared_ptr_HybridRecognizerSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
-    NitroSpeech::HybridRecognizerSpec_cxx swiftPart = NitroSpeech::HybridRecognizerSpec_cxx::fromUnsafe(swiftUnsafePointer);
-    return std::make_shared<margelo::nitro::nitrospeech::HybridRecognizerSpecSwift>(swiftPart);
-  }
-  void* NON_NULL get_std__shared_ptr_HybridRecognizerSpec_(std__shared_ptr_HybridRecognizerSpec_ cppType) {
-    std::shared_ptr<margelo::nitro::nitrospeech::HybridRecognizerSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::nitrospeech::HybridRecognizerSpecSwift>(cppType);
+  void* NON_NULL get_std__shared_ptr_HybridEqualizerSpec_(std__shared_ptr_HybridEqualizerSpec_ cppType) {
+    std::shared_ptr<margelo::nitro::nitrospeech::HybridEqualizerSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::nitrospeech::HybridEqualizerSpecSwift>(cppType);
     #ifdef NITRO_DEBUG
     if (swiftWrapper == nullptr) [[unlikely]] {
-      throw std::runtime_error("Class \"HybridRecognizerSpec\" is not implemented in Swift!");
+      throw std::runtime_error("Class \"HybridEqualizerSpec\" is not implemented in Swift!");
     }
     #endif
-    NitroSpeech::HybridRecognizerSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    NitroSpeech::HybridEqualizerSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
   }
   

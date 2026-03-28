@@ -10,7 +10,7 @@ import NitroModules
 /// See ``HybridNitroSpeechSpec``
 public protocol HybridNitroSpeechSpec_protocol: HybridObject {
   // Properties
-  var recognizer: (any HybridRecognizerSpec) { get set }
+  var equalizer: (any HybridEqualizerSpec) { get set }
 
   // Methods
   

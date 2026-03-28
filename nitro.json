@@ -14,8 +14,14 @@
   },
   "autolinking": {
     "NitroSpeech": {
-      "swift": "HybridNitroSpeech",
-      "kotlin": "HybridNitroSpeech"
+      "ios": {
+        "language": "swift",
+        "implementationClassName": "HybridNitroSpeech"
+      },
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "HybridNitroSpeech"
+      }
     }
   },
   "ignorePaths": [

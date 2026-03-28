@@ -12,11 +12,11 @@
 // Forward declaration of `HybridNitroSpeechSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 
-// Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
+// Forward declaration of `HybridEqualizerSpec` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { class HybridEqualizerSpec; }
 
 #include <memory>
-#include "HybridRecognizerSpec.hpp"
+#include "HybridEqualizerSpec.hpp"
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 
@@ -64,12 +64,12 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     // Properties
-    inline std::shared_ptr<HybridRecognizerSpec> getRecognizer() noexcept override {
-      auto __result = _swiftPart.getRecognizer();
+    inline std::shared_ptr<HybridEqualizerSpec> getEqualizer() noexcept override {
+      auto __result = _swiftPart.getEqualizer();
       return __result;
     }
-    inline void setRecognizer(const std::shared_ptr<HybridRecognizerSpec>& recognizer) noexcept override {
-      _swiftPart.setRecognizer(recognizer);
+    inline void setEqualizer(const std::shared_ptr<HybridEqualizerSpec>& equalizer) noexcept override {
+      _swiftPart.setEqualizer(equalizer);
     }
 
   public:

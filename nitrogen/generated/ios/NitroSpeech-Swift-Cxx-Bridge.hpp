@@ -8,33 +8,23 @@
 #pragma once
 
 // Forward declarations of C++ defined types
-// Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
+// Forward declaration of `HybridEqualizerSpec` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { class HybridEqualizerSpec; }
 // Forward declaration of `HybridNitroSpeechSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
-// Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
-// Forward declaration of `IosPreset` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 
 // Forward declarations of Swift defined types
+// Forward declaration of `HybridEqualizerSpec_cxx` to properly resolve imports.
+namespace NitroSpeech { class HybridEqualizerSpec_cxx; }
 // Forward declaration of `HybridNitroSpeechSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
-// Forward declaration of `HybridRecognizerSpec_cxx` to properly resolve imports.
-namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 
 // Include C++ defined types
-#include "HapticFeedbackStyle.hpp"
+#include "HybridEqualizerSpec.hpp"
 #include "HybridNitroSpeechSpec.hpp"
-#include "HybridRecognizerSpec.hpp"
-#include "IosPreset.hpp"
 #include <NitroModules/Result.hpp>
 #include <exception>
-#include <functional>
 #include <memory>
-#include <optional>
-#include <string>
-#include <vector>
 
 /**
  * Contains specialized versions of C++ templated types so they can be accessed from Swift,
@@ -42,281 +32,17 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
  */
 namespace margelo::nitro::nitrospeech::bridge::swift {
 
-  // pragma MARK: std::optional<std::string>
+  // pragma MARK: std::shared_ptr<HybridEqualizerSpec>
   /**
-   * Specialized version of `std::optional<std::string>`.
+   * Specialized version of `std::shared_ptr<HybridEqualizerSpec>`.
    */
-  using std__optional_std__string_ = std::optional<std::string>;
-  inline std::optional<std::string> create_std__optional_std__string_(const std::string& value) noexcept {
-    return std::optional<std::string>(value);
-  }
-  inline bool has_value_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::string get_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
-    return optional.value();
-  }
+  using std__shared_ptr_HybridEqualizerSpec_ = std::shared_ptr<HybridEqualizerSpec>;
+  std::shared_ptr<HybridEqualizerSpec> create_std__shared_ptr_HybridEqualizerSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridEqualizerSpec_(std__shared_ptr_HybridEqualizerSpec_ cppType);
   
-  // pragma MARK: std::optional<double>
-  /**
-   * Specialized version of `std::optional<double>`.
-   */
-  using std__optional_double_ = std::optional<double>;
-  inline std::optional<double> create_std__optional_double_(const double& value) noexcept {
-    return std::optional<double>(value);
-  }
-  inline bool has_value_std__optional_double_(const std::optional<double>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline double get_std__optional_double_(const std::optional<double>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<bool>
-  /**
-   * Specialized version of `std::optional<bool>`.
-   */
-  using std__optional_bool_ = std::optional<bool>;
-  inline std::optional<bool> create_std__optional_bool_(const bool& value) noexcept {
-    return std::optional<bool>(value);
-  }
-  inline bool has_value_std__optional_bool_(const std::optional<bool>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline bool get_std__optional_bool_(const std::optional<bool>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::vector<std::string>
-  /**
-   * Specialized version of `std::vector<std::string>`.
-   */
-  using std__vector_std__string_ = std::vector<std::string>;
-  inline std::vector<std::string> create_std__vector_std__string_(size_t size) noexcept {
-    std::vector<std::string> vector;
-    vector.reserve(size);
-    return vector;
-  }
-  
-  // pragma MARK: std::optional<std::vector<std::string>>
-  /**
-   * Specialized version of `std::optional<std::vector<std::string>>`.
-   */
-  using std__optional_std__vector_std__string__ = std::optional<std::vector<std::string>>;
-  inline std::optional<std::vector<std::string>> create_std__optional_std__vector_std__string__(const std::vector<std::string>& value) noexcept {
-    return std::optional<std::vector<std::string>>(value);
-  }
-  inline bool has_value_std__optional_std__vector_std__string__(const std::optional<std::vector<std::string>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::vector<std::string> get_std__optional_std__vector_std__string__(const std::optional<std::vector<std::string>>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<HapticFeedbackStyle>
-  /**
-   * Specialized version of `std::optional<HapticFeedbackStyle>`.
-   */
-  using std__optional_HapticFeedbackStyle_ = std::optional<HapticFeedbackStyle>;
-  inline std::optional<HapticFeedbackStyle> create_std__optional_HapticFeedbackStyle_(const HapticFeedbackStyle& value) noexcept {
-    return std::optional<HapticFeedbackStyle>(value);
-  }
-  inline bool has_value_std__optional_HapticFeedbackStyle_(const std::optional<HapticFeedbackStyle>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline HapticFeedbackStyle get_std__optional_HapticFeedbackStyle_(const std::optional<HapticFeedbackStyle>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<IosPreset>
-  /**
-   * Specialized version of `std::optional<IosPreset>`.
-   */
-  using std__optional_IosPreset_ = std::optional<IosPreset>;
-  inline std::optional<IosPreset> create_std__optional_IosPreset_(const IosPreset& value) noexcept {
-    return std::optional<IosPreset>(value);
-  }
-  inline bool has_value_std__optional_IosPreset_(const std::optional<IosPreset>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline IosPreset get_std__optional_IosPreset_(const std::optional<IosPreset>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::function<void()>
-  /**
-   * Specialized version of `std::function<void()>`.
-   */
-  using Func_void = std::function<void()>;
-  /**
-   * Wrapper class for a `std::function<void()>`, this can be used from Swift.
-   */
-  class Func_void_Wrapper final {
-  public:
-    explicit Func_void_Wrapper(std::function<void()>&& func): _function(std::make_unique<std::function<void()>>(std::move(func))) {}
-    inline void call() const noexcept {
-      _function->operator()();
-    }
-  private:
-    std::unique_ptr<std::function<void()>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_Wrapper wrap_Func_void(Func_void value) noexcept {
-    return Func_void_Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::optional<std::function<void()>>
-  /**
-   * Specialized version of `std::optional<std::function<void()>>`.
-   */
-  using std__optional_std__function_void____ = std::optional<std::function<void()>>;
-  inline std::optional<std::function<void()>> create_std__optional_std__function_void____(const std::function<void()>& value) noexcept {
-    return std::optional<std::function<void()>>(value);
-  }
-  inline bool has_value_std__optional_std__function_void____(const std::optional<std::function<void()>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::function<void()> get_std__optional_std__function_void____(const std::optional<std::function<void()>>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::function<void(const std::vector<std::string>& /* resultBatches */)>
-  /**
-   * Specialized version of `std::function<void(const std::vector<std::string>&)>`.
-   */
-  using Func_void_std__vector_std__string_ = std::function<void(const std::vector<std::string>& /* resultBatches */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::vector<std::string>& / * resultBatches * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__vector_std__string__Wrapper final {
-  public:
-    explicit Func_void_std__vector_std__string__Wrapper(std::function<void(const std::vector<std::string>& /* resultBatches */)>&& func): _function(std::make_unique<std::function<void(const std::vector<std::string>& /* resultBatches */)>>(std::move(func))) {}
-    inline void call(std::vector<std::string> resultBatches) const noexcept {
-      _function->operator()(resultBatches);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::vector<std::string>& /* resultBatches */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__vector_std__string_ create_Func_void_std__vector_std__string_(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__vector_std__string__Wrapper wrap_Func_void_std__vector_std__string_(Func_void_std__vector_std__string_ value) noexcept {
-    return Func_void_std__vector_std__string__Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>
-  /**
-   * Specialized version of `std::optional<std::function<void(const std::vector<std::string>& / * resultBatches * /)>>`.
-   */
-  using std__optional_std__function_void_const_std__vector_std__string______resultBatches______ = std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>;
-  inline std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>> create_std__optional_std__function_void_const_std__vector_std__string______resultBatches______(const std::function<void(const std::vector<std::string>& /* resultBatches */)>& value) noexcept {
-    return std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>(value);
-  }
-  inline bool has_value_std__optional_std__function_void_const_std__vector_std__string______resultBatches______(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::function<void(const std::vector<std::string>& /* resultBatches */)> get_std__optional_std__function_void_const_std__vector_std__string______resultBatches______(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::function<void(double /* timeLeftMs */)>
-  /**
-   * Specialized version of `std::function<void(double)>`.
-   */
-  using Func_void_double = std::function<void(double /* timeLeftMs */)>;
-  /**
-   * Wrapper class for a `std::function<void(double / * timeLeftMs * /)>`, this can be used from Swift.
-   */
-  class Func_void_double_Wrapper final {
-  public:
-    explicit Func_void_double_Wrapper(std::function<void(double /* timeLeftMs */)>&& func): _function(std::make_unique<std::function<void(double /* timeLeftMs */)>>(std::move(func))) {}
-    inline void call(double timeLeftMs) const noexcept {
-      _function->operator()(timeLeftMs);
-    }
-  private:
-    std::unique_ptr<std::function<void(double /* timeLeftMs */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_double create_Func_void_double(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_double_Wrapper wrap_Func_void_double(Func_void_double value) noexcept {
-    return Func_void_double_Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::optional<std::function<void(double /* timeLeftMs */)>>
-  /**
-   * Specialized version of `std::optional<std::function<void(double / * timeLeftMs * /)>>`.
-   */
-  using std__optional_std__function_void_double____timeLeftMs______ = std::optional<std::function<void(double /* timeLeftMs */)>>;
-  inline std::optional<std::function<void(double /* timeLeftMs */)>> create_std__optional_std__function_void_double____timeLeftMs______(const std::function<void(double /* timeLeftMs */)>& value) noexcept {
-    return std::optional<std::function<void(double /* timeLeftMs */)>>(value);
-  }
-  inline bool has_value_std__optional_std__function_void_double____timeLeftMs______(const std::optional<std::function<void(double /* timeLeftMs */)>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::function<void(double /* timeLeftMs */)> get_std__optional_std__function_void_double____timeLeftMs______(const std::optional<std::function<void(double /* timeLeftMs */)>>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::function<void(const std::string& /* message */)>
-  /**
-   * Specialized version of `std::function<void(const std::string&)>`.
-   */
-  using Func_void_std__string = std::function<void(const std::string& /* message */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::string& / * message * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__string_Wrapper final {
-  public:
-    explicit Func_void_std__string_Wrapper(std::function<void(const std::string& /* message */)>&& func): _function(std::make_unique<std::function<void(const std::string& /* message */)>>(std::move(func))) {}
-    inline void call(std::string message) const noexcept {
-      _function->operator()(message);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::string& /* message */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__string create_Func_void_std__string(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__string_Wrapper wrap_Func_void_std__string(Func_void_std__string value) noexcept {
-    return Func_void_std__string_Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::optional<std::function<void(const std::string& /* message */)>>
-  /**
-   * Specialized version of `std::optional<std::function<void(const std::string& / * message * /)>>`.
-   */
-  using std__optional_std__function_void_const_std__string_____message______ = std::optional<std::function<void(const std::string& /* message */)>>;
-  inline std::optional<std::function<void(const std::string& /* message */)>> create_std__optional_std__function_void_const_std__string_____message______(const std::function<void(const std::string& /* message */)>& value) noexcept {
-    return std::optional<std::function<void(const std::string& /* message */)>>(value);
-  }
-  inline bool has_value_std__optional_std__function_void_const_std__string_____message______(const std::optional<std::function<void(const std::string& /* message */)>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::function<void(const std::string& /* message */)> get_std__optional_std__function_void_const_std__string_____message______(const std::optional<std::function<void(const std::string& /* message */)>>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<std::function<void(double /* normVolume */)>>
-  /**
-   * Specialized version of `std::optional<std::function<void(double / * normVolume * /)>>`.
-   */
-  using std__optional_std__function_void_double____normVolume______ = std::optional<std::function<void(double /* normVolume */)>>;
-  inline std::optional<std::function<void(double /* normVolume */)>> create_std__optional_std__function_void_double____normVolume______(const std::function<void(double /* normVolume */)>& value) noexcept {
-    return std::optional<std::function<void(double /* normVolume */)>>(value);
-  }
-  inline bool has_value_std__optional_std__function_void_double____normVolume______(const std::optional<std::function<void(double /* normVolume */)>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::function<void(double /* normVolume */)> get_std__optional_std__function_void_double____normVolume______(const std::optional<std::function<void(double /* normVolume */)>>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::shared_ptr<HybridRecognizerSpec>
-  /**
-   * Specialized version of `std::shared_ptr<HybridRecognizerSpec>`.
-   */
-  using std__shared_ptr_HybridRecognizerSpec_ = std::shared_ptr<HybridRecognizerSpec>;
-  std::shared_ptr<HybridRecognizerSpec> create_std__shared_ptr_HybridRecognizerSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridRecognizerSpec_(std__shared_ptr_HybridRecognizerSpec_ cppType);
-  
-  // pragma MARK: std::weak_ptr<HybridRecognizerSpec>
-  using std__weak_ptr_HybridRecognizerSpec_ = std::weak_ptr<HybridRecognizerSpec>;
-  inline std__weak_ptr_HybridRecognizerSpec_ weakify_std__shared_ptr_HybridRecognizerSpec_(const std::shared_ptr<HybridRecognizerSpec>& strong) noexcept { return strong; }
+  // pragma MARK: std::weak_ptr<HybridEqualizerSpec>
+  using std__weak_ptr_HybridEqualizerSpec_ = std::weak_ptr<HybridEqualizerSpec>;
+  inline std__weak_ptr_HybridEqualizerSpec_ weakify_std__shared_ptr_HybridEqualizerSpec_(const std::shared_ptr<HybridEqualizerSpec>& strong) noexcept { return strong; }
   
   // pragma MARK: Result<void>
   using Result_void_ = Result<void>;
@@ -325,24 +51,6 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
   }
   inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
     return Result<void>::withError(error);
-  }
-  
-  // pragma MARK: Result<bool>
-  using Result_bool_ = Result<bool>;
-  inline Result_bool_ create_Result_bool_(bool value) noexcept {
-    return Result<bool>::withValue(std::move(value));
-  }
-  inline Result_bool_ create_Result_bool_(const std::exception_ptr& error) noexcept {
-    return Result<bool>::withError(error);
-  }
-  
-  // pragma MARK: Result<std::vector<std::string>>
-  using Result_std__vector_std__string__ = Result<std::vector<std::string>>;
-  inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::vector<std::string>& value) noexcept {
-    return Result<std::vector<std::string>>::withValue(value);
-  }
-  inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::exception_ptr& error) noexcept {
-    return Result<std::vector<std::string>>::withError(error);
   }
   
   // pragma MARK: std::shared_ptr<HybridNitroSpeechSpec>

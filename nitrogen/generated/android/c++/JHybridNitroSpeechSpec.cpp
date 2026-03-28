@@ -7,12 +7,12 @@
 
 #include "JHybridNitroSpeechSpec.hpp"
 
-// Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
+// Forward declaration of `HybridEqualizerSpec` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { class HybridEqualizerSpec; }
 
 #include <memory>
-#include "HybridRecognizerSpec.hpp"
-#include "JHybridRecognizerSpec.hpp"
+#include "HybridEqualizerSpec.hpp"
+#include "JHybridEqualizerSpec.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -44,14 +44,14 @@ namespace margelo::nitro::nitrospeech {
   }
 
   // Properties
-  std::shared_ptr<HybridRecognizerSpec> JHybridNitroSpeechSpec::getRecognizer() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridRecognizerSpec::JavaPart>()>("getRecognizer");
+  std::shared_ptr<HybridEqualizerSpec> JHybridNitroSpeechSpec::getEqualizer() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHybridEqualizerSpec::JavaPart>()>("getEqualizer");
     auto __result = method(_javaPart);
-    return __result->getJHybridRecognizerSpec();
+    return __result->getJHybridEqualizerSpec();
   }
-  void JHybridNitroSpeechSpec::setRecognizer(const std::shared_ptr<HybridRecognizerSpec>& recognizer) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JHybridRecognizerSpec::JavaPart> /* recognizer */)>("setRecognizer");
-    method(_javaPart, std::dynamic_pointer_cast<JHybridRecognizerSpec>(recognizer)->getJavaPart());
+  void JHybridNitroSpeechSpec::setEqualizer(const std::shared_ptr<HybridEqualizerSpec>& equalizer) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JHybridEqualizerSpec::JavaPart> /* equalizer */)>("setEqualizer");
+    method(_javaPart, std::dynamic_pointer_cast<JHybridEqualizerSpec>(equalizer)->getJavaPart());
   }
 
   // Methods

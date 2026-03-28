@@ -8,30 +8,17 @@
 #pragma once
 
 // Forward declarations of C++ defined types
-// Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
+// Forward declaration of `HybridEqualizerSpec` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { class HybridEqualizerSpec; }
 // Forward declaration of `HybridNitroSpeechSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
-// Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
-// Forward declaration of `IosPreset` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { enum class IosPreset; }
-// Forward declaration of `SpeechToTextParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 
 // Include C++ defined types
-#include "HapticFeedbackStyle.hpp"
+#include "HybridEqualizerSpec.hpp"
 #include "HybridNitroSpeechSpec.hpp"
-#include "HybridRecognizerSpec.hpp"
-#include "IosPreset.hpp"
-#include "SpeechToTextParams.hpp"
 #include <NitroModules/Result.hpp>
 #include <exception>
-#include <functional>
 #include <memory>
-#include <optional>
-#include <string>
-#include <vector>
 
 // C++ helpers for Swift
 #include "NitroSpeech-Swift-Cxx-Bridge.hpp"
@@ -43,10 +30,10 @@ namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 #include <NitroModules/DateToChronoDate.hpp>
 
 // Forward declarations of Swift defined types
+// Forward declaration of `HybridEqualizerSpec_cxx` to properly resolve imports.
+namespace NitroSpeech { class HybridEqualizerSpec_cxx; }
 // Forward declaration of `HybridNitroSpeechSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
-// Forward declaration of `HybridRecognizerSpec_cxx` to properly resolve imports.
-namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 
 // Include Swift defined types
 #if __has_include("NitroSpeech-Swift.h")
