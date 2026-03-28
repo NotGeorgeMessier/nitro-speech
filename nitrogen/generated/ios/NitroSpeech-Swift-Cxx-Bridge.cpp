@@ -8,9 +8,9 @@
 #include "NitroSpeech-Swift-Cxx-Bridge.hpp"
 
 // Include C++ implementation defined types
-#include "HybridEqualizerSpecSwift.hpp"
-#include "HybridNitroSpeechSpecSwift.hpp"
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
+#include "c++/HybridEqualizerSpecSwift.hpp"
+#include "c++/HybridNitroSpeechSpecSwift.hpp"
 #include <NitroModules/NitroDefines.hpp>
 
 namespace margelo::nitro::nitrospeech::bridge::swift {

@@ -1,6 +1,6 @@
 {
   "name": "@gmessier/rfgtgyh-test-temp-nitro",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Test package for detecting Nitro Modules issues",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",

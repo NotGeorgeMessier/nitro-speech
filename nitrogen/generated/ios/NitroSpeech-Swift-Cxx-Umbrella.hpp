@@ -14,8 +14,8 @@ namespace margelo::nitro::nitrospeech { class HybridEqualizerSpec; }
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 
 // Include C++ defined types
-#include "HybridEqualizerSpec.hpp"
-#include "HybridNitroSpeechSpec.hpp"
+#include "../shared/c++/HybridEqualizerSpec.hpp"
+#include "../shared/c++/HybridNitroSpeechSpec.hpp"
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <memory>

@@ -48,6 +48,9 @@ def add_nitrogen_files(spec)
     "nitrogen/generated/shared/**/views/**/*"
   ]
 
+  # Preserve directory layout under Pods/Headers/Public/<Pod>/ so relative #includes work.
+  spec.header_mappings_dir = '.' unless spec.attributes_hash['header_mappings_dir']
+
   current_pod_target_xcconfig = spec.attributes_hash['pod_target_xcconfig'] || {}
   spec.pod_target_xcconfig = current_pod_target_xcconfig.merge({
     # Use C++ 20

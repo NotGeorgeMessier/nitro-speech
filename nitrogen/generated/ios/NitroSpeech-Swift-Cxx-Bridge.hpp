@@ -20,8 +20,8 @@ namespace NitroSpeech { class HybridEqualizerSpec_cxx; }
 namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 
 // Include C++ defined types
-#include "HybridEqualizerSpec.hpp"
-#include "HybridNitroSpeechSpec.hpp"
+#include "../shared/c++/HybridEqualizerSpec.hpp"
+#include "../shared/c++/HybridNitroSpeechSpec.hpp"
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <memory>

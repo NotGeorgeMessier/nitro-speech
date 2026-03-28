@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "HybridEqualizerSpec.hpp"
+#include "../../shared/c++/HybridEqualizerSpec.hpp"
 
 // Forward declaration of `HybridEqualizerSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridEqualizerSpec_cxx; }
@@ -16,7 +16,7 @@ namespace NitroSpeech { class HybridEqualizerSpec_cxx; }
 
 
 
-#include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
+#include "../NitroSpeech-Swift-Cxx-Umbrella.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
