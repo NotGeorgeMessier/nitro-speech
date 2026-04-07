@@ -18,7 +18,7 @@ public extension SpeechToTextParams {
   /**
    * Create a new instance of `SpeechToTextParams`.
    */
-  init(locale: String?, autoFinishRecognitionMs: Double?, disableRepeatingFilter: Bool?, contextualStrings: [String]?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, maskOffensiveWords: Bool?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?, iosPreset: IosPreset?, iosAtypicalSpeech: Bool?) {
+  init(locale: String?, autoFinishRecognitionMs: Double?, autoFinishProgressIntervalMs: Double?, disableRepeatingFilter: Bool?, contextualStrings: [String]?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, maskOffensiveWords: Bool?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?, iosPreset: IosPreset?, iosAtypicalSpeech: Bool?) {
     self.init({ () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = locale {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
@@ -27,6 +27,12 @@ public extension SpeechToTextParams {
       }
     }(), { () -> bridge.std__optional_double_ in
       if let __unwrappedValue = autoFinishRecognitionMs {
+        return bridge.create_std__optional_double_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_double_ in
+      if let __unwrappedValue = autoFinishProgressIntervalMs {
         return bridge.create_std__optional_double_(__unwrappedValue)
       } else {
         return .init()
@@ -123,6 +129,18 @@ public extension SpeechToTextParams {
     return { () -> Double? in
       if bridge.has_value_std__optional_double_(self.__autoFinishRecognitionMs) {
         let __unwrapped = bridge.get_std__optional_double_(self.__autoFinishRecognitionMs)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
+  var autoFinishProgressIntervalMs: Double? {
+    return { () -> Double? in
+      if bridge.has_value_std__optional_double_(self.__autoFinishProgressIntervalMs) {
+        let __unwrapped = bridge.get_std__optional_double_(self.__autoFinishProgressIntervalMs)
         return __unwrapped
       } else {
         return nil

@@ -109,13 +109,13 @@ abstract class HybridRecognizerSpec: HybridObject() {
       onPermissionDenied = value?.let { it }
     }
   
-  abstract var onVolumeChange: ((normVolume: Double) -> Unit)?
+  abstract var onVolumeChange: ((event: VolumeChangeEvent) -> Unit)?
   
-  private var onVolumeChange_cxx: Func_void_double?
+  private var onVolumeChange_cxx: Func_void_VolumeChangeEvent?
     @Keep
     @DoNotStrip
     get() {
-      return onVolumeChange?.let { Func_void_double_java(it) }
+      return onVolumeChange?.let { Func_void_VolumeChangeEvent_java(it) }
     }
     @Keep
     @DoNotStrip
@@ -126,7 +126,11 @@ abstract class HybridRecognizerSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun startListening(params: SpeechToTextParams): Unit
+  abstract fun prewarm(defaultParams: SpeechToTextParams?): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun startListening(params: SpeechToTextParams?): Unit
   
   @DoNotStrip
   @Keep
@@ -150,7 +154,7 @@ abstract class HybridRecognizerSpec: HybridObject() {
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {
-    return "[HybridObject Recognizer]"
+    return "[HybridObject NitroSpeechRecognizer]"
   }
 
   // C++ backing class

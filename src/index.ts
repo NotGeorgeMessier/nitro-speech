@@ -1,13 +1,14 @@
 import React from 'react'
-import { NitroModules } from 'react-native-nitro-modules'
 import type {
   NitroSpeech as NitroSpeechSpec,
   Recognizer as RecognizerSpec,
   SpeechToTextParams,
+  VolumeChangeEvent,
 } from './specs/NitroSpeech.nitro'
+import { createNitroSpeechHybridObject } from '../nitrogen/generated/shared/ts/createNitroSpeechHybridObject'
 
 const NitroSpeech =
-  NitroModules.createHybridObject<NitroSpeechSpec>('NitroSpeech')
+  createNitroSpeechHybridObject<NitroSpeechSpec>('NitroSpeech')
 
 /**
  * Unsafe access to the Recognizer Session.
@@ -63,7 +64,26 @@ const recognizerGetSupportedLocalesIOS = () => {
 }
 
 const subscribers = new Set<RecognizerSpec['onVolumeChange']>()
-let currentVolume = 0
+
+let current: VolumeChangeEvent = {
+  smoothedVolume: 0,
+  rawVolume: 0,
+  db: undefined,
+}
+
+let snapshot: VolumeChangeEvent = { ...current }
+
+const getSnapshot = () => {
+  if (
+    snapshot.smoothedVolume === current.smoothedVolume &&
+    snapshot.rawVolume === current.rawVolume &&
+    snapshot.db === current.db
+  ) {
+    return snapshot
+  }
+  snapshot = { ...current }
+  return snapshot
+}
 
 /**
  * Subscription to the voice input volume changes
@@ -73,19 +93,22 @@ let currentVolume = 0
  * @returns The current voice input volume normalized to a range of 0 to 1.
  */
 export const useVoiceInputVolume = () => {
-  return React.useSyncExternalStore(
-    (subscriber) => {
-      subscribers.add(subscriber)
-      return () => subscribers.delete(subscriber)
-    },
-    () => currentVolume
-  )
+  return React.useSyncExternalStore((subscriber) => {
+    subscribers.add(subscriber)
+    return () => subscribers.delete(subscriber)
+  }, getSnapshot)
 }
 
-const handleVolumeChange: RecognizerSpec['onVolumeChange'] = (normVolume) => {
-  if (normVolume === currentVolume) return
-  currentVolume = normVolume
-  subscribers.forEach((subscriber) => subscriber?.(normVolume))
+const handleVolumeChange: RecognizerSpec['onVolumeChange'] = (event) => {
+  if (
+    event.smoothedVolume === current.smoothedVolume &&
+    event.rawVolume === current.rawVolume &&
+    event.db === current.db
+  ) {
+    return
+  }
+  current = event
+  subscribers.forEach((subscriber) => subscriber?.(event))
 }
 
 /**
@@ -122,8 +145,8 @@ export const useRecognizer = (
 ): RecognizerHandlers => {
   React.useEffect(() => {
     if (callbacks.onVolumeChange) {
-      RecognizerSession.onVolumeChange = (normVolume: number) => {
-        callbacks.onVolumeChange?.(normVolume)
+      RecognizerSession.onVolumeChange = (event) => {
+        callbacks.onVolumeChange?.(event)
       }
     } else {
       RecognizerSession.onVolumeChange = handleVolumeChange

@@ -9,7 +9,7 @@
 
 #include <NitroModules/JHybridObject.hpp>
 #include <fbjni/fbjni.h>
-#include "HybridRecognizerSpec.hpp"
+#include "NitroSpeechHybridRecognizerSpec.hpp"
 
 
 
@@ -21,11 +21,11 @@ namespace margelo::nitro::nitrospeech {
   class JHybridRecognizerSpec: public virtual HybridRecognizerSpec, public virtual JHybridObject {
   public:
     struct JavaPart: public jni::JavaClass<JavaPart, JHybridObject::JavaPart> {
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridRecognizerSpec;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridRecognizerSpec;";
       std::shared_ptr<JHybridRecognizerSpec> getJHybridRecognizerSpec();
     };
     struct CxxPart: public jni::HybridClass<CxxPart, JHybridObject::CxxPart> {
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridRecognizerSpec$CxxPart;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridRecognizerSpec$CxxPart;";
       static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
       static void registerNatives();
       using HybridBase::HybridBase;
@@ -62,12 +62,13 @@ namespace margelo::nitro::nitrospeech {
     void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) override;
     std::optional<std::function<void()>> getOnPermissionDenied() override;
     void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) override;
-    std::optional<std::function<void(double /* normVolume */)>> getOnVolumeChange() override;
-    void setOnVolumeChange(const std::optional<std::function<void(double /* normVolume */)>>& onVolumeChange) override;
+    std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> getOnVolumeChange() override;
+    void setOnVolumeChange(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& onVolumeChange) override;
 
   public:
     // Methods
-    void startListening(const SpeechToTextParams& params) override;
+    void prewarm(const std::optional<SpeechToTextParams>& defaultParams) override;
+    void startListening(const std::optional<SpeechToTextParams>& params) override;
     void stopListening() override;
     void addAutoFinishTime(std::optional<double> additionalTimeMs) override;
     void updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) override;

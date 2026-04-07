@@ -127,7 +127,7 @@ Both permissions are required for speech recognition to work on iOS.
 | **iOS transcription presets** | Tune recognition for short phrases vs general conversation | ✅ | Auto |
 | **Atypical speech hint** | Hint iOS that speech may include accent, lisp, or other confounding traits | ✅ | Auto |
 | **Language model selection** | Choose between web search vs free-form models | Auto | ✅ |
-| **Offensive word masking** | Control whether offensive words are masked | Auto | ✅ |
+| **Offensive word masking** | Control whether offensive words are masked | iOS 26+ | ✅ |
 | **Formatting quality** | Prefer quality vs speed in formatting | Auto | ✅ |
 
 ## Usage
@@ -215,7 +215,7 @@ On iOS 26+, the recognizer prefers the newer `SpeechTranscriber` path for genera
 
 React Navigation **doesn’t unmount screens** when you navigate — the screen can stay mounted in the background and come back without remounting. See: [Navigation lifecycle (React Navigation)](https://reactnavigation.org/docs/8.x/navigation-lifecycle/#summary).
 
-Because of that, prefer tying recognition cleanup to **focus state**, not just component unmount. A simple approach is `useIsFocused()` and passing it into `useRecognizer`’s `destroyDeps` so recognition stops when the screen blurs. See: `[useIsFocused` (React Navigation)](https://reactnavigation.org/docs/8.x/use-is-focused).
+Because of that, prefer tying recognition cleanup to **focus state**, not just component unmount. A simple approach is `useIsFocused()` and passing it into `useRecognizer`’s `destroyDeps` so recognition stops when the screen blurs. See: [`useIsFocused` (React Navigation)](https://reactnavigation.org/docs/8.x/use-is-focused).
 
 ```typescript
 const isFocused = useIsFocused();
@@ -251,6 +251,7 @@ RecognizerRef.stopListening();
 #### useVoiceInputVolume
 
 By default you have access to `useVoiceInputVolume` to read normalized voice input level (`0..1`) for UI meters.
+
 ⚠️ **Technical limitation**: this approach re-renders component a lot.
 
 ```typescript

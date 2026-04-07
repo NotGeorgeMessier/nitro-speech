@@ -8,9 +8,9 @@
 #include "NitroSpeech-Swift-Cxx-Bridge.hpp"
 
 // Include C++ implementation defined types
-#include "HybridNitroSpeechSpecSwift.hpp"
-#include "HybridRecognizerSpecSwift.hpp"
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
+#include "NitroSpeechHybridNitroSpeechSpecSwift.hpp"
+#include "NitroSpeechHybridRecognizerSpecSwift.hpp"
 #include <NitroModules/NitroDefines.hpp>
 
 namespace margelo::nitro::nitrospeech::bridge::swift {
@@ -44,6 +44,14 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     auto swiftClosure = NitroSpeech::Func_void_std__string::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](const std::string& message) mutable -> void {
       swiftClosure.call(message);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const VolumeChangeEvent& /* event */)>
+  Func_void_VolumeChangeEvent create_Func_void_VolumeChangeEvent(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroSpeech::Func_void_VolumeChangeEvent::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const VolumeChangeEvent& event) mutable -> void {
+      swiftClosure.call(event);
     };
   }
   

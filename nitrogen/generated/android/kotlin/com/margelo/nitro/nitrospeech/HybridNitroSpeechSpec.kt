@@ -36,7 +36,7 @@ abstract class HybridNitroSpeechSpec: HybridObject() {
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {
-    return "[HybridObject NitroSpeech]"
+    return "[HybridObject NitroSpeechNitroSpeech]"
   }
 
   // C++ backing class

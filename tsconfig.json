@@ -1,11 +1,12 @@
 {
   "include": [
-    "src"
+    "src",
+    "nitrogen/generated/shared"
   ],
   "compilerOptions": {
     "composite": true,
     "outDir": "lib",
-    "rootDir": "src",
+    "rootDir": ".",
     "declaration": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

@@ -8,12 +8,12 @@
 #pragma once
 
 #include <fbjni/fbjni.h>
-#include "SpeechToTextParams.hpp"
+#include "NitroSpeechSpeechToTextParams.hpp"
 
-#include "HapticFeedbackStyle.hpp"
-#include "IosPreset.hpp"
 #include "JHapticFeedbackStyle.hpp"
 #include "JIosPreset.hpp"
+#include "NitroSpeechHapticFeedbackStyle.hpp"
+#include "NitroSpeechIosPreset.hpp"
 #include <optional>
 #include <string>
 #include <vector>
@@ -27,7 +27,7 @@ namespace margelo::nitro::nitrospeech {
    */
   struct JSpeechToTextParams final: public jni::JavaClass<JSpeechToTextParams> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/SpeechToTextParams;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/SpeechToTextParams;";
 
   public:
     /**
@@ -41,6 +41,8 @@ namespace margelo::nitro::nitrospeech {
       jni::local_ref<jni::JString> locale = this->getFieldValue(fieldLocale);
       static const auto fieldAutoFinishRecognitionMs = clazz->getField<jni::JDouble>("autoFinishRecognitionMs");
       jni::local_ref<jni::JDouble> autoFinishRecognitionMs = this->getFieldValue(fieldAutoFinishRecognitionMs);
+      static const auto fieldAutoFinishProgressIntervalMs = clazz->getField<jni::JDouble>("autoFinishProgressIntervalMs");
+      jni::local_ref<jni::JDouble> autoFinishProgressIntervalMs = this->getFieldValue(fieldAutoFinishProgressIntervalMs);
       static const auto fieldDisableRepeatingFilter = clazz->getField<jni::JBoolean>("disableRepeatingFilter");
       jni::local_ref<jni::JBoolean> disableRepeatingFilter = this->getFieldValue(fieldDisableRepeatingFilter);
       static const auto fieldContextualStrings = clazz->getField<jni::JArrayClass<jni::JString>>("contextualStrings");
@@ -66,6 +68,7 @@ namespace margelo::nitro::nitrospeech {
       return SpeechToTextParams(
         locale != nullptr ? std::make_optional(locale->toStdString()) : std::nullopt,
         autoFinishRecognitionMs != nullptr ? std::make_optional(autoFinishRecognitionMs->value()) : std::nullopt,
+        autoFinishProgressIntervalMs != nullptr ? std::make_optional(autoFinishProgressIntervalMs->value()) : std::nullopt,
         disableRepeatingFilter != nullptr ? std::make_optional(static_cast<bool>(disableRepeatingFilter->value())) : std::nullopt,
         contextualStrings != nullptr ? std::make_optional([&]() {
           size_t __size = contextualStrings->size();
@@ -95,13 +98,14 @@ namespace margelo::nitro::nitrospeech {
      */
     [[maybe_unused]]
     static jni::local_ref<JSpeechToTextParams::javaobject> fromCpp(const SpeechToTextParams& value) {
-      using JSignature = JSpeechToTextParams(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<JIosPreset>, jni::alias_ref<jni::JBoolean>);
+      using JSignature = JSpeechToTextParams(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<JIosPreset>, jni::alias_ref<jni::JBoolean>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         value.locale.has_value() ? jni::make_jstring(value.locale.value()) : nullptr,
         value.autoFinishRecognitionMs.has_value() ? jni::JDouble::valueOf(value.autoFinishRecognitionMs.value()) : nullptr,
+        value.autoFinishProgressIntervalMs.has_value() ? jni::JDouble::valueOf(value.autoFinishProgressIntervalMs.value()) : nullptr,
         value.disableRepeatingFilter.has_value() ? jni::JBoolean::valueOf(value.disableRepeatingFilter.value()) : nullptr,
         value.contextualStrings.has_value() ? [&]() {
           size_t __size = value.contextualStrings.value().size();

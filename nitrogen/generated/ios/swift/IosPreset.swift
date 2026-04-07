@@ -17,7 +17,7 @@ public extension IosPreset {
    */
   init?(fromString string: String) {
     switch string {
-      case "shortForm":
+      case "shortform":
         self = .shortform
       case "general":
         self = .general
@@ -32,7 +32,7 @@ public extension IosPreset {
   var stringValue: String {
     switch self {
       case .shortform:
-        return "shortForm"
+        return "shortform"
       case .general:
         return "general"
     }

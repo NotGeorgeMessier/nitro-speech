@@ -27,7 +27,7 @@ interface ParamsAndroid {
   androidDisableBatchHandling?: boolean
 }
 
-type IosPreset = 'shortForm' | 'general'
+type IosPreset = 'shortform' | 'general'
 
 interface ParamsIOS {
   /**
@@ -70,6 +70,16 @@ export interface SpeechToTextParams extends ParamsAndroid, ParamsIOS {
    */
   autoFinishRecognitionMs?: number
   /**
+   * Default - 1000ms
+   *
+   * The interval at which onAutoFinishProgress will be reported.
+   *
+   * min: 50ms,
+   *
+   * max: autoFinishRecognitionMs || 8s
+   */
+  autoFinishProgressIntervalMs?: number
+  /**
    * Default - false
    *
    * Lots of repeating words in a row can be annoying
@@ -103,16 +113,43 @@ export interface SpeechToTextParams extends ParamsAndroid, ParamsIOS {
   maskOffensiveWords?: boolean
 }
 
+export interface VolumeChangeEvent {
+  /**
+   * Voice input volume normalized to a range of 0 to 1.
+   */
+  smoothedVolume: number
+  /**
+   * Voice input volume normalized to a range of 0 to 1.
+   *
+   * Not smoothed, raw volume from the audio engine.
+   */
+  rawVolume: number
+  /**
+   * Audio buffer volume in decibels.
+   *
+   * May vary on different devices and audio engines.
+   *
+   * db 0 is still a sound, undefined is no sound.
+   */
+  db?: number
+}
+
 export interface Recognizer extends HybridObject<{
   ios: 'swift'
   android: 'kotlin'
 }> {
   /**
+   * Prewarms the speech recognition.
+   *
+   * Preloads the speech recognition engine and the model for the given parameters.
+   */
+  prewarm(defaultParams?: SpeechToTextParams): void
+  /**
    * Tries to start the speech recognition.
    *
    * Not guaranteed to start the speech recognition.
    */
-  startListening(params: SpeechToTextParams): void
+  startListening(params?: SpeechToTextParams): void
   /**
    * Stops the speech recognition. if not started, does nothing.
    *
@@ -166,11 +203,11 @@ export interface Recognizer extends HybridObject<{
    */
   onResult?: (resultBatches: string[]) => void
   /**
-   * Called each second while auto finish is in progress.
+   * Called every `autoFinishProgressIntervalMs?` or 1000ms while auto finish is in progress.
    *
-   * Time left in milliseconds. Always more than 1000ms.
+   * Time left in milliseconds until the timer stops.
    *
-   * TODO: Add for android
+   * Note: not implemented for Android yet.
    */
   onAutoFinishProgress?: (timeLeftMs: number) => void
   /**
@@ -183,10 +220,8 @@ export interface Recognizer extends HybridObject<{
   onPermissionDenied?: () => void
   /**
    * Called with arbitrary frequency (many times per second) while audio recording is active.
-   *
-   * Voice input volume normalized to a range of 0 to 1.
    */
-  onVolumeChange?: (normVolume: number) => void
+  onVolumeChange?: (event: VolumeChangeEvent) => void
 }
 
 export interface NitroSpeech extends HybridObject<{

@@ -9,7 +9,7 @@
 
 #include <NitroModules/JHybridObject.hpp>
 #include <fbjni/fbjni.h>
-#include "HybridNitroSpeechSpec.hpp"
+#include "NitroSpeechHybridNitroSpeechSpec.hpp"
 
 
 
@@ -21,11 +21,11 @@ namespace margelo::nitro::nitrospeech {
   class JHybridNitroSpeechSpec: public virtual HybridNitroSpeechSpec, public virtual JHybridObject {
   public:
     struct JavaPart: public jni::JavaClass<JavaPart, JHybridObject::JavaPart> {
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridNitroSpeechSpec;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridNitroSpeechSpec;";
       std::shared_ptr<JHybridNitroSpeechSpec> getJHybridNitroSpeechSpec();
     };
     struct CxxPart: public jni::HybridClass<CxxPart, JHybridObject::CxxPart> {
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridNitroSpeechSpec$CxxPart;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridNitroSpeechSpec$CxxPart;";
       static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
       static void registerNatives();
       using HybridBase::HybridBase;

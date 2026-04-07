@@ -10,7 +10,7 @@
 #import "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 #import <type_traits>
 
-#include "HybridNitroSpeechSpecSwift.hpp"
+#include "NitroSpeechHybridNitroSpeechSpecSwift.hpp"
 
 @interface NitroSpeechAutolinking : NSObject
 @end

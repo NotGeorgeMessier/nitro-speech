@@ -319,14 +319,14 @@ open class HybridRecognizerSpec_cxx {
     }
   }
   
-  public final var onVolumeChange: bridge.std__optional_std__function_void_double____normVolume______ {
+  public final var onVolumeChange: bridge.std__optional_std__function_void_const_VolumeChangeEvent_____event______ {
     @inline(__always)
     get {
-      return { () -> bridge.std__optional_std__function_void_double____normVolume______ in
+      return { () -> bridge.std__optional_std__function_void_const_VolumeChangeEvent_____event______ in
         if let __unwrappedValue = self.__implementation.onVolumeChange {
-          return bridge.create_std__optional_std__function_void_double____normVolume______({ () -> bridge.Func_void_double in
-            let __closureWrapper = Func_void_double(__unwrappedValue)
-            return bridge.create_Func_void_double(__closureWrapper.toUnsafe())
+          return bridge.create_std__optional_std__function_void_const_VolumeChangeEvent_____event______({ () -> bridge.Func_void_VolumeChangeEvent in
+            let __closureWrapper = Func_void_VolumeChangeEvent(__unwrappedValue)
+            return bridge.create_Func_void_VolumeChangeEvent(__closureWrapper.toUnsafe())
           }())
         } else {
           return .init()
@@ -335,13 +335,13 @@ open class HybridRecognizerSpec_cxx {
     }
     @inline(__always)
     set {
-      self.__implementation.onVolumeChange = { () -> ((_ normVolume: Double) -> Void)? in
-        if bridge.has_value_std__optional_std__function_void_double____normVolume______(newValue) {
-          let __unwrapped = bridge.get_std__optional_std__function_void_double____normVolume______(newValue)
-          return { () -> (Double) -> Void in
-            let __wrappedFunction = bridge.wrap_Func_void_double(__unwrapped)
-            return { (__normVolume: Double) -> Void in
-              __wrappedFunction.call(__normVolume)
+      self.__implementation.onVolumeChange = { () -> ((_ event: VolumeChangeEvent) -> Void)? in
+        if bridge.has_value_std__optional_std__function_void_const_VolumeChangeEvent_____event______(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__function_void_const_VolumeChangeEvent_____event______(newValue)
+          return { () -> (VolumeChangeEvent) -> Void in
+            let __wrappedFunction = bridge.wrap_Func_void_VolumeChangeEvent(__unwrapped)
+            return { (__event: VolumeChangeEvent) -> Void in
+              __wrappedFunction.call(__event)
             }
           }()
         } else {
@@ -353,9 +353,20 @@ open class HybridRecognizerSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func startListening(params: SpeechToTextParams) -> bridge.Result_void_ {
+  public final func prewarm(defaultParams: bridge.std__optional_SpeechToTextParams_) -> bridge.Result_void_ {
     do {
-      try self.__implementation.startListening(params: params)
+      try self.__implementation.prewarm(defaultParams: defaultParams.value)
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func startListening(params: bridge.std__optional_SpeechToTextParams_) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.startListening(params: params.value)
       return bridge.create_Result_void_()
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()

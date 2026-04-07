@@ -20,6 +20,7 @@
 #include "JFunc_void_std__vector_std__string_.hpp"
 #include "JFunc_void_double.hpp"
 #include "JFunc_void_std__string.hpp"
+#include "JFunc_void_VolumeChangeEvent.hpp"
 #include "JHybridNitroSpeechSpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
@@ -32,9 +33,9 @@ int initialize(JavaVM* vm) {
 }
 
 struct JHybridNitroSpeechSpecImpl: public jni::JavaClass<JHybridNitroSpeechSpecImpl, JHybridNitroSpeechSpec::JavaPart> {
-  static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridNitroSpeech;";
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridNitroSpeechSpec;";
   static std::shared_ptr<JHybridNitroSpeechSpec> create() {
-    static auto constructorFn = javaClassStatic()->getConstructor<JHybridNitroSpeechSpecImpl::javaobject()>();
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridNitroSpeechSpecImpl::javaobject()>();
     jni::local_ref<JHybridNitroSpeechSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
     return javaPart->getJHybridNitroSpeechSpec();
   }
@@ -50,11 +51,12 @@ void registerAllNatives() {
   margelo::nitro::nitrospeech::JFunc_void_std__vector_std__string__cxx::registerNatives();
   margelo::nitro::nitrospeech::JFunc_void_double_cxx::registerNatives();
   margelo::nitro::nitrospeech::JFunc_void_std__string_cxx::registerNatives();
+  margelo::nitro::nitrospeech::JFunc_void_VolumeChangeEvent_cxx::registerNatives();
   margelo::nitro::nitrospeech::JHybridNitroSpeechSpec::CxxPart::registerNatives();
 
   // Register Nitro Hybrid Objects
   HybridObjectRegistry::registerHybridObjectConstructor(
-    "NitroSpeech",
+    "NitroSpeechNitroSpeech",
     []() -> std::shared_ptr<HybridObject> {
       return JHybridNitroSpeechSpecImpl::create();
     }

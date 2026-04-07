@@ -11,7 +11,7 @@
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
 
 #include <memory>
-#include "HybridRecognizerSpec.hpp"
+#include "NitroSpeechHybridRecognizerSpec.hpp"
 #include "JHybridRecognizerSpec.hpp"
 
 namespace margelo::nitro::nitrospeech {

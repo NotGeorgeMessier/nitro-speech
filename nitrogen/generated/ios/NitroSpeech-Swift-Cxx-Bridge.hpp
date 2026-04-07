@@ -16,6 +16,10 @@ namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
 // Forward declaration of `IosPreset` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class IosPreset; }
+// Forward declaration of `SpeechToTextParams` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
+// Forward declaration of `VolumeChangeEvent` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridNitroSpeechSpec_cxx` to properly resolve imports.
@@ -24,10 +28,12 @@ namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 
 // Include C++ defined types
-#include "HapticFeedbackStyle.hpp"
-#include "HybridNitroSpeechSpec.hpp"
-#include "HybridRecognizerSpec.hpp"
-#include "IosPreset.hpp"
+#include "NitroSpeechHapticFeedbackStyle.hpp"
+#include "NitroSpeechHybridNitroSpeechSpec.hpp"
+#include "NitroSpeechHybridRecognizerSpec.hpp"
+#include "NitroSpeechIosPreset.hpp"
+#include "NitroSpeechSpeechToTextParams.hpp"
+#include "NitroSpeechVolumeChangeEvent.hpp"
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <functional>
@@ -140,6 +146,21 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.has_value();
   }
   inline IosPreset get_std__optional_IosPreset_(const std::optional<IosPreset>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<SpeechToTextParams>
+  /**
+   * Specialized version of `std::optional<SpeechToTextParams>`.
+   */
+  using std__optional_SpeechToTextParams_ = std::optional<SpeechToTextParams>;
+  inline std::optional<SpeechToTextParams> create_std__optional_SpeechToTextParams_(const SpeechToTextParams& value) noexcept {
+    return std::optional<SpeechToTextParams>(value);
+  }
+  inline bool has_value_std__optional_SpeechToTextParams_(const std::optional<SpeechToTextParams>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline SpeechToTextParams get_std__optional_SpeechToTextParams_(const std::optional<SpeechToTextParams>& optional) noexcept {
     return optional.value();
   }
   
@@ -291,18 +312,40 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.value();
   }
   
-  // pragma MARK: std::optional<std::function<void(double /* normVolume */)>>
+  // pragma MARK: std::function<void(const VolumeChangeEvent& /* event */)>
   /**
-   * Specialized version of `std::optional<std::function<void(double / * normVolume * /)>>`.
+   * Specialized version of `std::function<void(const VolumeChangeEvent&)>`.
    */
-  using std__optional_std__function_void_double____normVolume______ = std::optional<std::function<void(double /* normVolume */)>>;
-  inline std::optional<std::function<void(double /* normVolume */)>> create_std__optional_std__function_void_double____normVolume______(const std::function<void(double /* normVolume */)>& value) noexcept {
-    return std::optional<std::function<void(double /* normVolume */)>>(value);
+  using Func_void_VolumeChangeEvent = std::function<void(const VolumeChangeEvent& /* event */)>;
+  /**
+   * Wrapper class for a `std::function<void(const VolumeChangeEvent& / * event * /)>`, this can be used from Swift.
+   */
+  class Func_void_VolumeChangeEvent_Wrapper final {
+  public:
+    explicit Func_void_VolumeChangeEvent_Wrapper(std::function<void(const VolumeChangeEvent& /* event */)>&& func): _function(std::make_unique<std::function<void(const VolumeChangeEvent& /* event */)>>(std::move(func))) {}
+    inline void call(VolumeChangeEvent event) const noexcept {
+      _function->operator()(event);
+    }
+  private:
+    std::unique_ptr<std::function<void(const VolumeChangeEvent& /* event */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_VolumeChangeEvent create_Func_void_VolumeChangeEvent(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_VolumeChangeEvent_Wrapper wrap_Func_void_VolumeChangeEvent(Func_void_VolumeChangeEvent value) noexcept {
+    return Func_void_VolumeChangeEvent_Wrapper(std::move(value));
   }
-  inline bool has_value_std__optional_std__function_void_double____normVolume______(const std::optional<std::function<void(double /* normVolume */)>>& optional) noexcept {
+  
+  // pragma MARK: std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(const VolumeChangeEvent& / * event * /)>>`.
+   */
+  using std__optional_std__function_void_const_VolumeChangeEvent_____event______ = std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>;
+  inline std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> create_std__optional_std__function_void_const_VolumeChangeEvent_____event______(const std::function<void(const VolumeChangeEvent& /* event */)>& value) noexcept {
+    return std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_const_VolumeChangeEvent_____event______(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& optional) noexcept {
     return optional.has_value();
   }
-  inline std::function<void(double /* normVolume */)> get_std__optional_std__function_void_double____normVolume______(const std::optional<std::function<void(double /* normVolume */)>>& optional) noexcept {
+  inline std::function<void(const VolumeChangeEvent& /* event */)> get_std__optional_std__function_void_const_VolumeChangeEvent_____event______(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& optional) noexcept {
     return optional.value();
   }
   

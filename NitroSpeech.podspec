@@ -3,7 +3,7 @@ require "json"
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 Pod::Spec.new do |s|
-  s.name         = "NitroSpeech"
+  s.name         = "NitroSpeechDev"
   s.version      = package["version"]
   s.summary      = package["description"]
   s.homepage     = package["homepage"]
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
     "cpp/**/*.{hpp,cpp}",
   ]
 
-  load 'nitrogen/generated/ios/NitroSpeech+autolinking.rb'
+  load 'nitrogen/generated/ios/NitroSpeechDev+autolinking.rb'
   add_nitrogen_files(s)
 
   s.dependency 'React-jsi'
