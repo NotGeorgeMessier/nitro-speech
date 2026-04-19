@@ -21,11 +21,11 @@ namespace margelo::nitro::nitrospeech {
   class JHybridRecognizerSpec: public virtual HybridRecognizerSpec, public virtual JHybridObject {
   public:
     struct JavaPart: public jni::JavaClass<JavaPart, JHybridObject::JavaPart> {
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridRecognizerSpec;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridRecognizerSpec;";
       std::shared_ptr<JHybridRecognizerSpec> getJHybridRecognizerSpec();
     };
     struct CxxPart: public jni::HybridClass<CxxPart, JHybridObject::CxxPart> {
-      static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridRecognizerSpec$CxxPart;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridRecognizerSpec$CxxPart;";
       static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
       static void registerNatives();
       using HybridBase::HybridBase;

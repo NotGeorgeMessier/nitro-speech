@@ -23,7 +23,7 @@ namespace margelo::nitro::nitrospeech {
    */
   struct JFunc_void: public jni::JavaClass<JFunc_void> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/Func_void;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/Func_void;";
 
   public:
     /**
@@ -59,7 +59,7 @@ namespace margelo::nitro::nitrospeech {
     }
 
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/Func_void_cxx;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/Func_void_cxx;";
     static void registerNatives() {
       registerHybrid({makeNativeMethod("invoke_cxx", JFunc_void_cxx::invoke_cxx)});
     }

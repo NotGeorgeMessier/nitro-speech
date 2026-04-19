@@ -19,7 +19,7 @@ namespace margelo::nitro::nitrospeech {
    */
   struct JHapticFeedbackStyle final: public jni::JavaClass<JHapticFeedbackStyle> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HapticFeedbackStyle;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HapticFeedbackStyle;";
 
   public:
     /**

@@ -25,7 +25,7 @@ namespace margelo::nitro::nitrospeech {
    */
   struct JSpeechToTextParams final: public jni::JavaClass<JSpeechToTextParams> {
   public:
-    static auto constexpr kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/SpeechToTextParams;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/SpeechToTextParams;";
 
   public:
     /**
