@@ -8,13 +8,13 @@
 #include "JHybridRecognizerSpec.hpp"
 
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
+namespace margelo::nitro::nitrospeechdev { struct VolumeChangeEvent; }
 // Forward declaration of `SpeechToTextParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
+namespace margelo::nitro::nitrospeechdev { struct SpeechToTextParams; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
+namespace margelo::nitro::nitrospeechdev { enum class HapticFeedbackStyle; }
 // Forward declaration of `IosPreset` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { enum class IosPreset; }
+namespace margelo::nitro::nitrospeechdev { enum class IosPreset; }
 
 #include <functional>
 #include <optional>
@@ -25,17 +25,17 @@ namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 #include "JFunc_void_std__vector_std__string_.hpp"
 #include "JFunc_void_double.hpp"
 #include "JFunc_void_std__string.hpp"
-#include "NitroSpeechVolumeChangeEvent.hpp"
+#include "NitroSpeechDevVolumeChangeEvent.hpp"
 #include "JFunc_void_VolumeChangeEvent.hpp"
 #include "JVolumeChangeEvent.hpp"
-#include "NitroSpeechSpeechToTextParams.hpp"
+#include "NitroSpeechDevSpeechToTextParams.hpp"
 #include "JSpeechToTextParams.hpp"
-#include "NitroSpeechHapticFeedbackStyle.hpp"
+#include "NitroSpeechDevHapticFeedbackStyle.hpp"
 #include "JHapticFeedbackStyle.hpp"
-#include "NitroSpeechIosPreset.hpp"
+#include "NitroSpeechDevIosPreset.hpp"
 #include "JIosPreset.hpp"
 
-namespace margelo::nitro::nitrospeech {
+namespace margelo::nitro::nitrospeechdev {
 
   std::shared_ptr<JHybridRecognizerSpec> JHybridRecognizerSpec::JavaPart::getJHybridRecognizerSpec() {
     auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
@@ -226,4 +226,4 @@ namespace margelo::nitro::nitrospeech {
     }();
   }
 
-} // namespace margelo::nitro::nitrospeech
+} // namespace margelo::nitro::nitrospeechdev

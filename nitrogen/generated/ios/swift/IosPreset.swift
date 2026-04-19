@@ -8,7 +8,7 @@
 /**
  * Represents the JS union `IosPreset`, backed by a C++ enum.
  */
-public typealias IosPreset = margelo.nitro.nitrospeech.IosPreset
+public typealias IosPreset = margelo.nitro.nitrospeechdev.IosPreset
 
 public extension IosPreset {
   /**

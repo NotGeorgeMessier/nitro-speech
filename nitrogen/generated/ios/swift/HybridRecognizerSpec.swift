@@ -31,7 +31,7 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
 public extension HybridRecognizerSpec_protocol {
   /// Default implementation of ``HybridObject.toString``
   func toString() -> String {
-    return "[HybridObject Recognizer]"
+    return "[HybridObject NitroSpeechDevRecognizer]"
   }
 }
 

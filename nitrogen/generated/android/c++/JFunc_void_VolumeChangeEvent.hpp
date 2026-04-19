@@ -10,13 +10,13 @@
 #include <fbjni/fbjni.h>
 #include <functional>
 
-#include "NitroSpeechVolumeChangeEvent.hpp"
+#include "NitroSpeechDevVolumeChangeEvent.hpp"
 #include <functional>
 #include <NitroModules/JNICallable.hpp>
 #include "JVolumeChangeEvent.hpp"
 #include <optional>
 
-namespace margelo::nitro::nitrospeech {
+namespace margelo::nitro::nitrospeechdev {
 
   using namespace facebook;
 
@@ -26,7 +26,7 @@ namespace margelo::nitro::nitrospeech {
    */
   struct JFunc_void_VolumeChangeEvent: public jni::JavaClass<JFunc_void_VolumeChangeEvent> {
   public:
-    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/Func_void_VolumeChangeEvent;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/Func_void_VolumeChangeEvent;";
 
   public:
     /**
@@ -62,7 +62,7 @@ namespace margelo::nitro::nitrospeech {
     }
 
   public:
-    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/Func_void_VolumeChangeEvent_cxx;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/Func_void_VolumeChangeEvent_cxx;";
     static void registerNatives() {
       registerHybrid({makeNativeMethod("invoke_cxx", JFunc_void_VolumeChangeEvent_cxx::invoke_cxx)});
     }
@@ -75,4 +75,4 @@ namespace margelo::nitro::nitrospeech {
     std::function<void(const VolumeChangeEvent& /* event */)> _func;
   };
 
-} // namespace margelo::nitro::nitrospeech
+} // namespace margelo::nitro::nitrospeechdev

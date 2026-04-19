@@ -14,7 +14,7 @@
 #include <functional>
 #include <NitroModules/JNICallable.hpp>
 
-namespace margelo::nitro::nitrospeech {
+namespace margelo::nitro::nitrospeechdev {
 
   using namespace facebook;
 
@@ -24,7 +24,7 @@ namespace margelo::nitro::nitrospeech {
    */
   struct JFunc_void_std__string: public jni::JavaClass<JFunc_void_std__string> {
   public:
-    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/Func_void_std__string;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/Func_void_std__string;";
 
   public:
     /**
@@ -60,7 +60,7 @@ namespace margelo::nitro::nitrospeech {
     }
 
   public:
-    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/Func_void_std__string_cxx;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/Func_void_std__string_cxx;";
     static void registerNatives() {
       registerHybrid({makeNativeMethod("invoke_cxx", JFunc_void_std__string_cxx::invoke_cxx)});
     }
@@ -73,4 +73,4 @@ namespace margelo::nitro::nitrospeech {
     std::function<void(const std::string& /* message */)> _func;
   };
 
-} // namespace margelo::nitro::nitrospeech
+} // namespace margelo::nitro::nitrospeechdev

@@ -8,13 +8,13 @@
 #include "JHybridNitroSpeechSpec.hpp"
 
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
+namespace margelo::nitro::nitrospeechdev { class HybridRecognizerSpec; }
 
 #include <memory>
-#include "NitroSpeechHybridRecognizerSpec.hpp"
+#include "NitroSpeechDevHybridRecognizerSpec.hpp"
 #include "JHybridRecognizerSpec.hpp"
 
-namespace margelo::nitro::nitrospeech {
+namespace margelo::nitro::nitrospeechdev {
 
   std::shared_ptr<JHybridNitroSpeechSpec> JHybridNitroSpeechSpec::JavaPart::getJHybridNitroSpeechSpec() {
     auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
@@ -57,4 +57,4 @@ namespace margelo::nitro::nitrospeech {
   // Methods
   
 
-} // namespace margelo::nitro::nitrospeech
+} // namespace margelo::nitro::nitrospeechdev

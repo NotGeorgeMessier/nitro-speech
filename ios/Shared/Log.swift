@@ -7,7 +7,7 @@ enum Log {
    static let category = "NitroSpeech"
    static func log(_ text: String) {
        if isLogging {
-           let tn = Thread.current.name ?? "n"
+           let tn = Thread.current.isMainThread ? "main" : "bg"
            let qos = Thread.current.qualityOfService.rawValue
            let tp = Thread.current.threadPriority
            let thread = "\(tn)/\(qos)/\(tp)"
@@ -32,7 +32,7 @@ final class Lg {
             let nowMs = ProcessInfo.processInfo.systemUptime * 1000
             let diff = Int(round(nowMs - (self.prevMs ?? nowMs)))
             self.prevMs = nowMs
-            let tn = Thread.current.name ?? "n"
+            let tn = Thread.current.isMainThread ? "main" : "bg"
             let qos = Thread.current.qualityOfService.rawValue
             let tp = Thread.current.threadPriority
             let thread = "\(tn)/\(qos)/\(tp)"

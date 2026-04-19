@@ -8,17 +8,17 @@
 #pragma once
 
 #include <fbjni/fbjni.h>
-#include "NitroSpeechSpeechToTextParams.hpp"
+#include "NitroSpeechDevSpeechToTextParams.hpp"
 
 #include "JHapticFeedbackStyle.hpp"
 #include "JIosPreset.hpp"
-#include "NitroSpeechHapticFeedbackStyle.hpp"
-#include "NitroSpeechIosPreset.hpp"
+#include "NitroSpeechDevHapticFeedbackStyle.hpp"
+#include "NitroSpeechDevIosPreset.hpp"
 #include <optional>
 #include <string>
 #include <vector>
 
-namespace margelo::nitro::nitrospeech {
+namespace margelo::nitro::nitrospeechdev {
 
   using namespace facebook;
 
@@ -27,7 +27,7 @@ namespace margelo::nitro::nitrospeech {
    */
   struct JSpeechToTextParams final: public jni::JavaClass<JSpeechToTextParams> {
   public:
-    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/SpeechToTextParams;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/SpeechToTextParams;";
 
   public:
     /**
@@ -130,4 +130,4 @@ namespace margelo::nitro::nitrospeech {
     }
   };
 
-} // namespace margelo::nitro::nitrospeech
+} // namespace margelo::nitro::nitrospeechdev

@@ -18,11 +18,11 @@ import NitroModules
  */
 open class HybridNitroSpeechSpec_cxx {
   /**
-   * The Swift <> C++ bridge's namespace (`margelo::nitro::nitrospeech::bridge::swift`)
-   * from `NitroSpeech-Swift-Cxx-Bridge.hpp`.
+   * The Swift <> C++ bridge's namespace (`margelo::nitro::nitrospeechdev::bridge::swift`)
+   * from `NitroSpeechDev-Swift-Cxx-Bridge.hpp`.
    * This contains specialized C++ templates, and C++ helper functions that can be accessed from Swift.
    */
-  public typealias bridge = margelo.nitro.nitrospeech.bridge.swift
+  public typealias bridge = margelo.nitro.nitrospeechdev.bridge.swift
 
   /**
    * Holds an instance of the `HybridNitroSpeechSpec` Swift protocol.

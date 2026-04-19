@@ -8,9 +8,9 @@
 #pragma once
 
 #include <fbjni/fbjni.h>
-#include "NitroSpeechIosPreset.hpp"
+#include "NitroSpeechDevIosPreset.hpp"
 
-namespace margelo::nitro::nitrospeech {
+namespace margelo::nitro::nitrospeechdev {
 
   using namespace facebook;
 
@@ -19,7 +19,7 @@ namespace margelo::nitro::nitrospeech {
    */
   struct JIosPreset final: public jni::JavaClass<JIosPreset> {
   public:
-    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/IosPreset;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/IosPreset;";
 
   public:
     /**
@@ -55,4 +55,4 @@ namespace margelo::nitro::nitrospeech {
     }
   };
 
-} // namespace margelo::nitro::nitrospeech
+} // namespace margelo::nitro::nitrospeechdev

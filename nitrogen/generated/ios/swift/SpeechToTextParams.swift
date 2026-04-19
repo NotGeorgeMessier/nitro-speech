@@ -10,10 +10,10 @@ import NitroModules
 /**
  * Represents an instance of `SpeechToTextParams`, backed by a C++ struct.
  */
-public typealias SpeechToTextParams = margelo.nitro.nitrospeech.SpeechToTextParams
+public typealias SpeechToTextParams = margelo.nitro.nitrospeechdev.SpeechToTextParams
 
 public extension SpeechToTextParams {
-  private typealias bridge = margelo.nitro.nitrospeech.bridge.swift
+  private typealias bridge = margelo.nitro.nitrospeechdev.bridge.swift
 
   /**
    * Create a new instance of `SpeechToTextParams`.

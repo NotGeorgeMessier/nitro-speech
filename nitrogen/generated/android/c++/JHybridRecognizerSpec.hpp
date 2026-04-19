@@ -9,23 +9,23 @@
 
 #include <NitroModules/JHybridObject.hpp>
 #include <fbjni/fbjni.h>
-#include "NitroSpeechHybridRecognizerSpec.hpp"
+#include "NitroSpeechDevHybridRecognizerSpec.hpp"
 
 
 
 
-namespace margelo::nitro::nitrospeech {
+namespace margelo::nitro::nitrospeechdev {
 
   using namespace facebook;
 
   class JHybridRecognizerSpec: public virtual HybridRecognizerSpec, public virtual JHybridObject {
   public:
     struct JavaPart: public jni::JavaClass<JavaPart, JHybridObject::JavaPart> {
-      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridRecognizerSpec;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/HybridRecognizerSpec;";
       std::shared_ptr<JHybridRecognizerSpec> getJHybridRecognizerSpec();
     };
     struct CxxPart: public jni::HybridClass<CxxPart, JHybridObject::CxxPart> {
-      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridRecognizerSpec$CxxPart;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/HybridRecognizerSpec$CxxPart;";
       static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
       static void registerNatives();
       using HybridBase::HybridBase;
@@ -79,4 +79,4 @@ namespace margelo::nitro::nitrospeech {
     jni::global_ref<JHybridRecognizerSpec::JavaPart> _javaPart;
   };
 
-} // namespace margelo::nitro::nitrospeech
+} // namespace margelo::nitro::nitrospeechdev

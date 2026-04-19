@@ -10,10 +10,10 @@ import NitroModules
 /**
  * Represents an instance of `VolumeChangeEvent`, backed by a C++ struct.
  */
-public typealias VolumeChangeEvent = margelo.nitro.nitrospeech.VolumeChangeEvent
+public typealias VolumeChangeEvent = margelo.nitro.nitrospeechdev.VolumeChangeEvent
 
 public extension VolumeChangeEvent {
-  private typealias bridge = margelo.nitro.nitrospeech.bridge.swift
+  private typealias bridge = margelo.nitro.nitrospeechdev.bridge.swift
 
   /**
    * Create a new instance of `VolumeChangeEvent`.

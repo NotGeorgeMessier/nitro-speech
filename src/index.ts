@@ -5,10 +5,10 @@ import type {
   SpeechToTextParams,
   VolumeChangeEvent,
 } from './specs/NitroSpeech.nitro'
-import { createNitroSpeechHybridObject } from '../nitrogen/generated/shared/ts/createNitroSpeechHybridObject'
+import { createNitroSpeechDevHybridObject } from '../nitrogen/generated/shared/ts/createNitroSpeechDevHybridObject'
 
-const NitroSpeech =
-  createNitroSpeechHybridObject<NitroSpeechSpec>('NitroSpeech')
+export const NitroSpeech =
+  createNitroSpeechDevHybridObject<NitroSpeechSpec>('NitroSpeech')
 
 /**
  * Unsafe access to the Recognizer Session.
