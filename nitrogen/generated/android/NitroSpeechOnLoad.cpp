@@ -32,7 +32,7 @@ int initialize(JavaVM* vm) {
 }
 
 struct JHybridNitroSpeechSpecImpl: public jni::JavaClass<JHybridNitroSpeechSpecImpl, JHybridNitroSpeechSpec::JavaPart> {
-  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridNitroSpeechSpec;";
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridNitroSpeech;";
   static std::shared_ptr<JHybridNitroSpeechSpec> create() {
     static const auto constructorFn = javaClassStatic()->getConstructor<JHybridNitroSpeechSpecImpl::javaobject()>();
     jni::local_ref<JHybridNitroSpeechSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);

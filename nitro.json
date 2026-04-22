@@ -16,11 +16,11 @@
     "NitroSpeech": {
       "ios": {
         "language": "swift",
-        "implementationClassName": "HybridNitroSpeechSpec"
+        "implementationClassName": "HybridNitroSpeech"
       },
       "android": {
         "language": "kotlin",
-        "implementationClassName": "HybridNitroSpeechSpec"
+        "implementationClassName": "HybridNitroSpeech"
       }
     }
   },

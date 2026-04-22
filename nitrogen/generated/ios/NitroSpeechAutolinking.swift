@@ -13,7 +13,7 @@ public final class NitroSpeechAutolinking {
   public typealias bridge = margelo.nitro.nitrospeech.bridge.swift
 
   public static func createNitroSpeech() -> bridge.std__shared_ptr_HybridNitroSpeechSpec_ {
-    let hybridObject = HybridNitroSpeechSpec()
+    let hybridObject = HybridNitroSpeech()
     return { () -> bridge.std__shared_ptr_HybridNitroSpeechSpec_ in
       let __cxxWrapped = hybridObject.getCxxWrapper()
       return __cxxWrapped.getCxxPart()
@@ -21,6 +21,6 @@ public final class NitroSpeechAutolinking {
   }
   
   public static func isNitroSpeechRecyclable() -> Bool {
-    return HybridNitroSpeechSpec.self is any RecyclableView.Type
+    return HybridNitroSpeech.self is any RecyclableView.Type
   }
 }
