@@ -3,17 +3,14 @@ import Speech
 
 @available(iOS 26.0, *)
 final class DictationRuntime: TranscriberRuntime {
-    var locale: Locale?
-    
+    let locale: Locale
     private var transcriber: DictationTranscriber?
     
-    func checkLocale(locale: Locale) async -> Bool {
-//        self.locale = await DictationTranscriber.supportedLocale(equivalentTo: locale)
-        return self.locale != nil
+    init(with locale: Locale) {
+        self.locale = locale
     }
     
     func create(config: SpeechToTextParams?) async throws {
-        guard let locale else {return}
         var dictationTranscriptionOptions: Set<DictationTranscriber.TranscriptionOption> = [
             .punctuation
         ]
@@ -65,7 +62,6 @@ final class DictationRuntime: TranscriberRuntime {
     }
     
     func clean() {
-        locale = nil
         transcriber = nil
     }
 }

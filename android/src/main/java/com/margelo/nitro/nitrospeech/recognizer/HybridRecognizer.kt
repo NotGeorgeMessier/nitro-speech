@@ -11,9 +11,14 @@ import android.util.Log
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.NitroModules
+import com.margelo.nitro.core.Promise
+import com.margelo.nitro.nitrospeech.DynamicParams
 import com.margelo.nitro.nitrospeech.HybridRecognizerSpec
 import com.margelo.nitro.nitrospeech.SpeechToTextParams
+import com.margelo.nitro.nitrospeech.VolumeChangeEvent
 
+@DoNotStrip
+@Keep
 class HybridRecognizer: HybridRecognizerSpec() {
   companion object {
     private const val TAG = "HybridRecognizer"
@@ -33,15 +38,19 @@ class HybridRecognizer: HybridRecognizerSpec() {
   override var onAutoFinishProgress: ((timeLeftMs: Double) -> Unit)? = null
   override var onError: ((error: String) -> Unit)? = null
   override var onPermissionDenied: (() -> Unit)? = null
-  override var onVolumeChange: ((normVolume: Double) -> Unit)? = null
+  override var onVolumeChange: ((event: VolumeChangeEvent) -> Unit)? = null
 
-  override fun getIsActive(): Boolean {
-    return isActive
+  @DoNotStrip
+  @Keep
+  override fun prewarm(defaultParams: SpeechToTextParams?): Promise<Unit> {
+    // no-op
+    // nothing to prewarm
+    return Promise()
   }
 
   @DoNotStrip
   @Keep
-  override fun startListening(params: SpeechToTextParams) {
+  override fun startListening(params: SpeechToTextParams?) {
     Log.d(TAG, "startListening: $params")
     if (isActive) {
       onFinishRecognition(
@@ -100,21 +109,72 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   @DoNotStrip
   @Keep
-  override fun addAutoFinishTime(additionalTimeMs: Double?) {
-    Log.d(TAG, "stopListening called")
+  override fun resetAutoFinishTime() {
     if (!isActive) return
-    autoStopper?.indicateRecordingActivity()
+    autoStopper?.resetTimer()
   }
 
   @DoNotStrip
   @Keep
-  override fun updateAutoFinishTime(newTimeMs: Double, withRefresh: Boolean?) {
-    Log.d(TAG, "updateAutoFinishTime: $newTimeMs")
+  override fun addAutoFinishTime(additionalTimeMs: Double?) {
+    Log.d(TAG, "addAutoFinishTime")
     if (!isActive) return
-    autoStopper?.updateSilenceThreshold(newTimeMs.toLong())
-    if (withRefresh == true) {
-      autoStopper?.indicateRecordingActivity()
+
+    if (additionalTimeMs != null) {
+      autoStopper?.addMsOnce(additionalTimeMs)
+    } else {
+      // Reset timer to original baseline.
+      autoStopper?.resetTimer()
     }
+  }
+
+  @DoNotStrip
+  @Keep
+  override fun updateConfig(
+    newConfig: DynamicParams?,
+    resetAutoFinishTime: Boolean?
+  ) {
+    Log.d(TAG, "updateConfig $newConfig",)
+    if (!isActive) return
+
+    val newTimeMs = if (newConfig?.autoFinishRecognitionMs != null) newConfig.autoFinishRecognitionMs else config?.autoFinishRecognitionMs
+    if (newTimeMs != null && newTimeMs != config?.autoFinishRecognitionMs) {
+      autoStopper?.updateSilenceThreshold(newTimeMs)
+    }
+    val newInterval = if (newConfig?.autoFinishProgressIntervalMs != null) newConfig.autoFinishProgressIntervalMs else config?.autoFinishProgressIntervalMs
+    if (newInterval != null && newInterval != config?.autoFinishProgressIntervalMs) {
+      autoStopper?.updateProgressInterval(newInterval)
+    }
+
+    if (resetAutoFinishTime == true) {
+      autoStopper?.resetTimer()
+    }
+
+    if (newConfig != null) {
+      config = SpeechToTextParams(
+        locale = config?.locale,
+        contextualStrings = config?.contextualStrings,
+        maskOffensiveWords = config?.maskOffensiveWords,
+        autoFinishRecognitionMs = newConfig.autoFinishRecognitionMs ?: config?.autoFinishRecognitionMs,
+        autoFinishProgressIntervalMs = newConfig.autoFinishProgressIntervalMs ?: config?.autoFinishProgressIntervalMs,
+        resetAutoFinishVoiceSensitivity = newConfig.resetAutoFinishVoiceSensitivity ?: config?.resetAutoFinishVoiceSensitivity,
+        disableRepeatingFilter = newConfig.disableRepeatingFilter ?: config?.disableRepeatingFilter,
+        startHapticFeedbackStyle = newConfig.startHapticFeedbackStyle ?: config?.startHapticFeedbackStyle,
+        stopHapticFeedbackStyle = newConfig.stopHapticFeedbackStyle ?: config?.stopHapticFeedbackStyle,
+        androidFormattingPreferQuality = config?.androidFormattingPreferQuality,
+        androidUseWebSearchModel = config?.androidUseWebSearchModel,
+        androidDisableBatchHandling = config?.androidDisableBatchHandling,
+        iosAddPunctuation = config?.iosAddPunctuation,
+        iosPreset = config?.iosPreset,
+        iosAtypicalSpeech = config?.iosAtypicalSpeech
+      )
+    }
+  }
+
+  @DoNotStrip
+  @Keep
+  override fun getIsActive(): Boolean {
+    return isActive
   }
 
   @DoNotStrip
@@ -123,6 +183,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
     return emptyArray()
   }
 
+  @DoNotStrip
+  @Keep
   override fun dispose() {
     stopListening()
   }
@@ -131,12 +193,16 @@ class HybridRecognizer: HybridRecognizerSpec() {
     mainHandler.post {
       try {
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
-        val silenceThreshold = config?.autoFinishRecognitionMs?.toLong() ?: 8000
         autoStopper = AutoStopper(
-            silenceThreshold,
-        ) {
-            stopListening()
-        }
+            silenceThresholdMs = config?.autoFinishRecognitionMs,
+            progressIntervalMs = config?.autoFinishProgressIntervalMs,
+            onProgress = { timeLeftMs ->
+              onAutoFinishProgress?.invoke(timeLeftMs)
+            },
+            onTimeout = {
+              stopListening()
+            }
+        )
         val recognitionListenerSession = RecognitionListenerSession(
           autoStopper,
           config,
@@ -181,6 +247,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
           if (isActive) {
             onReadyForSpeech?.invoke()
             onFinishRecognition(arrayListOf(), null, false)
+            autoStopper?.resetTimer()
           }
         }, 500)
       } catch (e: Exception) {
@@ -195,7 +262,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   private fun cleanup() {
     try {
-      Log.d(TAG, "stopListening called")
+      Log.d(TAG, "cleanup called")
       autoStopper?.stop()
       autoStopper = null
       speechRecognizer?.stopListening()
@@ -203,7 +270,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
       speechRecognizer = null
       isActive = false
       // Reset voice meter in JS consumers after stop/error cleanup.
-      onVolumeChange?.invoke(0.0)
+      onVolumeChange?.invoke(VolumeChangeEvent(0.0,0.0,null))
     } catch (e: Exception) {
       onFinishRecognition(
         null,

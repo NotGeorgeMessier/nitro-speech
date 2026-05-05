@@ -3,18 +3,17 @@ import Speech
 
 @available(iOS 26.0, *)
 final class SpeechRuntime: TranscriberRuntime {
-    var locale: Locale?
-    
+    let locale: Locale
     private var transcriber: SpeechTranscriber?
     
-    func checkLocale(locale: Locale) async -> Bool {
-        guard SpeechTranscriber.isAvailable else { return false }
-//        self.locale = await SpeechTranscriber.supportedLocale(equivalentTo: locale)
-        return self.locale != nil
+    init(with locale: Locale) {
+        self.locale = locale
     }
     
     func create(config: SpeechToTextParams?) async throws {
-        guard let locale else {return}
+        if !SpeechTranscriber.isAvailable {
+            throw NSError()
+        }
         var speechTranscriptionOptions: Set<SpeechTranscriber.TranscriptionOption> = []
         if config?.maskOffensiveWords == true {
             speechTranscriptionOptions.insert(.etiquetteReplacements)
@@ -54,7 +53,6 @@ final class SpeechRuntime: TranscriberRuntime {
     }
     
     func clean() {
-        locale = nil
         transcriber = nil
     }
 }

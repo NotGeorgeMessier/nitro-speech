@@ -8,11 +8,11 @@
 #pragma once
 
 #include <fbjni/fbjni.h>
-#include "NitroSpeechDevVolumeChangeEvent.hpp"
+#include "VolumeChangeEvent.hpp"
 
 #include <optional>
 
-namespace margelo::nitro::nitrospeechdev {
+namespace margelo::nitro::nitrospeech {
 
   using namespace facebook;
 
@@ -21,7 +21,7 @@ namespace margelo::nitro::nitrospeechdev {
    */
   struct JVolumeChangeEvent final: public jni::JavaClass<JVolumeChangeEvent> {
   public:
-    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/VolumeChangeEvent;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/VolumeChangeEvent;";
 
   public:
     /**
@@ -62,4 +62,4 @@ namespace margelo::nitro::nitrospeechdev {
     }
   };
 
-} // namespace margelo::nitro::nitrospeechdev
+} // namespace margelo::nitro::nitrospeech

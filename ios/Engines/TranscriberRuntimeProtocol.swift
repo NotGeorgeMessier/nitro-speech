@@ -9,9 +9,7 @@ struct TranscriberResult {
 
 @available(iOS 26.0, *)
 protocol TranscriberRuntime {
-    var locale: Locale? { get set }
-
-    func checkLocale(locale: Locale) async -> Bool
+    var locale: Locale { get }
     
     func create(config: SpeechToTextParams?) async throws
     

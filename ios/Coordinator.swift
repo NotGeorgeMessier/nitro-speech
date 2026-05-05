@@ -1,4 +1,5 @@
 import Foundation
+import NitroModules
 import Speech
 
 enum RecognizerBackend {
@@ -8,15 +9,28 @@ enum RecognizerBackend {
 }
 
 final class Coordinator {
-    private let localeManager: LocaleManager
-    var candidates: [RecognizerBackend] = []
+    weak var recognizerDelegate: RecognizerDelegate?
+    private var localeManager: LocaleManager?
+    private var candidates: [RecognizerBackend] = []
+    private var localeTask: Task<Void, Never>?
     
-    init(localeManager: LocaleManager) {
-        self.localeManager = localeManager
+    init() {
+        self.localeTask = Task {
+            self.localeManager = await LocaleManager()
+        }
     }
     
-    func initialize(with params: SpeechToTextParams?) {
-        Log.log("[Coordinator] init")
+    func initialize() async {
+        let params = self.recognizerDelegate?.config
+        Log.log("[Coordinator] LocaleManager - init (\(params?.locale))")
+        if self.localeManager == nil {
+            self.localeTask?.cancel()
+            self.localeTask = nil
+            self.localeManager = await LocaleManager()
+        }
+        guard let localeManager else { return }
+        await localeManager.ensureLocale(localeString: params?.locale)
+        self.candidates = []
         guard #available(iOS 26.0, *) else {
             if localeManager.SFLocale != nil {
                 self.candidates = [.sfSpeech]
@@ -50,7 +64,42 @@ final class Coordinator {
         Log.log("[Coordinator] candidates: \(self.candidates)")
     }
     
+    func getEngine() -> RecognizerEngine? {
+        Log.log("[Coordinator] getEngine")
+        guard let recognizerDelegate else { return nil }
+        guard let localeManager else { return nil }
+        guard let backend = candidates.first else { return nil }
+        Log.log("[Coordinator] backend: \(backend)")
+        if backend == .sfSpeech, let locale = localeManager.SFLocale {
+            Log.log("[Coordinator] SFSpeechEngine Activated")
+            return SFSpeechEngine(locale: locale, delegate: recognizerDelegate)
+        }
+        if #available(iOS 26.0, *) {
+            if backend == .speechTranscriber, let locale = localeManager.speechLocale {
+                Log.log("[Coordinator] SpeechTranscriber Activated")
+                return AnalyzerEngine(
+                    backend: .speechTranscriber,
+                    locale: locale,
+                    delegate: recognizerDelegate
+                )
+            }
+            if backend == .dictationTranscriber, let locale = localeManager.dictationLocale {
+                Log.log("[Coordinator] DictationTranscriber Activated")
+                return AnalyzerEngine(
+                    backend: .dictationTranscriber,
+                    locale: locale,
+                    delegate: recognizerDelegate
+                )
+            }
+        }
+        return nil
+    }
+    
     func reportEngineFailure() {
         self.candidates = Array(self.candidates.dropFirst())
+    }
+    
+    func getSupportedLocales() -> [String] {
+        return localeManager?.supportedLocales ?? []
     }
 }

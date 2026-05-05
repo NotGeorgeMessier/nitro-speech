@@ -19,11 +19,12 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
   var onVolumeChange: ((_ event: VolumeChangeEvent) -> Void)? { get set }
 
   // Methods
-  func prewarm(defaultParams: SpeechToTextParams?) throws -> Void
+  func prewarm(defaultParams: SpeechToTextParams?) throws -> Promise<Void>
   func startListening(params: SpeechToTextParams?) throws -> Void
   func stopListening() throws -> Void
+  func resetAutoFinishTime() throws -> Void
   func addAutoFinishTime(additionalTimeMs: Double?) throws -> Void
-  func updateAutoFinishTime(newTimeMs: Double, withRefresh: Bool?) throws -> Void
+  func updateConfig(newConfig: DynamicParams?, resetAutoFinishTime: Bool?) throws -> Void
   func getIsActive() throws -> Bool
   func getSupportedLocalesIOS() throws -> [String]
 }
@@ -31,7 +32,7 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
 public extension HybridRecognizerSpec_protocol {
   /// Default implementation of ``HybridObject.toString``
   func toString() -> String {
-    return "[HybridObject NitroSpeechDevRecognizer]"
+    return "[HybridObject Recognizer]"
   }
 }
 

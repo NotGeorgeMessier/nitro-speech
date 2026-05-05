@@ -8,38 +8,33 @@ enum Log {
    static func log(_ text: String) {
        if isLogging {
            let tn = Thread.current.isMainThread ? "main" : "bg"
-           let qos = Thread.current.qualityOfService.rawValue
-           let tp = Thread.current.threadPriority
-           let thread = "\(tn)/\(qos)/\(tp)"
            Logger(subsystem: subsystem, category: category).info(
-            "[thread]: \(thread) | \(text)"
+            "[thread]: \(tn) | \(text)"
            )
        }
    }
 }
 
 final class Lg {
-    static let isLogging = true
+    private let isLogging: Bool
     static let subsystem = "com.margelo.nitro.nitrospeech"
     static let category = "NitroSpeech"
     let prefix: String
-    init(prefix: String) {
+    init(prefix: String, disable: Bool? = false) {
         self.prefix = prefix
+        self.isLogging = !(disable ?? false)
     }
     var prevMs: Double?
     func log(_ text: String) {
-        if Self.isLogging {
+        if self.isLogging {
             let nowMs = ProcessInfo.processInfo.systemUptime * 1000
             let diff = Int(round(nowMs - (self.prevMs ?? nowMs)))
             self.prevMs = nowMs
             let tn = Thread.current.isMainThread ? "main" : "bg"
-            let qos = Thread.current.qualityOfService.rawValue
-            let tp = Thread.current.threadPriority
-            let thread = "\(tn)/\(qos)/\(tp)"
             Logger(
                 subsystem: Self.subsystem,
                 category: Self.category
-            ).info("[thread]: \(thread) | {\(self.prefix)} diff: \(diff) | \(text)")
+            ).info("[thread]: \(tn) | {\(self.prefix)} diff: \(diff) | \(text)")
         }
     }
 }

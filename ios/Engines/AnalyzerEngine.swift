@@ -15,13 +15,13 @@ final class AnalyzerEngine: RecognizerEngine {
     private var lastBatchStartTime: Float64? = nil
     private var resultBatches: [String] = []
     
-    init(backend: RecognizerBackend, locale: Locale) {
+    init(backend: RecognizerBackend, locale: Locale, delegate: RecognizerDelegate) {
         if backend == .speechTranscriber {
-            transcriber = SpeechRuntime()
+            transcriber = SpeechRuntime(with: locale)
         } else {
-            transcriber = DictationRuntime()
+            transcriber = DictationRuntime(with: locale)
         }
-        super.init(locale: locale)
+        super.init(locale: locale, delegate: delegate)
     }
     
     override func stop() {
@@ -46,32 +46,19 @@ final class AnalyzerEngine: RecognizerEngine {
         }
     }
     
-    override func prewarm(for type: FailureType) async -> Bool {
-        // Check and set locale for transcriber
-        guard await transcriber.checkLocale(
-            locale: Locale(identifier: config?.locale ?? "en-US")
-        ) else {
-            self.reportFailure(
-                from: "prewarm.supportedLocale",
-                message: "Locale isnt supported",
-                type: type
-            )
-            return false
-        }
-        
+    override func prewarm(for type: FailureType) async {
+        await super.prewarm(for: type)
         do {
-            // Creates transcriber and installs assets
-            try await transcriber.create(config: config)
+            // Create transcriber and install assets
+            try await transcriber.create(config: self.recognizerDelegate?.config)
         }
         catch {
             self.reportFailure(
                 from: "prewarm.assets",
-                message: "Failed to install required assets",
+                message: "Failed to create transcriber",
                 type: type
             )
-            return false
         }
-        return true
     }
     
     override func startSession() async {
@@ -79,7 +66,7 @@ final class AnalyzerEngine: RecognizerEngine {
         
         // Prepares transcriber and handles errors.
         // On failure, reportFailure triggers cleanup + engine reselection.
-        guard await prewarm(for: .start) else { return }
+        await prewarm(for: .start)
         
         // 3. Input sequence
         (inputSequence, inputBuilder) = AsyncStream.makeStream(of: AnalyzerInput.self)
@@ -166,7 +153,6 @@ final class AnalyzerEngine: RecognizerEngine {
                 try await transcriber.handleResults(
                     onResult: { [weak self] result in
                         guard let self else { return }
-                        self.trackPartialActivity()
                         self.handleBatch(
                             attrString: result.text,
                             rangeStart: result.rangeStart,
@@ -188,7 +174,7 @@ final class AnalyzerEngine: RecognizerEngine {
         
         do {
             if let inputSequence, let analyzer {
-                if let contextualStrings = config?.contextualStrings {
+                if let contextualStrings = self.recognizerDelegate?.config?.contextualStrings {
                     let context = AnalysisContext()
                     context.contextualStrings = [
                         AnalysisContext.ContextualStringsTag.general: contextualStrings
@@ -232,7 +218,10 @@ final class AnalyzerEngine: RecognizerEngine {
         if !newBatch.contains(/\w+/) {
             return
         }
-        let disableRepeatingFilter = self.config?.disableRepeatingFilter ?? false
+        // Track only when transcription is coming
+        self.trackPartialActivity()
+        
+        let disableRepeatingFilter = self.recognizerDelegate?.config?.disableRepeatingFilter ?? false
         if !disableRepeatingFilter {
             newBatch = Utils.repeatingFilter(newBatch)
         }
@@ -247,6 +236,6 @@ final class AnalyzerEngine: RecognizerEngine {
             self.resultBatches.append(newBatch)
         }
         self.lastBatchStartTime = CMTimeGetSeconds(rangeStart)
-        self.onResult?(self.resultBatches)
+        self.recognizerDelegate?.result(batches: self.resultBatches)
     }
 }

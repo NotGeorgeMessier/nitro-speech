@@ -9,23 +9,23 @@
 
 #include <NitroModules/JHybridObject.hpp>
 #include <fbjni/fbjni.h>
-#include "NitroSpeechDevHybridRecognizerSpec.hpp"
+#include "HybridRecognizerSpec.hpp"
 
 
 
 
-namespace margelo::nitro::nitrospeechdev {
+namespace margelo::nitro::nitrospeech {
 
   using namespace facebook;
 
   class JHybridRecognizerSpec: public virtual HybridRecognizerSpec, public virtual JHybridObject {
   public:
     struct JavaPart: public jni::JavaClass<JavaPart, JHybridObject::JavaPart> {
-      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/HybridRecognizerSpec;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridRecognizerSpec;";
       std::shared_ptr<JHybridRecognizerSpec> getJHybridRecognizerSpec();
     };
     struct CxxPart: public jni::HybridClass<CxxPart, JHybridObject::CxxPart> {
-      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/HybridRecognizerSpec$CxxPart;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HybridRecognizerSpec$CxxPart;";
       static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
       static void registerNatives();
       using HybridBase::HybridBase;
@@ -67,11 +67,12 @@ namespace margelo::nitro::nitrospeechdev {
 
   public:
     // Methods
-    void prewarm(const std::optional<SpeechToTextParams>& defaultParams) override;
+    std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechToTextParams>& defaultParams) override;
     void startListening(const std::optional<SpeechToTextParams>& params) override;
     void stopListening() override;
+    void resetAutoFinishTime() override;
     void addAutoFinishTime(std::optional<double> additionalTimeMs) override;
-    void updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) override;
+    void updateConfig(const std::optional<DynamicParams>& newConfig, std::optional<bool> resetAutoFinishTime) override;
     bool getIsActive() override;
     std::vector<std::string> getSupportedLocalesIOS() override;
 
@@ -79,4 +80,4 @@ namespace margelo::nitro::nitrospeechdev {
     jni::global_ref<JHybridRecognizerSpec::JavaPart> _javaPart;
   };
 
-} // namespace margelo::nitro::nitrospeechdev
+} // namespace margelo::nitro::nitrospeech

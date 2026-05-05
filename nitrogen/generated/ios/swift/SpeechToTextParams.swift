@@ -10,36 +10,18 @@ import NitroModules
 /**
  * Represents an instance of `SpeechToTextParams`, backed by a C++ struct.
  */
-public typealias SpeechToTextParams = margelo.nitro.nitrospeechdev.SpeechToTextParams
+public typealias SpeechToTextParams = margelo.nitro.nitrospeech.SpeechToTextParams
 
 public extension SpeechToTextParams {
-  private typealias bridge = margelo.nitro.nitrospeechdev.bridge.swift
+  private typealias bridge = margelo.nitro.nitrospeech.bridge.swift
 
   /**
    * Create a new instance of `SpeechToTextParams`.
    */
-  init(locale: String?, autoFinishRecognitionMs: Double?, autoFinishProgressIntervalMs: Double?, disableRepeatingFilter: Bool?, contextualStrings: [String]?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, maskOffensiveWords: Bool?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?, iosPreset: IosPreset?, iosAtypicalSpeech: Bool?) {
+  init(locale: String?, contextualStrings: [String]?, maskOffensiveWords: Bool?, autoFinishRecognitionMs: Double?, autoFinishProgressIntervalMs: Double?, resetAutoFinishVoiceSensitivity: Double?, disableRepeatingFilter: Bool?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?, iosPreset: IosPreset?, iosAtypicalSpeech: Bool?) {
     self.init({ () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = locale {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_double_ in
-      if let __unwrappedValue = autoFinishRecognitionMs {
-        return bridge.create_std__optional_double_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_double_ in
-      if let __unwrappedValue = autoFinishProgressIntervalMs {
-        return bridge.create_std__optional_double_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_bool_ in
-      if let __unwrappedValue = disableRepeatingFilter {
-        return bridge.create_std__optional_bool_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -55,6 +37,36 @@ public extension SpeechToTextParams {
       } else {
         return .init()
       }
+    }(), { () -> bridge.std__optional_bool_ in
+      if let __unwrappedValue = maskOffensiveWords {
+        return bridge.create_std__optional_bool_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_double_ in
+      if let __unwrappedValue = autoFinishRecognitionMs {
+        return bridge.create_std__optional_double_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_double_ in
+      if let __unwrappedValue = autoFinishProgressIntervalMs {
+        return bridge.create_std__optional_double_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_double_ in
+      if let __unwrappedValue = resetAutoFinishVoiceSensitivity {
+        return bridge.create_std__optional_double_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_bool_ in
+      if let __unwrappedValue = disableRepeatingFilter {
+        return bridge.create_std__optional_bool_(__unwrappedValue)
+      } else {
+        return .init()
+      }
     }(), { () -> bridge.std__optional_HapticFeedbackStyle_ in
       if let __unwrappedValue = startHapticFeedbackStyle {
         return bridge.create_std__optional_HapticFeedbackStyle_(__unwrappedValue)
@@ -64,12 +76,6 @@ public extension SpeechToTextParams {
     }(), { () -> bridge.std__optional_HapticFeedbackStyle_ in
       if let __unwrappedValue = stopHapticFeedbackStyle {
         return bridge.create_std__optional_HapticFeedbackStyle_(__unwrappedValue)
-      } else {
-        return .init()
-      }
-    }(), { () -> bridge.std__optional_bool_ in
-      if let __unwrappedValue = maskOffensiveWords {
-        return bridge.create_std__optional_bool_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -125,6 +131,30 @@ public extension SpeechToTextParams {
   }
   
   @inline(__always)
+  var contextualStrings: [String]? {
+    return { () -> [String]? in
+      if bridge.has_value_std__optional_std__vector_std__string__(self.__contextualStrings) {
+        let __unwrapped = bridge.get_std__optional_std__vector_std__string__(self.__contextualStrings)
+        return __unwrapped.map({ __item in String(__item) })
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
+  var maskOffensiveWords: Bool? {
+    return { () -> Bool? in
+      if bridge.has_value_std__optional_bool_(self.__maskOffensiveWords) {
+        let __unwrapped = bridge.get_std__optional_bool_(self.__maskOffensiveWords)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
   var autoFinishRecognitionMs: Double? {
     return { () -> Double? in
       if bridge.has_value_std__optional_double_(self.__autoFinishRecognitionMs) {
@@ -149,10 +179,10 @@ public extension SpeechToTextParams {
   }
   
   @inline(__always)
-  var disableRepeatingFilter: Bool? {
-    return { () -> Bool? in
-      if bridge.has_value_std__optional_bool_(self.__disableRepeatingFilter) {
-        let __unwrapped = bridge.get_std__optional_bool_(self.__disableRepeatingFilter)
+  var resetAutoFinishVoiceSensitivity: Double? {
+    return { () -> Double? in
+      if bridge.has_value_std__optional_double_(self.__resetAutoFinishVoiceSensitivity) {
+        let __unwrapped = bridge.get_std__optional_double_(self.__resetAutoFinishVoiceSensitivity)
         return __unwrapped
       } else {
         return nil
@@ -161,11 +191,11 @@ public extension SpeechToTextParams {
   }
   
   @inline(__always)
-  var contextualStrings: [String]? {
-    return { () -> [String]? in
-      if bridge.has_value_std__optional_std__vector_std__string__(self.__contextualStrings) {
-        let __unwrapped = bridge.get_std__optional_std__vector_std__string__(self.__contextualStrings)
-        return __unwrapped.map({ __item in String(__item) })
+  var disableRepeatingFilter: Bool? {
+    return { () -> Bool? in
+      if bridge.has_value_std__optional_bool_(self.__disableRepeatingFilter) {
+        let __unwrapped = bridge.get_std__optional_bool_(self.__disableRepeatingFilter)
+        return __unwrapped
       } else {
         return nil
       }
@@ -180,18 +210,6 @@ public extension SpeechToTextParams {
   @inline(__always)
   var stopHapticFeedbackStyle: HapticFeedbackStyle? {
     return self.__stopHapticFeedbackStyle.value
-  }
-  
-  @inline(__always)
-  var maskOffensiveWords: Bool? {
-    return { () -> Bool? in
-      if bridge.has_value_std__optional_bool_(self.__maskOffensiveWords) {
-        let __unwrapped = bridge.get_std__optional_bool_(self.__maskOffensiveWords)
-        return __unwrapped
-      } else {
-        return nil
-      }
-    }()
   }
   
   @inline(__always)

@@ -18,11 +18,11 @@ import NitroModules
  */
 open class HybridRecognizerSpec_cxx {
   /**
-   * The Swift <> C++ bridge's namespace (`margelo::nitro::nitrospeechdev::bridge::swift`)
-   * from `NitroSpeechDev-Swift-Cxx-Bridge.hpp`.
+   * The Swift <> C++ bridge's namespace (`margelo::nitro::nitrospeech::bridge::swift`)
+   * from `NitroSpeech-Swift-Cxx-Bridge.hpp`.
    * This contains specialized C++ templates, and C++ helper functions that can be accessed from Swift.
    */
-  public typealias bridge = margelo.nitro.nitrospeechdev.bridge.swift
+  public typealias bridge = margelo.nitro.nitrospeech.bridge.swift
 
   /**
    * Holds an instance of the `HybridRecognizerSpec` Swift protocol.
@@ -353,13 +353,21 @@ open class HybridRecognizerSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func prewarm(defaultParams: bridge.std__optional_SpeechToTextParams_) -> bridge.Result_void_ {
+  public final func prewarm(defaultParams: bridge.std__optional_SpeechToTextParams_) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      try self.__implementation.prewarm(defaultParams: defaultParams.value)
-      return bridge.create_Result_void_()
+      let __result = try self.__implementation.prewarm(defaultParams: defaultParams.value)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_void__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve() })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_void_(__exceptionPtr)
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
     }
   }
   
@@ -386,6 +394,17 @@ open class HybridRecognizerSpec_cxx {
   }
   
   @inline(__always)
+  public final func resetAutoFinishTime() -> bridge.Result_void_ {
+    do {
+      try self.__implementation.resetAutoFinishTime()
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func addAutoFinishTime(additionalTimeMs: bridge.std__optional_double_) -> bridge.Result_void_ {
     do {
       try self.__implementation.addAutoFinishTime(additionalTimeMs: { () -> Double? in
@@ -404,11 +423,11 @@ open class HybridRecognizerSpec_cxx {
   }
   
   @inline(__always)
-  public final func updateAutoFinishTime(newTimeMs: Double, withRefresh: bridge.std__optional_bool_) -> bridge.Result_void_ {
+  public final func updateConfig(newConfig: bridge.std__optional_DynamicParams_, resetAutoFinishTime: bridge.std__optional_bool_) -> bridge.Result_void_ {
     do {
-      try self.__implementation.updateAutoFinishTime(newTimeMs: newTimeMs, withRefresh: { () -> Bool? in
-        if bridge.has_value_std__optional_bool_(withRefresh) {
-          let __unwrapped = bridge.get_std__optional_bool_(withRefresh)
+      try self.__implementation.updateConfig(newConfig: newConfig.value, resetAutoFinishTime: { () -> Bool? in
+        if bridge.has_value_std__optional_bool_(resetAutoFinishTime) {
+          let __unwrapped = bridge.get_std__optional_bool_(resetAutoFinishTime)
           return __unwrapped
         } else {
           return nil

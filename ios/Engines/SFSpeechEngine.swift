@@ -15,9 +15,9 @@ final class SFSpeechEngine: RecognizerEngine {
         recognitionTask?.finish()
     }
     
-    override func prewarm(for type: FailureType) async -> Bool {
+    override func prewarm(for type: FailureType) async {
         speechRecognizer = SFSpeechRecognizer(
-            locale: Locale(identifier: config?.locale ?? "en-US")
+            locale: Locale(identifier: self.recognizerDelegate?.config?.locale ?? "en-US")
         )
         if speechRecognizer?.isAvailable != true {
             self.reportFailure(
@@ -25,19 +25,16 @@ final class SFSpeechEngine: RecognizerEngine {
                 message: "SFSpeechRecognizer is not available",
                 type: type
             )
-            return false
         }
-        return true
+        await super.prewarm(for: type)
     }
     
     override func startSession() async {
         await super.startSession()
         lg.log("[startSession.startSession]")
         
-        guard await prewarm(for: .start) else { return }
+        await prewarm(for: .start)
         lg.log("[startSession.prewarm]")
-        // prepare already ensures speechRecognizer exists
-        // otherwise logs error and cleanup
         guard let speechRecognizer else { return }
         
         recognitionRequest = createRecognitionRequest()
@@ -50,14 +47,17 @@ final class SFSpeechEngine: RecognizerEngine {
             guard let self else { return }
             
             if let result = result {
-                self.trackPartialActivity()
                 var transcription = result.bestTranscription.formattedString
                 if !transcription.isEmpty {
-                    let disableRepeatingFilter = self.config?.disableRepeatingFilter ?? false
+                    // Track only when transcription is coming
+                    self.trackPartialActivity()
+                    
+                    let disableRepeatingFilter = self.recognizerDelegate?.config?.disableRepeatingFilter ?? false
                     if !disableRepeatingFilter {
                         transcription = Utils.repeatingFilter(transcription)
                     }
-                    self.onResult?([transcription])
+                    // Legacy transcriber collects everything into one batch
+                    self.recognizerDelegate?.result(batches: [transcription])
                 }
                 
                 if result.isFinal {
@@ -73,7 +73,7 @@ final class SFSpeechEngine: RecognizerEngine {
                         type: .onSession
                     )
                 } else {
-                    self.cleanup(from: "startRecognition.recognitionTask.error")
+                    self.cleanup(from: "startRecognition.recognitionTask.manualStop")
                 }
             }
         }
@@ -101,12 +101,13 @@ final class SFSpeechEngine: RecognizerEngine {
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
         
-        if let contextualStrings = config?.contextualStrings, !contextualStrings.isEmpty {
+        if let contextualStrings = self.recognizerDelegate?.config?.contextualStrings,
+           !contextualStrings.isEmpty {
             request.contextualStrings = contextualStrings
         }
         
         if #available(iOS 16, *) {
-            if config?.iosAddPunctuation == false {
+            if self.recognizerDelegate?.config?.iosAddPunctuation == false {
                 request.addsPunctuation = false
             } else {
                 request.addsPunctuation = true

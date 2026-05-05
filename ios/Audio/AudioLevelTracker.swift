@@ -14,12 +14,32 @@ final class AudioLevelTracker {
     private static let meterMaxDb: Float = -10
     private static let meterAttack: Float = 0.35
     private static let meterRelease: Float = 0.08
-    private static let autoStopResetThreshold: Float = 0.6
+    private static let defaultAutoStopResetThreshold: Double = 0.4
 
+    private var autoStopResetThreshold: Double
     private var smoothedLevel: Float = 0
+    
+    init(resetAutoFinishVoiceSensitivity: Double?) {
+        if let resetAutoFinishVoiceSensitivity {
+            // Clamp value between 0 and 1
+            self.autoStopResetThreshold = max(0, min(1, resetAutoFinishVoiceSensitivity))
+        } else {
+            self.autoStopResetThreshold = Self.defaultAutoStopResetThreshold
+        }
+    }
+    
+    func updateResetAutoFinishVoiceSensitivity(newValue: Double?) {
+        if let newValue {
+            // Clamp value between 0 and 1
+            self.autoStopResetThreshold = max(0, min(1, newValue))
+        } else {
+            self.autoStopResetThreshold = Self.defaultAutoStopResetThreshold
+        }
+    }
 
     func reset() {
         smoothedLevel = 0
+        self.autoStopResetThreshold = Self.defaultAutoStopResetThreshold
     }
 
     func process(_ buffer: AVAudioPCMBuffer) -> AudioLevelSample? {
@@ -35,15 +55,12 @@ final class AudioLevelTracker {
 
         let coeff = normalized > smoothedLevel ? Self.meterAttack : Self.meterRelease
         smoothedLevel += coeff * (normalized - smoothedLevel)
-        let nowMs = ProcessInfo.processInfo.systemUptime * 1000
-
-//        Log.log("👀now: \(nowMs), raw: \(normalized), db: \(db), smooth: \(smoothedLevel)")
         
         return AudioLevelSample(
             smoothed: Double(smoothedLevel * 1_000_000).rounded() / 1_000_000,
             raw: Double(normalized * 1_000_000).rounded() / 1_000_000,
             db: Double(db * 1_000).rounded() / 1_000,
-            resetTimer: normalized >= Self.autoStopResetThreshold
+            resetTimer: Double(normalized) >= self.autoStopResetThreshold
         )
     }
 }

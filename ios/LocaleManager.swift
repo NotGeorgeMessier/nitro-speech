@@ -12,13 +12,12 @@ final class LocaleManager {
     
     private var equivalentsCountedFor: String?
     
-    init() {
+    init() async {
         self.speechLocales = []
         self.dictationLocales = []
         self.supportedLocales = sfSpeechLocales
         
-        Task { [weak self] in
-            guard #available(iOS 26.0, *), let self else { return }
+        if #available(iOS 26.0, *) {
             self.speechLocales = await SpeechTranscriber.supportedLocales.map {
                 $0.identifier
             }
@@ -41,6 +40,7 @@ final class LocaleManager {
         if self.equivalentsCountedFor == identifier {
             // All locales has been counted already, might be nil, but use them
             Log.log("[Coordinator] ensureLocale: \(identifier) -> Already counted ")
+            return
         }
         if #available(iOS 26.0, *) {
             let speechEquivalent = await SpeechTranscriber.supportedLocale(
@@ -48,6 +48,8 @@ final class LocaleManager {
             )?.identifier
             if let speechEquivalent, speechLocales.contains(speechEquivalent) {
                 self.speechLocale = Locale(identifier: speechEquivalent)
+            } else {
+                self.speechLocale = nil
             }
             
             let dictationEquivalent = await DictationTranscriber.supportedLocale(
@@ -55,12 +57,17 @@ final class LocaleManager {
             )?.identifier
             if let dictationEquivalent, self.dictationLocales.contains(dictationEquivalent) {
                 self.dictationLocale = Locale(identifier: dictationEquivalent)
+            } else {
+                self.dictationLocale = nil
             }
         }
         if sfSpeechLocales.contains(identifier) {
             self.SFLocale = Locale(identifier: identifier)
+        } else {
+            self.SFLocale = nil
         }
         self.equivalentsCountedFor = identifier
+        Log.log("[Coordinator] equivalents: speechLocale: \(self.speechLocale?.identifier), dictationLocale: \(self.dictationLocale?.identifier), SFLocale: \(self.SFLocale?.identifier)")
         Log.log("[Coordinator] ensureLocale: \(identifier) -> New")
     }
 }

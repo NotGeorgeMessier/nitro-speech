@@ -4,6 +4,8 @@ import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.nitrospeech.recognizer.HybridRecognizer
 
+@DoNotStrip
+@Keep
 class HybridNitroSpeech: HybridNitroSpeechSpec() {
 
   @DoNotStrip

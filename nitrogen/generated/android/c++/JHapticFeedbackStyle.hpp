@@ -8,9 +8,9 @@
 #pragma once
 
 #include <fbjni/fbjni.h>
-#include "NitroSpeechDevHapticFeedbackStyle.hpp"
+#include "HapticFeedbackStyle.hpp"
 
-namespace margelo::nitro::nitrospeechdev {
+namespace margelo::nitro::nitrospeech {
 
   using namespace facebook;
 
@@ -19,7 +19,7 @@ namespace margelo::nitro::nitrospeechdev {
    */
   struct JHapticFeedbackStyle final: public jni::JavaClass<JHapticFeedbackStyle> {
   public:
-    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/HapticFeedbackStyle;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/HapticFeedbackStyle;";
 
   public:
     /**
@@ -61,4 +61,4 @@ namespace margelo::nitro::nitrospeechdev {
     }
   };
 
-} // namespace margelo::nitro::nitrospeechdev
+} // namespace margelo::nitro::nitrospeech

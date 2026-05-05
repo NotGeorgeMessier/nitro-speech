@@ -3,7 +3,7 @@ import Speech
 import AVFoundation
 
 // No practical diff between "system" and "onSession" for now.
-// For future: send the level of error to RN side
+// For future: send the level of error to RN
 // "onSession" is less critical level, since the session has been started successfully
 enum FailureType {
     case system
@@ -15,84 +15,48 @@ enum FailureType {
 class RecognizerEngine {
     var isActive = false
     var isStopping = false
+    var hardwareFormat: AVAudioFormat?
+    weak var recognizerDelegate: RecognizerDelegate?
     
+    private let audioLevelTracker: AudioLevelTracker
     private var appStateObserver: AppStateObserver?
     private var audioEngine: AVAudioEngine?
-    private let audioLevelTracker = AudioLevelTracker()
     private var autoStopper: AutoStopper?
-    
     private let lg = Lg(prefix: "RecognizerEngine")
     
-    var hardwareFormat: AVAudioFormat?
-
     let locale: Locale
-    var config: SpeechToTextParams?
-    var reselectEngine: ((_ forPrewarm: Bool) -> Void)?
     
-    var onReady: (() -> Void)?
-    var onStop: (() -> Void)?
-    var onResult: (([String]) -> Void)?
-    var onAutoFinishProgress: ((Double) -> Void)?
-    var onError: ((String) -> Void)?
-    var onPermissionDenied: (() -> Void)?
-    var onVolumeChange: ((VolumeChangeEvent) -> Void)?
-    
-    init(locale: Locale) {
+    init(locale: Locale, delegate: RecognizerDelegate) {
         self.locale = locale
+        self.recognizerDelegate = delegate
+        self.audioLevelTracker = AudioLevelTracker(
+            resetAutoFinishVoiceSensitivity: delegate.config?.resetAutoFinishVoiceSensitivity
+        )
+    }
+    
+    // MARK: - Recognizer Methods
+    
+    func prewarm(for: FailureType) async {
+        self.prepareAudioEngine()
+        // for SpeechTranscriber: .isAvailable and async assets
+        // for Dictation: only async assets
+        // for legacy SF: only sync .isAvailable
     }
     
     func start() {
-        if isActive {
-            return
-        }
+        guard let recognizerDelegate, !isActive else { return }
         
         Permissions(
             onGranted: self.startSession,
-            onDenied: self.onPermissionDenied,
-            onError: self.onError
+            onDenied: recognizerDelegate.permissionDenied,
+            onError: recognizerDelegate.error
         ).requestAuthorization()
     }
     
     func stop() {
         guard isActive, !isStopping else { return }
         isStopping = true
-        HapticImpact.trigger(with: config?.stopHapticFeedbackStyle)
-    }
-    
-    func updateSession(
-        newConfig: SpeechToTextParams? = nil,
-        addMsToTimer: Double? = nil,
-        resetTimer: Bool? = nil
-    ) {
-        guard isActive, !isStopping else { return }
-        if let newTime = newConfig?.autoFinishRecognitionMs,
-           newTime != config?.autoFinishRecognitionMs {
-            autoStopper?.updateThreshold(
-                newTime,
-                from: "updateSession"
-            )
-        }
-        if let newInterval = newConfig?.autoFinishProgressIntervalMs,
-           newInterval != config?.autoFinishProgressIntervalMs {
-            autoStopper?.updateProgressInterval(
-                newInterval,
-                from: "updateSession"
-            )
-        }
-        if let addMsToTimer {
-            // Adds time to timer for once
-            autoStopper?.addMsOnce(
-                addMsToTimer, 
-                from: "updateSession"
-            )
-        } else if resetTimer == true {
-            // Reset to current baseline threshold.
-            autoStopper?.resetTimer(from: "updateSession")
-        }
-        if let newConfig {
-            // Update config only if none-nil
-            config = newConfig
-        }
+        HapticImpact.trigger(with: self.recognizerDelegate?.config?.stopHapticFeedbackStyle)
     }
     
     func startSession() async {
@@ -105,52 +69,30 @@ class RecognizerEngine {
         lg.log("[startSession.initAutoStop]")
         startAppStateObserver()
         lg.log("[startSession.startAppStateObserver]")
-        guard startAudioSession() else {
-            cleanup(from: "startRecognitionSetup")
-            return
-        }
+        startAudioSession()
         lg.log("[startSession.startAudioSession]")
-        // Extension in subclasses
-    }
-    
-    func prewarm(for: FailureType) async -> Bool {
-        // for SpeechTranscriber: .isAvailable and async assets
-        // for Dictation: only async assets
-        // for legacy SF: only sync .isAvailable
-        return true
     }
     
     func startAudioEngine(
         onBuffer: @escaping (AVAudioPCMBuffer) -> Void
     ) {
         lg.log("[startAudioEngine]")
-        audioEngine = AVAudioEngine()
-        lg.log("[startAudioEngine.audioEngine]")
-        guard let audioEngine else {
-            self.reportFailure(
-                from: "Audio Engine",
-                message: "Audio Engine failed to initiate",
-                // Recognizer-Engine agnostic Error
-                type: .system
-            )
-            return
-        }
-        hardwareFormat = audioEngine.inputNode.outputFormat(forBus: 0)
-        lg.log("[startAudioEngine.hardwareFormat]")
+        guard let audioEngine, let hardwareFormat else { return }
         audioEngine.inputNode.installTap(
             onBus: 0,
             bufferSize: 1024,
             format: hardwareFormat
         ) { [weak self] buffer, _ in
-            guard let self else { return }
+            guard let self, let recognizerDelegate = self.recognizerDelegate else { return }
             if let sample = self.audioLevelTracker.process(buffer) {
                 // Send buffer volume data
-                self.onVolumeChange?(
-                    VolumeChangeEvent(
-                        smoothedVolume: sample.smoothed,
-                        rawVolume: sample.raw,
-                        db: sample.db
-                    )
+                recognizerDelegate.volumeChange(
+                    event:
+                        VolumeChangeEvent(
+                            smoothedVolume: sample.smoothed,
+                            rawVolume: sample.raw,
+                            db: sample.db
+                        )
                 )
                 if sample.resetTimer {
                     self.autoStopper?.resetTimer(from: "rms threshold")
@@ -168,20 +110,64 @@ class RecognizerEngine {
             self.reportFailure(
                 from: "Audio Engine",
                 message: "Audio Engine failed to start",
-                // Recognizer-Engine agnostic Error
+                // RecognizerEngine-agnostic Error
                 type: .system
             )
         }
     }
     
     func sendFeedbackOnStart() {
+        guard let recognizerDelegate else { return }
         lg.log("[sendFeedbackOnStart]")
-        HapticImpact.trigger(with: config?.startHapticFeedbackStyle)
+        HapticImpact.trigger(with: recognizerDelegate.config?.startHapticFeedbackStyle)
         autoStopper?.resetTimer(from: "startListening.sendFeedbackOnStart")
-        self.onReady?()
-        self.onResult?([])
+        recognizerDelegate.readyForSpeech()
+        recognizerDelegate.result(batches: [])
     }
     
+    func updateSession(
+        newConfig: DynamicParams? = nil,
+        addMsToTimer: Double? = nil,
+        resetTimer: Bool? = nil
+    ) {
+        guard let recognizerDelegate, isActive, !isStopping else { return }
+        let currentConfig = recognizerDelegate.config
+        // Update AutoFinish time
+        if let newAutoFinish = newConfig?.autoFinishRecognitionMs,
+           newAutoFinish != currentConfig?.autoFinishRecognitionMs {
+            autoStopper?.updateThreshold(
+                newAutoFinish,
+                from: "updateSession"
+            )
+        }
+        // Update AutoFinish progress interval
+        if let newInterval = newConfig?.autoFinishProgressIntervalMs,
+           newInterval != currentConfig?.autoFinishProgressIntervalMs {
+            autoStopper?.updateProgressInterval(
+                newInterval,
+                from: "updateSession"
+            )
+        }
+        // Update AutoFinish reset voice sensitivity interval
+        if let newSensitivity = newConfig?.resetAutoFinishVoiceSensitivity, 
+            newSensitivity != currentConfig?.resetAutoFinishVoiceSensitivity {
+            audioLevelTracker.updateResetAutoFinishVoiceSensitivity(
+                newValue: newSensitivity
+            )
+        }
+        if let addMsToTimer {
+            // Add time to the timer once
+            autoStopper?.addMsOnce(
+                addMsToTimer,
+                from: "updateSession"
+            )
+        } else if resetTimer == true {
+            // Reset to current baseline threshold.
+            autoStopper?.resetTimer(from: "updateSession")
+        }
+        // Only update new non-nil values in the config
+        recognizerDelegate.softlyUpdateConfig(newConfig: newConfig)
+    }
     
     func cleanup(from: String) {
         lg.log("[cleanup]: \(from)")
@@ -199,15 +185,16 @@ class RecognizerEngine {
         audioEngine = nil
         isActive = false
         isStopping = false
-        self.onVolumeChange?(
-            VolumeChangeEvent(
-                smoothedVolume: 0,
-                rawVolume: 0,
-                db: nil
-            )
+        self.recognizerDelegate?.volumeChange(
+            event:
+                VolumeChangeEvent(
+                    smoothedVolume: 0,
+                    rawVolume: 0,
+                    db: nil
+                )
         )
         if wasActive {
-            self.onStop?()
+            self.recognizerDelegate?.recordingStopped()
         }
     }
     
@@ -222,11 +209,11 @@ class RecognizerEngine {
             // Try to reselect engine and try again
             case .prewarm, .start:
                 let isPrewarm = type == .prewarm
-                self.reselectEngine?(isPrewarm)
+                self.recognizerDelegate?.reselectEngine(forPrewarm: isPrewarm)
             // System level issue: send onError with description and clean
             // Session has already started: send onError and cleanup
             case .system, .onSession:
-                self.onError?(message)
+                self.recognizerDelegate?.error(message: message)
         }
     }
     
@@ -235,17 +222,41 @@ class RecognizerEngine {
             self.autoStopper?.resetTimer(from: "Partial results")
         }
     }
-}
-
-// AutoStopper extension
-extension RecognizerEngine {
+    
+    // MARK: - AudioEngine heavy prepare
+    
+    private func prepareAudioEngine() {
+        lg.log("[prewarm.start]")
+        audioEngine = AVAudioEngine()
+        guard let audioEngine else {
+            self.reportFailure(
+                from: "Audio Engine",
+                message: "Audio Engine failed to initiate",
+                // RecognizerEngine-agnostic Error
+                type: .system
+            )
+            return
+        }
+        lg.log("[prewarm.audioEngine]")
+        // heavy first hardwareFormat retrieval
+        if hardwareFormat == nil {
+            hardwareFormat = audioEngine.inputNode.outputFormat(forBus: 0)
+            lg.log("[prewarm.hardwareFormat]")
+        }
+    }
+    
+    // MARK: - AutoStopper
+    
     private func initAutoStop() {
+        let config = self.recognizerDelegate?.config
         autoStopper = AutoStopper(
             silenceThresholdMs: config?.autoFinishRecognitionMs,
             progressIntervalMs: config?.autoFinishProgressIntervalMs,
             onProgress: { [weak self] timeLeftMs in
                 guard let self else { return }
-                self.onAutoFinishProgress?(timeLeftMs)
+                self.recognizerDelegate?.autoFinishProgress(
+                    timeLeftMs: timeLeftMs
+                )
             },
             onTimeout: { [weak self] in
                 self?.stop()
@@ -256,10 +267,9 @@ extension RecognizerEngine {
         autoStopper?.stop()
         autoStopper = nil
     }
-}
-
-// App State Observer extension
-extension RecognizerEngine {
+    
+    // MARK: - App State Observer
+    
     private func startAppStateObserver() {
         appStateObserver = AppStateObserver { [weak self] in
             guard let self, self.isActive else { return }
@@ -271,31 +281,28 @@ extension RecognizerEngine {
         appStateObserver?.stop()
         appStateObserver = nil
     }
-}
-
-// Audio Session extension
-extension RecognizerEngine {
-    private func startAudioSession() -> Bool {
+    
+    // MARK: - Audio Session
+    
+    private func startAudioSession() {
         do {
             let audioSession = AVAudioSession.sharedInstance()
             try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
             // Required for haptic feedback
             try audioSession.setAllowHapticsAndSystemSoundsDuringRecording(true)
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-            return true
         } catch {
             self.reportFailure(
                 from: "startAudioSession",
                 message: "Failed to activate audio session: \(error.localizedDescription)",
-                // Recognizer-Engine agnostic Error
+                // RecognizerEngine-agnostic Error
                 type: .system
             )
-            return false
         }
     }
     private func stopAudioSession() {
         do {
-            // !!todo: check unduck
+            // TODO: check unduck
             try AVAudioSession.sharedInstance().setActive(false)
         } catch {
             // Just log and no-op - not critical

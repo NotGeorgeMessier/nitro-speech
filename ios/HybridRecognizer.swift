@@ -1,7 +1,9 @@
 import Foundation
 import NitroModules
 
-class HybridRecognizer: HybridRecognizerSpec {
+class HybridRecognizer: HybridRecognizerSpec  {
+    var config: SpeechToTextParams?
+    
     var onReadyForSpeech: (() -> Void)?
     var onRecordingStopped: (() -> Void)?
     var onResult: (([String]) -> Void)?
@@ -10,31 +12,32 @@ class HybridRecognizer: HybridRecognizerSpec {
     var onPermissionDenied: (() -> Void)?
     var onVolumeChange: ((VolumeChangeEvent) -> Void)?
     
-    private let localeManager = LocaleManager()
-    private let coordinator: Coordinator
-    private var config: SpeechToTextParams?
+    private let coordinator = Coordinator()
     private var paramsHash: String?
     private var engine: RecognizerEngine?
     
     override init() {
-        self.coordinator = Coordinator(localeManager: self.localeManager)
         super.init()
+        self.coordinator.recognizerDelegate = self
     }
     
-    func prewarm(defaultParams: SpeechToTextParams?) {
-        Task {
+    private let lg = Lg(prefix: "HybridRecognizer")
+    
+    @discardableResult
+    func prewarm(defaultParams: SpeechToTextParams?) -> Promise<Void> {
+        return Promise.async(.userInitiated) { [weak self] in
             // Ensure correct engine is selected based on params and ios version
-            guard let engine = await ensureEngine(params: defaultParams) else { return }
+            await self?.ensureEngine(params: defaultParams)
             // try to preload assets and check if speech engine is available on OS level
-            guard await engine.prewarm(for: .prewarm) else { return }
+            await self?.engine?.prewarm(for: .prewarm)
         }
     }
     
     func startListening(params: SpeechToTextParams?) {
         Task {
             // Ensure correct engine is selected based on params and ios version
-            guard let engine = await ensureEngine(params: params) else { return }
-            engine.start()
+            await ensureEngine(params: params)
+            engine?.start()
         }
     }
     
@@ -42,36 +45,23 @@ class HybridRecognizer: HybridRecognizerSpec {
         engine?.stop()
     }
     
+    func resetAutoFinishTime() {
+        engine?.updateSession(resetTimer: true)
+    }
+    
     func addAutoFinishTime(additionalTimeMs: Double?) {
         if let additionalTimeMs {
             engine?.updateSession(addMsToTimer: additionalTimeMs)
         } else {
-            // Spec parity: if additionalTimeMs is omitted, reset timer to original baseline.
+            // Reset timer to original baseline.
             engine?.updateSession(resetTimer: true)
         }
     }
     
-    func updateAutoFinishTime(newTimeMs: Double, withRefresh: Bool?) {
-        config = SpeechToTextParams(
-            locale: config?.locale,
-            // Only replace auto finish time
-            autoFinishRecognitionMs: newTimeMs,
-            autoFinishProgressIntervalMs: config?.autoFinishProgressIntervalMs,
-            disableRepeatingFilter: config?.disableRepeatingFilter,
-            contextualStrings: config?.contextualStrings,
-            startHapticFeedbackStyle: config?.startHapticFeedbackStyle,
-            stopHapticFeedbackStyle: config?.stopHapticFeedbackStyle,
-            maskOffensiveWords: config?.maskOffensiveWords,
-            androidFormattingPreferQuality: config?.androidFormattingPreferQuality,
-            androidUseWebSearchModel: config?.androidUseWebSearchModel,
-            androidDisableBatchHandling: config?.androidDisableBatchHandling,
-            iosAddPunctuation: config?.iosAddPunctuation,
-            iosPreset: config?.iosPreset,
-            iosAtypicalSpeech: config?.iosAtypicalSpeech
-        )
+    func updateConfig(newConfig: DynamicParams?, resetAutoFinishTime: Bool?) {
         engine?.updateSession(
-            newConfig: config,
-            resetTimer: withRefresh == true
+            newConfig: newConfig,
+            resetTimer: resetAutoFinishTime
         )
     }
 
@@ -80,79 +70,107 @@ class HybridRecognizer: HybridRecognizerSpec {
     }
     
     func getSupportedLocalesIOS() -> [String] {
-        return localeManager.supportedLocales
+        return self.coordinator.getSupportedLocales()
     }
 
-    private func ensureEngine(params: SpeechToTextParams?) async -> RecognizerEngine? {
+    private func ensureEngine(params: SpeechToTextParams?) async {
         // Remember new params
         config = params
         let hash = Utils.hashParams(params)
         if engine != nil && hash == paramsHash {
-            Log.log("Reuse Engine")
+            lg.log("Reuse Engine")
             // Engine is already correct
-            return engine
+            return
         }
         if hash != paramsHash {
-            await localeManager.ensureLocale(localeString: params?.locale)
             // Initialize when trying to select new engine with new params
-            coordinator.initialize(with: params)
+            await coordinator.initialize()
             paramsHash = hash
         }
-        Log.log("backend: \(coordinator.candidates.first) with: \(hash)")
+        lg.log("hash: \(hash)")
         // Try to select new engine
-        guard let backend = coordinator.candidates.first else {
+        engine = coordinator.getEngine()
+        if engine == nil {
+            // Only wrong locale can wipe out all candidates
             self.onError?("No recognition engine available for the requested locale")
-            return nil
+            return
         }
-        if backend == .sfSpeech, let locale = localeManager.SFLocale {
-            engine = SFSpeechEngine(locale: locale)
-        } else if #available(iOS 26.0, *) {
-            if backend == .speechTranscriber, let locale = localeManager.speechLocale {
-                engine = AnalyzerEngine(
-                    backend: .speechTranscriber,
-                    locale: locale
-                )
-            } else if let locale = localeManager.dictationLocale {
-                engine = AnalyzerEngine(
-                    backend: .dictationTranscriber,
-                    locale: locale
-                )
-            }
+    }
+}
+
+protocol RecognizerDelegate: AnyObject {
+    var config: SpeechToTextParams? { get }
+    func softlyUpdateConfig(newConfig: DynamicParams?)
+    func reselectEngine(forPrewarm: Bool)
+    func readyForSpeech()
+    func recordingStopped()
+    func result (batches: [String])
+    func autoFinishProgress (timeLeftMs: Double)
+    func error (message: String)
+    func permissionDenied ()
+    func volumeChange (event: VolumeChangeEvent)
+}
+
+extension HybridRecognizer: RecognizerDelegate {
+    func softlyUpdateConfig(newConfig: DynamicParams?) {
+        if let newConfig {
+            config = SpeechToTextParams(
+                locale: config?.locale,
+                contextualStrings: config?.contextualStrings,
+                maskOffensiveWords: config?.maskOffensiveWords,
+                autoFinishRecognitionMs: newConfig.autoFinishRecognitionMs ?? config?.autoFinishRecognitionMs,
+                autoFinishProgressIntervalMs: newConfig.autoFinishProgressIntervalMs ?? config?.autoFinishProgressIntervalMs,
+                resetAutoFinishVoiceSensitivity: newConfig.resetAutoFinishVoiceSensitivity ?? config?.resetAutoFinishVoiceSensitivity,
+                disableRepeatingFilter: newConfig.disableRepeatingFilter ?? config?.disableRepeatingFilter,
+                startHapticFeedbackStyle: newConfig.startHapticFeedbackStyle ?? config?.startHapticFeedbackStyle,
+                stopHapticFeedbackStyle: newConfig.stopHapticFeedbackStyle ?? config?.stopHapticFeedbackStyle,
+                androidFormattingPreferQuality: config?.androidFormattingPreferQuality,
+                androidUseWebSearchModel: config?.androidUseWebSearchModel,
+                androidDisableBatchHandling: config?.androidDisableBatchHandling,
+                iosAddPunctuation: config?.iosAddPunctuation,
+                iosPreset: config?.iosPreset,
+                iosAtypicalSpeech: config?.iosAtypicalSpeech
+            )
         }
-        engine?.config = params
-        engine?.reselectEngine = reselectEngine
-        engine?.onReady = { [weak self] in
-            Log.log("[HR -> onReadyForSpeech]")
-            self?.onReadyForSpeech?()
-        }
-        engine?.onStop = { [weak self] in
-            Log.log("[HR -> onReadyForSpeech]")
-            self?.onRecordingStopped?()
-        }
-        engine?.onResult = { [weak self] batches in
-            Log.log("[HR -> onResult]")
-            self?.onResult?(batches)
-        }
-        engine?.onAutoFinishProgress = { [weak self] ms in
-            Log.log("[HR -> onAutoFinishProgress]")
-            self?.onAutoFinishProgress?(ms)
-        }
-        engine?.onError = { [weak self] msg in
-            Log.log("[HR -> onError]")
-            self?.onError?(msg)
-        }
-        engine?.onPermissionDenied = { [weak self] in
-            Log.log("[HR -> onPermissionDenied]")
-            self?.onPermissionDenied?()
-        }
-        engine?.onVolumeChange = { [weak self] event in
-            Log.log("[HR -> onVolumeChange] \(event.rawVolume)")
-            self?.onVolumeChange?(event)
-        }
-        return engine
     }
     
-    private func reselectEngine(forPrewarm: Bool) {
+    func readyForSpeech() {
+        self.lg.log("[HR -> onReadyForSpeech]")
+        self.onReadyForSpeech?()
+    }
+    
+    func recordingStopped() {
+        self.lg.log("[onRecordingStopped]")
+        self.onRecordingStopped?()
+    }
+    
+    func result(batches: [String]) {
+        self.lg.log("[onResult] \(batches)")
+//        self.lg.log("[onResult] \(self.onResult)")
+        self.onResult?(batches)
+    }
+    
+    func autoFinishProgress(timeLeftMs: Double) {
+        self.lg.log("[onAutoFinishProgress] \(timeLeftMs)ms")
+        self.onAutoFinishProgress?(timeLeftMs)
+    }
+    
+    func error(message: String) {
+        self.lg.log("[onError]")
+        self.onError?(message)
+    }
+    
+    func permissionDenied() {
+        self.lg.log("[onPermissionDenied]")
+        self.onPermissionDenied?()
+    }
+    
+    func volumeChange(event: VolumeChangeEvent) {
+        // self.lg.log("[onVolumeChange] \(event.rawVolume)")
+        self.onVolumeChange?(event)
+    }
+    
+    func reselectEngine(forPrewarm: Bool) {
         // Remove failed engine from candidates
         coordinator.reportEngineFailure()
         // Reset active engine

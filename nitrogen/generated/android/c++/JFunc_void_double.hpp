@@ -13,7 +13,7 @@
 #include <functional>
 #include <NitroModules/JNICallable.hpp>
 
-namespace margelo::nitro::nitrospeechdev {
+namespace margelo::nitro::nitrospeech {
 
   using namespace facebook;
 
@@ -23,7 +23,7 @@ namespace margelo::nitro::nitrospeechdev {
    */
   struct JFunc_void_double: public jni::JavaClass<JFunc_void_double> {
   public:
-    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/Func_void_double;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/Func_void_double;";
 
   public:
     /**
@@ -59,7 +59,7 @@ namespace margelo::nitro::nitrospeechdev {
     }
 
   public:
-    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeechdev/Func_void_double_cxx;";
+    static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/nitrospeech/Func_void_double_cxx;";
     static void registerNatives() {
       registerHybrid({makeNativeMethod("invoke_cxx", JFunc_void_double_cxx::invoke_cxx)});
     }
@@ -72,4 +72,4 @@ namespace margelo::nitro::nitrospeechdev {
     std::function<void(double /* timeLeftMs */)> _func;
   };
 
-} // namespace margelo::nitro::nitrospeechdev
+} // namespace margelo::nitro::nitrospeech

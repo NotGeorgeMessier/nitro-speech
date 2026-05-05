@@ -12,7 +12,7 @@ import NitroModules
  * This class can be used from C++, e.g. to wrap the Swift closure as a `std::function`.
  */
 public final class Func_void_std__vector_std__string_ {
-  public typealias bridge = margelo.nitro.nitrospeechdev.bridge.swift
+  public typealias bridge = margelo.nitro.nitrospeech.bridge.swift
 
   private let closure: (_ resultBatches: [String]) -> Void
 

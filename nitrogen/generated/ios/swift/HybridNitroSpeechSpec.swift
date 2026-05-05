@@ -19,7 +19,7 @@ public protocol HybridNitroSpeechSpec_protocol: HybridObject {
 public extension HybridNitroSpeechSpec_protocol {
   /// Default implementation of ``HybridObject.toString``
   func toString() -> String {
-    return "[HybridObject NitroSpeechDevNitroSpeech]"
+    return "[HybridObject NitroSpeech]"
   }
 }
 

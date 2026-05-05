@@ -8,7 +8,7 @@
 /**
  * Represents the JS union `HapticFeedbackStyle`, backed by a C++ enum.
  */
-public typealias HapticFeedbackStyle = margelo.nitro.nitrospeechdev.HapticFeedbackStyle
+public typealias HapticFeedbackStyle = margelo.nitro.nitrospeech.HapticFeedbackStyle
 
 public extension HapticFeedbackStyle {
   /**

@@ -8,13 +8,15 @@
 #include "JHybridRecognizerSpec.hpp"
 
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
-namespace margelo::nitro::nitrospeechdev { struct VolumeChangeEvent; }
+namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 // Forward declaration of `SpeechToTextParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeechdev { struct SpeechToTextParams; }
+namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
-namespace margelo::nitro::nitrospeechdev { enum class HapticFeedbackStyle; }
+namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 // Forward declaration of `IosPreset` to properly resolve imports.
-namespace margelo::nitro::nitrospeechdev { enum class IosPreset; }
+namespace margelo::nitro::nitrospeech { enum class IosPreset; }
+// Forward declaration of `DynamicParams` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct DynamicParams; }
 
 #include <functional>
 #include <optional>
@@ -25,17 +27,22 @@ namespace margelo::nitro::nitrospeechdev { enum class IosPreset; }
 #include "JFunc_void_std__vector_std__string_.hpp"
 #include "JFunc_void_double.hpp"
 #include "JFunc_void_std__string.hpp"
-#include "NitroSpeechDevVolumeChangeEvent.hpp"
+#include "VolumeChangeEvent.hpp"
 #include "JFunc_void_VolumeChangeEvent.hpp"
 #include "JVolumeChangeEvent.hpp"
-#include "NitroSpeechDevSpeechToTextParams.hpp"
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
+#include <NitroModules/JUnit.hpp>
+#include "SpeechToTextParams.hpp"
 #include "JSpeechToTextParams.hpp"
-#include "NitroSpeechDevHapticFeedbackStyle.hpp"
+#include "HapticFeedbackStyle.hpp"
 #include "JHapticFeedbackStyle.hpp"
-#include "NitroSpeechDevIosPreset.hpp"
+#include "IosPreset.hpp"
 #include "JIosPreset.hpp"
+#include "DynamicParams.hpp"
+#include "JDynamicParams.hpp"
 
-namespace margelo::nitro::nitrospeechdev {
+namespace margelo::nitro::nitrospeech {
 
   std::shared_ptr<JHybridRecognizerSpec> JHybridRecognizerSpec::JavaPart::getJHybridRecognizerSpec() {
     auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
@@ -186,9 +193,20 @@ namespace margelo::nitro::nitrospeechdev {
   }
 
   // Methods
-  void JHybridRecognizerSpec::prewarm(const std::optional<SpeechToTextParams>& defaultParams) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JSpeechToTextParams> /* defaultParams */)>("prewarm");
-    method(_javaPart, defaultParams.has_value() ? JSpeechToTextParams::fromCpp(defaultParams.value()) : nullptr);
+  std::shared_ptr<Promise<void>> JHybridRecognizerSpec::prewarm(const std::optional<SpeechToTextParams>& defaultParams) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JSpeechToTextParams> /* defaultParams */)>("prewarm");
+    auto __result = method(_javaPart, defaultParams.has_value() ? JSpeechToTextParams::fromCpp(defaultParams.value()) : nullptr);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
   void JHybridRecognizerSpec::startListening(const std::optional<SpeechToTextParams>& params) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JSpeechToTextParams> /* params */)>("startListening");
@@ -198,13 +216,17 @@ namespace margelo::nitro::nitrospeechdev {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("stopListening");
     method(_javaPart);
   }
+  void JHybridRecognizerSpec::resetAutoFinishTime() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("resetAutoFinishTime");
+    method(_javaPart);
+  }
   void JHybridRecognizerSpec::addAutoFinishTime(std::optional<double> additionalTimeMs) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JDouble> /* additionalTimeMs */)>("addAutoFinishTime");
     method(_javaPart, additionalTimeMs.has_value() ? jni::JDouble::valueOf(additionalTimeMs.value()) : nullptr);
   }
-  void JHybridRecognizerSpec::updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* newTimeMs */, jni::alias_ref<jni::JBoolean> /* withRefresh */)>("updateAutoFinishTime");
-    method(_javaPart, newTimeMs, withRefresh.has_value() ? jni::JBoolean::valueOf(withRefresh.value()) : nullptr);
+  void JHybridRecognizerSpec::updateConfig(const std::optional<DynamicParams>& newConfig, std::optional<bool> resetAutoFinishTime) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JDynamicParams> /* newConfig */, jni::alias_ref<jni::JBoolean> /* resetAutoFinishTime */)>("updateConfig");
+    method(_javaPart, newConfig.has_value() ? JDynamicParams::fromCpp(newConfig.value()) : nullptr, resetAutoFinishTime.has_value() ? jni::JBoolean::valueOf(resetAutoFinishTime.value()) : nullptr);
   }
   bool JHybridRecognizerSpec::getIsActive() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean()>("getIsActive");
@@ -214,16 +236,16 @@ namespace margelo::nitro::nitrospeechdev {
   std::vector<std::string> JHybridRecognizerSpec::getSupportedLocalesIOS() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JArrayClass<jni::JString>>()>("getSupportedLocalesIOS");
     auto __result = method(_javaPart);
-    return [&]() {
-      size_t __size = __result->size();
+    return [&](auto&& __input) {
+      size_t __size = __input->size();
       std::vector<std::string> __vector;
       __vector.reserve(__size);
       for (size_t __i = 0; __i < __size; __i++) {
-        auto __element = __result->getElement(__i);
+        auto __element = __input->getElement(__i);
         __vector.push_back(__element->toStdString());
       }
       return __vector;
-    }();
+    }(__result);
   }
 
-} // namespace margelo::nitro::nitrospeechdev
+} // namespace margelo::nitro::nitrospeech

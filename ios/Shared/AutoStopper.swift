@@ -5,7 +5,7 @@ final class AutoStopper {
     private static let defaultProgressIntervalMs = 1000.0
     private static let minProgressIntervalMs = 50.0
 
-    private let lg = Lg(prefix: "AutoStopper")
+    private let lg = Lg(prefix: "AutoStopper", disable: true)
     
     private let queue = DispatchQueue(label: "com.margelo.nitrospeech.autostopper")
 

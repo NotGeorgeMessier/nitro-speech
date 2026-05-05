@@ -33,6 +33,7 @@ enum Utils {
         return joiner
     }
 
+    // hash only params that affect transcriber preference
     static func hashParams(_ params: SpeechToTextParams?) -> String {
         guard let params else { return "n" }
         let locale = params.locale ?? "en-US"

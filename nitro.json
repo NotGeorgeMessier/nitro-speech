@@ -1,12 +1,12 @@
 {
   "$schema": "https://nitro.margelo.com/nitro.schema.json",
-  "cxxNamespace": ["nitrospeechdev"],
+  "cxxNamespace": ["nitrospeech"],
   "ios": {
-    "iosModuleName": "NitroSpeechDev"
+    "iosModuleName": "NitroSpeech"
   },
   "android": {
-    "androidNamespace": ["nitrospeechdev"],
-    "androidCxxLibName": "NitroSpeechDev"
+    "androidNamespace": ["nitrospeech"],
+    "androidCxxLibName": "NitroSpeech"
   },
   "autolinking": {
     "NitroSpeech": {
