@@ -88,6 +88,8 @@ export interface MutableSpeechRecognitionConfig {
    *
    * `0.60` - Loud restaurants, noisy office, party, highly crowded places level
    *
+   * `1` - Use to disable volume-based reset of the auto finish timer
+   *
    * @default 0.40
    */
   resetAutoFinishVoiceSensitivity?: number

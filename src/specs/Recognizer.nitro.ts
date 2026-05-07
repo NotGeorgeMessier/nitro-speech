@@ -11,6 +11,10 @@ export interface Recognizer extends HybridObject<{
 }> {
   /**
    * Prepare the speech recognition engine and the model for the given parameters.
+   *
+   * Omit the {@linkcode Promise} result if want to run synchronously.
+   * {@linkcode startListening} will start and resolve it automatically.
+   * Only `await` if run beforehand and want to react on the success
    */
   prewarm(defaultParams?: SpeechRecognitionConfig): Promise<void>
 
@@ -99,6 +103,8 @@ export interface Recognizer extends HybridObject<{
   onPermissionDenied?: () => void
   /**
    * Called with high and arbitrary frequency (many times per second) while audio recording is active.
+   *
+   * @warning overriding it will disable the built-in `useVoiceInputVolume` hook.
    */
   onVolumeChange?: (event: VolumeChangeEvent) => void
 }

@@ -27,7 +27,7 @@ final class Lg {
     }
     var prevMs: Double?
     func log(_ text: String) {
-        if self.isLogging && !self.disable {
+        if Self.isLogging && !self.disable {
             let nowMs = ProcessInfo.processInfo.systemUptime * 1000
             let diff = Int(round(nowMs - (self.prevMs ?? nowMs)))
             self.prevMs = nowMs
