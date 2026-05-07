@@ -13,7 +13,7 @@
 
 #### Key Features:
 
-- ⚡ Built on Nitro Modules for zero-overhead native bridging
+- ⚡ Built with Nitro Modules for zero-overhead native bridging
 - 🌎 Supports 60+ languages 
 - 🍎 The only library that uses new `SpeechAnalyzer` with `SpeechTranscriber` or `DictationTranscriber` API for iOS 26+ (with fallback to legacy `SFSpeechRecognition` for older versions)
 - ⏱️ Timer for silence
