@@ -34,7 +34,7 @@ enum Utils {
     }
 
     // hash only params that affect transcriber preference
-    static func hashParams(_ params: SpeechToTextParams?) -> String {
+    static func hashParams(_ params: SpeechRecognitionConfig?) -> String {
         guard let params else { return "n" }
         let locale = params.locale ?? "en-US"
         let addPunctuation = switch params.iosAddPunctuation {

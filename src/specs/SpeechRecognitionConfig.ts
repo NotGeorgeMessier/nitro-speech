@@ -56,7 +56,7 @@ interface ParamsIOS {
 
 type HapticFeedbackStyle = 'light' | 'medium' | 'heavy' | 'none'
 
-export interface DynamicParams {
+export interface MutableSpeechRecognitionConfig {
   /**
    * Silence timer duration with no voice detected
    *
@@ -121,8 +121,8 @@ export interface DynamicParams {
  *
  * Use `Plarform.select()` to match expectations
  */
-export interface SpeechToTextParams
-  extends DynamicParams, ParamsAndroid, ParamsIOS {
+export interface SpeechRecognitionConfig
+  extends MutableSpeechRecognitionConfig, ParamsAndroid, ParamsIOS {
   /**
    * @default "en-US"
    *

@@ -10,7 +10,7 @@ final class SpeechRuntime: TranscriberRuntime {
         self.locale = locale
     }
     
-    func create(config: SpeechToTextParams?) async throws {
+    func create(config: SpeechRecognitionConfig?) async throws {
         if !SpeechTranscriber.isAvailable {
             throw NSError()
         }

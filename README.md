@@ -372,7 +372,7 @@ The `RecognizerSession.dispose()` method is **NOT SAFE** and should rarely be us
 
 #### Returns
 
-- `startListening(params: SpeechToTextParams)` - Start speech recognition with the given parameters
+- `startListening(params: SpeechRecognitionConfig)` - Start speech recognition with the given parameters
 - `stopListening()` - Stop speech recognition
 - `addAutoFinishTime(additionalTimeMs?: number)` - Add time to the auto-finish timer (or reset to original if no parameter)
 - `updateAutoFinishTime(newTimeMs: number, withRefresh?: boolean)` - Update the auto-finish timer
@@ -381,7 +381,7 @@ The `RecognizerSession.dispose()` method is **NOT SAFE** and should rarely be us
 
 ### `RecognizerRef`
 
-- `startListening(params: SpeechToTextParams)`
+- `startListening(params: SpeechRecognitionConfig)`
 - `stopListening()`
 - `addAutoFinishTime(additionalTimeMs?: number)`
 - `updateAutoFinishTime(newTimeMs: number, withRefresh?: boolean)`
@@ -397,7 +397,7 @@ The `RecognizerSession.dispose()` method is **NOT SAFE** and should rarely be us
 - Exposes callbacks (`onReadyForSpeech`, `onResult`, etc.) and control methods.
 - Prefer `useRecognizer` (single owner) + `RecognizerRef` for app-level usage.
 
-### `SpeechToTextParams`
+### `SpeechRecognitionConfig`
 
 Configuration object for speech recognition.
 

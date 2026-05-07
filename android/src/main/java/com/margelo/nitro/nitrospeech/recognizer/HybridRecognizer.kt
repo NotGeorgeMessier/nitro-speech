@@ -12,9 +12,9 @@ import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.NitroModules
 import com.margelo.nitro.core.Promise
-import com.margelo.nitro.nitrospeech.DynamicParams
+import com.margelo.nitro.nitrospeech.MutableSpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.HybridRecognizerSpec
-import com.margelo.nitro.nitrospeech.SpeechToTextParams
+import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.VolumeChangeEvent
 
 @DoNotStrip
@@ -26,7 +26,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   }
 
   private var isActive: Boolean = false
-  private var config: SpeechToTextParams? = null
+  private var config: SpeechRecognitionConfig? = null
   private var autoStopper: AutoStopper? = null
   private var speechRecognizer: SpeechRecognizer? = null
   private val mainHandler = Handler(Looper.getMainLooper())
@@ -42,7 +42,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   @DoNotStrip
   @Keep
-  override fun prewarm(defaultParams: SpeechToTextParams?): Promise<Unit> {
+  override fun prewarm(defaultParams: SpeechRecognitionConfig?): Promise<Unit> {
     // no-op
     // nothing to prewarm
     return Promise()
@@ -50,7 +50,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   @DoNotStrip
   @Keep
-  override fun startListening(params: SpeechToTextParams?) {
+  override fun startListening(params: SpeechRecognitionConfig?) {
     Log.d(TAG, "startListening: $params")
     if (isActive) {
       onFinishRecognition(
@@ -131,7 +131,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @DoNotStrip
   @Keep
   override fun updateConfig(
-    newConfig: DynamicParams?,
+    newConfig: MutableSpeechRecognitionConfig?,
     resetAutoFinishTime: Boolean?
   ) {
     Log.d(TAG, "updateConfig $newConfig",)
@@ -151,7 +151,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
     }
 
     if (newConfig != null) {
-      config = SpeechToTextParams(
+      config = SpeechRecognitionConfig(
         locale = config?.locale,
         contextualStrings = config?.contextualStrings,
         maskOffensiveWords = config?.maskOffensiveWords,

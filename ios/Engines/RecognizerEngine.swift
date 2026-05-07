@@ -126,7 +126,7 @@ class RecognizerEngine {
     }
     
     func updateSession(
-        newConfig: DynamicParams? = nil,
+        newConfig: MutableSpeechRecognitionConfig? = nil,
         addMsToTimer: Double? = nil,
         resetTimer: Bool? = nil
     ) {

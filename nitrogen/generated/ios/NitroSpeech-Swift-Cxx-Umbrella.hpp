@@ -8,8 +8,6 @@
 #pragma once
 
 // Forward declarations of C++ defined types
-// Forward declaration of `DynamicParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct DynamicParams; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 // Forward declaration of `HybridNitroSpeechSpec` to properly resolve imports.
@@ -18,18 +16,20 @@ namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
 // Forward declaration of `IosPreset` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class IosPreset; }
-// Forward declaration of `SpeechToTextParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
+// Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
+// Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 
 // Include C++ defined types
-#include "DynamicParams.hpp"
 #include "HapticFeedbackStyle.hpp"
 #include "HybridNitroSpeechSpec.hpp"
 #include "HybridRecognizerSpec.hpp"
 #include "IosPreset.hpp"
-#include "SpeechToTextParams.hpp"
+#include "MutableSpeechRecognitionConfig.hpp"
+#include "SpeechRecognitionConfig.hpp"
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>

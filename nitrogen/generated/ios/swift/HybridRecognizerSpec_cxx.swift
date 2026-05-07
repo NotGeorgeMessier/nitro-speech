@@ -353,7 +353,7 @@ open class HybridRecognizerSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func prewarm(defaultParams: bridge.std__optional_SpeechToTextParams_) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func prewarm(defaultParams: bridge.std__optional_SpeechRecognitionConfig_) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
       let __result = try self.__implementation.prewarm(defaultParams: defaultParams.value)
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
@@ -372,7 +372,7 @@ open class HybridRecognizerSpec_cxx {
   }
   
   @inline(__always)
-  public final func startListening(params: bridge.std__optional_SpeechToTextParams_) -> bridge.Result_void_ {
+  public final func startListening(params: bridge.std__optional_SpeechRecognitionConfig_) -> bridge.Result_void_ {
     do {
       try self.__implementation.startListening(params: params.value)
       return bridge.create_Result_void_()
@@ -423,7 +423,7 @@ open class HybridRecognizerSpec_cxx {
   }
   
   @inline(__always)
-  public final func updateConfig(newConfig: bridge.std__optional_DynamicParams_, resetAutoFinishTime: bridge.std__optional_bool_) -> bridge.Result_void_ {
+  public final func updateConfig(newConfig: bridge.std__optional_MutableSpeechRecognitionConfig_, resetAutoFinishTime: bridge.std__optional_bool_) -> bridge.Result_void_ {
     do {
       try self.__implementation.updateConfig(newConfig: newConfig.value, resetAutoFinishTime: { () -> Bool? in
         if bridge.has_value_std__optional_bool_(resetAutoFinishTime) {

@@ -1,5 +1,5 @@
 import type { Recognizer as RecognizerSpec } from '../specs/Recognizer.nitro'
-import type { SpeechToTextParams } from '../specs/SpeechToTextParams'
+import type { SpeechRecognitionConfig } from '../specs/SpeechRecognitionConfig'
 import type { VolumeChangeEvent } from '../specs/VolumeChangeEvent'
 
 type RecognizerCallbacks = Pick<
@@ -26,7 +26,7 @@ type RecognizerMethods = Pick<
 
 export type {
   RecognizerSpec,
-  SpeechToTextParams,
+  SpeechRecognitionConfig,
   VolumeChangeEvent,
   RecognizerCallbacks,
   RecognizerMethods,

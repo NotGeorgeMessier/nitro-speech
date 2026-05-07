@@ -2,7 +2,7 @@ import Foundation
 import os.log
 
 enum Log {
-   static let isLogging = true
+   static let isLogging = false
    static let subsystem = "com.margelo.nitro.nitrospeech"
    static let category = "NitroSpeech"
    static func log(_ text: String) {
@@ -16,17 +16,18 @@ enum Log {
 }
 
 final class Lg {
-    private let isLogging: Bool
+    private let disable: Bool
+    static let isLogging = false
     static let subsystem = "com.margelo.nitro.nitrospeech"
     static let category = "NitroSpeech"
     let prefix: String
     init(prefix: String, disable: Bool? = false) {
         self.prefix = prefix
-        self.isLogging = !(disable ?? false)
+        self.disable = disable ?? false
     }
     var prevMs: Double?
     func log(_ text: String) {
-        if self.isLogging {
+        if self.isLogging && !self.disable {
             let nowMs = ProcessInfo.processInfo.systemUptime * 1000
             let diff = Int(round(nowMs - (self.prevMs ?? nowMs)))
             self.prevMs = nowMs

@@ -11,7 +11,7 @@ struct TranscriberResult {
 protocol TranscriberRuntime {
     var locale: Locale { get }
     
-    func create(config: SpeechToTextParams?) async throws
+    func create(config: SpeechRecognitionConfig?) async throws
     
     func getModules() -> [any SpeechModule]
     

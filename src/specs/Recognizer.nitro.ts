@@ -1,5 +1,8 @@
 import type { HybridObject } from 'react-native-nitro-modules'
-import type { DynamicParams, SpeechToTextParams } from './SpeechToTextParams'
+import type {
+  MutableSpeechRecognitionConfig,
+  SpeechRecognitionConfig,
+} from './SpeechRecognitionConfig'
 import type { VolumeChangeEvent } from './VolumeChangeEvent'
 
 export interface Recognizer extends HybridObject<{
@@ -9,7 +12,7 @@ export interface Recognizer extends HybridObject<{
   /**
    * Prepare the speech recognition engine and the model for the given parameters.
    */
-  prewarm(defaultParams?: SpeechToTextParams): Promise<void>
+  prewarm(defaultParams?: SpeechRecognitionConfig): Promise<void>
 
   /**
    * Try to start the speech recognition.
@@ -20,7 +23,7 @@ export interface Recognizer extends HybridObject<{
    *
    * On failure - {@linkcode onError} is called
    */
-  startListening(params?: SpeechToTextParams): void
+  startListening(params?: SpeechRecognitionConfig): void
 
   /**
    * Stops the speech recognition. if not started, does nothing.
@@ -32,14 +35,14 @@ export interface Recognizer extends HybridObject<{
   stopListening(): void
 
   /**
-   * Reset the auto finish timer to current {@linkcode SpeechToTextParams.autoFinishRecognitionMs}.
+   * Reset the auto finish timer to current {@linkcode SpeechRecognitionConfig.autoFinishRecognitionMs}.
    */
   resetAutoFinishTime(): void
 
   /**
    * Add time to the auto finish timer once without changing the timer threshold.
    *
-   * @param additionalTimeMs - time in ms to add to the current auto finish timer. If not set, will reset the timer to the original {@linkcode SpeechToTextParams.autoFinishRecognitionMs}.
+   * @param additionalTimeMs - time in ms to add to the current auto finish timer. If not set, will reset the timer to the original {@linkcode SpeechRecognitionConfig.autoFinishRecognitionMs}.
    */
   addAutoFinishTime(additionalTimeMs?: number): void
 
@@ -47,9 +50,12 @@ export interface Recognizer extends HybridObject<{
    * Applies changes only within the active recognition session.
    *
    * @param newConfig - new dynamic params for the speech recognition.
-   * @param resetAutoFinishTime - if true, will reset auto finish time to actual {@linkcode SpeechToTextParams.autoFinishRecognitionMs}.
+   * @param resetAutoFinishTime - if true, will reset auto finish time to actual {@linkcode SpeechRecognitionConfig.autoFinishRecognitionMs}.
    */
-  updateConfig(newConfig?: DynamicParams, resetAutoFinishTime?: boolean): void
+  updateConfig(
+    newConfig?: MutableSpeechRecognitionConfig,
+    resetAutoFinishTime?: boolean
+  ): void
 
   /**
    * Returns true if the speech recognition is active.
@@ -76,7 +82,7 @@ export interface Recognizer extends HybridObject<{
    */
   onResult?: (resultBatches: string[]) => void
   /**
-   * Called every {@linkcode SpeechToTextParams.autoFinishProgressIntervalMs} or 1000ms
+   * Called every {@linkcode SpeechRecognitionConfig.autoFinishProgressIntervalMs} or 1000ms
    *
    * Time left in milliseconds until the timer stops.
    *

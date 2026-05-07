@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.SpeechRecognizer
 import android.util.Log
-import com.margelo.nitro.nitrospeech.SpeechToTextParams
+import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.VolumeChangeEvent
 import kotlin.math.max
 import kotlin.math.roundToInt
 
 class RecognitionListenerSession (
     private val autoStopper: AutoStopper?,
-    private val config: SpeechToTextParams?,
+    private val config: SpeechRecognitionConfig?,
     private val onVolumeChange: ((event: VolumeChangeEvent) -> Unit)?,
     private val onFinishRecognition: (result: ArrayList<String>?, errorMessage: String?, recordingStopped: Boolean) -> Unit,
 ) {

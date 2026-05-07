@@ -2,7 +2,7 @@ import Foundation
 import NitroModules
 
 class HybridRecognizer: HybridRecognizerSpec  {
-    var config: SpeechToTextParams?
+    var config: SpeechRecognitionConfig?
     
     var onReadyForSpeech: (() -> Void)?
     var onRecordingStopped: (() -> Void)?
@@ -24,7 +24,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
     private let lg = Lg(prefix: "HybridRecognizer")
     
     @discardableResult
-    func prewarm(defaultParams: SpeechToTextParams?) -> Promise<Void> {
+    func prewarm(defaultParams: SpeechRecognitionConfig?) -> Promise<Void> {
         return Promise.async(.userInitiated) { [weak self] in
             // Ensure correct engine is selected based on params and ios version
             await self?.ensureEngine(params: defaultParams)
@@ -33,7 +33,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
         }
     }
     
-    func startListening(params: SpeechToTextParams?) {
+    func startListening(params: SpeechRecognitionConfig?) {
         Task {
             // Ensure correct engine is selected based on params and ios version
             await ensureEngine(params: params)
@@ -58,7 +58,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
         }
     }
     
-    func updateConfig(newConfig: DynamicParams?, resetAutoFinishTime: Bool?) {
+    func updateConfig(newConfig: MutableSpeechRecognitionConfig?, resetAutoFinishTime: Bool?) {
         engine?.updateSession(
             newConfig: newConfig,
             resetTimer: resetAutoFinishTime
@@ -73,7 +73,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
         return self.coordinator.getSupportedLocales()
     }
 
-    private func ensureEngine(params: SpeechToTextParams?) async {
+    private func ensureEngine(params: SpeechRecognitionConfig?) async {
         // Remember new params
         config = params
         let hash = Utils.hashParams(params)
@@ -99,8 +99,8 @@ class HybridRecognizer: HybridRecognizerSpec  {
 }
 
 protocol RecognizerDelegate: AnyObject {
-    var config: SpeechToTextParams? { get }
-    func softlyUpdateConfig(newConfig: DynamicParams?)
+    var config: SpeechRecognitionConfig? { get }
+    func softlyUpdateConfig(newConfig: MutableSpeechRecognitionConfig?)
     func reselectEngine(forPrewarm: Bool)
     func readyForSpeech()
     func recordingStopped()
@@ -112,9 +112,9 @@ protocol RecognizerDelegate: AnyObject {
 }
 
 extension HybridRecognizer: RecognizerDelegate {
-    func softlyUpdateConfig(newConfig: DynamicParams?) {
+    func softlyUpdateConfig(newConfig: MutableSpeechRecognitionConfig?) {
         if let newConfig {
-            config = SpeechToTextParams(
+            config = SpeechRecognitionConfig(
                 locale: config?.locale,
                 contextualStrings: config?.contextualStrings,
                 maskOffensiveWords: config?.maskOffensiveWords,
@@ -146,7 +146,6 @@ extension HybridRecognizer: RecognizerDelegate {
     
     func result(batches: [String]) {
         self.lg.log("[onResult] \(batches)")
-//        self.lg.log("[onResult] \(self.onResult)")
         self.onResult?(batches)
     }
     

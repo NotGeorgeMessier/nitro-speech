@@ -1,7 +1,7 @@
 import { SpeechRecognizer } from './SpeechRecognizer'
-import type { SpeechToTextParams } from './types'
+import type { SpeechRecognitionConfig } from './types'
 
-export const recognizerStartListening = (params: SpeechToTextParams) => {
+export const recognizerStartListening = (params: SpeechRecognitionConfig) => {
   'worklet'
   SpeechRecognizer.startListening(params)
 }
@@ -22,7 +22,7 @@ export const recognizerAddAutoFinishTime = (additionalTimeMs?: number) => {
 }
 
 export const recognizerUpdateConfig = (
-  newConfig: SpeechToTextParams,
+  newConfig: SpeechRecognitionConfig,
   resetAutoFinishTime?: boolean
 ) => {
   'worklet'

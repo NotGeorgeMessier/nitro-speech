@@ -67,12 +67,12 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     // Methods
-    std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechToTextParams>& defaultParams) override;
-    void startListening(const std::optional<SpeechToTextParams>& params) override;
+    std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams) override;
+    void startListening(const std::optional<SpeechRecognitionConfig>& params) override;
     void stopListening() override;
     void resetAutoFinishTime() override;
     void addAutoFinishTime(std::optional<double> additionalTimeMs) override;
-    void updateConfig(const std::optional<DynamicParams>& newConfig, std::optional<bool> resetAutoFinishTime) override;
+    void updateConfig(const std::optional<MutableSpeechRecognitionConfig>& newConfig, std::optional<bool> resetAutoFinishTime) override;
     bool getIsActive() override;
     std::vector<std::string> getSupportedLocalesIOS() override;
 

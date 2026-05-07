@@ -14,14 +14,14 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
-// Forward declaration of `SpeechToTextParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
+// Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 // Forward declaration of `IosPreset` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class IosPreset; }
-// Forward declaration of `DynamicParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct DynamicParams; }
+// Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 
 #include <functional>
 #include <optional>
@@ -29,10 +29,10 @@ namespace margelo::nitro::nitrospeech { struct DynamicParams; }
 #include <vector>
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
-#include "SpeechToTextParams.hpp"
+#include "SpeechRecognitionConfig.hpp"
 #include "HapticFeedbackStyle.hpp"
 #include "IosPreset.hpp"
-#include "DynamicParams.hpp"
+#include "MutableSpeechRecognitionConfig.hpp"
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 
@@ -132,7 +132,7 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     // Methods
-    inline std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechToTextParams>& defaultParams) override {
+    inline std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams) override {
       auto __result = _swiftPart.prewarm(defaultParams);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
@@ -140,7 +140,7 @@ namespace margelo::nitro::nitrospeech {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline void startListening(const std::optional<SpeechToTextParams>& params) override {
+    inline void startListening(const std::optional<SpeechRecognitionConfig>& params) override {
       auto __result = _swiftPart.startListening(params);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
@@ -164,7 +164,7 @@ namespace margelo::nitro::nitrospeech {
         std::rethrow_exception(__result.error());
       }
     }
-    inline void updateConfig(const std::optional<DynamicParams>& newConfig, std::optional<bool> resetAutoFinishTime) override {
+    inline void updateConfig(const std::optional<MutableSpeechRecognitionConfig>& newConfig, std::optional<bool> resetAutoFinishTime) override {
       auto __result = _swiftPart.updateConfig(newConfig, resetAutoFinishTime);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());

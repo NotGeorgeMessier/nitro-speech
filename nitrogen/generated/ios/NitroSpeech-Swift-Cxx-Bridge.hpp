@@ -8,8 +8,6 @@
 #pragma once
 
 // Forward declarations of C++ defined types
-// Forward declaration of `DynamicParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct DynamicParams; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 // Forward declaration of `HybridNitroSpeechSpec` to properly resolve imports.
@@ -18,8 +16,10 @@ namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
 // Forward declaration of `IosPreset` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class IosPreset; }
-// Forward declaration of `SpeechToTextParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
+// Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
+// Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 
@@ -30,12 +30,12 @@ namespace NitroSpeech { class HybridNitroSpeechSpec_cxx; }
 namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 
 // Include C++ defined types
-#include "DynamicParams.hpp"
 #include "HapticFeedbackStyle.hpp"
 #include "HybridNitroSpeechSpec.hpp"
 #include "HybridRecognizerSpec.hpp"
 #include "IosPreset.hpp"
-#include "SpeechToTextParams.hpp"
+#include "MutableSpeechRecognitionConfig.hpp"
+#include "SpeechRecognitionConfig.hpp"
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/PromiseHolder.hpp>
@@ -234,33 +234,33 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.value();
   }
   
-  // pragma MARK: std::optional<SpeechToTextParams>
+  // pragma MARK: std::optional<SpeechRecognitionConfig>
   /**
-   * Specialized version of `std::optional<SpeechToTextParams>`.
+   * Specialized version of `std::optional<SpeechRecognitionConfig>`.
    */
-  using std__optional_SpeechToTextParams_ = std::optional<SpeechToTextParams>;
-  inline std::optional<SpeechToTextParams> create_std__optional_SpeechToTextParams_(const SpeechToTextParams& value) noexcept {
-    return std::optional<SpeechToTextParams>(value);
+  using std__optional_SpeechRecognitionConfig_ = std::optional<SpeechRecognitionConfig>;
+  inline std::optional<SpeechRecognitionConfig> create_std__optional_SpeechRecognitionConfig_(const SpeechRecognitionConfig& value) noexcept {
+    return std::optional<SpeechRecognitionConfig>(value);
   }
-  inline bool has_value_std__optional_SpeechToTextParams_(const std::optional<SpeechToTextParams>& optional) noexcept {
+  inline bool has_value_std__optional_SpeechRecognitionConfig_(const std::optional<SpeechRecognitionConfig>& optional) noexcept {
     return optional.has_value();
   }
-  inline SpeechToTextParams get_std__optional_SpeechToTextParams_(const std::optional<SpeechToTextParams>& optional) noexcept {
+  inline SpeechRecognitionConfig get_std__optional_SpeechRecognitionConfig_(const std::optional<SpeechRecognitionConfig>& optional) noexcept {
     return optional.value();
   }
   
-  // pragma MARK: std::optional<DynamicParams>
+  // pragma MARK: std::optional<MutableSpeechRecognitionConfig>
   /**
-   * Specialized version of `std::optional<DynamicParams>`.
+   * Specialized version of `std::optional<MutableSpeechRecognitionConfig>`.
    */
-  using std__optional_DynamicParams_ = std::optional<DynamicParams>;
-  inline std::optional<DynamicParams> create_std__optional_DynamicParams_(const DynamicParams& value) noexcept {
-    return std::optional<DynamicParams>(value);
+  using std__optional_MutableSpeechRecognitionConfig_ = std::optional<MutableSpeechRecognitionConfig>;
+  inline std::optional<MutableSpeechRecognitionConfig> create_std__optional_MutableSpeechRecognitionConfig_(const MutableSpeechRecognitionConfig& value) noexcept {
+    return std::optional<MutableSpeechRecognitionConfig>(value);
   }
-  inline bool has_value_std__optional_DynamicParams_(const std::optional<DynamicParams>& optional) noexcept {
+  inline bool has_value_std__optional_MutableSpeechRecognitionConfig_(const std::optional<MutableSpeechRecognitionConfig>& optional) noexcept {
     return optional.has_value();
   }
-  inline DynamicParams get_std__optional_DynamicParams_(const std::optional<DynamicParams>& optional) noexcept {
+  inline MutableSpeechRecognitionConfig get_std__optional_MutableSpeechRecognitionConfig_(const std::optional<MutableSpeechRecognitionConfig>& optional) noexcept {
     return optional.value();
   }
   

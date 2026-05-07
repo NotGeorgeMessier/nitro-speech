@@ -127,11 +127,11 @@ abstract class HybridRecognizerSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun prewarm(defaultParams: SpeechToTextParams?): Promise<Unit>
+  abstract fun prewarm(defaultParams: SpeechRecognitionConfig?): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun startListening(params: SpeechToTextParams?): Unit
+  abstract fun startListening(params: SpeechRecognitionConfig?): Unit
   
   @DoNotStrip
   @Keep
@@ -147,7 +147,7 @@ abstract class HybridRecognizerSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun updateConfig(newConfig: DynamicParams?, resetAutoFinishTime: Boolean?): Unit
+  abstract fun updateConfig(newConfig: MutableSpeechRecognitionConfig?, resetAutoFinishTime: Boolean?): Unit
   
   @DoNotStrip
   @Keep

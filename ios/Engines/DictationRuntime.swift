@@ -10,7 +10,7 @@ final class DictationRuntime: TranscriberRuntime {
         self.locale = locale
     }
     
-    func create(config: SpeechToTextParams?) async throws {
+    func create(config: SpeechRecognitionConfig?) async throws {
         var dictationTranscriptionOptions: Set<DictationTranscriber.TranscriptionOption> = [
             .punctuation
         ]

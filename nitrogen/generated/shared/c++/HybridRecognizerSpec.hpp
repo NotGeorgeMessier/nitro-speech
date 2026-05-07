@@ -15,10 +15,10 @@
 
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
-// Forward declaration of `SpeechToTextParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
-// Forward declaration of `DynamicParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct DynamicParams; }
+// Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
+// Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 
 #include <functional>
 #include <optional>
@@ -26,8 +26,8 @@ namespace margelo::nitro::nitrospeech { struct DynamicParams; }
 #include <vector>
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
-#include "SpeechToTextParams.hpp"
-#include "DynamicParams.hpp"
+#include "SpeechRecognitionConfig.hpp"
+#include "MutableSpeechRecognitionConfig.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -73,12 +73,12 @@ namespace margelo::nitro::nitrospeech {
 
     public:
       // Methods
-      virtual std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechToTextParams>& defaultParams) = 0;
-      virtual void startListening(const std::optional<SpeechToTextParams>& params) = 0;
+      virtual std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams) = 0;
+      virtual void startListening(const std::optional<SpeechRecognitionConfig>& params) = 0;
       virtual void stopListening() = 0;
       virtual void resetAutoFinishTime() = 0;
       virtual void addAutoFinishTime(std::optional<double> additionalTimeMs) = 0;
-      virtual void updateConfig(const std::optional<DynamicParams>& newConfig, std::optional<bool> resetAutoFinishTime) = 0;
+      virtual void updateConfig(const std::optional<MutableSpeechRecognitionConfig>& newConfig, std::optional<bool> resetAutoFinishTime) = 0;
       virtual bool getIsActive() = 0;
       virtual std::vector<std::string> getSupportedLocalesIOS() = 0;
 
