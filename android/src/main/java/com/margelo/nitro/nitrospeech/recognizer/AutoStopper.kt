@@ -2,7 +2,6 @@ package com.margelo.nitro.nitrospeech.recognizer
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import kotlin.math.max
 
 class AutoStopper(
@@ -12,11 +11,12 @@ class AutoStopper(
     val onTimeout: () -> Unit,
 ) {
     companion object {
-        private const val TAG = "HybridRecognizer"
         private const val DEFAULT_SILENCE_THRESHOLD_MS = 8000.0
         private const val DEFAULT_PROGRESS_INTERVAL_MS = 1000.0
         private const val MIN_PROGRESS_INTERVAL_MS = 50.0
     }
+
+    private val logger = Logger(disable = false)
 
     private var silenceThresholdMs: Double = clampMs(silenceThresholdMs ?: DEFAULT_SILENCE_THRESHOLD_MS)
     private var progressIntervalMs: Double = clampMs(progressIntervalMs ?: DEFAULT_PROGRESS_INTERVAL_MS)
@@ -31,7 +31,7 @@ class AutoStopper(
     private val tickRunnable = Runnable { tick() }
 
     fun resetTimer() {
-        Log.d(TAG, "resetTimer | isStopped: $isStopped | ms: ${System.currentTimeMillis()}")
+        logger.log("resetTimer | isStopped: $isStopped | ms: ${System.currentTimeMillis()}")
         handler.removeCallbacks(tickRunnable)
         isTimerScheduled = false
         if (isStopped) return
@@ -55,7 +55,7 @@ class AutoStopper(
 
     fun addMsOnce(extraMs: Double) {
         if (isStopped || !extraMs.isFinite()) return
-        Log.d(TAG, "addMsOnce | extraMs: $extraMs")
+        logger.log("addMsOnce | extraMs: $extraMs")
         timeLeftMs += extraMs
         didTimeout = false
         if (timeLeftMs > 0 && isTimerScheduled) {
@@ -65,7 +65,7 @@ class AutoStopper(
 
     fun updateProgressInterval(newIntervalMs: Double) {
         if (isStopped) return
-        Log.d(TAG, "updateProgressInterval | newIntervalMs: $newIntervalMs")
+        logger.log("updateProgressInterval | newIntervalMs: $newIntervalMs")
         progressIntervalMs = clampMs(newIntervalMs)
         if (isTimerScheduled) {
             scheduleNextTickLocked()
@@ -83,7 +83,7 @@ class AutoStopper(
         if (isStopped || didTimeout) return
         timeLeftMs -= progressIntervalMs
         if (timeLeftMs > 0) {
-            Log.d(TAG, "onProgress | timeLeftMs: $timeLeftMs")
+            logger.log("onProgress | timeLeftMs: $timeLeftMs")
             onProgress(timeLeftMs)
             scheduleNextTickLocked()
             return
@@ -92,7 +92,7 @@ class AutoStopper(
         didTimeout = true
         handler.removeCallbacks(tickRunnable)
         isTimerScheduled = false
-        Log.d(TAG, "onTimeout | ms: ${System.currentTimeMillis()}")
+        logger.log("onTimeout | ms: ${System.currentTimeMillis()}")
         onTimeout()
     }
 

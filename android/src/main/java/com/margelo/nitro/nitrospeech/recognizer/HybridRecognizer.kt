@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.util.Log
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.NitroModules
@@ -21,12 +20,14 @@ import com.margelo.nitro.nitrospeech.VolumeChangeEvent
 @Keep
 class HybridRecognizer: HybridRecognizerSpec() {
   companion object {
-    private const val TAG = "HybridRecognizer"
     private const val POST_RECOGNITION_DELAY = 250L
   }
 
+  private val logger = Logger(disable = false)
+
   private var isActive: Boolean = false
   private var config: SpeechRecognitionConfig? = null
+  private var volumeChangeEvent: VolumeChangeEvent = VolumeChangeEvent(0.0,0.0,null)
   private var autoStopper: AutoStopper? = null
   private var speechRecognizer: SpeechRecognizer? = null
   private val mainHandler = Handler(Looper.getMainLooper())
@@ -51,7 +52,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @DoNotStrip
   @Keep
   override fun startListening(params: SpeechRecognitionConfig?) {
-    Log.d(TAG, "startListening: $params")
+    logger.log("startListening: $params")
     if (isActive) {
       onFinishRecognition(
         null,
@@ -94,7 +95,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @DoNotStrip
   @Keep
   override fun stopListening() {
-    Log.d(TAG, "stopListening called")
+    logger.log("stopListening called")
     if (!isActive) return
     onFinishRecognition(null, null, true)
     mainHandler.postDelayed({
@@ -117,7 +118,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @DoNotStrip
   @Keep
   override fun addAutoFinishTime(additionalTimeMs: Double?) {
-    Log.d(TAG, "addAutoFinishTime")
+    logger.log("addAutoFinishTime")
     if (!isActive) return
 
     if (additionalTimeMs != null) {
@@ -134,7 +135,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
     newConfig: MutableSpeechRecognitionConfig?,
     resetAutoFinishTime: Boolean?
   ) {
-    Log.d(TAG, "updateConfig $newConfig",)
+    logger.log("updateConfig $newConfig",)
     if (!isActive) return
 
     val newTimeMs = if (newConfig?.autoFinishRecognitionMs != null) newConfig.autoFinishRecognitionMs else config?.autoFinishRecognitionMs
@@ -179,6 +180,12 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   @DoNotStrip
   @Keep
+  override fun getVoiceInputVolume(): VolumeChangeEvent {
+    return volumeChangeEvent
+  }
+
+  @DoNotStrip
+  @Keep
   override fun getSupportedLocalesIOS(): Array<String> {
     return emptyArray()
   }
@@ -204,12 +211,14 @@ class HybridRecognizer: HybridRecognizerSpec() {
             }
         )
         val recognitionListenerSession = RecognitionListenerSession(
-          autoStopper,
-          config,
-          onVolumeChange
-        ) { result: ArrayList<String>?, errorMessage: String?, recordingStopped: Boolean ->
-          onFinishRecognition(result, errorMessage, recordingStopped)
-        }
+            autoStopper,
+            config,
+            fireVolumeChangeEvent = { event -> fireVolumeChangeEvent(event) },
+            onFinishRecognition = { result, errorMessage, recordingStopped ->
+              onFinishRecognition(result, errorMessage, recordingStopped)
+            }
+        )
+
         speechRecognizer?.setRecognitionListener(recognitionListenerSession.createRecognitionListener())
 
         val languageModel = if (config?.androidUseWebSearchModel == true) RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH else RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
@@ -262,7 +271,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   private fun cleanup() {
     try {
-      Log.d(TAG, "cleanup called")
+      logger.log("cleanup called")
       autoStopper?.stop()
       autoStopper = null
       speechRecognizer?.stopListening()
@@ -270,7 +279,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
       speechRecognizer = null
       isActive = false
       // Reset voice meter in JS consumers after stop/error cleanup.
-      onVolumeChange?.invoke(VolumeChangeEvent(0.0,0.0,null))
+      fireVolumeChangeEvent(VolumeChangeEvent(0.0,0.0,null))
     } catch (e: Exception) {
       onFinishRecognition(
         null,
@@ -290,5 +299,11 @@ class HybridRecognizer: HybridRecognizerSpec() {
     if (!result.isNullOrEmpty()) {
       onResult?.invoke(result.toTypedArray())
     }
+  }
+
+  private fun fireVolumeChangeEvent(event: VolumeChangeEvent) {
+    logger.log("fireVolumeChangeEvent ${event}")
+    volumeChangeEvent = event
+    onVolumeChange?.invoke(event)
   }
 }

@@ -7,10 +7,12 @@ import {
   recognizerGetSupportedLocalesIOS,
   recognizerStartListening,
   recognizerStopListening,
+  recognizerGetVoiceInputVolume,
 } from './methods'
 import type { RecognizerCallbacks, RecognizerMethods } from './types'
 import { SpeechRecognizer } from './SpeechRecognizer'
 import { speechRecognizerVolumeChangeHandler } from './useVoiceInputVolume'
+import { speechRecognizerActiveStateHandler } from './useRecognizerIsActive'
 
 /**
  * Safe, lifecycle-aware hook to use the recognizer.
@@ -30,17 +32,12 @@ export const useRecognizer = (
   destroyDeps: DependencyList = []
 ): RecognizerMethods => {
   useEffect(() => {
-    if (callbacks.onVolumeChange) {
-      SpeechRecognizer.onVolumeChange = (event) => {
-        callbacks.onVolumeChange?.(event)
-      }
-    } else {
-      SpeechRecognizer.onVolumeChange = speechRecognizerVolumeChangeHandler
-    }
     SpeechRecognizer.onReadyForSpeech = () => {
+      speechRecognizerActiveStateHandler(true)
       callbacks.onReadyForSpeech?.()
     }
     SpeechRecognizer.onRecordingStopped = () => {
+      speechRecognizerActiveStateHandler(false)
       callbacks.onRecordingStopped?.()
     }
     SpeechRecognizer.onResult = (resultBatches: string[]) => {
@@ -54,6 +51,10 @@ export const useRecognizer = (
     }
     SpeechRecognizer.onPermissionDenied = () => {
       callbacks.onPermissionDenied?.()
+    }
+    SpeechRecognizer.onVolumeChange = (event) => {
+      speechRecognizerVolumeChangeHandler(event)
+      callbacks.onVolumeChange?.(event)
     }
     return () => {
       SpeechRecognizer.onReadyForSpeech = undefined
@@ -80,6 +81,7 @@ export const useRecognizer = (
     addAutoFinishTime: recognizerAddAutoFinishTime,
     updateConfig: recognizerUpdateConfig,
     getIsActive: recognizerGetIsActive,
+    getVoiceInputVolume: recognizerGetVoiceInputVolume,
     getSupportedLocalesIOS: recognizerGetSupportedLocalesIOS,
   }
 }

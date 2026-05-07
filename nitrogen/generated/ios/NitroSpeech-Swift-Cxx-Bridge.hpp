@@ -454,6 +454,15 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return Result<bool>::withError(error);
   }
   
+  // pragma MARK: Result<VolumeChangeEvent>
+  using Result_VolumeChangeEvent_ = Result<VolumeChangeEvent>;
+  inline Result_VolumeChangeEvent_ create_Result_VolumeChangeEvent_(const VolumeChangeEvent& value) noexcept {
+    return Result<VolumeChangeEvent>::withValue(value);
+  }
+  inline Result_VolumeChangeEvent_ create_Result_VolumeChangeEvent_(const std::exception_ptr& error) noexcept {
+    return Result<VolumeChangeEvent>::withError(error);
+  }
+  
   // pragma MARK: Result<std::vector<std::string>>
   using Result_std__vector_std__string__ = Result<std::vector<std::string>>;
   inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::vector<std::string>& value) noexcept {

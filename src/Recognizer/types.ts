@@ -21,6 +21,7 @@ type RecognizerMethods = Pick<
   | 'addAutoFinishTime'
   | 'updateConfig'
   | 'getIsActive'
+  | 'getVoiceInputVolume'
   | 'getSupportedLocalesIOS'
 >
 

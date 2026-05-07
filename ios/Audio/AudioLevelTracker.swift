@@ -16,33 +16,18 @@ final class AudioLevelTracker {
     private static let meterRelease: Float = 0.08
     private static let defaultAutoStopResetThreshold: Double = 0.4
 
-    private var autoStopResetThreshold: Double
     private var smoothedLevel: Float = 0
+
+    var currentSample: AudioLevelSample?
     
-    init(resetAutoFinishVoiceSensitivity: Double?) {
-        if let resetAutoFinishVoiceSensitivity {
-            // Clamp value between 0 and 1
-            self.autoStopResetThreshold = max(0, min(1, resetAutoFinishVoiceSensitivity))
-        } else {
-            self.autoStopResetThreshold = Self.defaultAutoStopResetThreshold
-        }
-    }
-    
-    func updateResetAutoFinishVoiceSensitivity(newValue: Double?) {
-        if let newValue {
-            // Clamp value between 0 and 1
-            self.autoStopResetThreshold = max(0, min(1, newValue))
-        } else {
-            self.autoStopResetThreshold = Self.defaultAutoStopResetThreshold
-        }
-    }
+    private let lg = Lg(prefix: "RecognizerEngine")
 
     func reset() {
         smoothedLevel = 0
-        self.autoStopResetThreshold = Self.defaultAutoStopResetThreshold
+        currentSample = nil
     }
 
-    func process(_ buffer: AVAudioPCMBuffer) -> AudioLevelSample? {
+    func process(_ buffer: AVAudioPCMBuffer,_ autoStopResetThreshold: Double? = nil) -> AudioLevelSample? {
         guard let samples = buffer.floatChannelData?[0] else { return nil }
 
         let frameCount = Int(buffer.frameLength)
@@ -56,11 +41,20 @@ final class AudioLevelTracker {
         let coeff = normalized > smoothedLevel ? Self.meterAttack : Self.meterRelease
         smoothedLevel += coeff * (normalized - smoothedLevel)
         
-        return AudioLevelSample(
+        var threshold = Self.defaultAutoStopResetThreshold
+        if let autoStopResetThreshold {
+            threshold = max(0, min(1, autoStopResetThreshold))
+        }
+
+        currentSample = AudioLevelSample(
             smoothed: Double(smoothedLevel * 1_000_000).rounded() / 1_000_000,
             raw: Double(normalized * 1_000_000).rounded() / 1_000_000,
             db: Double(db * 1_000).rounded() / 1_000,
-            resetTimer: Double(normalized) >= self.autoStopResetThreshold
+            resetTimer: Double(normalized) >= threshold
         )
+        
+        lg.log("[AudioLevelTracker.process] autoStopResetThreshold: \(threshold)")
+        
+        return currentSample
     }
 }

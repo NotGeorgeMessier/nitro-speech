@@ -18,7 +18,7 @@ class RecognizerEngine {
     var hardwareFormat: AVAudioFormat?
     weak var recognizerDelegate: RecognizerDelegate?
     
-    private let audioLevelTracker: AudioLevelTracker
+    private let audioLevelTracker = AudioLevelTracker()
     private var appStateObserver: AppStateObserver?
     private var audioEngine: AVAudioEngine?
     private var autoStopper: AutoStopper?
@@ -29,9 +29,6 @@ class RecognizerEngine {
     init(locale: Locale, delegate: RecognizerDelegate) {
         self.locale = locale
         self.recognizerDelegate = delegate
-        self.audioLevelTracker = AudioLevelTracker(
-            resetAutoFinishVoiceSensitivity: delegate.config?.resetAutoFinishVoiceSensitivity
-        )
     }
     
     // MARK: - Recognizer Methods
@@ -84,7 +81,10 @@ class RecognizerEngine {
             format: hardwareFormat
         ) { [weak self] buffer, _ in
             guard let self, let recognizerDelegate = self.recognizerDelegate else { return }
-            if let sample = self.audioLevelTracker.process(buffer) {
+            if let sample = self.audioLevelTracker.process(
+                buffer,
+                recognizerDelegate.config?.resetAutoFinishVoiceSensitivity
+            ) {
                 // Send buffer volume data
                 recognizerDelegate.volumeChange(
                     event:
@@ -148,13 +148,7 @@ class RecognizerEngine {
                 from: "updateSession"
             )
         }
-        // Update AutoFinish reset voice sensitivity interval
-        if let newSensitivity = newConfig?.resetAutoFinishVoiceSensitivity, 
-            newSensitivity != currentConfig?.resetAutoFinishVoiceSensitivity {
-            audioLevelTracker.updateResetAutoFinishVoiceSensitivity(
-                newValue: newSensitivity
-            )
-        }
+        
         if let addMsToTimer {
             // Add time to the timer once
             autoStopper?.addMsOnce(
@@ -168,7 +162,16 @@ class RecognizerEngine {
         // Only update new non-nil values in the config
         recognizerDelegate.softlyUpdateConfig(newConfig: newConfig)
     }
-    
+
+    func getVoiceInputVolume() -> VolumeChangeEvent? {
+        guard let currentSample = audioLevelTracker.currentSample else { return nil }
+        return VolumeChangeEvent(
+            smoothedVolume: currentSample.smoothed,
+            rawVolume: currentSample.raw,
+            db: currentSample.db
+        )
+    }
+
     func cleanup(from: String) {
         lg.log("[cleanup]: \(from)")
         let wasActive = isActive

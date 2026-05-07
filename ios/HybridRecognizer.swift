@@ -68,6 +68,14 @@ class HybridRecognizer: HybridRecognizerSpec  {
     func getIsActive() -> Bool {
         engine?.isActive ?? false
     }
+
+    func getVoiceInputVolume() -> VolumeChangeEvent {
+        return engine?.getVoiceInputVolume() ?? VolumeChangeEvent(
+            smoothedVolume: 0,
+            rawVolume: 0,
+            db: nil
+        )
+    }
     
     func getSupportedLocalesIOS() -> [String] {
         return self.coordinator.getSupportedLocales()

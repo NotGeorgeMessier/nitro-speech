@@ -178,6 +178,14 @@ namespace margelo::nitro::nitrospeech {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline VolumeChangeEvent getVoiceInputVolume() override {
+      auto __result = _swiftPart.getVoiceInputVolume();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::vector<std::string> getSupportedLocalesIOS() override {
       auto __result = _swiftPart.getSupportedLocalesIOS();
       if (__result.hasError()) [[unlikely]] {

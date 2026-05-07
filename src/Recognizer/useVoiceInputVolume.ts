@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react'
 import type { RecognizerSpec, VolumeChangeEvent } from './types'
 
-type OnVolumeChange = RecognizerSpec['onVolumeChange']
+type OnVolumeChange = Exclude<RecognizerSpec['onVolumeChange'], undefined>
 
 const subscribers = new Set<OnVolumeChange>()
 

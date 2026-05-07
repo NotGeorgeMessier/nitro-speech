@@ -67,6 +67,11 @@ export interface Recognizer extends HybridObject<{
   getIsActive(): boolean
 
   /**
+   * Returns the current voice input volume.
+   */
+  getVoiceInputVolume(): VolumeChangeEvent
+
+  /**
    * Returns a list of supported locales.
    *
    * @platform iOS only
@@ -82,11 +87,11 @@ export interface Recognizer extends HybridObject<{
    */
   onRecordingStopped?: () => void
   /**
-   * Called each time either a new batch has been added or the last batch has been updated.
+   * Fires each time either a new batch has been added or the last batch has been updated.
    */
   onResult?: (resultBatches: string[]) => void
   /**
-   * Called every {@linkcode SpeechRecognitionConfig.autoFinishProgressIntervalMs} or 1000ms
+   * Fires every {@linkcode SpeechRecognitionConfig.autoFinishProgressIntervalMs} or 1000ms
    *
    * Time left in milliseconds until the timer stops.
    *
@@ -102,9 +107,7 @@ export interface Recognizer extends HybridObject<{
    */
   onPermissionDenied?: () => void
   /**
-   * Called with high and arbitrary frequency (many times per second) while audio recording is active.
-   *
-   * @warning overriding it will disable the built-in `useVoiceInputVolume` hook.
+   * Fires with high and arbitrary frequency (many times per second) while audio recording is active.
    */
   onVolumeChange?: (event: VolumeChangeEvent) => void
 }

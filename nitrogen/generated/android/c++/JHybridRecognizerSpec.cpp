@@ -233,6 +233,11 @@ namespace margelo::nitro::nitrospeech {
     auto __result = method(_javaPart);
     return static_cast<bool>(__result);
   }
+  VolumeChangeEvent JHybridRecognizerSpec::getVoiceInputVolume() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVolumeChangeEvent>()>("getVoiceInputVolume");
+    auto __result = method(_javaPart);
+    return __result->toCpp();
+  }
   std::vector<std::string> JHybridRecognizerSpec::getSupportedLocalesIOS() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JArrayClass<jni::JString>>()>("getSupportedLocalesIOS");
     auto __result = method(_javaPart);

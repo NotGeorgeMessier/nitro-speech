@@ -155,6 +155,10 @@ abstract class HybridRecognizerSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun getVoiceInputVolume(): VolumeChangeEvent
+  
+  @DoNotStrip
+  @Keep
   abstract fun getSupportedLocalesIOS(): Array<String>
 
   // Default implementation of `HybridObject.toString()`

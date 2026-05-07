@@ -80,6 +80,7 @@ namespace margelo::nitro::nitrospeech {
       virtual void addAutoFinishTime(std::optional<double> additionalTimeMs) = 0;
       virtual void updateConfig(const std::optional<MutableSpeechRecognitionConfig>& newConfig, std::optional<bool> resetAutoFinishTime) = 0;
       virtual bool getIsActive() = 0;
+      virtual VolumeChangeEvent getVoiceInputVolume() = 0;
       virtual std::vector<std::string> getSupportedLocalesIOS() = 0;
 
     protected:

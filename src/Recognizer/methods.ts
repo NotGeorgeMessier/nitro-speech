@@ -34,6 +34,11 @@ export const recognizerGetIsActive = () => {
   return SpeechRecognizer.getIsActive()
 }
 
+export const recognizerGetVoiceInputVolume = () => {
+  'worklet'
+  return SpeechRecognizer.getVoiceInputVolume()
+}
+
 export const recognizerGetSupportedLocalesIOS = () => {
   'worklet'
   return SpeechRecognizer.getSupportedLocalesIOS().sort()

@@ -13,7 +13,7 @@
 
 #### Key Features:
 
-- ⚡ Built with Nitro Modules for zero-overhead native bridging
+- ⚡ Built with Nitro Modules for low-overhead native binding
 - 🌎 Supports 60+ languages 
 - 🍎 The only library that uses new `SpeechAnalyzer` with `SpeechTranscriber` or `DictationTranscriber` API for iOS 26+ (with fallback to legacy `SFSpeechRecognition` for older versions)
 - ⏱️ Timer for silence
@@ -21,16 +21,16 @@
   - Callback `onAutoFinishProgress` fires periodically with interval
   - Configurable interval `autoFinishProgressIntervalMs` value (default: 1 sec)
   - Method `updateConfig` with `autoFinishRecognitionMs` and `autoFinishProgressIntervalMs`
-  allows to change value on the fly
+  allows changing the value on the fly
   - Method `resetAutoFinishTime` resets the Timer to the threshold
   - Method `addAutoFinishTime` adds ms once without changing threshold
   - Configurable volume-based sensitivity `resetAutoFinishVoiceSensitivity` for the timer from 0 to 1
 - 🎤 Rich user voice input management 
-  - Hook `useVoiceInputVolume()` for `raw` or `smoothed` normalized 
-  volume level from 0 to 1 -> easy to use for UI animations;
+  - Hook `useVoiceInputVolume()` for `raw` or `smoothed` normalized volume level from 0 to 1 -> easy to use for UI animations;
   And `db` as human-friendly value
   - Flexible callback `onVolumeChange` for custom behavior
-- 🧩 Lifecycle methods: `prewarm` | `updateConfig` | `getIsActive` | `getSupportedLocalesIOS`
+  - Static method `getVoiceInputVolume()`
+- 🧩 Lifecycle methods: `prewarm` | `updateConfig` | `getIsActive`
 - 👆 Configurable Haptic Feedback on start and finish
 - 🎚️ Speech-quality configurations:
   - Result is grouped by speech segments into Batches.
@@ -53,6 +53,7 @@
   - [Cross-component control: RecognizerRef](#cross-component-control-recognizerref)
   - [Multithreading (react-native-worklets)](#multithreading-react-native-worklets)
   - [Voice input volume](#voice-input-volume)
+  - [useRecognizerIsActive](#userecognizerisactive)
   - [Unsafe: SpeechRecognizer](#unsafe-speechrecognizer)
 - [Requirements](#requirements)
 - [Compatibility](#compatibility)
@@ -123,11 +124,11 @@ Both permissions are required for speech recognition to work on iOS.
 | **Auto-finish progress** | Callback `onAutoFinishProgress` with countdown until auto-stop | ✅ | ✅ |
 | **Add Auto-finish Time** | Adds time to the auto finish timer once without changing the timer threshold | ✅ | ✅ |
 | **Reset Auto-finish Time** | Resets the Timer to the threshold | ✅ | ✅ |
-| **Voice input volume** | Hook `useVoiceInputVolume` and `onVolumeChange` callback | ✅ | ✅ |
+| **Voice input volume** | `useVoiceInputVolume`, `getVoiceInputVolume()`, `onVolumeChange` | ✅ | ✅ |
 | **Reset Auto-finish Sensitivity** | The voice detector sensitivity to reset the Auto-finish time | ✅ | ✅ |
 | **Prewarm** | Prepares resources, downloads assets, confirms locale availability | ✅ | ✅ |
-| **Update config** | Static method `updateConfig` allows update config on the fly | ✅ | ✅ |
-| **isActive** | Static method `getIsActive()` | ✅ | ✅ |
+| **Update config** | Static method `updateConfig` allows updating the config on the fly | ✅ | ✅ |
+| **Is Active** | Static method `getIsActive()` | ✅ | ✅ |
 | **Haptic feedback** | Haptic feedback on recording start/stop | ✅ | ✅ |
 | **Permission handling** | Dedicated `onPermissionDenied` callback | ✅ | ✅ |
 | **Background handling** | Stop when app loses focus/goes to background | ✅ | ✅ |
@@ -162,6 +163,7 @@ function MyComponent() {
     updateConfig,
     getSupportedLocalesIOS,
     getIsActive,
+    getVoiceInputVolume,
   } = useRecognizer({
     onReadyForSpeech: () => {
       console.log('Listening...');
@@ -271,6 +273,7 @@ RecognizerRef.updateConfig(
   true
 );
 RecognizerRef.getIsActive();
+RecognizerRef.getVoiceInputVolume();
 RecognizerRef.stopListening();
 // iOS only
 RecognizerRef.getSupportedLocalesIOS();
@@ -321,8 +324,6 @@ function VoiceMeter() {
 As a better alternative you can control volume via SharedValue and apply it only on UI thread with Reanimated.
 This way you will avoid re-renders since the volume will be stored on UI thread
 
-Warning: this approach will disable the built-in `useVoiceInputVolume` hook.
-
 ```typescript
 function VoiceMeter() {
   const sharedVolume = useSharedValue(0)
@@ -341,6 +342,16 @@ function VoiceMeter() {
 }
 ```
 
+### useRecognizerIsActive
+
+```typescript
+import { useRecognizerIsActive } from '@gmessier/nitro-speech';
+
+function MyComponent() {
+  const isActive = useRecognizerIsActive();
+  return <Text>{isActive ? 'Listening...' : 'Not listening'}</Text>;
+}
+```
 
 ### Unsafe: SpeechRecognizer
 
@@ -415,7 +426,7 @@ The `SpeechRecognizer.dispose()` method is **NOT SAFE** and should rarely be use
 
 ## Compatibility
 
-Latest versions of `@gmessier/nitro-speech` requires [react-native-nitro-modules 0.35.0 or higher](https://github.com/mrousavy/nitro/releases/tag/v0.35.0).
+Latest versions of `@gmessier/nitro-speech` require [react-native-nitro-modules 0.35.0 or higher](https://github.com/mrousavy/nitro/releases/tag/v0.35.0).
 
 
 | Compatibility                          | Supported versions                |
@@ -427,7 +438,7 @@ Latest versions of `@gmessier/nitro-speech` requires [react-native-nitro-modules
 
 ### Android Gradle sync issues
 
-If you're having issues with Android Gradle sync, try running the prebuild for the library, that causes the issue:
+If you're having issues with Android Gradle sync, try running the prebuild for the library that causes the issue:
 
 e.g. failed in `react-native-nitro-modules`:
 

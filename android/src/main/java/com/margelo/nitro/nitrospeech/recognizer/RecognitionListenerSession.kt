@@ -3,7 +3,6 @@ package com.margelo.nitro.nitrospeech.recognizer
 import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.SpeechRecognizer
-import android.util.Log
 import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.VolumeChangeEvent
 import kotlin.math.max
@@ -12,11 +11,11 @@ import kotlin.math.roundToInt
 class RecognitionListenerSession (
     private val autoStopper: AutoStopper?,
     private val config: SpeechRecognitionConfig?,
-    private val onVolumeChange: ((event: VolumeChangeEvent) -> Unit)?,
+    private val fireVolumeChangeEvent: (event: VolumeChangeEvent) -> Unit,
     private val onFinishRecognition: (result: ArrayList<String>?, errorMessage: String?, recordingStopped: Boolean) -> Unit,
 ) {
+    private val logger = Logger(disable = false)
     companion object {
-        private const val TAG = "HybridRecognizer"
         private const val SPEECH_LEVEL_THRESHOLD = 0.35
         private const val FLOOR_RISE_ALPHA = 0.01f
         private const val FLOOR_FALL_ALPHA = 0.20f
@@ -40,11 +39,11 @@ class RecognitionListenerSession (
             override fun onBeginningOfSpeech() {}
             override fun onRmsChanged(rmsdB: Float) {
                 val volumeEvent = getVolume(rmsdB)
-                onVolumeChange?.invoke(volumeEvent)
+                fireVolumeChangeEvent(volumeEvent)
                 val threshold =
                     config?.resetAutoFinishVoiceSensitivity?.coerceIn(0.0, 1.0)
                         ?: SPEECH_LEVEL_THRESHOLD.toDouble()
-                Log.d(TAG, "onRmsChanged: ${volumeEvent}")
+                // logger.log("onRmsChanged: ${volumeEvent}")
                 if (volumeEvent.rawVolume > threshold) {
                     autoStopper?.resetTimer()
                 }
@@ -75,7 +74,7 @@ class RecognitionListenerSession (
             }
 
             override fun onResults(results: Bundle?) {
-                Log.d(TAG, "onResults: $resultBatches")
+                logger.log("onResults: $resultBatches")
                 onFinishRecognition(resultBatches, null, true)
                 autoStopper?.stop()
                 autoStopper?.onTimeout()
@@ -85,26 +84,26 @@ class RecognitionListenerSession (
                 val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
 
                 if (matches.isNullOrEmpty() || matches[0] == "") {
-                    Log.d(TAG, "onPartialResults[0], skip, NO RECOGNIZE")
+                    logger.log("onPartialResults[0], skip, NO RECOGNIZE")
                     return
                 }
 
                 autoStopper?.resetTimer()
-                Log.d(TAG, "onPartialResults[0], add ${matches[0]}")
+                logger.log("onPartialResults[0], add ${matches[0]}")
                 var currentBatches = resultBatches
                 if (currentBatches.isNullOrEmpty()) {
-                    Log.d(TAG, "onPartialResults[1], NO BATCHES YET | add first")
+                    logger.log("onPartialResults[1], NO BATCHES YET | add first")
                     currentBatches = arrayListOf(matches[0])
                 } else {
-                    Log.d(TAG, "onPartialResults[1], current batches $currentBatches")
+                    logger.log("onPartialResults[1], current batches $currentBatches")
                     val prevBatchLength = currentBatches[currentBatches.lastIndex].length
                     val match = if (config?.disableRepeatingFilter == true) matches[0] else repeatingFilter(matches[0])
                     val matchLength = match.length
                     if (config?.androidDisableBatchHandling == true || matchLength + 3 < prevBatchLength) {
-                        Log.d(TAG, "onPartialResults[2], append new batch")
+                        logger.log("onPartialResults[2], append new batch")
                         currentBatches.add(match)
                     } else {
-                        Log.d(TAG, "onPartialResults[2], update batch, replace #${currentBatches.lastIndex}")
+                        logger.log("onPartialResults[2], update batch, replace #${currentBatches.lastIndex}")
                         currentBatches[currentBatches.lastIndex] = match
                     }
                 }

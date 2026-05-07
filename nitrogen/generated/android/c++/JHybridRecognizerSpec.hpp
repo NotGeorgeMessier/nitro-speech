@@ -74,6 +74,7 @@ namespace margelo::nitro::nitrospeech {
     void addAutoFinishTime(std::optional<double> additionalTimeMs) override;
     void updateConfig(const std::optional<MutableSpeechRecognitionConfig>& newConfig, std::optional<bool> resetAutoFinishTime) override;
     bool getIsActive() override;
+    VolumeChangeEvent getVoiceInputVolume() override;
     std::vector<std::string> getSupportedLocalesIOS() override;
 
   private:
