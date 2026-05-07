@@ -4,19 +4,20 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.SpeechRecognizer
 import android.util.Log
-import com.margelo.nitro.nitrospeech.SpeechToTextParams
+import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
+import com.margelo.nitro.nitrospeech.VolumeChangeEvent
 import kotlin.math.max
 import kotlin.math.roundToInt
 
 class RecognitionListenerSession (
     private val autoStopper: AutoStopper?,
-    private val config: SpeechToTextParams?,
-    private val onVolumeChange: ((normVolume: Double) -> Unit)?,
+    private val config: SpeechRecognitionConfig?,
+    private val onVolumeChange: ((event: VolumeChangeEvent) -> Unit)?,
     private val onFinishRecognition: (result: ArrayList<String>?, errorMessage: String?, recordingStopped: Boolean) -> Unit,
 ) {
     companion object {
         private const val TAG = "HybridRecognizer"
-        private const val SPEECH_LEVEL_THRESHOLD = 0.08f
+        private const val SPEECH_LEVEL_THRESHOLD = 0.35
         private const val FLOOR_RISE_ALPHA = 0.01f
         private const val FLOOR_FALL_ALPHA = 0.20f
         private const val PEAK_ATTACK_ALPHA = 0.25f
@@ -38,10 +39,14 @@ class RecognitionListenerSession (
             override fun onReadyForSpeech(params: Bundle?) {}
             override fun onBeginningOfSpeech() {}
             override fun onRmsChanged(rmsdB: Float) {
-                val normLevel = normalizeRmsDb(rmsdB)
-                onVolumeChange?.invoke(normLevel.toDouble())
-                if (normLevel > SPEECH_LEVEL_THRESHOLD) {
-                    autoStopper?.indicateRecordingActivity()
+                val volumeEvent = getVolume(rmsdB)
+                onVolumeChange?.invoke(volumeEvent)
+                val threshold =
+                    config?.resetAutoFinishVoiceSensitivity?.coerceIn(0.0, 1.0)
+                        ?: SPEECH_LEVEL_THRESHOLD.toDouble()
+                Log.d(TAG, "onRmsChanged: ${volumeEvent}")
+                if (volumeEvent.rawVolume > threshold) {
+                    autoStopper?.resetTimer()
                 }
             }
             override fun onBufferReceived(buffer: ByteArray?) {}
@@ -66,18 +71,17 @@ class RecognitionListenerSession (
                     true
                 )
                 autoStopper?.stop()
-                autoStopper?.forceStopRecording()
+                autoStopper?.onTimeout()
             }
 
             override fun onResults(results: Bundle?) {
                 Log.d(TAG, "onResults: $resultBatches")
                 onFinishRecognition(resultBatches, null, true)
                 autoStopper?.stop()
-                autoStopper?.forceStopRecording()
+                autoStopper?.onTimeout()
             }
 
             override fun onPartialResults(partialResults: Bundle?) {
-                autoStopper?.indicateRecordingActivity()
                 val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
 
                 if (matches.isNullOrEmpty() || matches[0] == "") {
@@ -85,6 +89,7 @@ class RecognitionListenerSession (
                     return
                 }
 
+                autoStopper?.resetTimer()
                 Log.d(TAG, "onPartialResults[0], add ${matches[0]}")
                 var currentBatches = resultBatches
                 if (currentBatches.isNullOrEmpty()) {
@@ -144,9 +149,9 @@ class RecognitionListenerSession (
         return joiner.toString()
     }
 
-    private fun normalizeRmsDb(rmsdB: Float): Double {
+    private fun getVolume(rmsdB: Float): VolumeChangeEvent {
         if (!rmsdB.isFinite()) {
-            return 0.0
+            return VolumeChangeEvent(0.0,0.0,null)
         }
 
         if (noiseFloorDb.isNaN()) {
@@ -166,7 +171,14 @@ class RecognitionListenerSession (
         val raw = ((rmsdB - noiseFloorDb) / span).coerceIn(0f, 1f)
         val smoothingCoeff = if (raw > levelSmoothed) METER_ATTACK else METER_RELEASE
         levelSmoothed += smoothingCoeff * (raw - levelSmoothed)
+        val roundedSmoothed = ((levelSmoothed * PRECISION_SCALE).roundToInt() / PRECISION_SCALE).toDouble()
+        val roundedRaw = ((raw * PRECISION_SCALE).roundToInt() / PRECISION_SCALE).toDouble()
+        val db = (rmsdB * 1000).roundToInt() / 1000.0
 
-        return ((levelSmoothed * PRECISION_SCALE).roundToInt() / PRECISION_SCALE).toDouble()
+        return VolumeChangeEvent(
+            smoothedVolume = roundedSmoothed,
+            rawVolume = roundedRaw,
+            db = db
+        )
     }
   }

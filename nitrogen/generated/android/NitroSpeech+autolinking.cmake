@@ -33,11 +33,11 @@ target_sources(
   # Autolinking Setup
   ../nitrogen/generated/android/NitroSpeechOnLoad.cpp
   # Shared Nitrogen C++ sources
-  ../nitrogen/generated/shared/c++/HybridRecognizerSpec.cpp
   ../nitrogen/generated/shared/c++/HybridNitroSpeechSpec.cpp
+  ../nitrogen/generated/shared/c++/HybridRecognizerSpec.cpp
   # Android-specific Nitrogen C++ sources
-  ../nitrogen/generated/android/c++/JHybridRecognizerSpec.cpp
   ../nitrogen/generated/android/c++/JHybridNitroSpeechSpec.cpp
+  ../nitrogen/generated/android/c++/JHybridRecognizerSpec.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake

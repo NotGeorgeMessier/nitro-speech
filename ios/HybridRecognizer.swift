@@ -1,13 +1,8 @@
 import Foundation
-import Speech
 import NitroModules
-import os.log
-import AVFoundation
 
-class HybridRecognizer: HybridRecognizerSpec {
-    internal let logger = Logger(subsystem: "com.margelo.nitro.nitrospeech", category: "Recognizer")
-    internal static let defaultAutoFinishRecognitionMs = 8000.0
-    internal static let speechRmsThreshold: Float = 0.005623
+class HybridRecognizer: HybridRecognizerSpec  {
+    var config: SpeechRecognitionConfig?
     
     var onReadyForSpeech: (() -> Void)?
     var onRecordingStopped: (() -> Void)?
@@ -15,228 +10,176 @@ class HybridRecognizer: HybridRecognizerSpec {
     var onAutoFinishProgress: ((Double) -> Void)?
     var onError: ((String) -> Void)?
     var onPermissionDenied: (() -> Void)?
-    var onVolumeChange: ((Double) -> Void)?
+    var onVolumeChange: ((VolumeChangeEvent) -> Void)?
     
-    internal var audioEngine: AVAudioEngine?
+    private let coordinator = Coordinator()
+    private var paramsHash: String?
+    private var engine: RecognizerEngine?
     
-    internal var autoStopper: AutoStopper?
-    internal var appStateObserver: AppStateObserver?
-    internal var isActive: Bool = false
-    internal var isStopping: Bool = false
-    internal var config: SpeechToTextParams?
-    internal var levelSmoothed: Float = 0
-    
-    func getIsActive() -> Bool {
-        return self.isActive
+    override init() {
+        super.init()
+        self.coordinator.recognizerDelegate = self
     }
     
-    func startListening(params: SpeechToTextParams) {
-        if isActive {
-            return
-        }
-        
-        SFSpeechRecognizer.requestAuthorization { [weak self] authStatus in
-            Task { @MainActor in
-                guard let self = self else { return }
-                
-                self.config = params
-                
-                switch authStatus {
-                case .authorized:
-                    self.requestMicrophonePermission()
-                case .denied, .restricted:
-                    self.onPermissionDenied?()
-                case .notDetermined:
-                    self.onError?("Speech recognition not determined")
-                @unknown default:
-                    self.onError?("Unknown authorization status")
-                }
-            }
+    private let lg = Lg(prefix: "HybridRecognizer")
+    
+    @discardableResult
+    func prewarm(defaultParams: SpeechRecognitionConfig?) -> Promise<Void> {
+        return Promise.async(.userInitiated) { [weak self] in
+            // Ensure correct engine is selected based on params and ios version
+            await self?.ensureEngine(params: defaultParams)
+            // try to preload assets and check if speech engine is available on OS level
+            await self?.engine?.prewarm(for: .prewarm)
         }
     }
-
-    func dispose() {
-        stopListening()
+    
+    func startListening(params: SpeechRecognitionConfig?) {
+        Task {
+            // Ensure correct engine is selected based on params and ios version
+            await ensureEngine(params: params)
+            engine?.start()
+        }
     }
     
     func stopListening() {
-        guard isActive, !isStopping else { return }
-        isStopping = true
-        
-        self.stopHapticFeedback()
+        engine?.stop()
     }
     
-    internal func handleInternalStopTrigger() {
-        self.stopListening()
+    func resetAutoFinishTime() {
+        engine?.updateSession(resetTimer: true)
     }
     
     func addAutoFinishTime(additionalTimeMs: Double?) {
-        guard isActive, !isStopping else { return }
-        
-        autoStopper?.indicateRecordingActivity(
-            from: "refreshAutoFinish",
-            addMsToThreshold: additionalTimeMs
-        )
+        if let additionalTimeMs {
+            engine?.updateSession(addMsToTimer: additionalTimeMs)
+        } else {
+            // Reset timer to original baseline.
+            engine?.updateSession(resetTimer: true)
+        }
     }
     
-    func updateAutoFinishTime(newTimeMs: Double, withRefresh: Bool?) {
-        guard isActive, !isStopping else { return }
-        
-        autoStopper?.updateSilenceThreshold(newThresholdMs: newTimeMs)
-        
-        if withRefresh == true {
-            autoStopper?.indicateRecordingActivity(
-                from: "updateAutoFinishTime",
-                addMsToThreshold: nil
-            )
-        }
+    func updateConfig(newConfig: MutableSpeechRecognitionConfig?, resetAutoFinishTime: Bool?) {
+        engine?.updateSession(
+            newConfig: newConfig,
+            resetTimer: resetAutoFinishTime
+        )
     }
 
-    internal func requestMicrophonePermission() {}
+    func getIsActive() -> Bool {
+        engine?.isActive ?? false
+    }
     
-    internal func startRecognitionSetup() -> Bool {
-        isStopping = false
-        isActive = true
-        
-        initAutoStop()
-        monitorAppState()
-        guard startAudioSession() else {
-            cleanup(from: "startRecognitionSetup")
-            return false
+    func getSupportedLocalesIOS() -> [String] {
+        return self.coordinator.getSupportedLocales()
+    }
+
+    private func ensureEngine(params: SpeechRecognitionConfig?) async {
+        // Remember new params
+        config = params
+        let hash = Utils.hashParams(params)
+        if engine != nil && hash == paramsHash {
+            lg.log("Reuse Engine")
+            // Engine is already correct
+            return
         }
-        
-        return true
-    }
-    
-    internal func startRecognitionFeedback() {
-        self.startHapticFeedback()
-        autoStopper?.indicateRecordingActivity(
-            from: "startListening",
-            addMsToThreshold: nil
-        )
-        onReadyForSpeech?()
-        onResult?([])
-    }
-    
-    internal func startRecognition() {}
-    internal func startRecognition() async {}
-    
-    internal func cleanup(from: String) {
-        logger.info("cleanup called from: \(from)")
-        deinitAutoStop()
-        stopMonitorAppState()
-        stopAudioSession()
-        stopAudioEngine()
-        levelSmoothed = 0
-        isActive = false
-        isStopping = false
-        onVolumeChange?(0)
-    }
-    
-    internal func stopAudioEngine() {
-        if let audioEngine = audioEngine, audioEngine.isRunning {
-            audioEngine.stop()
+        if hash != paramsHash {
+            // Initialize when trying to select new engine with new params
+            await coordinator.initialize()
+            paramsHash = hash
         }
-        audioEngine?.inputNode.removeTap(onBus: 0)
-        audioEngine = nil
-    }
-    
-    internal func monitorAppState() {
-        appStateObserver = AppStateObserver { [weak self] in
-            guard let self = self, self.isActive else { return }
-            self.handleInternalStopTrigger()
-        }
-    }
-    internal func stopMonitorAppState () {
-        appStateObserver?.stop()
-        appStateObserver = nil
-    }
-    
-    internal func initAutoStop() {
-        autoStopper = AutoStopper(
-            silenceThresholdMs: config?.autoFinishRecognitionMs ?? Self.defaultAutoFinishRecognitionMs,
-            onProgress: { [weak self] timeLeftMs in
-                self?.onAutoFinishProgress?(timeLeftMs)
-            },
-            onTimeout: { [weak self] in
-                self?.handleInternalStopTrigger()
-            }
-        )
-    }
-    internal func deinitAutoStop () {
-        autoStopper?.stop()
-        autoStopper = nil
-    }
-    
-    internal func startAudioSession() -> Bool {
-        do {
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-            // Without this, iOS may suppress haptics while recording.
-            try audioSession.setAllowHapticsAndSystemSoundsDuringRecording(true)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-            return true
-        } catch {
-            onError?("Failed to activate audio session: \(error.localizedDescription)")
-            return false
-        }
-    }
-    internal func stopAudioSession () {
-        do {
-            try AVAudioSession.sharedInstance().setActive(false)
-        } catch {
-            logger.info("Failed to deactivate audio session: \(error.localizedDescription)")
+        lg.log("hash: \(hash)")
+        // Try to select new engine
+        engine = coordinator.getEngine()
+        if engine == nil {
+            // Only wrong locale can wipe out all candidates
+            self.onError?("No recognition engine available for the requested locale")
             return
         }
     }
-    
-    internal func startHapticFeedback() {
-        if let hapticStyle = config?.startHapticFeedbackStyle {
-            HapticImpact(style: hapticStyle).trigger()
-        } else {
-            HapticImpact(style: .medium).trigger()
-        }
-    }
-    internal func stopHapticFeedback () {
-        if let hapticStyle = config?.stopHapticFeedbackStyle {
-            HapticImpact(style: hapticStyle).trigger()
-        } else {
-            HapticImpact(style: .medium).trigger()
-        }
-    }
-    
-    internal func trackPartialActivity() {
-        if !self.isStopping {
-            self.autoStopper?.indicateRecordingActivity(
-                from: "partial results",
-                addMsToThreshold: nil
+}
+
+protocol RecognizerDelegate: AnyObject {
+    var config: SpeechRecognitionConfig? { get }
+    func softlyUpdateConfig(newConfig: MutableSpeechRecognitionConfig?)
+    func reselectEngine(forPrewarm: Bool)
+    func readyForSpeech()
+    func recordingStopped()
+    func result (batches: [String])
+    func autoFinishProgress (timeLeftMs: Double)
+    func error (message: String)
+    func permissionDenied ()
+    func volumeChange (event: VolumeChangeEvent)
+}
+
+extension HybridRecognizer: RecognizerDelegate {
+    func softlyUpdateConfig(newConfig: MutableSpeechRecognitionConfig?) {
+        if let newConfig {
+            config = SpeechRecognitionConfig(
+                locale: config?.locale,
+                contextualStrings: config?.contextualStrings,
+                maskOffensiveWords: config?.maskOffensiveWords,
+                autoFinishRecognitionMs: newConfig.autoFinishRecognitionMs ?? config?.autoFinishRecognitionMs,
+                autoFinishProgressIntervalMs: newConfig.autoFinishProgressIntervalMs ?? config?.autoFinishProgressIntervalMs,
+                resetAutoFinishVoiceSensitivity: newConfig.resetAutoFinishVoiceSensitivity ?? config?.resetAutoFinishVoiceSensitivity,
+                disableRepeatingFilter: newConfig.disableRepeatingFilter ?? config?.disableRepeatingFilter,
+                startHapticFeedbackStyle: newConfig.startHapticFeedbackStyle ?? config?.startHapticFeedbackStyle,
+                stopHapticFeedbackStyle: newConfig.stopHapticFeedbackStyle ?? config?.stopHapticFeedbackStyle,
+                androidFormattingPreferQuality: config?.androidFormattingPreferQuality,
+                androidUseWebSearchModel: config?.androidUseWebSearchModel,
+                androidDisableBatchHandling: config?.androidDisableBatchHandling,
+                iosAddPunctuation: config?.iosAddPunctuation,
+                iosPreset: config?.iosPreset,
+                iosAtypicalSpeech: config?.iosAtypicalSpeech
             )
         }
     }
-
-    internal func repeatingFilter(text: String) -> String {
-        var subStrings = text.split { $0.isWhitespace }.map { String($0) }
-        var joiner = ""
-        // 10 - arbitrary number of last substrings that is still unstable
-        // and needs to be filtered. Prev substrings were handled earlier.
-        if subStrings.count >= 10 {
-            joiner = subStrings.prefix(subStrings.count - 9).joined(separator: " ")
-            subStrings = Array(subStrings.suffix(10))
+    
+    func readyForSpeech() {
+        self.lg.log("[HR -> onReadyForSpeech]")
+        self.onReadyForSpeech?()
+    }
+    
+    func recordingStopped() {
+        self.lg.log("[onRecordingStopped]")
+        self.onRecordingStopped?()
+    }
+    
+    func result(batches: [String]) {
+        self.lg.log("[onResult] \(batches)")
+        self.onResult?(batches)
+    }
+    
+    func autoFinishProgress(timeLeftMs: Double) {
+        self.lg.log("[onAutoFinishProgress] \(timeLeftMs)ms")
+        self.onAutoFinishProgress?(timeLeftMs)
+    }
+    
+    func error(message: String) {
+        self.lg.log("[onError]")
+        self.onError?(message)
+    }
+    
+    func permissionDenied() {
+        self.lg.log("[onPermissionDenied]")
+        self.onPermissionDenied?()
+    }
+    
+    func volumeChange(event: VolumeChangeEvent) {
+        // self.lg.log("[onVolumeChange] \(event.rawVolume)")
+        self.onVolumeChange?(event)
+    }
+    
+    func reselectEngine(forPrewarm: Bool) {
+        // Remove failed engine from candidates
+        coordinator.reportEngineFailure()
+        // Reset active engine
+        engine = nil
+        // Try to prewarm with another candidate
+        if forPrewarm {
+            self.prewarm(defaultParams: config)
         } else {
-            joiner = subStrings.first ?? ""
+            // Try to start with another candidate
+            self.startListening(params: config)
         }
-        for i in subStrings.indices {
-            if i == 0 { continue }
-            // Always add number-contained strings
-            if #available(iOS 16.0, *), subStrings[i].contains(/\d+/) {
-                joiner += " \(subStrings[i])"
-                continue
-            }
-            
-            // Skip consecutive duplicate strings
-            if subStrings[i] == subStrings[i-1] { continue }
-            joiner += " \(subStrings[i])"
-        }
-        return joiner
     }
 }

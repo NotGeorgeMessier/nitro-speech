@@ -33,16 +33,16 @@ namespace margelo::nitro::nitrospeech {
      */
     void invoke(const std::vector<std::string>& resultBatches) const {
       static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JArrayClass<jni::JString>> /* resultBatches */)>("invoke");
-      method(self(), [&]() {
-        size_t __size = resultBatches.size();
+      method(self(), [&](auto&& __input) {
+        size_t __size = __input.size();
         jni::local_ref<jni::JArrayClass<jni::JString>> __array = jni::JArrayClass<jni::JString>::newArray(__size);
         for (size_t __i = 0; __i < __size; __i++) {
-          const auto& __element = resultBatches[__i];
+          const auto& __element = __input[__i];
           auto __elementJni = jni::make_jstring(__element);
           __array->setElement(__i, *__elementJni);
         }
         return __array;
-      }());
+      }(resultBatches));
     }
   };
 
@@ -60,16 +60,16 @@ namespace margelo::nitro::nitrospeech {
      * Invokes the C++ `std::function<...>` this `JFunc_void_std__vector_std__string__cxx` instance holds.
      */
     void invoke_cxx(jni::alias_ref<jni::JArrayClass<jni::JString>> resultBatches) {
-      _func([&]() {
-              size_t __size = resultBatches->size();
-              std::vector<std::string> __vector;
-              __vector.reserve(__size);
-              for (size_t __i = 0; __i < __size; __i++) {
-                auto __element = resultBatches->getElement(__i);
-                __vector.push_back(__element->toStdString());
-              }
-              return __vector;
-            }());
+      _func([&](auto&& __input) {
+        size_t __size = __input->size();
+        std::vector<std::string> __vector;
+        __vector.reserve(__size);
+        for (size_t __i = 0; __i < __size; __i++) {
+          auto __element = __input->getElement(__i);
+          __vector.push_back(__element->toStdString());
+        }
+        return __vector;
+      }(resultBatches));
     }
 
   public:

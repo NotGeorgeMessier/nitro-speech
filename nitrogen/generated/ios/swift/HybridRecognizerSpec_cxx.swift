@@ -319,14 +319,14 @@ open class HybridRecognizerSpec_cxx {
     }
   }
   
-  public final var onVolumeChange: bridge.std__optional_std__function_void_double____normVolume______ {
+  public final var onVolumeChange: bridge.std__optional_std__function_void_const_VolumeChangeEvent_____event______ {
     @inline(__always)
     get {
-      return { () -> bridge.std__optional_std__function_void_double____normVolume______ in
+      return { () -> bridge.std__optional_std__function_void_const_VolumeChangeEvent_____event______ in
         if let __unwrappedValue = self.__implementation.onVolumeChange {
-          return bridge.create_std__optional_std__function_void_double____normVolume______({ () -> bridge.Func_void_double in
-            let __closureWrapper = Func_void_double(__unwrappedValue)
-            return bridge.create_Func_void_double(__closureWrapper.toUnsafe())
+          return bridge.create_std__optional_std__function_void_const_VolumeChangeEvent_____event______({ () -> bridge.Func_void_VolumeChangeEvent in
+            let __closureWrapper = Func_void_VolumeChangeEvent(__unwrappedValue)
+            return bridge.create_Func_void_VolumeChangeEvent(__closureWrapper.toUnsafe())
           }())
         } else {
           return .init()
@@ -335,13 +335,13 @@ open class HybridRecognizerSpec_cxx {
     }
     @inline(__always)
     set {
-      self.__implementation.onVolumeChange = { () -> ((_ normVolume: Double) -> Void)? in
-        if bridge.has_value_std__optional_std__function_void_double____normVolume______(newValue) {
-          let __unwrapped = bridge.get_std__optional_std__function_void_double____normVolume______(newValue)
-          return { () -> (Double) -> Void in
-            let __wrappedFunction = bridge.wrap_Func_void_double(__unwrapped)
-            return { (__normVolume: Double) -> Void in
-              __wrappedFunction.call(__normVolume)
+      self.__implementation.onVolumeChange = { () -> ((_ event: VolumeChangeEvent) -> Void)? in
+        if bridge.has_value_std__optional_std__function_void_const_VolumeChangeEvent_____event______(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__function_void_const_VolumeChangeEvent_____event______(newValue)
+          return { () -> (VolumeChangeEvent) -> Void in
+            let __wrappedFunction = bridge.wrap_Func_void_VolumeChangeEvent(__unwrapped)
+            return { (__event: VolumeChangeEvent) -> Void in
+              __wrappedFunction.call(__event)
             }
           }()
         } else {
@@ -353,9 +353,28 @@ open class HybridRecognizerSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func startListening(params: SpeechToTextParams) -> bridge.Result_void_ {
+  public final func prewarm(defaultParams: bridge.std__optional_SpeechRecognitionConfig_) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      try self.__implementation.startListening(params: params)
+      let __result = try self.__implementation.prewarm(defaultParams: defaultParams.value)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_void__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve() })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func startListening(params: bridge.std__optional_SpeechRecognitionConfig_) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.startListening(params: params.value)
       return bridge.create_Result_void_()
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
@@ -367,6 +386,17 @@ open class HybridRecognizerSpec_cxx {
   public final func stopListening() -> bridge.Result_void_ {
     do {
       try self.__implementation.stopListening()
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func resetAutoFinishTime() -> bridge.Result_void_ {
+    do {
+      try self.__implementation.resetAutoFinishTime()
       return bridge.create_Result_void_()
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
@@ -393,11 +423,11 @@ open class HybridRecognizerSpec_cxx {
   }
   
   @inline(__always)
-  public final func updateAutoFinishTime(newTimeMs: Double, withRefresh: bridge.std__optional_bool_) -> bridge.Result_void_ {
+  public final func updateConfig(newConfig: bridge.std__optional_MutableSpeechRecognitionConfig_, resetAutoFinishTime: bridge.std__optional_bool_) -> bridge.Result_void_ {
     do {
-      try self.__implementation.updateAutoFinishTime(newTimeMs: newTimeMs, withRefresh: { () -> Bool? in
-        if bridge.has_value_std__optional_bool_(withRefresh) {
-          let __unwrapped = bridge.get_std__optional_bool_(withRefresh)
+      try self.__implementation.updateConfig(newConfig: newConfig.value, resetAutoFinishTime: { () -> Bool? in
+        if bridge.has_value_std__optional_bool_(resetAutoFinishTime) {
+          let __unwrapped = bridge.get_std__optional_bool_(resetAutoFinishTime)
           return __unwrapped
         } else {
           return nil
@@ -419,6 +449,24 @@ open class HybridRecognizerSpec_cxx {
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
       return bridge.create_Result_bool_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func getSupportedLocalesIOS() -> bridge.Result_std__vector_std__string__ {
+    do {
+      let __result = try self.__implementation.getSupportedLocalesIOS()
+      let __resultCpp = { () -> bridge.std__vector_std__string_ in
+        var __vector = bridge.create_std__vector_std__string_(__result.count)
+        for __item in __result {
+          __vector.push_back(std.string(__item))
+        }
+        return __vector
+      }()
+      return bridge.create_Result_std__vector_std__string__(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__vector_std__string__(__exceptionPtr)
     }
   }
 }

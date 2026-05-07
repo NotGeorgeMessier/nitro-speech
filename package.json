@@ -1,12 +1,12 @@
 {
   "name": "@gmessier/nitro-speech",
-  "version": "0.3.3",
-  "description": "React Native Speech Recognition Library powered by Nitro Modules",
-  "main": "./lib/commonjs/index.js",
-  "module": "./lib/module/index.js",
-  "types": "./lib/typescript/index.d.ts",
-  "react-native": "./lib/module/index.js",
-  "source": "src/index.ts",
+  "version": "0.4.0",
+  "description": "React Native Real-time Speech Recognition Library powered by Nitro Modules",
+  "main": "./lib/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "react-native": "./src/index.ts",
+  "source": "./src/index.ts",
   "files": [
     "src",
     "react-native.config.js",
@@ -15,7 +15,6 @@
     "android/build.gradle",
     "android/gradle.properties",
     "android/fix-prefab.gradle",
-    "android/proguard-rules.pro",
     "android/CMakeLists.txt",
     "android/src",
     "ios/**/*.h",
@@ -26,16 +25,15 @@
     "app.plugin.js",
     "nitro.json",
     "*.podspec",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf android/build node_modules/**/android/build lib",
+    "build": "rm -rf lib && rm -f tsconfig.tsbuildinfo && bun tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\" --fix",
-    "lint-ci": "eslint \"**/*.{js,ts,tsx}\" -f @jamesacarr/github-actions",
-    "typescript": "tsc",
-    "build": "rm -rf lib && npm run typecheck && bob build",
-    "specs": "tsc --noEmit false && nitrogen --logLevel=\"debug\""
+    "nitro": "rm -rf nitrogen && npx nitrogen@latest",
+    "localnitro": "rm -rf nitrogen && node ../../../nitro/nitro/packages/nitrogen/lib/index.js"
   },
   "keywords": [
     "react-native",
@@ -50,6 +48,7 @@
     "voice",
     "voice-recognition",
     "transcription",
+    "transcriber",
     "audio",
     "microphone",
     "nitro",
@@ -81,8 +80,8 @@
     "prettier": "^3.3.3",
     "react": "19.2.4",
     "react-native": "0.84.1",
-    "react-native-nitro-modules": "0.35.4",
-    "nitrogen": "0.35.4",
+    "react-native-nitro-modules": "0.35.6",
+    "nitrogen": "0.35.6",
     "react-native-builder-bob": "0.37.0",
     "typescript": "^5.8.3"
   },

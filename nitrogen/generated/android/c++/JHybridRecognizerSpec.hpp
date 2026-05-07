@@ -62,16 +62,19 @@ namespace margelo::nitro::nitrospeech {
     void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) override;
     std::optional<std::function<void()>> getOnPermissionDenied() override;
     void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) override;
-    std::optional<std::function<void(double /* normVolume */)>> getOnVolumeChange() override;
-    void setOnVolumeChange(const std::optional<std::function<void(double /* normVolume */)>>& onVolumeChange) override;
+    std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> getOnVolumeChange() override;
+    void setOnVolumeChange(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& onVolumeChange) override;
 
   public:
     // Methods
-    void startListening(const SpeechToTextParams& params) override;
+    std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams) override;
+    void startListening(const std::optional<SpeechRecognitionConfig>& params) override;
     void stopListening() override;
+    void resetAutoFinishTime() override;
     void addAutoFinishTime(std::optional<double> additionalTimeMs) override;
-    void updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) override;
+    void updateConfig(const std::optional<MutableSpeechRecognitionConfig>& newConfig, std::optional<bool> resetAutoFinishTime) override;
     bool getIsActive() override;
+    std::vector<std::string> getSupportedLocalesIOS() override;
 
   private:
     jni::global_ref<JHybridRecognizerSpec::JavaPart> _javaPart;

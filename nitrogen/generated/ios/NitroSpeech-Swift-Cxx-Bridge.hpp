@@ -14,6 +14,14 @@ namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
+// Forward declaration of `IosPreset` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class IosPreset; }
+// Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
+// Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
+// Forward declaration of `VolumeChangeEvent` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridNitroSpeechSpec_cxx` to properly resolve imports.
@@ -25,6 +33,12 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 #include "HapticFeedbackStyle.hpp"
 #include "HybridNitroSpeechSpec.hpp"
 #include "HybridRecognizerSpec.hpp"
+#include "IosPreset.hpp"
+#include "MutableSpeechRecognitionConfig.hpp"
+#include "SpeechRecognitionConfig.hpp"
+#include "VolumeChangeEvent.hpp"
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/PromiseHolder.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <functional>
@@ -39,6 +53,86 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
  */
 namespace margelo::nitro::nitrospeech::bridge::swift {
 
+  // pragma MARK: std::shared_ptr<HybridRecognizerSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridRecognizerSpec>`.
+   */
+  using std__shared_ptr_HybridRecognizerSpec_ = std::shared_ptr<HybridRecognizerSpec>;
+  std::shared_ptr<HybridRecognizerSpec> create_std__shared_ptr_HybridRecognizerSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridRecognizerSpec_(std__shared_ptr_HybridRecognizerSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridRecognizerSpec>
+  using std__weak_ptr_HybridRecognizerSpec_ = std::weak_ptr<HybridRecognizerSpec>;
+  inline std__weak_ptr_HybridRecognizerSpec_ weakify_std__shared_ptr_HybridRecognizerSpec_(const std::shared_ptr<HybridRecognizerSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::shared_ptr<HybridNitroSpeechSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridNitroSpeechSpec>`.
+   */
+  using std__shared_ptr_HybridNitroSpeechSpec_ = std::shared_ptr<HybridNitroSpeechSpec>;
+  std::shared_ptr<HybridNitroSpeechSpec> create_std__shared_ptr_HybridNitroSpeechSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridNitroSpeechSpec_(std__shared_ptr_HybridNitroSpeechSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridNitroSpeechSpec>
+  using std__weak_ptr_HybridNitroSpeechSpec_ = std::weak_ptr<HybridNitroSpeechSpec>;
+  inline std__weak_ptr_HybridNitroSpeechSpec_ weakify_std__shared_ptr_HybridNitroSpeechSpec_(const std::shared_ptr<HybridNitroSpeechSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: std::shared_ptr<Promise<void>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<void>>`.
+   */
+  using std__shared_ptr_Promise_void__ = std::shared_ptr<Promise<void>>;
+  inline std::shared_ptr<Promise<void>> create_std__shared_ptr_Promise_void__() noexcept {
+    return Promise<void>::create();
+  }
+  inline PromiseHolder<void> wrap_std__shared_ptr_Promise_void__(std::shared_ptr<Promise<void>> promise) noexcept {
+    return PromiseHolder<void>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void()>
+  /**
+   * Specialized version of `std::function<void()>`.
+   */
+  using Func_void = std::function<void()>;
+  /**
+   * Wrapper class for a `std::function<void()>`, this can be used from Swift.
+   */
+  class Func_void_Wrapper final {
+  public:
+    explicit Func_void_Wrapper(std::function<void()>&& func): _function(std::make_unique<std::function<void()>>(std::move(func))) {}
+    inline void call() const noexcept {
+      _function->operator()();
+    }
+  private:
+    std::unique_ptr<std::function<void()>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_Wrapper wrap_Func_void(Func_void value) noexcept {
+    return Func_void_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  /**
+   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
+   */
+  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__exception_ptr_Wrapper final {
+  public:
+    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
+    inline void call(std::exception_ptr error) const noexcept {
+      _function->operator()(error);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
+    return Func_void_std__exception_ptr_Wrapper(std::move(value));
+  }
+  
   // pragma MARK: std::optional<std::string>
   /**
    * Specialized version of `std::optional<std::string>`.
@@ -51,36 +145,6 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.has_value();
   }
   inline std::string get_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<double>
-  /**
-   * Specialized version of `std::optional<double>`.
-   */
-  using std__optional_double_ = std::optional<double>;
-  inline std::optional<double> create_std__optional_double_(const double& value) noexcept {
-    return std::optional<double>(value);
-  }
-  inline bool has_value_std__optional_double_(const std::optional<double>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline double get_std__optional_double_(const std::optional<double>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<bool>
-  /**
-   * Specialized version of `std::optional<bool>`.
-   */
-  using std__optional_bool_ = std::optional<bool>;
-  inline std::optional<bool> create_std__optional_bool_(const bool& value) noexcept {
-    return std::optional<bool>(value);
-  }
-  inline bool has_value_std__optional_bool_(const std::optional<bool>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline bool get_std__optional_bool_(const std::optional<bool>& optional) noexcept {
     return optional.value();
   }
   
@@ -110,6 +174,36 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.value();
   }
   
+  // pragma MARK: std::optional<bool>
+  /**
+   * Specialized version of `std::optional<bool>`.
+   */
+  using std__optional_bool_ = std::optional<bool>;
+  inline std::optional<bool> create_std__optional_bool_(const bool& value) noexcept {
+    return std::optional<bool>(value);
+  }
+  inline bool has_value_std__optional_bool_(const std::optional<bool>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline bool get_std__optional_bool_(const std::optional<bool>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<double>
+  /**
+   * Specialized version of `std::optional<double>`.
+   */
+  using std__optional_double_ = std::optional<double>;
+  inline std::optional<double> create_std__optional_double_(const double& value) noexcept {
+    return std::optional<double>(value);
+  }
+  inline bool has_value_std__optional_double_(const std::optional<double>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline double get_std__optional_double_(const std::optional<double>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::optional<HapticFeedbackStyle>
   /**
    * Specialized version of `std::optional<HapticFeedbackStyle>`.
@@ -125,26 +219,49 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.value();
   }
   
-  // pragma MARK: std::function<void()>
+  // pragma MARK: std::optional<IosPreset>
   /**
-   * Specialized version of `std::function<void()>`.
+   * Specialized version of `std::optional<IosPreset>`.
    */
-  using Func_void = std::function<void()>;
+  using std__optional_IosPreset_ = std::optional<IosPreset>;
+  inline std::optional<IosPreset> create_std__optional_IosPreset_(const IosPreset& value) noexcept {
+    return std::optional<IosPreset>(value);
+  }
+  inline bool has_value_std__optional_IosPreset_(const std::optional<IosPreset>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline IosPreset get_std__optional_IosPreset_(const std::optional<IosPreset>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<SpeechRecognitionConfig>
   /**
-   * Wrapper class for a `std::function<void()>`, this can be used from Swift.
+   * Specialized version of `std::optional<SpeechRecognitionConfig>`.
    */
-  class Func_void_Wrapper final {
-  public:
-    explicit Func_void_Wrapper(std::function<void()>&& func): _function(std::make_unique<std::function<void()>>(std::move(func))) {}
-    inline void call() const noexcept {
-      _function->operator()();
-    }
-  private:
-    std::unique_ptr<std::function<void()>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_Wrapper wrap_Func_void(Func_void value) noexcept {
-    return Func_void_Wrapper(std::move(value));
+  using std__optional_SpeechRecognitionConfig_ = std::optional<SpeechRecognitionConfig>;
+  inline std::optional<SpeechRecognitionConfig> create_std__optional_SpeechRecognitionConfig_(const SpeechRecognitionConfig& value) noexcept {
+    return std::optional<SpeechRecognitionConfig>(value);
+  }
+  inline bool has_value_std__optional_SpeechRecognitionConfig_(const std::optional<SpeechRecognitionConfig>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline SpeechRecognitionConfig get_std__optional_SpeechRecognitionConfig_(const std::optional<SpeechRecognitionConfig>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MutableSpeechRecognitionConfig>
+  /**
+   * Specialized version of `std::optional<MutableSpeechRecognitionConfig>`.
+   */
+  using std__optional_MutableSpeechRecognitionConfig_ = std::optional<MutableSpeechRecognitionConfig>;
+  inline std::optional<MutableSpeechRecognitionConfig> create_std__optional_MutableSpeechRecognitionConfig_(const MutableSpeechRecognitionConfig& value) noexcept {
+    return std::optional<MutableSpeechRecognitionConfig>(value);
+  }
+  inline bool has_value_std__optional_MutableSpeechRecognitionConfig_(const std::optional<MutableSpeechRecognitionConfig>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MutableSpeechRecognitionConfig get_std__optional_MutableSpeechRecognitionConfig_(const std::optional<MutableSpeechRecognitionConfig>& optional) noexcept {
+    return optional.value();
   }
   
   // pragma MARK: std::optional<std::function<void()>>
@@ -273,32 +390,51 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.value();
   }
   
-  // pragma MARK: std::optional<std::function<void(double /* normVolume */)>>
+  // pragma MARK: std::function<void(const VolumeChangeEvent& /* event */)>
   /**
-   * Specialized version of `std::optional<std::function<void(double / * normVolume * /)>>`.
+   * Specialized version of `std::function<void(const VolumeChangeEvent&)>`.
    */
-  using std__optional_std__function_void_double____normVolume______ = std::optional<std::function<void(double /* normVolume */)>>;
-  inline std::optional<std::function<void(double /* normVolume */)>> create_std__optional_std__function_void_double____normVolume______(const std::function<void(double /* normVolume */)>& value) noexcept {
-    return std::optional<std::function<void(double /* normVolume */)>>(value);
+  using Func_void_VolumeChangeEvent = std::function<void(const VolumeChangeEvent& /* event */)>;
+  /**
+   * Wrapper class for a `std::function<void(const VolumeChangeEvent& / * event * /)>`, this can be used from Swift.
+   */
+  class Func_void_VolumeChangeEvent_Wrapper final {
+  public:
+    explicit Func_void_VolumeChangeEvent_Wrapper(std::function<void(const VolumeChangeEvent& /* event */)>&& func): _function(std::make_unique<std::function<void(const VolumeChangeEvent& /* event */)>>(std::move(func))) {}
+    inline void call(VolumeChangeEvent event) const noexcept {
+      _function->operator()(event);
+    }
+  private:
+    std::unique_ptr<std::function<void(const VolumeChangeEvent& /* event */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_VolumeChangeEvent create_Func_void_VolumeChangeEvent(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_VolumeChangeEvent_Wrapper wrap_Func_void_VolumeChangeEvent(Func_void_VolumeChangeEvent value) noexcept {
+    return Func_void_VolumeChangeEvent_Wrapper(std::move(value));
   }
-  inline bool has_value_std__optional_std__function_void_double____normVolume______(const std::optional<std::function<void(double /* normVolume */)>>& optional) noexcept {
+  
+  // pragma MARK: std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>
+  /**
+   * Specialized version of `std::optional<std::function<void(const VolumeChangeEvent& / * event * /)>>`.
+   */
+  using std__optional_std__function_void_const_VolumeChangeEvent_____event______ = std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>;
+  inline std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> create_std__optional_std__function_void_const_VolumeChangeEvent_____event______(const std::function<void(const VolumeChangeEvent& /* event */)>& value) noexcept {
+    return std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>(value);
+  }
+  inline bool has_value_std__optional_std__function_void_const_VolumeChangeEvent_____event______(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& optional) noexcept {
     return optional.has_value();
   }
-  inline std::function<void(double /* normVolume */)> get_std__optional_std__function_void_double____normVolume______(const std::optional<std::function<void(double /* normVolume */)>>& optional) noexcept {
+  inline std::function<void(const VolumeChangeEvent& /* event */)> get_std__optional_std__function_void_const_VolumeChangeEvent_____event______(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& optional) noexcept {
     return optional.value();
   }
   
-  // pragma MARK: std::shared_ptr<HybridRecognizerSpec>
-  /**
-   * Specialized version of `std::shared_ptr<HybridRecognizerSpec>`.
-   */
-  using std__shared_ptr_HybridRecognizerSpec_ = std::shared_ptr<HybridRecognizerSpec>;
-  std::shared_ptr<HybridRecognizerSpec> create_std__shared_ptr_HybridRecognizerSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridRecognizerSpec_(std__shared_ptr_HybridRecognizerSpec_ cppType);
-  
-  // pragma MARK: std::weak_ptr<HybridRecognizerSpec>
-  using std__weak_ptr_HybridRecognizerSpec_ = std::weak_ptr<HybridRecognizerSpec>;
-  inline std__weak_ptr_HybridRecognizerSpec_ weakify_std__shared_ptr_HybridRecognizerSpec_(const std::shared_ptr<HybridRecognizerSpec>& strong) noexcept { return strong; }
+  // pragma MARK: Result<std::shared_ptr<Promise<void>>>
+  using Result_std__shared_ptr_Promise_void___ = Result<std::shared_ptr<Promise<void>>>;
+  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::shared_ptr<Promise<void>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<void>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<void>>>::withError(error);
+  }
   
   // pragma MARK: Result<void>
   using Result_void_ = Result<void>;
@@ -318,16 +454,13 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return Result<bool>::withError(error);
   }
   
-  // pragma MARK: std::shared_ptr<HybridNitroSpeechSpec>
-  /**
-   * Specialized version of `std::shared_ptr<HybridNitroSpeechSpec>`.
-   */
-  using std__shared_ptr_HybridNitroSpeechSpec_ = std::shared_ptr<HybridNitroSpeechSpec>;
-  std::shared_ptr<HybridNitroSpeechSpec> create_std__shared_ptr_HybridNitroSpeechSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridNitroSpeechSpec_(std__shared_ptr_HybridNitroSpeechSpec_ cppType);
-  
-  // pragma MARK: std::weak_ptr<HybridNitroSpeechSpec>
-  using std__weak_ptr_HybridNitroSpeechSpec_ = std::weak_ptr<HybridNitroSpeechSpec>;
-  inline std__weak_ptr_HybridNitroSpeechSpec_ weakify_std__shared_ptr_HybridNitroSpeechSpec_(const std::shared_ptr<HybridNitroSpeechSpec>& strong) noexcept { return strong; }
+  // pragma MARK: Result<std::vector<std::string>>
+  using Result_std__vector_std__string__ = Result<std::vector<std::string>>;
+  inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::vector<std::string>& value) noexcept {
+    return Result<std::vector<std::string>>::withValue(value);
+  }
+  inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::exception_ptr& error) noexcept {
+    return Result<std::vector<std::string>>::withError(error);
+  }
 
 } // namespace margelo::nitro::nitrospeech::bridge::swift

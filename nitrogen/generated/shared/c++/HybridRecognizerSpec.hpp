@@ -13,14 +13,21 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
-// Forward declaration of `SpeechToTextParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
+// Forward declaration of `VolumeChangeEvent` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
+// Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
+// Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 
 #include <functional>
 #include <optional>
 #include <string>
 #include <vector>
-#include "SpeechToTextParams.hpp"
+#include "VolumeChangeEvent.hpp"
+#include <NitroModules/Promise.hpp>
+#include "SpeechRecognitionConfig.hpp"
+#include "MutableSpeechRecognitionConfig.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -61,16 +68,19 @@ namespace margelo::nitro::nitrospeech {
       virtual void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) = 0;
       virtual std::optional<std::function<void()>> getOnPermissionDenied() = 0;
       virtual void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) = 0;
-      virtual std::optional<std::function<void(double /* normVolume */)>> getOnVolumeChange() = 0;
-      virtual void setOnVolumeChange(const std::optional<std::function<void(double /* normVolume */)>>& onVolumeChange) = 0;
+      virtual std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> getOnVolumeChange() = 0;
+      virtual void setOnVolumeChange(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& onVolumeChange) = 0;
 
     public:
       // Methods
-      virtual void startListening(const SpeechToTextParams& params) = 0;
+      virtual std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams) = 0;
+      virtual void startListening(const std::optional<SpeechRecognitionConfig>& params) = 0;
       virtual void stopListening() = 0;
+      virtual void resetAutoFinishTime() = 0;
       virtual void addAutoFinishTime(std::optional<double> additionalTimeMs) = 0;
-      virtual void updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) = 0;
+      virtual void updateConfig(const std::optional<MutableSpeechRecognitionConfig>& newConfig, std::optional<bool> resetAutoFinishTime) = 0;
       virtual bool getIsActive() = 0;
+      virtual std::vector<std::string> getSupportedLocalesIOS() = 0;
 
     protected:
       // Hybrid Setup

@@ -12,17 +12,27 @@
 // Forward declaration of `HybridRecognizerSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 
-// Forward declaration of `SpeechToTextParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
+// Forward declaration of `VolumeChangeEvent` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
+// Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
+// Forward declaration of `IosPreset` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class IosPreset; }
+// Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 
 #include <functional>
 #include <optional>
 #include <string>
 #include <vector>
-#include "SpeechToTextParams.hpp"
+#include "VolumeChangeEvent.hpp"
+#include <NitroModules/Promise.hpp>
+#include "SpeechRecognitionConfig.hpp"
 #include "HapticFeedbackStyle.hpp"
+#include "IosPreset.hpp"
+#include "MutableSpeechRecognitionConfig.hpp"
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 
@@ -112,18 +122,26 @@ namespace margelo::nitro::nitrospeech {
     inline void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) noexcept override {
       _swiftPart.setOnPermissionDenied(onPermissionDenied);
     }
-    inline std::optional<std::function<void(double /* normVolume */)>> getOnVolumeChange() noexcept override {
+    inline std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> getOnVolumeChange() noexcept override {
       auto __result = _swiftPart.getOnVolumeChange();
       return __result;
     }
-    inline void setOnVolumeChange(const std::optional<std::function<void(double /* normVolume */)>>& onVolumeChange) noexcept override {
+    inline void setOnVolumeChange(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& onVolumeChange) noexcept override {
       _swiftPart.setOnVolumeChange(onVolumeChange);
     }
 
   public:
     // Methods
-    inline void startListening(const SpeechToTextParams& params) override {
-      auto __result = _swiftPart.startListening(std::forward<decltype(params)>(params));
+    inline std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams) override {
+      auto __result = _swiftPart.prewarm(defaultParams);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline void startListening(const std::optional<SpeechRecognitionConfig>& params) override {
+      auto __result = _swiftPart.startListening(params);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
@@ -134,20 +152,34 @@ namespace margelo::nitro::nitrospeech {
         std::rethrow_exception(__result.error());
       }
     }
+    inline void resetAutoFinishTime() override {
+      auto __result = _swiftPart.resetAutoFinishTime();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
     inline void addAutoFinishTime(std::optional<double> additionalTimeMs) override {
       auto __result = _swiftPart.addAutoFinishTime(additionalTimeMs);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
     }
-    inline void updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) override {
-      auto __result = _swiftPart.updateAutoFinishTime(std::forward<decltype(newTimeMs)>(newTimeMs), withRefresh);
+    inline void updateConfig(const std::optional<MutableSpeechRecognitionConfig>& newConfig, std::optional<bool> resetAutoFinishTime) override {
+      auto __result = _swiftPart.updateConfig(newConfig, resetAutoFinishTime);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
     }
     inline bool getIsActive() override {
       auto __result = _swiftPart.getIsActive();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::vector<std::string> getSupportedLocalesIOS() override {
+      auto __result = _swiftPart.getSupportedLocalesIOS();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

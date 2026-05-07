@@ -7,10 +7,16 @@
 
 #include "JHybridRecognizerSpec.hpp"
 
-// Forward declaration of `SpeechToTextParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
+// Forward declaration of `VolumeChangeEvent` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
+// Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
+// Forward declaration of `IosPreset` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class IosPreset; }
+// Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 
 #include <functional>
 #include <optional>
@@ -21,10 +27,20 @@ namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 #include "JFunc_void_std__vector_std__string_.hpp"
 #include "JFunc_void_double.hpp"
 #include "JFunc_void_std__string.hpp"
-#include "SpeechToTextParams.hpp"
-#include "JSpeechToTextParams.hpp"
+#include "VolumeChangeEvent.hpp"
+#include "JFunc_void_VolumeChangeEvent.hpp"
+#include "JVolumeChangeEvent.hpp"
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
+#include <NitroModules/JUnit.hpp>
+#include "SpeechRecognitionConfig.hpp"
+#include "JSpeechRecognitionConfig.hpp"
 #include "HapticFeedbackStyle.hpp"
 #include "JHapticFeedbackStyle.hpp"
+#include "IosPreset.hpp"
+#include "JIosPreset.hpp"
+#include "MutableSpeechRecognitionConfig.hpp"
+#include "JMutableSpeechRecognitionConfig.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -158,45 +174,78 @@ namespace margelo::nitro::nitrospeech {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void::javaobject> /* onPermissionDenied */)>("setOnPermissionDenied_cxx");
     method(_javaPart, onPermissionDenied.has_value() ? JFunc_void_cxx::fromCpp(onPermissionDenied.value()) : nullptr);
   }
-  std::optional<std::function<void(double /* normVolume */)>> JHybridRecognizerSpec::getOnVolumeChange() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void_double::javaobject>()>("getOnVolumeChange_cxx");
+  std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> JHybridRecognizerSpec::getOnVolumeChange() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void_VolumeChangeEvent::javaobject>()>("getOnVolumeChange_cxx");
     auto __result = method(_javaPart);
-    return __result != nullptr ? std::make_optional([&]() -> std::function<void(double /* normVolume */)> {
-      if (__result->isInstanceOf(JFunc_void_double_cxx::javaClassStatic())) [[likely]] {
-        auto downcast = jni::static_ref_cast<JFunc_void_double_cxx::javaobject>(__result);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const VolumeChangeEvent& /* event */)> {
+      if (__result->isInstanceOf(JFunc_void_VolumeChangeEvent_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_VolumeChangeEvent_cxx::javaobject>(__result);
         return downcast->cthis()->getFunction();
       } else {
         auto __resultRef = jni::make_global(__result);
-        return JNICallable<JFunc_void_double, void(double)>(std::move(__resultRef));
+        return JNICallable<JFunc_void_VolumeChangeEvent, void(VolumeChangeEvent)>(std::move(__resultRef));
       }
     }()) : std::nullopt;
   }
-  void JHybridRecognizerSpec::setOnVolumeChange(const std::optional<std::function<void(double /* normVolume */)>>& onVolumeChange) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_double::javaobject> /* onVolumeChange */)>("setOnVolumeChange_cxx");
-    method(_javaPart, onVolumeChange.has_value() ? JFunc_void_double_cxx::fromCpp(onVolumeChange.value()) : nullptr);
+  void JHybridRecognizerSpec::setOnVolumeChange(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& onVolumeChange) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_VolumeChangeEvent::javaobject> /* onVolumeChange */)>("setOnVolumeChange_cxx");
+    method(_javaPart, onVolumeChange.has_value() ? JFunc_void_VolumeChangeEvent_cxx::fromCpp(onVolumeChange.value()) : nullptr);
   }
 
   // Methods
-  void JHybridRecognizerSpec::startListening(const SpeechToTextParams& params) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JSpeechToTextParams> /* params */)>("startListening");
-    method(_javaPart, JSpeechToTextParams::fromCpp(params));
+  std::shared_ptr<Promise<void>> JHybridRecognizerSpec::prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JSpeechRecognitionConfig> /* defaultParams */)>("prewarm");
+    auto __result = method(_javaPart, defaultParams.has_value() ? JSpeechRecognitionConfig::fromCpp(defaultParams.value()) : nullptr);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  void JHybridRecognizerSpec::startListening(const std::optional<SpeechRecognitionConfig>& params) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JSpeechRecognitionConfig> /* params */)>("startListening");
+    method(_javaPart, params.has_value() ? JSpeechRecognitionConfig::fromCpp(params.value()) : nullptr);
   }
   void JHybridRecognizerSpec::stopListening() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("stopListening");
+    method(_javaPart);
+  }
+  void JHybridRecognizerSpec::resetAutoFinishTime() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("resetAutoFinishTime");
     method(_javaPart);
   }
   void JHybridRecognizerSpec::addAutoFinishTime(std::optional<double> additionalTimeMs) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JDouble> /* additionalTimeMs */)>("addAutoFinishTime");
     method(_javaPart, additionalTimeMs.has_value() ? jni::JDouble::valueOf(additionalTimeMs.value()) : nullptr);
   }
-  void JHybridRecognizerSpec::updateAutoFinishTime(double newTimeMs, std::optional<bool> withRefresh) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(double /* newTimeMs */, jni::alias_ref<jni::JBoolean> /* withRefresh */)>("updateAutoFinishTime");
-    method(_javaPart, newTimeMs, withRefresh.has_value() ? jni::JBoolean::valueOf(withRefresh.value()) : nullptr);
+  void JHybridRecognizerSpec::updateConfig(const std::optional<MutableSpeechRecognitionConfig>& newConfig, std::optional<bool> resetAutoFinishTime) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JMutableSpeechRecognitionConfig> /* newConfig */, jni::alias_ref<jni::JBoolean> /* resetAutoFinishTime */)>("updateConfig");
+    method(_javaPart, newConfig.has_value() ? JMutableSpeechRecognitionConfig::fromCpp(newConfig.value()) : nullptr, resetAutoFinishTime.has_value() ? jni::JBoolean::valueOf(resetAutoFinishTime.value()) : nullptr);
   }
   bool JHybridRecognizerSpec::getIsActive() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean()>("getIsActive");
     auto __result = method(_javaPart);
     return static_cast<bool>(__result);
+  }
+  std::vector<std::string> JHybridRecognizerSpec::getSupportedLocalesIOS() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JArrayClass<jni::JString>>()>("getSupportedLocalesIOS");
+    auto __result = method(_javaPart);
+    return [&](auto&& __input) {
+      size_t __size = __input->size();
+      std::vector<std::string> __vector;
+      __vector.reserve(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        auto __element = __input->getElement(__i);
+        __vector.push_back(__element->toStdString());
+      }
+      return __vector;
+    }(__result);
   }
 
 } // namespace margelo::nitro::nitrospeech

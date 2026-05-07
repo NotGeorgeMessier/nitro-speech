@@ -14,14 +14,24 @@ namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 namespace margelo::nitro::nitrospeech { class HybridNitroSpeechSpec; }
 // Forward declaration of `HybridRecognizerSpec` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
-// Forward declaration of `SpeechToTextParams` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct SpeechToTextParams; }
+// Forward declaration of `IosPreset` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class IosPreset; }
+// Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
+// Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
+// Forward declaration of `VolumeChangeEvent` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 
 // Include C++ defined types
 #include "HapticFeedbackStyle.hpp"
 #include "HybridNitroSpeechSpec.hpp"
 #include "HybridRecognizerSpec.hpp"
-#include "SpeechToTextParams.hpp"
+#include "IosPreset.hpp"
+#include "MutableSpeechRecognitionConfig.hpp"
+#include "SpeechRecognitionConfig.hpp"
+#include "VolumeChangeEvent.hpp"
+#include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <functional>

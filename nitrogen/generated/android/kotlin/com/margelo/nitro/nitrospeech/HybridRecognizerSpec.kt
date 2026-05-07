@@ -10,6 +10,7 @@ package com.margelo.nitro.nitrospeech
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -109,13 +110,13 @@ abstract class HybridRecognizerSpec: HybridObject() {
       onPermissionDenied = value?.let { it }
     }
   
-  abstract var onVolumeChange: ((normVolume: Double) -> Unit)?
+  abstract var onVolumeChange: ((event: VolumeChangeEvent) -> Unit)?
   
-  private var onVolumeChange_cxx: Func_void_double?
+  private var onVolumeChange_cxx: Func_void_VolumeChangeEvent?
     @Keep
     @DoNotStrip
     get() {
-      return onVolumeChange?.let { Func_void_double_java(it) }
+      return onVolumeChange?.let { Func_void_VolumeChangeEvent_java(it) }
     }
     @Keep
     @DoNotStrip
@@ -126,7 +127,11 @@ abstract class HybridRecognizerSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun startListening(params: SpeechToTextParams): Unit
+  abstract fun prewarm(defaultParams: SpeechRecognitionConfig?): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun startListening(params: SpeechRecognitionConfig?): Unit
   
   @DoNotStrip
   @Keep
@@ -134,15 +139,23 @@ abstract class HybridRecognizerSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun resetAutoFinishTime(): Unit
+  
+  @DoNotStrip
+  @Keep
   abstract fun addAutoFinishTime(additionalTimeMs: Double?): Unit
   
   @DoNotStrip
   @Keep
-  abstract fun updateAutoFinishTime(newTimeMs: Double, withRefresh: Boolean?): Unit
+  abstract fun updateConfig(newConfig: MutableSpeechRecognitionConfig?, resetAutoFinishTime: Boolean?): Unit
   
   @DoNotStrip
   @Keep
   abstract fun getIsActive(): Boolean
+  
+  @DoNotStrip
+  @Keep
+  abstract fun getSupportedLocalesIOS(): Array<String>
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

@@ -16,14 +16,17 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
   var onAutoFinishProgress: ((_ timeLeftMs: Double) -> Void)? { get set }
   var onError: ((_ message: String) -> Void)? { get set }
   var onPermissionDenied: (() -> Void)? { get set }
-  var onVolumeChange: ((_ normVolume: Double) -> Void)? { get set }
+  var onVolumeChange: ((_ event: VolumeChangeEvent) -> Void)? { get set }
 
   // Methods
-  func startListening(params: SpeechToTextParams) throws -> Void
+  func prewarm(defaultParams: SpeechRecognitionConfig?) throws -> Promise<Void>
+  func startListening(params: SpeechRecognitionConfig?) throws -> Void
   func stopListening() throws -> Void
+  func resetAutoFinishTime() throws -> Void
   func addAutoFinishTime(additionalTimeMs: Double?) throws -> Void
-  func updateAutoFinishTime(newTimeMs: Double, withRefresh: Bool?) throws -> Void
+  func updateConfig(newConfig: MutableSpeechRecognitionConfig?, resetAutoFinishTime: Bool?) throws -> Void
   func getIsActive() throws -> Bool
+  func getSupportedLocalesIOS() throws -> [String]
 }
 
 public extension HybridRecognizerSpec_protocol {
