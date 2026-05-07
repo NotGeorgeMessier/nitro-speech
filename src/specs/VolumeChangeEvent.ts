@@ -1,5 +1,5 @@
 /**
- * Contain data about each audio buffer volume.
+ * Contains data about each audio buffer volume.
  *
  * Emits with high frequency.
  */
