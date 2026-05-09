@@ -12,9 +12,24 @@ export interface Recognizer extends HybridObject<{
   /**
    * Prepare the speech recognition engine and the model for the given parameters.
    *
-   * Omit the {@linkcode Promise} result if want to run synchronously.
+   * @notes
+   * - Not required, {@linkcode startListening} will prewarm automatically.
+   *
+   * - Omit the {@linkcode Promise} result if you want to run synchronously.
    * {@linkcode startListening} will start and resolve it automatically.
-   * Only `await` if run beforehand and want to react on the success
+   *
+   * - Only `await` if run beforehand and you want to react to the success
+   *
+   * @worklet **Do not** use `await` on Worklet or UI runtimes. It will not work properly.
+   *
+   * You can run it synchronously:
+   * ```typescript
+   *  scheduleOnRuntime(workletRuntime, () => {
+   *    RecognizerRef.prewarm({
+   *      // your config to prepare
+   *    });
+   *  });
+   * ```
    */
   prewarm(defaultParams?: SpeechRecognitionConfig): Promise<void>
 
@@ -30,9 +45,9 @@ export interface Recognizer extends HybridObject<{
   startListening(params?: SpeechRecognitionConfig): void
 
   /**
-   * Stops the speech recognition. if not started, does nothing.
+   * Stops the speech recognition. If not started, does nothing.
    *
-   * Not a sync operation for android, delay about 250ms to polish the result.
+   * Not a sync operation for Android, delay about 250ms to polish the result.
    *
    * Use {@linkcode onRecordingStopped} to handle the stop event.
    */
@@ -94,8 +109,6 @@ export interface Recognizer extends HybridObject<{
    * Fires every {@linkcode SpeechRecognitionConfig.autoFinishProgressIntervalMs} or 1000ms
    *
    * Time left in milliseconds until the timer stops.
-   *
-   * @note not implemented for Android yet.
    */
   onAutoFinishProgress?: (timeLeftMs: number) => void
   /**

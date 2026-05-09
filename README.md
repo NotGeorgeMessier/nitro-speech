@@ -155,7 +155,8 @@ Because of that, treat it as a **single session owner** setup hook: use it once 
 import { useRecognizer } from '@gmessier/nitro-speech';
 
 function MyComponent() {
-  const { 
+  const {
+    prewarm,
     startListening, 
     stopListening, 
     resetAutoFinishTime, 
@@ -261,6 +262,7 @@ If you need to call recognizer methods from other components without prop drilli
 ```typescript
 import { RecognizerRef } from '@gmessier/nitro-speech';
 
+RecognizerRef.prewarm({ locale: 'en-US' });
 RecognizerRef.startListening({ locale: 'en-US' });
 RecognizerRef.addAutoFinishTime(5000);
 RecognizerRef.resetAutoFinishTime();
@@ -360,11 +362,17 @@ function MyComponent() {
 **Warning**: Since it reflects the original hybrid object, its API may change in the future.
 
 ```typescript
-import { SpeechRecognizer, speechRecognizerVolumeChangeHandler } from '@gmessier/nitro-speech';
+import { 
+  SpeechRecognizer, 
+  speechRecognizerVolumeChangeHandler,
+  speechRecognizerActiveStateHandler,
+} from '@gmessier/nitro-speech';
 
 // Set up callbacks
 SpeechRecognizer.onReadyForSpeech = () => {
   console.log('Listening...');
+  // Add speechRecognizerActiveStateHandler to enable useRecognizerIsActive hook manually
+  speechRecognizerActiveStateHandler(true);
 };
 
 SpeechRecognizer.onResult = (textBatches) => {
@@ -373,6 +381,8 @@ SpeechRecognizer.onResult = (textBatches) => {
 
 SpeechRecognizer.onRecordingStopped = () => {
   console.log('Stopped');
+  // Add speechRecognizerActiveStateHandler to enable useRecognizerIsActive hook manually
+  speechRecognizerActiveStateHandler(false);
 };
 
 SpeechRecognizer.onAutoFinishProgress = (timeLeftMs) => {
@@ -389,10 +399,27 @@ SpeechRecognizer.onPermissionDenied = () => {
 
 SpeechRecognizer.onVolumeChange = (volume) => {
   console.log('new volume: ', volume);
+  // Add speechRecognizerVolumeChangeHandler to enable useVoiceInputVolume hook manually
+  speechRecognizerVolumeChangeHandler(volume);
 };
-// OR use speechRecognizerVolumeChangeHandler to enable useVoiceInputVolume hook manually
-SpeechRecognizer.onVolumeChange = speechRecognizerVolumeChangeHandler
 
+// Prepare resources, download assets, confirms locale availability
+SpeechRecognizer.prewarm({
+  locale: 'en-US',
+  // ... your config to prepare
+});
+// OR `await` if you want to react to the success
+await SpeechRecognizer.prewarm({
+  locale: 'en-US',
+  // ... your config to prepare
+});
+// OR from worklet (only sync)
+scheduleOnRuntime(workletRuntime, () => {
+  SpeechRecognizer.prewarm({
+    locale: 'en-US',
+    // ... your config to prepare
+  });
+});
 
 // Start listening
 SpeechRecognizer.startListening({

@@ -8,6 +8,7 @@ import {
   recognizerStartListening,
   recognizerStopListening,
   recognizerGetVoiceInputVolume,
+  recognizerPrewarm,
 } from './methods'
 import type { RecognizerCallbacks, RecognizerMethods } from './types'
 import { SpeechRecognizer } from './SpeechRecognizer'
@@ -75,6 +76,7 @@ export const useRecognizer = (
   }, [...destroyDeps])
 
   return {
+    prewarm: recognizerPrewarm,
     startListening: recognizerStartListening,
     stopListening: recognizerStopListening,
     resetAutoFinishTime: recognizerResetAutoFinishTime,

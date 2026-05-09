@@ -15,6 +15,7 @@ type RecognizerCallbacks = Pick<
 
 type RecognizerMethods = Pick<
   RecognizerSpec,
+  | 'prewarm'
   | 'startListening'
   | 'stopListening'
   | 'resetAutoFinishTime'
