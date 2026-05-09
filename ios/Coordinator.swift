@@ -39,6 +39,7 @@ final class Coordinator {
         }
         
         if params?.iosPreset == IosPreset.shortform
+        || params?.iosPreset == IosPreset.speed
         || params?.iosAddPunctuation == false
         || params?.iosAtypicalSpeech == true {
             // DictationTranscriber priority

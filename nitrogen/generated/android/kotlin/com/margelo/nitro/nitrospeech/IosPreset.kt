@@ -17,7 +17,8 @@ import com.facebook.proguard.annotations.DoNotStrip
 @Keep
 enum class IosPreset(@DoNotStrip @Keep val value: Int) {
   SHORTFORM(0),
-  GENERAL(1);
+  GENERAL(1),
+  SPEED(2);
 
   companion object
 }

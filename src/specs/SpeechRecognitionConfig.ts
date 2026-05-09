@@ -23,7 +23,7 @@ interface ParamsAndroid {
   androidDisableBatchHandling?: boolean
 }
 
-type IosPreset = 'shortform' | 'general'
+type IosPreset = 'shortform' | 'general' | 'speed'
 
 interface ParamsIOS {
   /**
@@ -35,9 +35,11 @@ interface ParamsIOS {
    */
   iosAddPunctuation?: boolean
   /**
-   * `"shortForm"` - for a short phrase or sentence, also disables punctuation
+   * `"shortForm"` - For a short phrase or sentence, also disables punctuation
    *
-   * `"general"` - for longer speeches, more accurate but delayed response
+   * `"speed"` - Gives priority to speed over accuracy
+   *
+   * `"general"` - For longer speeches, more accurate but delayed response
    *
    * @since iOS 26.0+
    *

@@ -44,7 +44,8 @@ enum Utils {
         }
         let preset = switch params.iosPreset {
             case nil: "n"
-            case .shortform: "s"
+            // Both presets prioritize Dictation
+            case .shortform, .speed: "s"
             case .general: "g"
         }
         let atypicalSpeech = switch params.iosAtypicalSpeech {

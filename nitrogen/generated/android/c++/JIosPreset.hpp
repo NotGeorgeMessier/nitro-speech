@@ -48,6 +48,9 @@ namespace margelo::nitro::nitrospeech {
         case IosPreset::GENERAL:
           static const auto fieldGENERAL = clazz->getStaticField<JIosPreset>("GENERAL");
           return clazz->getStaticFieldValue(fieldGENERAL);
+        case IosPreset::SPEED:
+          static const auto fieldSPEED = clazz->getStaticField<JIosPreset>("SPEED");
+          return clazz->getStaticFieldValue(fieldSPEED);
         default:
           std::string stringValue = std::to_string(static_cast<int>(value));
           throw std::invalid_argument("Invalid enum value (" + stringValue + "!");
