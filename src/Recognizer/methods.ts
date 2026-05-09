@@ -1,7 +1,15 @@
 import { SpeechRecognizer } from './SpeechRecognizer'
-import type { SpeechRecognitionConfig } from './types'
+import type {
+  MutableSpeechRecognitionConfig,
+  SpeechRecognitionConfig,
+} from './types'
 
-export const recognizerStartListening = (params: SpeechRecognitionConfig) => {
+export const recognizerPrewarm = (params?: SpeechRecognitionConfig) => {
+  'worklet'
+  return SpeechRecognizer.prewarm(params)
+}
+
+export const recognizerStartListening = (params?: SpeechRecognitionConfig) => {
   'worklet'
   SpeechRecognizer.startListening(params)
 }
@@ -22,7 +30,7 @@ export const recognizerAddAutoFinishTime = (additionalTimeMs?: number) => {
 }
 
 export const recognizerUpdateConfig = (
-  newConfig: SpeechRecognitionConfig,
+  newConfig?: MutableSpeechRecognitionConfig,
   resetAutoFinishTime?: boolean
 ) => {
   'worklet'

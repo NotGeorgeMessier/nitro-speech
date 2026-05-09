@@ -1,4 +1,3 @@
-export * from './Recognizer/types'
 export { useRecognizer } from './Recognizer/useRecognizer'
 export {
   useVoiceInputVolume,
@@ -11,3 +10,11 @@ export {
 export { SpeechRecognizer } from './Recognizer/SpeechRecognizer'
 export { RecognizerRef } from './Recognizer/RecognizerRef'
 export { NitroSpeech } from './NitroSpeech'
+export {
+  type RecognizerSpec,
+  type SpeechRecognitionConfig,
+  type MutableSpeechRecognitionConfig,
+  type VolumeChangeEvent,
+  type RecognizerCallbacks,
+  type RecognizerMethods,
+} from './Recognizer/types'
