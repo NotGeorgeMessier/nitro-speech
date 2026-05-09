@@ -357,6 +357,8 @@ function MyComponent() {
 
 `SpeechRecognizer` is the hybrid object. It gives direct access to callbacks and control methods, but it is unsafe to orchestrate the full session directly from it.
 
+**Warning**: Since it reflects the original hybrid object, its API may change in the future.
+
 ```typescript
 import { SpeechRecognizer, speechRecognizerVolumeChangeHandler } from '@gmessier/nitro-speech';
 

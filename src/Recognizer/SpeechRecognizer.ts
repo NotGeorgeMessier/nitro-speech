@@ -5,6 +5,7 @@ import { NitroSpeech } from '../NitroSpeech'
  *
  * Direct access to the all Speech Recognizer methods and callbacks.
  *
- * @note unsafe, might lead to race conditions
+ * @note Unsafe, might lead to race conditions
+ * @warning Since it reflects the original hybrid object, its API may change in the future.
  */
 export const SpeechRecognizer = NitroSpeech.recognizer
