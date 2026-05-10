@@ -20,7 +20,7 @@ final class AudioLevelTracker {
 
     var currentSample: AudioLevelSample?
     
-    private let lg = Lg(prefix: "RecognizerEngine")
+    private let lg = Lg(prefix: "RecognizerEngine", disable: true)
 
     func reset() {
         smoothedLevel = 0

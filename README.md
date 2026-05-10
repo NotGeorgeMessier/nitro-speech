@@ -34,7 +34,7 @@
 - 👆 Configurable Haptic Feedback on start and finish
 - 🎚️ Speech-quality configurations:
   - Result is grouped by speech segments into Batches.
-  - Param `iosPreset` - `shortForm` or `general` enables best transcriber for your situation
+  - Param `iosPreset` - enables best transcriber for your situation
   - Param `disableRepeatingFilter` - filters out consecutive duplicate words.
   - Param `androidDisableBatchHandling` - disables empty partial results
   - Many more, see `SpeechRecognitionConfig`
@@ -138,7 +138,7 @@ Both permissions are required for speech recognition to work on iOS.
 | **Language model selection** | Choose between web search vs free-form models | Auto | ✅ |
 | **Batch handling** | Filters out empty or repeated results | Auto | ✅ |
 | **Formatting quality** | Prefer quality vs speed in formatting | Auto | ✅ |
-| **Transcription preset** | `iosPreset` adapts for short phrases (`shortForm`) or `general` conversation | ✅ | Auto |
+| **Transcription preset** | `iosPreset` adapts for different scenarios | ✅ | Auto |
 | **Automatic punctuation** | Adds punctuation to transcription (iOS 16+) | ✅ | Auto |
 | **Atypical speech hint** | Hint iOS that speech may include accent, lisp, or other confounding traits | ✅ | Auto |
 | **getSupportedLocalesIOS** | Supported locales for iOS (No available API for Android) | ✅ | X |
@@ -235,7 +235,7 @@ function MyComponent() {
 }
 ```
 
-On iOS 26+, the recognizer prefers the newer `SpeechTranscriber` path for general cases. Setting `iosPreset: 'shortForm'`, `iosAddPunctuation: false`, or `iosAtypicalSpeech: true` switches priority to `DictationTranscriber` that is better suited for short utterances or non-standard speech patterns.
+On iOS 26+, the recognizer prefers the newer `SpeechTranscriber` path for general cases. Setting `iosPreset: 'shortForm' OR 'speed'`, `iosAddPunctuation: false`, or `iosAtypicalSpeech: true` switches priority to `DictationTranscriber` that is better suited for short utterances or non-standard speech patterns.
 
 ### With React Navigation (important)
 

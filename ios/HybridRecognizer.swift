@@ -7,10 +7,13 @@ class HybridRecognizer: HybridRecognizerSpec  {
     var onReadyForSpeech: (() -> Void)?
     var onRecordingStopped: (() -> Void)?
     var onResult: (([String]) -> Void)?
+    var onResultFallback: (([String]) -> Void)?
     var onAutoFinishProgress: ((Double) -> Void)?
+    var onAutoFinishProgressFallback: ((Double) -> Void)?
     var onError: ((String) -> Void)?
     var onPermissionDenied: (() -> Void)?
     var onVolumeChange: ((VolumeChangeEvent) -> Void)?
+    var onVolumeChangeFallback: ((VolumeChangeEvent) -> Void)?
     
     private let coordinator = Coordinator()
     private var paramsHash: String?
@@ -154,12 +157,29 @@ extension HybridRecognizer: RecognizerDelegate {
     
     func result(batches: [String]) {
         self.lg.log("[onResult] \(batches)")
-        self.onResult?(batches)
+        if onResult != nil {
+            onResultFallback = onResult
+        }
+        
+        if (onResultFallback == nil) {
+            self.lg.log("onResultFallback -> nil")
+        }
+        
+        onResultFallback?(batches)
     }
     
     func autoFinishProgress(timeLeftMs: Double) {
         self.lg.log("[onAutoFinishProgress] \(timeLeftMs)ms")
-        self.onAutoFinishProgress?(timeLeftMs)
+        
+        if onAutoFinishProgress != nil {
+            onAutoFinishProgressFallback = onAutoFinishProgress
+        }
+        
+        if (onAutoFinishProgressFallback == nil) {
+            self.lg.log("onAutoFinishProgressFallback -> nil")
+        }
+        
+        onAutoFinishProgressFallback?(timeLeftMs)
     }
     
     func error(message: String) {
@@ -174,7 +194,15 @@ extension HybridRecognizer: RecognizerDelegate {
     
     func volumeChange(event: VolumeChangeEvent) {
         // self.lg.log("[onVolumeChange] \(event.rawVolume)")
-        self.onVolumeChange?(event)
+        if onVolumeChange != nil {
+            onVolumeChangeFallback = onVolumeChange
+        }
+        
+        if (onVolumeChangeFallback == nil) {
+            self.lg.log("onVolumeChangeFallback -> nil")
+        }
+        
+        onVolumeChangeFallback?(event)
     }
     
     func reselectEngine(forPrewarm: Bool) {

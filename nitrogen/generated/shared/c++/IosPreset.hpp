@@ -31,6 +31,7 @@ namespace margelo::nitro::nitrospeech {
   enum class IosPreset {
     SHORTFORM      SWIFT_NAME(shortform) = 0,
     GENERAL      SWIFT_NAME(general) = 1,
+    SPEED      SWIFT_NAME(speed) = 2,
   } CLOSED_ENUM;
 
 } // namespace margelo::nitro::nitrospeech
@@ -45,6 +46,7 @@ namespace margelo::nitro {
       switch (hashString(unionValue.c_str(), unionValue.size())) {
         case hashString("shortform"): return margelo::nitro::nitrospeech::IosPreset::SHORTFORM;
         case hashString("general"): return margelo::nitro::nitrospeech::IosPreset::GENERAL;
+        case hashString("speed"): return margelo::nitro::nitrospeech::IosPreset::SPEED;
         default: [[unlikely]]
           throw std::invalid_argument("Cannot convert \"" + unionValue + "\" to enum IosPreset - invalid value!");
       }
@@ -53,6 +55,7 @@ namespace margelo::nitro {
       switch (arg) {
         case margelo::nitro::nitrospeech::IosPreset::SHORTFORM: return JSIConverter<std::string>::toJSI(runtime, "shortform");
         case margelo::nitro::nitrospeech::IosPreset::GENERAL: return JSIConverter<std::string>::toJSI(runtime, "general");
+        case margelo::nitro::nitrospeech::IosPreset::SPEED: return JSIConverter<std::string>::toJSI(runtime, "speed");
         default: [[unlikely]]
           throw std::invalid_argument("Cannot convert IosPreset to JS - invalid value: "
                                     + std::to_string(static_cast<int>(arg)) + "!");
@@ -66,6 +69,7 @@ namespace margelo::nitro {
       switch (hashString(unionValue.c_str(), unionValue.size())) {
         case hashString("shortform"):
         case hashString("general"):
+        case hashString("speed"):
           return true;
         default:
           return false;

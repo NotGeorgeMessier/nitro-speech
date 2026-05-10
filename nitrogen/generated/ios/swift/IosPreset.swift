@@ -21,6 +21,8 @@ public extension IosPreset {
         self = .shortform
       case "general":
         self = .general
+      case "speed":
+        self = .speed
       default:
         return nil
     }
@@ -35,6 +37,8 @@ public extension IosPreset {
         return "shortform"
       case .general:
         return "general"
+      case .speed:
+        return "speed"
     }
   }
 }
