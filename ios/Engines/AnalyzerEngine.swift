@@ -46,17 +46,21 @@ final class AnalyzerEngine: RecognizerEngine {
         }
     }
     
-    override func prewarm(for type: FailureType) async {
+    override func prewarm(for type: PrewarmType) async {
         await super.prewarm(for: type)
         do {
             // Create transcriber and install assets
             try await transcriber.create(config: self.recognizerDelegate?.config)
         }
         catch {
+            let failureType: FailureType = switch type {
+                case .prewarm: .prewarm
+                case .start: .start
+            }
             self.reportFailure(
                 from: "prewarm.assets",
                 message: "Failed to create transcriber",
-                type: type
+                type: failureType
             )
         }
     }
@@ -93,7 +97,7 @@ final class AnalyzerEngine: RecognizerEngine {
                     self?.outputContinuation?.yield(buffer)
                 }
             )
-            guard let hardwareFormat else { return }
+            guard let hardwareFormat = recognizerDelegate?.hardwareFormat else { return }
             let stream = AsyncStream(
                 AVAudioPCMBuffer.self,
                 bufferingPolicy: .unbounded
@@ -225,14 +229,14 @@ final class AnalyzerEngine: RecognizerEngine {
         if !disableRepeatingFilter {
             newBatch = Utils.repeatingFilter(newBatch)
         }
-        Log.log("[1] lastBatch: \(self.resultBatches.last ?? "") | newBatch: \(newBatch)")
+//        Log.log("[1] lastBatch: \(self.resultBatches.last ?? "") | newBatch: \(newBatch)")
         if self.resultBatches.isEmpty {
             self.resultBatches.append(newBatch)
         } else if CMTimeGetSeconds(rangeStart) == self.lastBatchStartTime || isFinal {
-            Log.log("[2] replace, isFinal: \(isFinal)")
+//            Log.log("[2] replace, isFinal: \(isFinal)")
             self.resultBatches[self.resultBatches.count - 1] = newBatch
         } else {
-            Log.log("[2] add new batch")
+//            Log.log("[2] add new batch")
             self.resultBatches.append(newBatch)
         }
         self.lastBatchStartTime = CMTimeGetSeconds(rangeStart)

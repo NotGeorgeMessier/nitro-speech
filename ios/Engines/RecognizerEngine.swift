@@ -12,10 +12,14 @@ enum FailureType {
     case onSession
 }
 
+enum PrewarmType {
+    case start
+    case prewarm
+}
+
 class RecognizerEngine {
     var isActive = false
     var isStopping = false
-    var hardwareFormat: AVAudioFormat?
     weak var recognizerDelegate: RecognizerDelegate?
     
     private let audioLevelTracker = AudioLevelTracker()
@@ -33,8 +37,8 @@ class RecognizerEngine {
     
     // MARK: - Recognizer Methods
     
-    func prewarm(for: FailureType) async {
-        self.prepareAudioEngine()
+    func prewarm(for type: PrewarmType) async {
+        audioSessionAudioEngine(for: type)
         // for SpeechTranscriber: .isAvailable and async assets
         // for Dictation: only async assets
         // for legacy SF: only sync .isAvailable
@@ -66,15 +70,13 @@ class RecognizerEngine {
         lg.log("[startSession.initAutoStop]")
         startAppStateObserver()
         lg.log("[startSession.startAppStateObserver]")
-        startAudioSession()
-        lg.log("[startSession.startAudioSession]")
     }
     
     func startAudioEngine(
         onBuffer: @escaping (AVAudioPCMBuffer) -> Void
     ) {
         lg.log("[startAudioEngine]")
-        guard let audioEngine, let hardwareFormat else { return }
+        guard let audioEngine, let hardwareFormat = self.recognizerDelegate?.hardwareFormat else { return }
         audioEngine.inputNode.installTap(
             onBus: 0,
             bufferSize: 1024,
@@ -226,28 +228,6 @@ class RecognizerEngine {
         }
     }
     
-    // MARK: - AudioEngine heavy prepare
-    
-    private func prepareAudioEngine() {
-        lg.log("[prewarm.start]")
-        audioEngine = AVAudioEngine()
-        guard let audioEngine else {
-            self.reportFailure(
-                from: "Audio Engine",
-                message: "Audio Engine failed to initiate",
-                // RecognizerEngine-agnostic Error
-                type: .system
-            )
-            return
-        }
-        lg.log("[prewarm.audioEngine]")
-        // heavy first hardwareFormat retrieval
-        if hardwareFormat == nil {
-            hardwareFormat = audioEngine.inputNode.outputFormat(forBus: 0)
-            lg.log("[prewarm.hardwareFormat]")
-        }
-    }
-    
     // MARK: - AutoStopper
     
     private func initAutoStop() {
@@ -287,10 +267,42 @@ class RecognizerEngine {
     
     // MARK: - Audio Session
     
+    private func audioSessionAudioEngine(for type: PrewarmType) {
+        audioEngine = AVAudioEngine()
+        guard let audioEngine else {
+            self.reportFailure(
+                from: "Audio Engine",
+                message: "Audio Engine failed to initiate",
+                // RecognizerEngine-agnostic Error
+                type: .system
+            )
+            return
+        }
+        lg.log("[audioSessionAudioEngine.audioEngine]")
+        
+        if type == .prewarm, let recognizerDelegate, recognizerDelegate.hardwareFormat != nil {
+            return
+        }
+        
+        startAudioSession()
+        lg.log("[audioSessionAudioEngine.audioSession]")
+        // heavy first hardwareFormat retrieval
+        if let recognizerDelegate, recognizerDelegate.hardwareFormat == nil {
+            let format = audioEngine.inputNode.outputFormat(forBus: 0)
+            recognizerDelegate.setHardwareFormat(format: format)
+            lg.log("[audioSessionAudioEngine.hardwareFormat]")
+        }
+        
+        if type == .prewarm {
+            stopAudioSession()
+            lg.log("[audioSessionAudioEngine.stopAudioSession]")
+        }
+    }
+    
     private func startAudioSession() {
         do {
             let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+            try audioSession.setCategory(.playAndRecord, mode: .default, options: .duckOthers)
             // Required for haptic feedback
             try audioSession.setAllowHapticsAndSystemSoundsDuringRecording(true)
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
@@ -305,7 +317,6 @@ class RecognizerEngine {
     }
     private func stopAudioSession() {
         do {
-            // TODO: check unduck
             try AVAudioSession.sharedInstance().setActive(false)
         } catch {
             // Just log and no-op - not critical

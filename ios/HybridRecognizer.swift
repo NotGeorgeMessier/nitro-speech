@@ -1,8 +1,10 @@
 import Foundation
 import NitroModules
+import AVFoundation
 
 class HybridRecognizer: HybridRecognizerSpec  {
     var config: SpeechRecognitionConfig?
+    var hardwareFormat: AVAudioFormat?
     
     var onReadyForSpeech: (() -> Void)?
     var onRecordingStopped: (() -> Void)?
@@ -29,6 +31,8 @@ class HybridRecognizer: HybridRecognizerSpec  {
     @discardableResult
     func prewarm(defaultParams: SpeechRecognitionConfig?) -> Promise<Void> {
         return Promise.async(.userInitiated) { [weak self] in
+            // Ignore when standalone prewarm triggered for active session
+            guard self?.engine?.isActive != true else { return }
             // Ensure correct engine is selected based on params and ios version
             await self?.ensureEngine(params: defaultParams)
             // try to preload assets and check if speech engine is available on OS level
@@ -111,6 +115,8 @@ class HybridRecognizer: HybridRecognizerSpec  {
 
 protocol RecognizerDelegate: AnyObject {
     var config: SpeechRecognitionConfig? { get }
+    var hardwareFormat: AVAudioFormat? { get }
+    func setHardwareFormat(format: AVAudioFormat)
     func softlyUpdateConfig(newConfig: MutableSpeechRecognitionConfig?)
     func reselectEngine(forPrewarm: Bool)
     func readyForSpeech()
@@ -123,6 +129,9 @@ protocol RecognizerDelegate: AnyObject {
 }
 
 extension HybridRecognizer: RecognizerDelegate {
+    func setHardwareFormat(format: AVAudioFormat) {
+        hardwareFormat = format
+    }
     func softlyUpdateConfig(newConfig: MutableSpeechRecognitionConfig?) {
         if let newConfig {
             config = SpeechRecognitionConfig(
@@ -193,7 +202,6 @@ extension HybridRecognizer: RecognizerDelegate {
     }
     
     func volumeChange(event: VolumeChangeEvent) {
-        // self.lg.log("[onVolumeChange] \(event.rawVolume)")
         if onVolumeChange != nil {
             onVolumeChangeFallback = onVolumeChange
         }
