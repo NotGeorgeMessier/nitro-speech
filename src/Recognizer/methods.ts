@@ -1,53 +1,60 @@
 import { SpeechRecognizer } from './SpeechRecognizer'
-import type {
-  MutableSpeechRecognitionConfig,
-  SpeechRecognitionConfig,
-} from './types'
+import type { RecognizerMethods } from './types'
 
-export const recognizerPrewarm = (params?: SpeechRecognitionConfig) => {
+export const recognizerPrewarm: RecognizerMethods['prewarm'] = (
+  params,
+  options
+) => {
   'worklet'
-  return SpeechRecognizer.prewarm(params)
+  return SpeechRecognizer.prewarm(params, options)
 }
 
-export const recognizerStartListening = (params?: SpeechRecognitionConfig) => {
+export const recognizerStartListening: RecognizerMethods['startListening'] = (
+  params
+) => {
   'worklet'
   SpeechRecognizer.startListening(params)
 }
 
-export const recognizerStopListening = () => {
-  'worklet'
-  SpeechRecognizer.stopListening()
-}
+export const recognizerStopListening: RecognizerMethods['stopListening'] =
+  () => {
+    'worklet'
+    SpeechRecognizer.stopListening()
+  }
 
-export const recognizerResetAutoFinishTime = () => {
-  'worklet'
-  SpeechRecognizer.resetAutoFinishTime()
-}
+export const recognizerResetAutoFinishTime: RecognizerMethods['resetAutoFinishTime'] =
+  () => {
+    'worklet'
+    SpeechRecognizer.resetAutoFinishTime()
+  }
 
-export const recognizerAddAutoFinishTime = (additionalTimeMs?: number) => {
-  'worklet'
-  SpeechRecognizer.addAutoFinishTime(additionalTimeMs)
-}
+export const recognizerAddAutoFinishTime: RecognizerMethods['addAutoFinishTime'] =
+  (additionalTimeMs) => {
+    'worklet'
+    SpeechRecognizer.addAutoFinishTime(additionalTimeMs)
+  }
 
-export const recognizerUpdateConfig = (
-  newConfig?: MutableSpeechRecognitionConfig,
-  resetAutoFinishTime?: boolean
+export const recognizerUpdateConfig: RecognizerMethods['updateConfig'] = (
+  newConfig,
+  resetAutoFinishTime
 ) => {
   'worklet'
   SpeechRecognizer.updateConfig(newConfig, resetAutoFinishTime)
 }
 
-export const recognizerGetIsActive = () => {
+export const recognizerGetIsActive: RecognizerMethods['getIsActive'] = () => {
   'worklet'
   return SpeechRecognizer.getIsActive()
 }
 
-export const recognizerGetVoiceInputVolume = () => {
-  'worklet'
-  return SpeechRecognizer.getVoiceInputVolume()
-}
+export const recognizerGetVoiceInputVolume: RecognizerMethods['getVoiceInputVolume'] =
+  () => {
+    'worklet'
+    return SpeechRecognizer.getVoiceInputVolume()
+  }
 
-export const recognizerGetSupportedLocalesIOS = () => {
-  'worklet'
-  return SpeechRecognizer.getSupportedLocalesIOS().sort()
-}
+export const recognizerGetSupportedLocalesIOS: RecognizerMethods['getSupportedLocalesIOS'] =
+  () => {
+    'worklet'
+    return SpeechRecognizer.getSupportedLocalesIOS().sort()
+  }

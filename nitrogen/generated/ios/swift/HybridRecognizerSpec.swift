@@ -19,7 +19,7 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
   var onVolumeChange: ((_ event: VolumeChangeEvent) -> Void)? { get set }
 
   // Methods
-  func prewarm(defaultParams: SpeechRecognitionConfig?) throws -> Promise<Void>
+  func prewarm(defaultParams: SpeechRecognitionConfig?, options: SpeechRecognitionPrewarm?) throws -> Promise<Void>
   func startListening(params: SpeechRecognitionConfig?) throws -> Void
   func stopListening() throws -> Void
   func resetAutoFinishTime() throws -> Void

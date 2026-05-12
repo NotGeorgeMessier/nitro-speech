@@ -127,7 +127,7 @@ abstract class HybridRecognizerSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun prewarm(defaultParams: SpeechRecognitionConfig?): Promise<Unit>
+  abstract fun prewarm(defaultParams: SpeechRecognitionConfig?, options: SpeechRecognitionPrewarm?): Promise<Unit>
   
   @DoNotStrip
   @Keep

@@ -20,6 +20,8 @@ namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 // Forward declaration of `IosPreset` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class IosPreset; }
+// Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 // Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 
@@ -32,6 +34,7 @@ namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 #include "SpeechRecognitionConfig.hpp"
 #include "HapticFeedbackStyle.hpp"
 #include "IosPreset.hpp"
+#include "SpeechRecognitionPrewarm.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
@@ -132,8 +135,8 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     // Methods
-    inline std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams) override {
-      auto __result = _swiftPart.prewarm(defaultParams);
+    inline std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams, const std::optional<SpeechRecognitionPrewarm>& options) override {
+      auto __result = _swiftPart.prewarm(defaultParams, options);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

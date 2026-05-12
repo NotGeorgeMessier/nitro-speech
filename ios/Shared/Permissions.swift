@@ -2,58 +2,23 @@ import Foundation
 import Speech
 import AVFoundation
 
-final class Permissions {
-    private let onGranted: () async -> Void
-    private let onDenied: (() -> Void)?
-    private let onError: ((String) -> Void)?
-    
-    init(
-        onGranted: @escaping () async -> Void,
-        onDenied: (() -> Void)?,
-        onError: ((String) -> Void)?
-    ) {
-        self.onGranted = onGranted
-        self.onDenied = onDenied
-        self.onError = onError
+enum Permissions {
+    static func requestAuthorization() async -> SFSpeechRecognizerAuthorizationStatus {
+        return await withCheckedContinuation { continuation in
+            SFSpeechRecognizer.requestAuthorization { authStatus in
+                continuation.resume(returning: authStatus)
+            }
+        }
     }
     
-    private func requestMicrophonePermission() async {
-        // Request permission to record.
+    static func requestMicrophonePermission() async -> Bool {
         if #available(iOS 17.0, *) {
-            if await AVAudioApplication.requestRecordPermission() {
-                await self.onGranted()
-                return
-            }
-            self.onDenied?()
-            return
+            return await AVAudioApplication.requestRecordPermission()
         }
-        AVAudioSession.sharedInstance().requestRecordPermission { [weak self] granted in
-            Task { @MainActor in
-                guard let self else { return }
-                if granted {
-                    await self.onGranted()
-                    return
-                }
-                self.onDenied?()
+        return await withCheckedContinuation { continuation in
+            AVAudioSession.sharedInstance().requestRecordPermission { granted in
+                continuation.resume(returning: granted)
             }
         }
     }
-    
-    func requestAuthorization() {
-        SFSpeechRecognizer.requestAuthorization { authStatus in
-            Task { @MainActor in
-                switch authStatus {
-                    case .authorized:
-                        await self.requestMicrophonePermission()
-                    case .denied, .restricted:
-                        self.onDenied?()
-                    case .notDetermined:
-                        self.onError?("Speech recognition not determined")
-                    @unknown default:
-                        self.onError?("Unknown authorization status")
-                }
-            }
-        }
-    }
-    
 }

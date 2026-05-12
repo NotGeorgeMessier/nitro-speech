@@ -3,6 +3,7 @@ import NitroModules
 import AVFoundation
 
 class HybridRecognizer: HybridRecognizerSpec  {
+    var prewarmOptions: SpeechRecognitionPrewarm?
     var config: SpeechRecognitionConfig?
     var hardwareFormat: AVAudioFormat?
     
@@ -29,14 +30,18 @@ class HybridRecognizer: HybridRecognizerSpec  {
     private let lg = Lg(prefix: "HybridRecognizer")
     
     @discardableResult
-    func prewarm(defaultParams: SpeechRecognitionConfig?) -> Promise<Void> {
+    func prewarm(
+        defaultParams: SpeechRecognitionConfig?,
+        options: SpeechRecognitionPrewarm?
+    ) -> Promise<Void> {
+        prewarmOptions = options
         return Promise.async(.userInitiated) { [weak self] in
             // Ignore when standalone prewarm triggered for active session
             guard self?.engine?.isActive != true else { return }
             // Ensure correct engine is selected based on params and ios version
             await self?.ensureEngine(params: defaultParams)
             // try to preload assets and check if speech engine is available on OS level
-            await self?.engine?.prewarm(for: .prewarm)
+            await self?.engine?.prewarm(for: .prewarm, options)
         }
     }
     
@@ -44,7 +49,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
         Task {
             // Ensure correct engine is selected based on params and ios version
             await ensureEngine(params: params)
-            engine?.start()
+            await engine?.start()
         }
     }
     
@@ -220,7 +225,7 @@ extension HybridRecognizer: RecognizerDelegate {
         engine = nil
         // Try to prewarm with another candidate
         if forPrewarm {
-            self.prewarm(defaultParams: config)
+            self.prewarm(defaultParams: config, options: prewarmOptions)
         } else {
             // Try to start with another candidate
             self.startListening(params: config)

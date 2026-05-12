@@ -353,9 +353,9 @@ open class HybridRecognizerSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func prewarm(defaultParams: bridge.std__optional_SpeechRecognitionConfig_) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func prewarm(defaultParams: bridge.std__optional_SpeechRecognitionConfig_, options: bridge.std__optional_SpeechRecognitionPrewarm_) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.prewarm(defaultParams: defaultParams.value)
+      let __result = try self.__implementation.prewarm(defaultParams: defaultParams.value, options: options.value)
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)

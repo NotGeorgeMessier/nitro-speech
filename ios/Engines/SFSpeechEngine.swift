@@ -15,7 +15,7 @@ final class SFSpeechEngine: RecognizerEngine {
         recognitionTask?.finish()
     }
     
-    override func prewarm(for type: PrewarmType) async {
+    override func prewarm(for type: PrewarmType, _ options: SpeechRecognitionPrewarm? = nil) async {
         speechRecognizer = SFSpeechRecognizer(
             locale: Locale(identifier: self.recognizerDelegate?.config?.locale ?? "en-US")
         )
@@ -30,7 +30,7 @@ final class SFSpeechEngine: RecognizerEngine {
                 type: failureType
             )
         }
-        await super.prewarm(for: type)
+        await super.prewarm(for: type, options)
     }
     
     override func startSession() async {

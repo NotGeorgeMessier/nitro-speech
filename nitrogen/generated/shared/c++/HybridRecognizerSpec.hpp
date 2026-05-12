@@ -17,6 +17,8 @@
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
+// Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 // Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 
@@ -27,6 +29,7 @@ namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include "SpeechRecognitionConfig.hpp"
+#include "SpeechRecognitionPrewarm.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
 
 namespace margelo::nitro::nitrospeech {
@@ -73,7 +76,7 @@ namespace margelo::nitro::nitrospeech {
 
     public:
       // Methods
-      virtual std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams) = 0;
+      virtual std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams, const std::optional<SpeechRecognitionPrewarm>& options) = 0;
       virtual void startListening(const std::optional<SpeechRecognitionConfig>& params) = 0;
       virtual void stopListening() = 0;
       virtual void resetAutoFinishTime() = 0;

@@ -4,6 +4,7 @@ import type {
   SpeechRecognitionConfig,
 } from '../specs/SpeechRecognitionConfig'
 import type { VolumeChangeEvent } from '../specs/VolumeChangeEvent'
+import type { SpeechRecognitionPrewarm } from '../specs/SpeechRecognitionPrewarm'
 
 type RecognizerCallbacks = Pick<
   RecognizerSpec,
@@ -32,6 +33,7 @@ type RecognizerMethods = Pick<
 export type {
   RecognizerSpec,
   SpeechRecognitionConfig,
+  SpeechRecognitionPrewarm,
   MutableSpeechRecognitionConfig,
   VolumeChangeEvent,
   RecognizerCallbacks,

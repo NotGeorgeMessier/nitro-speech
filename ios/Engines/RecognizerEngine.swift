@@ -37,21 +37,48 @@ class RecognizerEngine {
     
     // MARK: - Recognizer Methods
     
-    func prewarm(for type: PrewarmType) async {
-        audioSessionAudioEngine(for: type)
+    func prewarm(for type: PrewarmType, _ options: SpeechRecognitionPrewarm? = nil) async {
+        // Prepare audioEngine
+        audioEngine = AVAudioEngine()
+        lg.log("[prewarm.audioEngine]")
+        
+        guard let recognizerDelegate else { return }
+        
+        // Everything is set, return early
+        if type == .prewarm, recognizerDelegate.hardwareFormat != nil {
+            lg.log("[prewarm.return]: Everything set")
+            return
+        }
+        
+        // User explicitly asked for prewarm without requesting permissions, return early
+        if type == .prewarm, options?.requestPermission == false {
+            lg.log("[prewarm.return]: requestPermission: false")
+            return
+        }
+        
+        if type == .prewarm {
+            // options.requestPermission is true by default
+            // Start Permission sequence
+            let granted = await requestPermissions()
+            if granted {
+                self.prewarmAudioSession(for: type)
+            }
+        } else {
+            self.prewarmAudioSession(for: type)
+        }
+        
         // for SpeechTranscriber: .isAvailable and async assets
         // for Dictation: only async assets
         // for legacy SF: only sync .isAvailable
     }
     
-    func start() {
-        guard let recognizerDelegate, !isActive else { return }
+    func start() async {
+        guard !isActive else { return }
         
-        Permissions(
-            onGranted: self.startSession,
-            onDenied: recognizerDelegate.permissionDenied,
-            onError: recognizerDelegate.error
-        ).requestAuthorization()
+        let granted = await requestPermissions()
+        if granted {
+            await startSession()
+        }
     }
     
     func stop() {
@@ -59,6 +86,55 @@ class RecognizerEngine {
         isStopping = true
         HapticImpact.trigger(with: self.recognizerDelegate?.config?.stopHapticFeedbackStyle)
     }
+    
+    func updateSession(
+        newConfig: MutableSpeechRecognitionConfig? = nil,
+        addMsToTimer: Double? = nil,
+        resetTimer: Bool? = nil
+    ) {
+        guard let recognizerDelegate, isActive, !isStopping else { return }
+        let currentConfig = recognizerDelegate.config
+        // Update AutoFinish time
+        if let newAutoFinish = newConfig?.autoFinishRecognitionMs,
+           newAutoFinish != currentConfig?.autoFinishRecognitionMs {
+            autoStopper?.updateThreshold(
+                newAutoFinish,
+                from: "updateSession"
+            )
+        }
+        // Update AutoFinish progress interval
+        if let newInterval = newConfig?.autoFinishProgressIntervalMs,
+           newInterval != currentConfig?.autoFinishProgressIntervalMs {
+            autoStopper?.updateProgressInterval(
+                newInterval,
+                from: "updateSession"
+            )
+        }
+        
+        if let addMsToTimer {
+            // Add time to the timer once
+            autoStopper?.addMsOnce(
+                addMsToTimer,
+                from: "updateSession"
+            )
+        } else if resetTimer == true {
+            // Reset to current baseline threshold.
+            autoStopper?.resetTimer(from: "updateSession")
+        }
+        // Only update new non-nil values in the config
+        recognizerDelegate.softlyUpdateConfig(newConfig: newConfig)
+    }
+
+    func getVoiceInputVolume() -> VolumeChangeEvent? {
+        guard let currentSample = audioLevelTracker.currentSample else { return nil }
+        return VolumeChangeEvent(
+            smoothedVolume: currentSample.smoothed,
+            rawVolume: currentSample.raw,
+            db: currentSample.db
+        )
+    }
+    
+    // MARK: Helpers
     
     func startSession() async {
         lg.log("[startSession.startSession]")
@@ -126,53 +202,6 @@ class RecognizerEngine {
         recognizerDelegate.readyForSpeech()
         recognizerDelegate.result(batches: [])
     }
-    
-    func updateSession(
-        newConfig: MutableSpeechRecognitionConfig? = nil,
-        addMsToTimer: Double? = nil,
-        resetTimer: Bool? = nil
-    ) {
-        guard let recognizerDelegate, isActive, !isStopping else { return }
-        let currentConfig = recognizerDelegate.config
-        // Update AutoFinish time
-        if let newAutoFinish = newConfig?.autoFinishRecognitionMs,
-           newAutoFinish != currentConfig?.autoFinishRecognitionMs {
-            autoStopper?.updateThreshold(
-                newAutoFinish,
-                from: "updateSession"
-            )
-        }
-        // Update AutoFinish progress interval
-        if let newInterval = newConfig?.autoFinishProgressIntervalMs,
-           newInterval != currentConfig?.autoFinishProgressIntervalMs {
-            autoStopper?.updateProgressInterval(
-                newInterval,
-                from: "updateSession"
-            )
-        }
-        
-        if let addMsToTimer {
-            // Add time to the timer once
-            autoStopper?.addMsOnce(
-                addMsToTimer,
-                from: "updateSession"
-            )
-        } else if resetTimer == true {
-            // Reset to current baseline threshold.
-            autoStopper?.resetTimer(from: "updateSession")
-        }
-        // Only update new non-nil values in the config
-        recognizerDelegate.softlyUpdateConfig(newConfig: newConfig)
-    }
-
-    func getVoiceInputVolume() -> VolumeChangeEvent? {
-        guard let currentSample = audioLevelTracker.currentSample else { return nil }
-        return VolumeChangeEvent(
-            smoothedVolume: currentSample.smoothed,
-            rawVolume: currentSample.raw,
-            db: currentSample.db
-        )
-    }
 
     func cleanup(from: String) {
         lg.log("[cleanup]: \(from)")
@@ -228,7 +257,32 @@ class RecognizerEngine {
         }
     }
     
-    // MARK: - AutoStopper
+    // MARK: Permissions
+    
+    private func requestPermissions() async -> Bool {
+        guard let recognizerDelegate else { return false }
+        let authStatus = await Permissions.requestAuthorization()
+        if authStatus == .denied || authStatus == .restricted {
+            recognizerDelegate.permissionDenied()
+            return false
+        }
+        
+        if authStatus != .authorized {
+            // .notDetermined or unknown issue
+            recognizerDelegate.error(message: "Speech recognition permission is not determined")
+            return false
+        }
+        
+        if !(await Permissions.requestMicrophonePermission()) {
+            recognizerDelegate.permissionDenied()
+            return false
+        }
+        
+        // Granted
+        return true
+    }
+    
+    // MARK: Auto Stopper
     
     private func initAutoStop() {
         let config = self.recognizerDelegate?.config
@@ -251,7 +305,7 @@ class RecognizerEngine {
         autoStopper = nil
     }
     
-    // MARK: - App State Observer
+    // MARK: App State Observer
     
     private func startAppStateObserver() {
         appStateObserver = AppStateObserver { [weak self] in
@@ -265,10 +319,9 @@ class RecognizerEngine {
         appStateObserver = nil
     }
     
-    // MARK: - Audio Session
+    // MARK: Audio Session
     
-    private func audioSessionAudioEngine(for type: PrewarmType) {
-        audioEngine = AVAudioEngine()
+    private func prewarmAudioSession(for type: PrewarmType) {
         guard let audioEngine else {
             self.reportFailure(
                 from: "Audio Engine",
@@ -278,24 +331,18 @@ class RecognizerEngine {
             )
             return
         }
-        lg.log("[audioSessionAudioEngine.audioEngine]")
-        
-        if type == .prewarm, let recognizerDelegate, recognizerDelegate.hardwareFormat != nil {
-            return
-        }
-        
         startAudioSession()
-        lg.log("[audioSessionAudioEngine.audioSession]")
+        lg.log("[prewarmAudioSession.audioSession]")
         // heavy first hardwareFormat retrieval
         if let recognizerDelegate, recognizerDelegate.hardwareFormat == nil {
             let format = audioEngine.inputNode.outputFormat(forBus: 0)
             recognizerDelegate.setHardwareFormat(format: format)
-            lg.log("[audioSessionAudioEngine.hardwareFormat]")
+            lg.log("[prewarmAudioSession.hardwareFormat]")
         }
         
         if type == .prewarm {
             stopAudioSession()
-            lg.log("[audioSessionAudioEngine.stopAudioSession]")
+            lg.log("[prewarmAudioSession.stopAudioSession]")
         }
     }
     

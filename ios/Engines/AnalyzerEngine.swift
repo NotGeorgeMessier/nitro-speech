@@ -46,8 +46,8 @@ final class AnalyzerEngine: RecognizerEngine {
         }
     }
     
-    override func prewarm(for type: PrewarmType) async {
-        await super.prewarm(for: type)
+    override func prewarm(for type: PrewarmType, _ options: SpeechRecognitionPrewarm? = nil) async {
+        await super.prewarm(for: type, options)
         do {
             // Create transcriber and install assets
             try await transcriber.create(config: self.recognizerDelegate?.config)

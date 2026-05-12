@@ -20,6 +20,8 @@ namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
+// Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 
@@ -30,6 +32,7 @@ namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 #include "IosPreset.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
 #include "SpeechRecognitionConfig.hpp"
+#include "SpeechRecognitionPrewarm.hpp"
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>
