@@ -126,7 +126,7 @@ Both permissions are required for speech recognition to work on iOS.
 | **Reset Auto-finish Time** | Resets the Timer to the threshold | ✅ | ✅ |
 | **Voice input volume** | `useVoiceInputVolume`, `getVoiceInputVolume()`, `onVolumeChange` | ✅ | ✅ |
 | **Reset Auto-finish Sensitivity** | The voice detector sensitivity to reset the Auto-finish time | ✅ | ✅ |
-| **Prewarm** | Prepares resources, downloads assets, confirms locale availability | ✅ | ✅ |
+| **Prewarm** | Prepares resources, downloads assets, confirms locale availability, requests permissions | ✅ | ✅ |
 | **Update config** | Static method `updateConfig` allows updating the config on the fly | ✅ | ✅ |
 | **Is Active** | Static method `getIsActive()` | ✅ | ✅ |
 | **Haptic feedback** | Haptic feedback on recording start/stop | ✅ | ✅ |
@@ -230,6 +230,17 @@ function MyComponent() {
           )>
         <Text>Update Timer to 12s, 500ms interval, 0.65 sensitivity, with reset</Text>
       </TouchableOpacity>
+      <TouchableOpacity 
+        onPress={() => {
+          scheduleOnRuntime(workletRuntime, () => {
+            RecognizerRef.prewarm({
+              iosPreset: 'speed',
+            }, { requestPermission: true });
+          });
+        }}
+      >
+        <Text>Prewarm from worklet with permission request (default behavior)</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -262,7 +273,7 @@ If you need to call recognizer methods from other components without prop drilli
 ```typescript
 import { RecognizerRef } from '@gmessier/nitro-speech';
 
-RecognizerRef.prewarm({ locale: 'en-US' });
+RecognizerRef.prewarm({ locale: 'en-US' }, { requestPermission: true });
 RecognizerRef.startListening({ locale: 'en-US' });
 RecognizerRef.addAutoFinishTime(5000);
 RecognizerRef.resetAutoFinishTime();
@@ -407,7 +418,8 @@ SpeechRecognizer.onVolumeChange = (volume) => {
 SpeechRecognizer.prewarm({
   locale: 'en-US',
   // ... your config to prepare
-});
+}, { requestPermission: true });
+);
 // OR `await` if you want to react to the success
 await SpeechRecognizer.prewarm({
   locale: 'en-US',
@@ -418,7 +430,7 @@ scheduleOnRuntime(workletRuntime, () => {
   SpeechRecognizer.prewarm({
     locale: 'en-US',
     // ... your config to prepare
-  });
+  }, { requestPermission: false });
 });
 
 // Start listening
