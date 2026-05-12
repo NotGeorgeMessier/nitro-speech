@@ -14,6 +14,7 @@ import com.margelo.nitro.core.Promise
 import com.margelo.nitro.nitrospeech.MutableSpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.HybridRecognizerSpec
 import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
+import com.margelo.nitro.nitrospeech.SpeechRecognitionPrewarm
 import com.margelo.nitro.nitrospeech.VolumeChangeEvent
 
 @DoNotStrip
@@ -43,52 +44,27 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   @DoNotStrip
   @Keep
-  override fun prewarm(defaultParams: SpeechRecognitionConfig?): Promise<Unit> {
-    // no-op
+  override fun prewarm(
+    defaultParams: SpeechRecognitionConfig?,
+    options: SpeechRecognitionPrewarm?
+  ): Promise<Unit> {
+    logger.log("prewarm called")
     // nothing to prewarm
-    return Promise()
+    // only request permissions
+    return Promise.async {
+      // Enabled by default for user
+      if (options?.requestPermission != false) {
+        preparePermissions(null, isPrewarm = true)
+      }
+    }
   }
 
   @DoNotStrip
   @Keep
   override fun startListening(params: SpeechRecognitionConfig?) {
     logger.log("startListening: $params")
-    if (isActive) {
-      onFinishRecognition(
-        null,
-        "Error at startListening: Previous SpeechRecognizer is still active",
-        false
-      )
-      return
-    }
-
-    val context = NitroModules.applicationContext
-    if (context == null) {
-      onFinishRecognition(
-        null,
-        "Error at startListening: Context not available",
-        true
-      )
-      return
-    }
-    val activity = context.currentActivity
-    if (activity == null) {
-      onFinishRecognition(
-        null,
-        "Error at startListening: Activity not found",
-        true
-      )
-      return
-    }
-
-    val permissionRequester = AudioPermissionRequester(activity)
-    permissionRequester.checkAndRequest { granted ->
-      if (!granted) {
-        onPermissionDenied?.invoke()
-        return@checkAndRequest
-      }
-      config = params
-      start(context)
+    Promise.async {
+      preparePermissions(params, isPrewarm = false)
     }
   }
 
@@ -194,6 +170,48 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @Keep
   override fun dispose() {
     stopListening()
+  }
+
+  private suspend fun preparePermissions(params: SpeechRecognitionConfig?, isPrewarm: Boolean) {
+    if (isActive) {
+      onFinishRecognition(
+        null,
+        "Error: SpeechRecognizer is already active",
+        false
+      )
+      return
+    }
+
+    val context = NitroModules.applicationContext
+    if (context == null) {
+      onFinishRecognition(
+        null,
+        "Error: Context not available",
+        true
+      )
+      return
+    }
+    val activity = context.currentActivity
+    if (activity == null) {
+      onFinishRecognition(
+        null,
+        "Error: Activity not found",
+        true
+      )
+      return
+    }
+
+    val permissionRequester = AudioPermissionRequester(activity)
+    val granted = permissionRequester.checkAndRequest()
+    if (!granted) {
+      onPermissionDenied?.invoke()
+      return
+    }
+    if (isPrewarm) {
+      return
+    }
+    config = params
+    start(context)
   }
 
   private fun start(context: Context) {
