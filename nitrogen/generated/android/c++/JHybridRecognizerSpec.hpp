@@ -67,7 +67,7 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     // Methods
-    std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams) override;
+    std::shared_ptr<Promise<void>> prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams, const std::optional<SpeechRecognitionPrewarm>& options) override;
     void startListening(const std::optional<SpeechRecognitionConfig>& params) override;
     void stopListening() override;
     void resetAutoFinishTime() override;

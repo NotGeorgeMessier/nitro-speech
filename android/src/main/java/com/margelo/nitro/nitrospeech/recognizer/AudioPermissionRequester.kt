@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 class AudioPermissionRequester (
   private val activity: Activity
@@ -16,12 +18,13 @@ class AudioPermissionRequester (
   private var callback: ((Boolean) -> Unit)? = null
 
   private val launcher = componentActivity.activityResultRegistry.register(
-    "record_audio_key", ActivityResultContracts.RequestPermission()
+    "record_audio_key",
+    ActivityResultContracts.RequestPermission()
   ) { granted ->
     callback?.invoke(granted)
   }
 
-  fun checkAndRequest(onResult: (Boolean) -> Unit) {
+  suspend fun checkAndRequest(): Boolean {
     val audioGranted =
       ContextCompat.checkSelfPermission(
         activity,
@@ -29,11 +32,14 @@ class AudioPermissionRequester (
       ) == PackageManager.PERMISSION_GRANTED
 
     if (audioGranted) {
-      onResult(true)
-      return
+      return true
     }
 
-    callback = onResult
-    launcher.launch(recordAudioPermission)
+    return suspendCancellableCoroutine { cont ->
+      callback = { granted ->
+        if (cont.isActive) cont.resume(granted)
+      }
+      launcher.launch(recordAudioPermission)
+    }
   }
 }

@@ -1,8 +1,11 @@
 import Foundation
 import NitroModules
+import AVFoundation
 
 class HybridRecognizer: HybridRecognizerSpec  {
+    var prewarmOptions: SpeechRecognitionPrewarm?
     var config: SpeechRecognitionConfig?
+    var hardwareFormat: AVAudioFormat?
     
     var onReadyForSpeech: (() -> Void)?
     var onRecordingStopped: (() -> Void)?
@@ -27,12 +30,18 @@ class HybridRecognizer: HybridRecognizerSpec  {
     private let lg = Lg(prefix: "HybridRecognizer")
     
     @discardableResult
-    func prewarm(defaultParams: SpeechRecognitionConfig?) -> Promise<Void> {
+    func prewarm(
+        defaultParams: SpeechRecognitionConfig?,
+        options: SpeechRecognitionPrewarm?
+    ) -> Promise<Void> {
+        prewarmOptions = options
         return Promise.async(.userInitiated) { [weak self] in
+            // Ignore when standalone prewarm triggered for active session
+            guard self?.engine?.isActive != true else { return }
             // Ensure correct engine is selected based on params and ios version
             await self?.ensureEngine(params: defaultParams)
             // try to preload assets and check if speech engine is available on OS level
-            await self?.engine?.prewarm(for: .prewarm)
+            await self?.engine?.prewarm(for: .prewarm, options)
         }
     }
     
@@ -40,7 +49,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
         Task {
             // Ensure correct engine is selected based on params and ios version
             await ensureEngine(params: params)
-            engine?.start()
+            await engine?.start()
         }
     }
     
@@ -111,6 +120,8 @@ class HybridRecognizer: HybridRecognizerSpec  {
 
 protocol RecognizerDelegate: AnyObject {
     var config: SpeechRecognitionConfig? { get }
+    var hardwareFormat: AVAudioFormat? { get }
+    func setHardwareFormat(format: AVAudioFormat)
     func softlyUpdateConfig(newConfig: MutableSpeechRecognitionConfig?)
     func reselectEngine(forPrewarm: Bool)
     func readyForSpeech()
@@ -123,6 +134,9 @@ protocol RecognizerDelegate: AnyObject {
 }
 
 extension HybridRecognizer: RecognizerDelegate {
+    func setHardwareFormat(format: AVAudioFormat) {
+        hardwareFormat = format
+    }
     func softlyUpdateConfig(newConfig: MutableSpeechRecognitionConfig?) {
         if let newConfig {
             config = SpeechRecognitionConfig(
@@ -193,7 +207,6 @@ extension HybridRecognizer: RecognizerDelegate {
     }
     
     func volumeChange(event: VolumeChangeEvent) {
-        // self.lg.log("[onVolumeChange] \(event.rawVolume)")
         if onVolumeChange != nil {
             onVolumeChangeFallback = onVolumeChange
         }
@@ -212,7 +225,7 @@ extension HybridRecognizer: RecognizerDelegate {
         engine = nil
         // Try to prewarm with another candidate
         if forPrewarm {
-            self.prewarm(defaultParams: config)
+            self.prewarm(defaultParams: config, options: prewarmOptions)
         } else {
             // Try to start with another candidate
             self.startListening(params: config)

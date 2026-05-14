@@ -15,6 +15,8 @@ namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 // Forward declaration of `IosPreset` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class IosPreset; }
+// Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 // Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 
@@ -39,6 +41,8 @@ namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 #include "JHapticFeedbackStyle.hpp"
 #include "IosPreset.hpp"
 #include "JIosPreset.hpp"
+#include "SpeechRecognitionPrewarm.hpp"
+#include "JSpeechRecognitionPrewarm.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
 #include "JMutableSpeechRecognitionConfig.hpp"
 
@@ -193,9 +197,9 @@ namespace margelo::nitro::nitrospeech {
   }
 
   // Methods
-  std::shared_ptr<Promise<void>> JHybridRecognizerSpec::prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JSpeechRecognitionConfig> /* defaultParams */)>("prewarm");
-    auto __result = method(_javaPart, defaultParams.has_value() ? JSpeechRecognitionConfig::fromCpp(defaultParams.value()) : nullptr);
+  std::shared_ptr<Promise<void>> JHybridRecognizerSpec::prewarm(const std::optional<SpeechRecognitionConfig>& defaultParams, const std::optional<SpeechRecognitionPrewarm>& options) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JSpeechRecognitionConfig> /* defaultParams */, jni::alias_ref<JSpeechRecognitionPrewarm> /* options */)>("prewarm");
+    auto __result = method(_javaPart, defaultParams.has_value() ? JSpeechRecognitionConfig::fromCpp(defaultParams.value()) : nullptr, options.has_value() ? JSpeechRecognitionPrewarm::fromCpp(options.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {

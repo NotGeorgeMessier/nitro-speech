@@ -40,6 +40,8 @@ interface ParamsIOS {
    * `"speed"` - Gives priority to speed over accuracy
    *
    * `"general"` - For longer speeches, more accurate but delayed response
+   * 
+   * @note preset may be overridden by other properties
    *
    * @since iOS 26.0+
    *

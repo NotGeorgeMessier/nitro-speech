@@ -13,6 +13,7 @@ export { NitroSpeech } from './NitroSpeech'
 export {
   type RecognizerSpec,
   type SpeechRecognitionConfig,
+  type SpeechRecognitionPrewarm,
   type MutableSpeechRecognitionConfig,
   type VolumeChangeEvent,
   type RecognizerCallbacks,

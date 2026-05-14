@@ -20,6 +20,8 @@ namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
+// Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 
@@ -36,6 +38,7 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 #include "IosPreset.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
 #include "SpeechRecognitionConfig.hpp"
+#include "SpeechRecognitionPrewarm.hpp"
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/PromiseHolder.hpp>
@@ -246,6 +249,21 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.has_value();
   }
   inline SpeechRecognitionConfig get_std__optional_SpeechRecognitionConfig_(const std::optional<SpeechRecognitionConfig>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<SpeechRecognitionPrewarm>
+  /**
+   * Specialized version of `std::optional<SpeechRecognitionPrewarm>`.
+   */
+  using std__optional_SpeechRecognitionPrewarm_ = std::optional<SpeechRecognitionPrewarm>;
+  inline std::optional<SpeechRecognitionPrewarm> create_std__optional_SpeechRecognitionPrewarm_(const SpeechRecognitionPrewarm& value) noexcept {
+    return std::optional<SpeechRecognitionPrewarm>(value);
+  }
+  inline bool has_value_std__optional_SpeechRecognitionPrewarm_(const std::optional<SpeechRecognitionPrewarm>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline SpeechRecognitionPrewarm get_std__optional_SpeechRecognitionPrewarm_(const std::optional<SpeechRecognitionPrewarm>& optional) noexcept {
     return optional.value();
   }
   

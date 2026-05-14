@@ -15,18 +15,22 @@ final class SFSpeechEngine: RecognizerEngine {
         recognitionTask?.finish()
     }
     
-    override func prewarm(for type: FailureType) async {
+    override func prewarm(for type: PrewarmType, _ options: SpeechRecognitionPrewarm? = nil) async {
         speechRecognizer = SFSpeechRecognizer(
             locale: Locale(identifier: self.recognizerDelegate?.config?.locale ?? "en-US")
         )
         if speechRecognizer?.isAvailable != true {
+            let failureType: FailureType = switch type {
+                case .prewarm: .prewarm
+                case .start: .start
+            }
             self.reportFailure(
                 from: "prewarm",
                 message: "SFSpeechRecognizer is not available",
-                type: type
+                type: failureType
             )
         }
-        await super.prewarm(for: type)
+        await super.prewarm(for: type, options)
     }
     
     override func startSession() async {

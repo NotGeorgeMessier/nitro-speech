@@ -4,6 +4,7 @@ import type {
   SpeechRecognitionConfig,
 } from './SpeechRecognitionConfig'
 import type { VolumeChangeEvent } from './VolumeChangeEvent'
+import type { SpeechRecognitionPrewarm } from './SpeechRecognitionPrewarm'
 
 export interface Recognizer extends HybridObject<{
   ios: 'swift'
@@ -31,7 +32,10 @@ export interface Recognizer extends HybridObject<{
    *  });
    * ```
    */
-  prewarm(defaultParams?: SpeechRecognitionConfig): Promise<void>
+  prewarm(
+    defaultParams?: SpeechRecognitionConfig,
+    options?: SpeechRecognitionPrewarm
+  ): Promise<void>
 
   /**
    * Try to start the speech recognition.
