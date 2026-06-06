@@ -1,7 +1,5 @@
 /**
  * Contains data about each audio buffer volume.
- *
- * Emits with high frequency.
  */
 export interface VolumeChangeEvent {
   /**
@@ -25,7 +23,7 @@ export interface VolumeChangeEvent {
    *
    * May vary on different devices and audio engines.
    *
-   * db 0 is still a sound, undefined is no sound.
+   * db 0 is still a sound, undefined is no sound or disabled event.
    */
   db?: number
 }

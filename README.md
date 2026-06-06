@@ -7,7 +7,7 @@
  
 > If you hit an issue or want to request a feature, please open a GitHub issue or reach out to me on Discord / Twitter (X) — response is guaranteed.
 >
-> - GitHub Issues: [NotGeorgeMessier/nitro-speech/issues](https://github.com/NotGeorgeMessier/nitro-speech/issues)
+> - GitHub Issues: [nitro-speech/issues](https://github.com/NotGeorgeMessier/nitro-speech/issues)
 > - Discord: `gmessier`
 > - Twitter (X): `SufferingGeorge`
 
@@ -16,30 +16,28 @@
 - ⚡ Built with Nitro Modules for low-overhead native binding
 - 🌎 Supports 60+ languages 
 - 🍎 The only library that uses new `SpeechAnalyzer` with `SpeechTranscriber` or `DictationTranscriber` API for iOS 26+ (with fallback to legacy `SFSpeechRecognition` for older versions)
+- 🧵 Full support of `react-native-worklets` - every method is accessible from any thread
 - ⏱️ Timer for silence
-  - Configurable `autoFinishRecognitionMs` value (default: 8 sec)
+  - Configurable and mutable `autoFinishRecognitionMs` value (default: 8 sec)
   - Callback `onAutoFinishProgress` fires periodically with interval
-  - Configurable interval `autoFinishProgressIntervalMs` value (default: 1 sec)
-  - Method `updateConfig` with `autoFinishRecognitionMs` and `autoFinishProgressIntervalMs`
+  - Configurable and mutable interval `autoFinishProgressIntervalMs` value (default: 1 sec)
   allows changing the value on the fly
   - Method `resetAutoFinishTime` resets the Timer to the threshold
   - Method `addAutoFinishTime` adds ms once without changing threshold
   - Configurable volume-based sensitivity `resetAutoFinishVoiceSensitivity` for the timer from 0 to 1
 - 🎤 Rich user voice input management 
-  - Hook `useVoiceInputVolume()` for `raw` or `smoothed` normalized volume level from 0 to 1 -> easy to use for UI animations;
-  And `db` as human-friendly value
-  - Flexible callback `onVolumeChange` for custom behavior
-  - Static method `getVoiceInputVolume()`
-- 🧩 Lifecycle methods: `prewarm` | `updateConfig` | `getIsActive`
+  - Hook `useVoiceInputVolume(config)` for displaying volume in dB and making smooth UI animations;
+  - Callback `onVolumeChange` for advanced use cases
+- 🧩 Session Lifecycle methods: `prewarm` and `updateConfig`
 - 👆 Configurable Haptic Feedback on start and finish
-- 🎚️ Speech-quality configurations:
+- 🎚️ Speech-quality features:
   - Result is grouped by speech segments into Batches.
-  - Param `iosPreset` - enables best transcriber for your situation
-  - Param `disableRepeatingFilter` - filters out consecutive duplicate words.
-  - Param `androidDisableBatchHandling` - disables empty partial results
-  - Many more, see `SpeechRecognitionConfig`
+  - Check `SpeechRecognitionConfig` for all the params
+  - Use `MutableSpeechRecognitionConfig` params for `updateConfig` method
 - 🔓 Embedded Permission handling
   - Callback `onPermissionDenied` - if user denied the request
+  - Configure `SpeechRecognitionPrewarm.requestPermission` option for `prewarm` method
+  - Method `getPermissions(): PermissionStatus`
 - 📦 Everything else that could be found in Expo or other libraries
 
 ## Table of Contents
@@ -127,10 +125,10 @@ Both permissions are required for speech recognition to work on iOS.
 | **Voice input volume** | `useVoiceInputVolume`, `getVoiceInputVolume()`, `onVolumeChange` | ✅ | ✅ |
 | **Reset Auto-finish Sensitivity** | The voice detector sensitivity to reset the Auto-finish time | ✅ | ✅ |
 | **Prewarm** | Prepares resources, downloads assets, confirms locale availability, requests permissions | ✅ | ✅ |
-| **Update config** | Static method `updateConfig` allows updating the config on the fly | ✅ | ✅ |
-| **Is Active** | Static method `getIsActive()` | ✅ | ✅ |
+| **Update config** | Static method `updateConfig` updates the config on the fly | ✅ | ✅ |
+| **Is Active** | `useRecognizerIsActive()` and `getIsActive()`, `onReadyForSpeech` and `onRecordingStopped`| ✅ | ✅ |
 | **Haptic feedback** | Haptic feedback on recording start/stop | ✅ | ✅ |
-| **Permission handling** | Dedicated `onPermissionDenied` callback | ✅ | ✅ |
+| **Permission handling** | Auto-request permissions with `prewarm` and `startListening`, `getPermissions()` and `onPermissionDenied` | ✅ | ✅ |
 | **Background handling** | Stop when app loses focus/goes to background | ✅ | ✅ |
 | **Repeating word filter** | Removes consecutive duplicate words from artifacts | ✅ | ✅ |
 | **Offensive word masking** | Control whether offensive words are masked with * | iOS 26+ | ✅ |
@@ -162,9 +160,10 @@ function MyComponent() {
     resetAutoFinishTime, 
     addAutoFinishTime, 
     updateConfig,
-    getSupportedLocalesIOS,
     getIsActive,
     getVoiceInputVolume,
+    getPermissions,
+    getSupportedLocalesIOS,
   } = useRecognizer({
     onReadyForSpeech: () => {
       console.log('Listening...');
@@ -287,6 +286,7 @@ RecognizerRef.updateConfig(
 );
 RecognizerRef.getIsActive();
 RecognizerRef.getVoiceInputVolume();
+RecognizerRef.getPermissions();
 RecognizerRef.stopListening();
 // iOS only
 RecognizerRef.getSupportedLocalesIOS();
@@ -317,16 +317,22 @@ onPress={() => {
 
 #### useVoiceInputVolume
 
-⚠️ **Technical limitation**: this hook re-renders component a lot.
+Use `useVoiceInputVolume(config?: UseVoiceInputVolumeConfig)` to subscribe to volume changes. 
+
+`config` is optional and can be used to limit the number of events per second.
+
+By default, there is no limit and the hook might re-render a lot.
 
 ```typescript
 import { useVoiceInputVolume } from '@gmessier/nitro-speech';
 
 function VoiceMeter() {
-  const volumeEvent = useVoiceInputVolume();
+  const volumeEvent = useVoiceInputVolume({
+    eventsPerSecond: 5,
+  });
   return <>
-    <Text>{volumeEvent.smoothedVolume.toFixed(2)}</Text>
-    <Text>{volumeEvent.rawVolume.toFixed(2)}</Text>
+    <Text>{volumeEvent.smoothedVolume}</Text>
+    <Text>{volumeEvent.rawVolume}</Text>
     <Text>{volumeEvent.db}</Text>
   </>;
 }
@@ -413,6 +419,9 @@ SpeechRecognizer.onVolumeChange = (volume) => {
   // Add speechRecognizerVolumeChangeHandler to enable useVoiceInputVolume hook manually
   speechRecognizerVolumeChangeHandler(volume);
 };
+
+// Get permissions
+SpeechRecognizer.getPermissions();
 
 // Prepare resources, download assets, confirms locale availability
 SpeechRecognizer.prewarm({

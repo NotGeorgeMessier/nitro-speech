@@ -36,6 +36,7 @@ namespace margelo::nitro::nitrospeech {
       prototype.registerHybridMethod("updateConfig", &HybridRecognizerSpec::updateConfig);
       prototype.registerHybridMethod("getIsActive", &HybridRecognizerSpec::getIsActive);
       prototype.registerHybridMethod("getVoiceInputVolume", &HybridRecognizerSpec::getVoiceInputVolume);
+      prototype.registerHybridMethod("getPermissions", &HybridRecognizerSpec::getPermissions);
       prototype.registerHybridMethod("getSupportedLocalesIOS", &HybridRecognizerSpec::getSupportedLocalesIOS);
     });
   }

@@ -24,6 +24,8 @@ namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 // Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
+// Forward declaration of `PermissionStatus` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 
 #include <functional>
 #include <optional>
@@ -36,6 +38,7 @@ namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 #include "IosPreset.hpp"
 #include "SpeechRecognitionPrewarm.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
+#include "PermissionStatus.hpp"
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 
@@ -183,6 +186,14 @@ namespace margelo::nitro::nitrospeech {
     }
     inline VolumeChangeEvent getVoiceInputVolume() override {
       auto __result = _swiftPart.getVoiceInputVolume();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline PermissionStatus getPermissions() override {
+      auto __result = _swiftPart.getPermissions();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

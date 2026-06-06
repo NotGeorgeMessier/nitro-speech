@@ -5,6 +5,8 @@ import type {
 } from '../specs/SpeechRecognitionConfig'
 import type { VolumeChangeEvent } from '../specs/VolumeChangeEvent'
 import type { SpeechRecognitionPrewarm } from '../specs/SpeechRecognitionPrewarm'
+import type { UseVoiceInputVolumeConfig } from './useVoiceInputVolume'
+import type { PermissionStatus } from '../specs/Permissions'
 
 type RecognizerCallbacks = Pick<
   RecognizerSpec,
@@ -27,6 +29,7 @@ type RecognizerMethods = Pick<
   | 'updateConfig'
   | 'getIsActive'
   | 'getVoiceInputVolume'
+  | 'getPermissions'
   | 'getSupportedLocalesIOS'
 >
 
@@ -38,4 +41,6 @@ export type {
   VolumeChangeEvent,
   RecognizerCallbacks,
   RecognizerMethods,
+  UseVoiceInputVolumeConfig,
+  PermissionStatus,
 }

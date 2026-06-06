@@ -9,6 +9,7 @@ import {
   recognizerStopListening,
   recognizerGetVoiceInputVolume,
   recognizerPrewarm,
+  recognizerGetPermissions,
 } from './methods'
 import type { RecognizerCallbacks, RecognizerMethods } from './types'
 import { SpeechRecognizer } from './SpeechRecognizer'
@@ -84,6 +85,7 @@ export const useRecognizer = (
     updateConfig: recognizerUpdateConfig,
     getIsActive: recognizerGetIsActive,
     getVoiceInputVolume: recognizerGetVoiceInputVolume,
+    getPermissions: recognizerGetPermissions,
     getSupportedLocalesIOS: recognizerGetSupportedLocalesIOS,
   }
 }

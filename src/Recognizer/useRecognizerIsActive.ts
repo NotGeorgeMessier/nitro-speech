@@ -1,23 +1,25 @@
 import { useSyncExternalStore } from 'react'
 
-type OnActiveStateChange = (isActive: boolean) => void
+type TSubscriber = () => void
 
-const subscribers = new Set<OnActiveStateChange>()
+const subscribers = new Set<TSubscriber>()
 
-let recognizerIsActive = false
+const subscribe = (subscriber: TSubscriber) => {
+  subscribers.add(subscriber)
+  return () => subscribers.delete(subscriber)
+}
 
-const getSnapshot = () => {
-  return recognizerIsActive
+let current = false
+
+const getCurrent = () => {
+  return current
 }
 
 /**
  * Returns true if the speech recognition session is active.
  */
 export const useRecognizerIsActive = () => {
-  return useSyncExternalStore((subscriber) => {
-    subscribers.add(subscriber)
-    return () => subscribers.delete(subscriber)
-  }, getSnapshot)
+  return useSyncExternalStore(subscribe, getCurrent)
 }
 
 /**
@@ -38,12 +40,10 @@ export const useRecognizerIsActive = () => {
  * SpeechRecognizer.startListening({ locale: 'en-US' })
  * ```
  */
-export const speechRecognizerActiveStateHandler: OnActiveStateChange = (
-  isActive
-) => {
-  if (isActive === recognizerIsActive) {
+export const speechRecognizerActiveStateHandler = (isActive: boolean) => {
+  if (isActive === current) {
     return
   }
-  recognizerIsActive = isActive
-  subscribers.forEach((subscriber) => subscriber?.(isActive))
+  current = isActive
+  subscribers.forEach((subscriber) => subscriber?.())
 }

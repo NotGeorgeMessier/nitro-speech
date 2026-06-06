@@ -13,6 +13,7 @@ import com.margelo.nitro.NitroModules
 import com.margelo.nitro.core.Promise
 import com.margelo.nitro.nitrospeech.MutableSpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.HybridRecognizerSpec
+import com.margelo.nitro.nitrospeech.PermissionStatus
 import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.SpeechRecognitionPrewarm
 import com.margelo.nitro.nitrospeech.VolumeChangeEvent
@@ -158,6 +159,14 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @Keep
   override fun getVoiceInputVolume(): VolumeChangeEvent {
     return volumeChangeEvent
+  }
+
+  @DoNotStrip
+  @Keep
+  override fun getPermissions(): PermissionStatus {
+    val context = NitroModules.applicationContext ?: return PermissionStatus.NOT_REQUESTED
+    val activity = context.currentActivity ?: return PermissionStatus.NOT_REQUESTED
+    return AudioPermissionRequester.checkStatus(activity)
   }
 
   @DoNotStrip

@@ -134,7 +134,7 @@ class RecognizerEngine {
         )
     }
     
-    // MARK: Helpers
+    // MARK: Start Session
     
     func startSession() async {
         lg.log("[startSession.startSession]")
@@ -148,6 +148,7 @@ class RecognizerEngine {
         lg.log("[startSession.startAppStateObserver]")
     }
     
+    // MARK: Audio Engine
     func startAudioEngine(
         onBuffer: @escaping (AVAudioPCMBuffer) -> Void
     ) {
@@ -202,6 +203,8 @@ class RecognizerEngine {
         recognizerDelegate.readyForSpeech()
         recognizerDelegate.result(batches: [])
     }
+    
+    // MARK: Cleanup
 
     func cleanup(from: String) {
         lg.log("[cleanup]: \(from)")

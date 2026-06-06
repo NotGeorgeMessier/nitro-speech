@@ -159,6 +159,10 @@ abstract class HybridRecognizerSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun getPermissions(): PermissionStatus
+  
+  @DoNotStrip
+  @Keep
   abstract fun getSupportedLocalesIOS(): Array<String>
 
   // Default implementation of `HybridObject.toString()`

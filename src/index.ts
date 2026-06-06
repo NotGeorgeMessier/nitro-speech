@@ -18,4 +18,6 @@ export {
   type VolumeChangeEvent,
   type RecognizerCallbacks,
   type RecognizerMethods,
+  type UseVoiceInputVolumeConfig,
+  type PermissionStatus,
 } from './Recognizer/types'

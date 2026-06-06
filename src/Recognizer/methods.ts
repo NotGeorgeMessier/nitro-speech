@@ -53,6 +53,12 @@ export const recognizerGetVoiceInputVolume: RecognizerMethods['getVoiceInputVolu
     return SpeechRecognizer.getVoiceInputVolume()
   }
 
+export const recognizerGetPermissions: RecognizerMethods['getPermissions'] =
+  () => {
+    'worklet'
+    return SpeechRecognizer.getPermissions()
+  }
+
 export const recognizerGetSupportedLocalesIOS: RecognizerMethods['getSupportedLocalesIOS'] =
   () => {
     'worklet'

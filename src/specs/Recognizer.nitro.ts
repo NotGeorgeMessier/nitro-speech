@@ -5,6 +5,7 @@ import type {
 } from './SpeechRecognitionConfig'
 import type { VolumeChangeEvent } from './VolumeChangeEvent'
 import type { SpeechRecognitionPrewarm } from './SpeechRecognitionPrewarm'
+import type { PermissionStatus } from './Permissions'
 
 export interface Recognizer extends HybridObject<{
   ios: 'swift'
@@ -89,6 +90,11 @@ export interface Recognizer extends HybridObject<{
    * Returns the current voice input volume.
    */
   getVoiceInputVolume(): VolumeChangeEvent
+
+  /**
+   * Returns {@linkcode PermissionStatus} for the microphone and speech recognition together.
+   */
+  getPermissions(): PermissionStatus
 
   /**
    * Returns a list of supported locales.

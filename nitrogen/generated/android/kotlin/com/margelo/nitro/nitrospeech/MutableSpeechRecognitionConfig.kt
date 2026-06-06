@@ -51,7 +51,7 @@ data class MutableSpeechRecognitionConfig(
   }
 
   override fun hashCode(): Int {
-    return arrayOf(
+    return arrayOf<Any?>(
       autoFinishRecognitionMs,
       autoFinishProgressIntervalMs,
       resetAutoFinishVoiceSensitivity,

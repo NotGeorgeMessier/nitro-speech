@@ -25,11 +25,11 @@ final class Lg {
         self.prefix = prefix
         self.disable = disable ?? false
     }
-    var prevMs: Double?
+    var prevMs: Int?
     func log(_ text: String) {
         if Self.isLogging && !self.disable {
-            let nowMs = ProcessInfo.processInfo.systemUptime * 1000
-            let diff = Int(round(nowMs - (self.prevMs ?? nowMs)))
+            let nowMs = Utils.nowMs()
+            let diff = nowMs - (self.prevMs ?? nowMs)
             self.prevMs = nowMs
             let tn = Thread.current.isMainThread ? "main" : "bg"
             Logger(

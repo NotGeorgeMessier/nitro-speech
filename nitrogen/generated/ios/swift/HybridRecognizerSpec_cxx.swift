@@ -465,6 +465,18 @@ open class HybridRecognizerSpec_cxx {
   }
   
   @inline(__always)
+  public final func getPermissions() -> bridge.Result_PermissionStatus_ {
+    do {
+      let __result = try self.__implementation.getPermissions()
+      let __resultCpp = __result
+      return bridge.create_Result_PermissionStatus_(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_PermissionStatus_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func getSupportedLocalesIOS() -> bridge.Result_std__vector_std__string__ {
     do {
       let __result = try self.__implementation.getSupportedLocalesIOS()

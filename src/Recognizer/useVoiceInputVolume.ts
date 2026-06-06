@@ -1,42 +1,111 @@
-import { useSyncExternalStore } from 'react'
-import type { RecognizerSpec, VolumeChangeEvent } from './types'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import type { VolumeChangeEvent } from './types'
 
-type OnVolumeChange = Exclude<RecognizerSpec['onVolumeChange'], undefined>
+type TSubscriber = () => void
 
-const subscribers = new Set<OnVolumeChange>()
+const stateSubscribers = new Set<TSubscriber>()
+const isActiveSubscribers = new Set<TSubscriber>()
 
-let current: VolumeChangeEvent = {
+const EMPTY_VOLUME_EVENT: VolumeChangeEvent = {
   smoothedVolume: 0,
   rawVolume: 0,
   db: undefined,
 }
 
-let snapshot: VolumeChangeEvent = { ...current }
+let isActiveEvent = false
+let state: VolumeChangeEvent = EMPTY_VOLUME_EVENT
 
-const getSnapshot = () => {
-  if (
-    snapshot.smoothedVolume === current.smoothedVolume &&
-    snapshot.rawVolume === current.rawVolume &&
-    snapshot.db === current.db
-  ) {
-    return snapshot
-  }
-  snapshot = { ...current }
-  return snapshot
+const isActiveSubscribe = (subscriber: TSubscriber) => {
+  isActiveSubscribers.add(subscriber)
+  return () => isActiveSubscribers.delete(subscriber)
+}
+const stateSubscribe = (subscriber: TSubscriber) => {
+  stateSubscribers.add(subscriber)
+  return () => stateSubscribers.delete(subscriber)
+}
+const noop = () => {
+  return () => {}
+}
+
+const getIsActive = () => {
+  return isActiveEvent
+}
+const getState = () => {
+  return state
+}
+const getEmpty = () => {
+  return EMPTY_VOLUME_EVENT
+}
+
+export interface UseVoiceInputVolumeConfig {
+  /**
+   * The number of volume change events to emit per second.
+   *
+   * This property does not create more events,
+   * it only limits the number of events per second.
+   *
+   * `undefined` or `X < 0` - no limit, emit every event
+   *
+   * `0` - disable emitting
+   *
+   * `0 < X < 1` - Inverts the value extending the window (e.g. `0.5` -> 1 event per 2 seconds)
+   *
+   * `1 <= X` - emit X events per second (only interger values)
+   *
+   * @default undefined
+   *
+   * @max around 4-10 events per second depending on the platform and device.
+   */
+  eventsPerSecond?: number
 }
 
 /**
- * Subscription to the voice input volume changes
+ * @param config.eventsPerSecond - Controls the frequency of the volume change events.
  *
- * Updates with arbitrary frequency (many times per second) while audio recording is active.
- *
- * @returns The current voice input volume normalized to a range of 0 to 1.
+ * @returns Object with {@linkcode VolumeChangeEvent}
  */
-export const useVoiceInputVolume = () => {
-  return useSyncExternalStore((subscriber) => {
-    subscribers.add(subscriber)
-    return () => subscribers.delete(subscriber)
-  }, getSnapshot)
+export const useVoiceInputVolume = (config?: UseVoiceInputVolumeConfig) => {
+  const eps = config?.eventsPerSecond
+  const isActive = useSyncExternalStore(isActiveSubscribe, getIsActive)
+  const event = useRef<VolumeChangeEvent>(EMPTY_VOLUME_EVENT)
+  const [_, flip] = useState(false)
+
+  const isEPS = typeof eps === 'number' && eps >= 0 && isActive
+  const externalStore = useSyncExternalStore(
+    isEPS ? noop : stateSubscribe,
+    isEPS ? getEmpty : getState
+  )
+
+  useEffect(() => {
+    if (!isEPS || eps === 0) {
+      return
+    }
+
+    const interval = Math.max(100, Math.min(60000, Math.round(1000 / eps)))
+
+    const t = setInterval(() => {
+      event.current = state
+      flip((prev) => !prev)
+    }, interval)
+
+    return () => {
+      clearInterval(t)
+    }
+  }, [eps, isEPS])
+
+  if (!isActive || eps === 0) {
+    event.current = EMPTY_VOLUME_EVENT
+    return EMPTY_VOLUME_EVENT
+  }
+
+  if (!isEPS) {
+    return externalStore
+  }
+
+  if (event.current.rawVolume === 0) {
+    event.current = state
+  }
+  return event.current
 }
 
 /**
@@ -47,19 +116,28 @@ export const useVoiceInputVolume = () => {
  * ```typescript
  * import { speechRecognizerVolumeChangeHandler } from '@gmessier/nitro-speech'
  *
- * SpeechRecognizer.onVolumeChange = speechRecognizerVolumeChangeHandler
+ * SpeechRecognizer.onVolumeChange = (event) => {
+ *  speechRecognizerVolumeChangeHandler(event)
+ *  // other logic...
+ * }
  * ... // setup everything else
  * SpeechRecognizer.startListening({ locale: 'en-US' })
  * ```
  */
-export const speechRecognizerVolumeChangeHandler: OnVolumeChange = (event) => {
-  if (
-    event.smoothedVolume === current.smoothedVolume &&
-    event.rawVolume === current.rawVolume &&
-    event.db === current.db
-  ) {
-    return
+export const speechRecognizerVolumeChangeHandler = (
+  event: VolumeChangeEvent
+) => {
+  const updateActive = event.rawVolume > 0
+  if (updateActive !== isActiveEvent) {
+    isActiveEvent = updateActive
+    isActiveSubscribers.forEach((subscriber) => subscriber())
   }
-  current = event
-  subscribers.forEach((subscriber) => subscriber?.(event))
+
+  event.smoothedVolume = Math.round(event.smoothedVolume * 10000) / 10000
+  event.rawVolume = Math.round(event.rawVolume * 10000) / 10000
+  event.db = event.db ? Math.round(event.db * 100) / 100 : undefined
+  if (event.rawVolume !== state.rawVolume) {
+    state = { ...event }
+    stateSubscribers.forEach((subscriber) => subscriber())
+  }
 }

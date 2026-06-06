@@ -18,6 +18,8 @@ namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
 namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 // Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
+// Forward declaration of `PermissionStatus` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 // Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
@@ -37,6 +39,7 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 #include "HybridRecognizerSpec.hpp"
 #include "IosPreset.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
+#include "PermissionStatus.hpp"
 #include "SpeechRecognitionConfig.hpp"
 #include "SpeechRecognitionPrewarm.hpp"
 #include "VolumeChangeEvent.hpp"
@@ -479,6 +482,15 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
   }
   inline Result_VolumeChangeEvent_ create_Result_VolumeChangeEvent_(const std::exception_ptr& error) noexcept {
     return Result<VolumeChangeEvent>::withError(error);
+  }
+  
+  // pragma MARK: Result<PermissionStatus>
+  using Result_PermissionStatus_ = Result<PermissionStatus>;
+  inline Result_PermissionStatus_ create_Result_PermissionStatus_(PermissionStatus value) noexcept {
+    return Result<PermissionStatus>::withValue(std::move(value));
+  }
+  inline Result_PermissionStatus_ create_Result_PermissionStatus_(const std::exception_ptr& error) noexcept {
+    return Result<PermissionStatus>::withError(error);
   }
   
   // pragma MARK: Result<std::vector<std::string>>

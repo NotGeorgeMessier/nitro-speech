@@ -9,6 +9,8 @@
 
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
+// Forward declaration of `PermissionStatus` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
@@ -35,6 +37,8 @@ namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
 #include <NitroModules/JUnit.hpp>
+#include "PermissionStatus.hpp"
+#include "JPermissionStatus.hpp"
 #include "SpeechRecognitionConfig.hpp"
 #include "JSpeechRecognitionConfig.hpp"
 #include "HapticFeedbackStyle.hpp"
@@ -239,6 +243,11 @@ namespace margelo::nitro::nitrospeech {
   }
   VolumeChangeEvent JHybridRecognizerSpec::getVoiceInputVolume() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVolumeChangeEvent>()>("getVoiceInputVolume");
+    auto __result = method(_javaPart);
+    return __result->toCpp();
+  }
+  PermissionStatus JHybridRecognizerSpec::getPermissions() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPermissionStatus>()>("getPermissions");
     auto __result = method(_javaPart);
     return __result->toCpp();
   }
