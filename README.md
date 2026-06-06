@@ -485,7 +485,7 @@ The `SpeechRecognizer.dispose()` method is **NOT SAFE** and should rarely be use
 
 ## Compatibility
 
-Old versions of `@gmessier/nitro-speech` require [react-native-nitro-modules 0.35.0 or higher](https://github.com/mrousavy/nitro/releases/tag/v0.35.0).
+Old versions of `@gmessier/nitro-speech` incompatible with [react-native-nitro-modules 0.35.0+](https://github.com/mrousavy/nitro/releases/tag/v0.35.0).
 
 
 | Compatibility                          | Supported versions                |
