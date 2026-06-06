@@ -19,5 +19,5 @@ export {
   type RecognizerCallbacks,
   type RecognizerMethods,
   type UseVoiceInputVolumeConfig,
-  type PermissionStatus,
+  PermissionStatus,
 } from './Recognizer/types'
