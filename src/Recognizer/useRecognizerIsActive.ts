@@ -28,7 +28,7 @@ export const useRecognizerIsActive = () => {
  * In case you use static Speech Recognizer:
  *
  * ```typescript
- * import { speechRecognizerActiveStateHandler } from '@gmessier/nitro-speech'
+ * import { speechRecognizerActiveStateHandler } from 'react-native-nitro-speech'
  *
  * SpeechRecognizer.onReadyForSpeech = () => {
  *   speechRecognizerActiveStateHandler(true)

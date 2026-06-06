@@ -4,12 +4,17 @@
 [![license](https://img.shields.io/npm/l/@gmessier/nitro-speech.svg)](https://github.com/NotGeorgeMessier/nitro-speech/blob/main/LICENSE)
 [![npm downloads](https://img.shields.io/npm/dm/@gmessier/nitro-speech.svg)](https://www.npmjs.com/package/@gmessier/nitro-speech)
 
- 
+
+** ⚠️ Package name change `@gmessier/nitro-speech` -> `react-native-nitro-speech`**
+
+From version 0.4.5 onwards, the package name is `react-native-nitro-speech`.
+`@gmessier/nitro-speech` is identical (as of now), but will be deprecated in the future. Please, use `react-native-nitro-speech` instead or check the [compatibility section](#compatibility).
+
 > If you hit an issue or want to request a feature, please open a GitHub issue or reach out to me on Discord / Twitter (X) — response is guaranteed.
 >
-> - GitHub Issues: [nitro-speech/issues](https://github.com/NotGeorgeMessier/nitro-speech/issues)
-> - Discord: `gmessier`
-> - Twitter (X): `SufferingGeorge`
+> - [GitHub Issues](https://github.com/NotGeorgeMessier/nitro-speech/issues)
+> - Discord: `@gmessier`
+> - Twitter (X): `@SufferingGeorge`
 
 #### Key Features:
 
@@ -60,11 +65,11 @@
 ## Installation
 
 ```bash
-npm install @gmessier/nitro-speech react-native-nitro-modules
+npm install react-native-nitro-speech react-native-nitro-modules
 # or
-yarn add @gmessier/nitro-speech react-native-nitro-modules
+yarn add react-native-nitro-speech react-native-nitro-modules
 # or 
-bun add @gmessier/nitro-speech react-native-nitro-modules
+bun add react-native-nitro-speech react-native-nitro-modules
 ```
 
 ### Expo
@@ -150,7 +155,7 @@ Both permissions are required for speech recognition to work on iOS.
 Because of that, treat it as a **single session owner** setup hook: use it once per recognition session/screen, where you define callbacks.
 
 ```typescript
-import { useRecognizer } from '@gmessier/nitro-speech';
+import { useRecognizer } from 'react-native-nitro-speech';
 
 function MyComponent() {
   const {
@@ -270,7 +275,7 @@ const {
 If you need to call recognizer methods from other components without prop drilling, use `RecognizerRef`.
 
 ```typescript
-import { RecognizerRef } from '@gmessier/nitro-speech';
+import { RecognizerRef } from 'react-native-nitro-speech';
 
 RecognizerRef.prewarm({ locale: 'en-US' }, { requestPermission: true });
 RecognizerRef.startListening({ locale: 'en-US' });
@@ -324,7 +329,7 @@ Use `useVoiceInputVolume(config?: UseVoiceInputVolumeConfig)` to subscribe to vo
 By default, there is no limit and the hook might re-render a lot.
 
 ```typescript
-import { useVoiceInputVolume } from '@gmessier/nitro-speech';
+import { useVoiceInputVolume } from 'react-native-nitro-speech';
 
 function VoiceMeter() {
   const volumeEvent = useVoiceInputVolume({
@@ -364,7 +369,7 @@ function VoiceMeter() {
 ### useRecognizerIsActive
 
 ```typescript
-import { useRecognizerIsActive } from '@gmessier/nitro-speech';
+import { useRecognizerIsActive } from 'react-native-nitro-speech';
 
 function MyComponent() {
   const isActive = useRecognizerIsActive();
@@ -383,7 +388,7 @@ import {
   SpeechRecognizer, 
   speechRecognizerVolumeChangeHandler,
   speechRecognizerActiveStateHandler,
-} from '@gmessier/nitro-speech';
+} from 'react-native-nitro-speech';
 
 // Set up callbacks
 SpeechRecognizer.onReadyForSpeech = () => {
@@ -476,13 +481,14 @@ The `SpeechRecognizer.dispose()` method is **NOT SAFE** and should rarely be use
 
 ## Compatibility
 
-Latest versions of `@gmessier/nitro-speech` require [react-native-nitro-modules 0.35.0 or higher](https://github.com/mrousavy/nitro/releases/tag/v0.35.0).
+Old versions of `@gmessier/nitro-speech` require [react-native-nitro-modules 0.35.0 or higher](https://github.com/mrousavy/nitro/releases/tag/v0.35.0).
 
 
 | Compatibility                          | Supported versions                |
 | -------------------------------------- | --------------------------------- |
 | `react-native-nitro-modules <= 0.34.*` | `@gmessier/nitro-speech <= 0.2.*` |
 | `react-native-nitro-modules >= 0.35.*` | `@gmessier/nitro-speech >= 0.3.*` |
+| `react-native-nitro-modules >= 0.35.*` | `react-native-nitro-speech *` |
 
 ## Troubleshooting
 
