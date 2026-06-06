@@ -9,7 +9,7 @@
 
 From version 0.4.5 onwards, the package name is `react-native-nitro-speech`.
 
-`@gmessier/nitro-speech` is identical (as of now), but will be deprecated in the future. 
+`@gmessier/nitro-speech` is identical (as of now), but will no longer be supported in the future.
 
 Please, use `react-native-nitro-speech` instead or check the [compatibility section](#compatibility).
 
