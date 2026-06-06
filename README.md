@@ -5,7 +5,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/@gmessier/nitro-speech.svg)](https://www.npmjs.com/package/@gmessier/nitro-speech)
 
 
-** ⚠️ Package name change `@gmessier/nitro-speech` -> `react-native-nitro-speech`**
+**⚠️ Package name change `@gmessier/nitro-speech` -> `react-native-nitro-speech`**
 
 From version 0.4.5 onwards, the package name is `react-native-nitro-speech`.
 `@gmessier/nitro-speech` is identical (as of now), but will be deprecated in the future. Please, use `react-native-nitro-speech` instead or check the [compatibility section](#compatibility).
