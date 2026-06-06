@@ -89,6 +89,29 @@ class HybridRecognizer: HybridRecognizerSpec  {
         )
     }
     
+    func getPermissions() -> PermissionStatus {
+        // Return early for the speech recognition permission first
+        let speechRecognitionStatus = Permissions.authorizationStatus()
+        if speechRecognitionStatus == PermissionStatus.denied {
+            return PermissionStatus.denied
+        }
+        if speechRecognitionStatus == PermissionStatus.notRequested {
+            return PermissionStatus.notRequested
+        }
+        
+        // Check micro then
+        let micStatus = Permissions.microphonePermissionStatus()
+        if micStatus == PermissionStatus.denied {
+            return PermissionStatus.denied
+        }
+        if micStatus == PermissionStatus.notRequested {
+            return PermissionStatus.notRequested
+        }
+        
+        // Everything is granted
+        return PermissionStatus.granted
+    }
+    
     func getSupportedLocalesIOS() -> [String] {
         return self.coordinator.getSupportedLocales()
     }
@@ -170,7 +193,7 @@ extension HybridRecognizer: RecognizerDelegate {
     }
     
     func result(batches: [String]) {
-        self.lg.log("[onResult] \(batches)")
+//        self.lg.log("[onResult] \(batches)")
         if onResult != nil {
             onResultFallback = onResult
         }
@@ -207,6 +230,7 @@ extension HybridRecognizer: RecognizerDelegate {
     }
     
     func volumeChange(event: VolumeChangeEvent) {
+        self.lg.log("[onVolumeChange] raw: \(event.rawVolume) | db: \(event.db)")
         if onVolumeChange != nil {
             onVolumeChangeFallback = onVolumeChange
         }

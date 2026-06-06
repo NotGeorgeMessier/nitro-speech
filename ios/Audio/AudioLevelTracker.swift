@@ -11,7 +11,7 @@ struct AudioLevelSample {
 
 final class AudioLevelTracker {
     private static let meterMinDb: Float = -70
-    private static let meterMaxDb: Float = -10
+    private static let meterMaxDb: Float = 0
     private static let meterAttack: Float = 0.35
     private static let meterRelease: Float = 0.08
     private static let defaultAutoStopResetThreshold: Double = 0.4
@@ -50,7 +50,7 @@ final class AudioLevelTracker {
             smoothed: Double(smoothedLevel * 1_000_000).rounded() / 1_000_000,
             raw: Double(normalized * 1_000_000).rounded() / 1_000_000,
             db: Double(db * 1_000).rounded() / 1_000,
-            resetTimer: Double(normalized) >= threshold
+            resetTimer: threshold < 1 && Double(normalized) >= threshold
         )
         
         lg.log("[AudioLevelTracker.process] autoStopResetThreshold: \(threshold)")

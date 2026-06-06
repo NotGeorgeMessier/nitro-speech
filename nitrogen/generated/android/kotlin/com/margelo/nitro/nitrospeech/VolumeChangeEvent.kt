@@ -39,7 +39,7 @@ data class VolumeChangeEvent(
   }
 
   override fun hashCode(): Int {
-    return arrayOf(
+    return arrayOf<Any?>(
       smoothedVolume,
       rawVolume,
       db

@@ -44,7 +44,7 @@ class RecognitionListenerSession (
                     config?.resetAutoFinishVoiceSensitivity?.coerceIn(0.0, 1.0)
                         ?: SPEECH_LEVEL_THRESHOLD.toDouble()
                 // logger.log("onRmsChanged: ${volumeEvent}")
-                if (volumeEvent.rawVolume > threshold) {
+                if (threshold < 1 && volumeEvent.rawVolume > threshold) {
                     autoStopper?.resetTimer()
                 }
             }

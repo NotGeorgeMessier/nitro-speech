@@ -40,7 +40,7 @@ interface ParamsIOS {
    * `"speed"` - Gives priority to speed over accuracy
    *
    * `"general"` - For longer speeches, more accurate but delayed response
-   * 
+   *
    * @note preset may be overridden by other properties
    *
    * @since iOS 26.0+
@@ -88,9 +88,11 @@ export interface MutableSpeechRecognitionConfig {
    *
    * `0.10` - Quiet room level
    *
-   * `0.40` - Default, street, medium restaurant background, office level
+   * `0.40` - Default, medium-low level, street, avoids triggers at quiet places
    *
-   * `0.60` - Loud restaurants, noisy office, party, highly crowded places level
+   * `0.60` - Medium-high level, restaurant, office background
+   *
+   * `0.80` - High level, loud restaurants, noisy office, party, highly crowded places
    *
    * `1` - Use to disable volume-based reset of the auto finish timer
    *

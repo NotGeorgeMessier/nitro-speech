@@ -9,12 +9,12 @@
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-prettier": "^5.2.1",
-        "nitrogen": "0.35.6",
+        "nitrogen": "0.35.9",
         "prettier": "^3.3.3",
         "react": "19.2.4",
         "react-native": "0.84.1",
         "react-native-builder-bob": "0.37.0",
-        "react-native-nitro-modules": "0.35.6",
+        "react-native-nitro-modules": "0.35.9",
         "typescript": "^5.8.3",
       },
       "peerDependencies": {
@@ -345,7 +345,7 @@
 
     "@sinonjs/fake-timers": ["@sinonjs/fake-timers@10.3.0", "", { "dependencies": { "@sinonjs/commons": "^3.0.0" } }, "sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA=="],
 
-    "@ts-morph/common": ["@ts-morph/common@0.28.1", "", { "dependencies": { "minimatch": "^10.0.1", "path-browserify": "^1.0.1", "tinyglobby": "^0.2.14" } }, "sha512-W74iWf7ILp1ZKNYXY5qbddNaml7e9Sedv5lvU1V8lftlitkc9Pq1A+jlH23ltDgWYeZFFEqGCD1Ies9hqu3O+g=="],
+    "@ts-morph/common": ["@ts-morph/common@0.29.0", "", { "dependencies": { "minimatch": "^10.0.1", "path-browserify": "^1.0.1", "tinyglobby": "^0.2.14" } }, "sha512-35oUmphHbJvQ/+UTwFNme/t2p3FoKiGJ5auTjjpNTop2dyREspirjMy82PLSC1pnDJ8ah1GU98hwpVt64YXQsg=="],
 
     "@types/babel__core": ["@types/babel__core@7.20.5", "", { "dependencies": { "@babel/parser": "^7.20.7", "@babel/types": "^7.20.7", "@types/babel__generator": "*", "@types/babel__template": "*", "@types/babel__traverse": "*" } }, "sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA=="],
 
@@ -987,7 +987,7 @@
 
     "negotiator": ["negotiator@1.0.0", "", {}, "sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg=="],
 
-    "nitrogen": ["nitrogen@0.35.6", "", { "dependencies": { "chalk": "^5.3.0", "react-native-nitro-modules": "^0.35.6", "ts-morph": "^27.0.0", "yargs": "^18.0.0", "zod": "^4.0.5" }, "bin": { "nitrogen": "lib/index.js" } }, "sha512-fUoyqCEQugl49L/lp/v3LceZt8jwL/gqfLhWsxRPxr1pOTnBhyrcEJ2dAJvHl10h7JxaswP6YCnVZMZmjJavKg=="],
+    "nitrogen": ["nitrogen@0.35.9", "", { "dependencies": { "chalk": "^5.3.0", "react-native-nitro-modules": "^0.35.9", "ts-morph": "^28.0.0", "yargs": "^18.0.0", "zod": "^4.0.5" }, "bin": { "nitrogen": "lib/index.js" } }, "sha512-Qbs45N/9VXYFg4u/nUF4EKw7qmbaVD0vABh5Rq6e3YT1MQP672/EBneMfNXvwOaTf8KW3pIxM01IlEdKS3f8JQ=="],
 
     "node-abort-controller": ["node-abort-controller@3.1.1", "", {}, "sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ=="],
 
@@ -1105,7 +1105,7 @@
 
     "react-native-builder-bob": ["react-native-builder-bob@0.37.0", "", { "dependencies": { "@babel/core": "^7.25.2", "@babel/plugin-transform-strict-mode": "^7.24.7", "@babel/preset-env": "^7.25.2", "@babel/preset-flow": "^7.24.7", "@babel/preset-react": "^7.24.7", "@babel/preset-typescript": "^7.24.7", "babel-plugin-module-resolver": "^5.0.2", "browserslist": "^4.20.4", "cosmiconfig": "^9.0.0", "cross-spawn": "^7.0.3", "dedent": "^0.7.0", "del": "^6.1.1", "escape-string-regexp": "^4.0.0", "fs-extra": "^10.1.0", "glob": "^8.0.3", "is-git-dirty": "^2.0.1", "json5": "^2.2.1", "kleur": "^4.1.4", "metro-config": "^0.80.9", "prompts": "^2.4.2", "which": "^2.0.2", "yargs": "^17.5.1" }, "bin": { "bob": "bin/bob" } }, "sha512-CkM4csFrYtdGJoRLbPY6V8LBbOxgPZIuM0MkPaiOI2F/ASwxMAzoJu9wBw8Pyvx1p27XnrIEKPyDiTqimJ7xbA=="],
 
-    "react-native-nitro-modules": ["react-native-nitro-modules@0.35.6", "", { "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-3Cb7s+O5tpZ6RdIiPOB/wi3IMfBxD6tl6VDF8gJ5zvM/BEGTWxwMMLjzmWmsYPKekdbYBznF6qp2d2SxixPy8g=="],
+    "react-native-nitro-modules": ["react-native-nitro-modules@0.35.9", "", { "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-yCO6eJ85SPPUo4a4an7H5oj6wPCSIT72fbjr5WZ/20n6zswaJ2gNNpnWtg2We0AZwkAOjSqkOJ0Vjc05p6kGiA=="],
 
     "react-refresh": ["react-refresh@0.14.2", "", {}, "sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA=="],
 
@@ -1251,7 +1251,7 @@
 
     "ts-api-utils": ["ts-api-utils@2.5.0", "", { "peerDependencies": { "typescript": ">=4.8.4" } }, "sha512-OJ/ibxhPlqrMM0UiNHJ/0CKQkoKF243/AEmplt3qpRgkW8VG7IfOS41h7V8TjITqdByHzrjcS/2si+y4lIh8NA=="],
 
-    "ts-morph": ["ts-morph@27.0.2", "", { "dependencies": { "@ts-morph/common": "~0.28.1", "code-block-writer": "^13.0.3" } }, "sha512-fhUhgeljcrdZ+9DZND1De1029PrE+cMkIP7ooqkLRTrRLTqcki2AstsyJm0vRNbTbVCNJ0idGlbBrfqc7/nA8w=="],
+    "ts-morph": ["ts-morph@28.0.0", "", { "dependencies": { "@ts-morph/common": "~0.29.0", "code-block-writer": "^13.0.3" } }, "sha512-Wp3tnZ2bzwxyTZMtgWVzXDfm7lB1Drz+y9DmmYH/L702PQhPyVrp3pkou3yIz4qjS14GY9kcpmLiOOMvl8oG1g=="],
 
     "type-check": ["type-check@0.4.0", "", { "dependencies": { "prelude-ls": "^1.2.1" } }, "sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew=="],
 

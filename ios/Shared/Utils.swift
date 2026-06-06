@@ -56,4 +56,8 @@ enum Utils {
         
         return [locale, addPunctuation, preset, atypicalSpeech].joined(separator: "|")
     }
+    
+    static func nowMs() -> Int {
+        return Int(round(Double(DispatchTime.now().uptimeNanoseconds / 1_000_000)))
+    }
 }

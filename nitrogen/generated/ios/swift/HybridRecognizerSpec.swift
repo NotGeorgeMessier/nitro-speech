@@ -27,6 +27,7 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
   func updateConfig(newConfig: MutableSpeechRecognitionConfig?, resetAutoFinishTime: Bool?) throws -> Void
   func getIsActive() throws -> Bool
   func getVoiceInputVolume() throws -> VolumeChangeEvent
+  func getPermissions() throws -> PermissionStatus
   func getSupportedLocalesIOS() throws -> [String]
 }
 
