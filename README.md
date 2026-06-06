@@ -8,8 +8,12 @@
 **⚠️ Package name change `@gmessier/nitro-speech` -> `react-native-nitro-speech`**
 
 From version 0.4.5 onwards, the package name is `react-native-nitro-speech`.
-`@gmessier/nitro-speech` is identical (as of now), but will be deprecated in the future. Please, use `react-native-nitro-speech` instead or check the [compatibility section](#compatibility).
 
+`@gmessier/nitro-speech` is identical (as of now), but will be deprecated in the future. 
+
+Please, use `react-native-nitro-speech` instead or check the [compatibility section](#compatibility).
+
+#### Feedback
 > If you hit an issue or want to request a feature, please open a GitHub issue or reach out to me on Discord / Twitter (X) — response is guaranteed.
 >
 > - [GitHub Issues](https://github.com/NotGeorgeMessier/nitro-speech/issues)
