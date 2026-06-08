@@ -31,9 +31,8 @@ The API is identical — no migration needed.
 - 👆 Configurable Haptic Feedback on start and finish
 - 🎚️ Speech-quality features: see full list [here](./docs/features/real-time-transcription.md#real-time-transcription)
 - 🔓 Embedded Permission handling
-  - Callback `onPermissionDenied` - if the user denied the request
-  - Configure `SpeechRecognitionPrewarm.requestPermission` option for `prewarm` method
-  - Method `getPermissions(): PermissionStatus`
+  - Callback `onPermissionDenied` and method `getPermissions`
+  - Option `requestPermission` for `prewarm` method
 - 📦 Everything else that could be found in Expo or other libraries
 
 ## Table of Contents
