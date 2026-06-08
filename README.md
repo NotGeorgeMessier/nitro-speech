@@ -1,4 +1,4 @@
-# @gmessier/nitro-speech
+# react-native-nitro-speech
 
 [![npm version](https://img.shields.io/npm/v/@gmessier/nitro-speech.svg)](https://www.npmjs.com/package/@gmessier/nitro-speech)
 [![license](https://img.shields.io/npm/l/@gmessier/nitro-speech.svg)](https://github.com/NotGeorgeMessier/nitro-speech/blob/main/LICENSE)
@@ -6,7 +6,7 @@
 
 ### React Native real-time Speech Recognition Library powered by Nitro Modules
 
-⚠️ This is `@gmessier/nitro-speech` package ([npm](https://www.npmjs.com/package/@gmessier/nitro-speech)). This package will be deprecated soon. Please switch to the new `react-native-nitro-speech` ([npm](https://www.npmjs.com/package/react-native-nitro-speech))
+This is `react-native-nitro-speech` package ([npm](https://www.npmjs.com/package/react-native-nitro-speech)). The old name `@gmessier/nitro-speech` will be deprecated soon ([npm](https://www.npmjs.com/package/@gmessier/nitro-speech)). If you are using the old name, please switch to the new one.
 
 The API is identical — no migration needed.
 
@@ -56,11 +56,11 @@ The API is identical — no migration needed.
 ## Installation
 
 ```bash
-npm install @gmessier/nitro-speech react-native-nitro-modules
+npm install react-native-nitro-speech react-native-nitro-modules
 # or
-yarn add @gmessier/nitro-speech react-native-nitro-modules
+yarn add react-native-nitro-speech react-native-nitro-modules
 # or
-bun add @gmessier/nitro-speech react-native-nitro-modules
+bun add react-native-nitro-speech react-native-nitro-modules
 ```
 
 ### Expo
