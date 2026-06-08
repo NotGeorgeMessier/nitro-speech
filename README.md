@@ -1,52 +1,38 @@
-# react-native-nitro-speech
+# @gmessier/nitro-speech
 
 [![npm version](https://img.shields.io/npm/v/@gmessier/nitro-speech.svg)](https://www.npmjs.com/package/@gmessier/nitro-speech)
 [![license](https://img.shields.io/npm/l/@gmessier/nitro-speech.svg)](https://github.com/NotGeorgeMessier/nitro-speech/blob/main/LICENSE)
 [![npm downloads](https://img.shields.io/npm/dm/@gmessier/nitro-speech.svg)](https://www.npmjs.com/package/@gmessier/nitro-speech)
 
+### React Native real-time Speech Recognition Library powered by Nitro Modules
 
-**⚠️ Package name change `@gmessier/nitro-speech` -> `react-native-nitro-speech`**
+⚠️ This is `@gmessier/nitro-speech` package ([npm](https://www.npmjs.com/package/@gmessier/nitro-speech)). This package will be deprecated soon. Please switch to the new `react-native-nitro-speech` ([npm](https://www.npmjs.com/package/react-native-nitro-speech))
 
-From version 0.4.5 onwards, the package name is `react-native-nitro-speech`.
-
-`@gmessier/nitro-speech` is identical (as of now), but will no longer be supported in the future.
-
-Please, use `react-native-nitro-speech` instead or check the [compatibility section](#compatibility).
-
-#### Feedback
-> If you hit an issue or want to request a feature, please open a GitHub issue or reach out to me on Discord / Twitter (X) — response is guaranteed.
->
-> - [GitHub Issues](https://github.com/NotGeorgeMessier/nitro-speech/issues)
-> - Discord: `@gmessier`
-> - Twitter (X): `@SufferingGeorge`
+The API is identical — no migration needed.
 
 #### Key Features:
 
 - ⚡ Built with Nitro Modules for low-overhead native binding
 - 🌎 Supports 60+ languages 
-- 🍎 The only library that uses new `SpeechAnalyzer` with `SpeechTranscriber` or `DictationTranscriber` API for iOS 26+ (with fallback to legacy `SFSpeechRecognition` for older versions)
-- 🧵 Full support of `react-native-worklets` - every method is accessible from any thread
+- 🍎 The only library implementing new `SpeechAnalyzer` with `SpeechTranscriber` or `DictationTranscriber` API for iOS 26+ (with fallback to legacy `SFSpeechRecognition` for older versions)
+- 🧵 Full support of `react-native-worklets` - each method is accessible from any runtime
 - ⏱️ Timer for silence
   - Configurable and mutable `autoFinishRecognitionMs` value (default: 8 sec)
-  - Callback `onAutoFinishProgress` fires periodically with interval
+  - Callback `onAutoFinishProgress` fires periodically with a configurable interval
   - Configurable and mutable interval `autoFinishProgressIntervalMs` value (default: 1 sec)
   allows changing the value on the fly
-  - Method `resetAutoFinishTime` resets the Timer to the threshold
+  - Method `resetAutoFinishTime` resets the timer to the threshold
   - Method `addAutoFinishTime` adds ms once without changing threshold
   - Configurable volume-based sensitivity `resetAutoFinishVoiceSensitivity` for the timer from 0 to 1
 - 🎤 Rich user voice input management 
-  - Hook `useVoiceInputVolume(config)` for displaying volume in dB and making smooth UI animations;
+  - Hook `useVoiceInputVolume` and method `getVoiceInputVolume` for displaying volume in dB and making smooth UI animations
   - Callback `onVolumeChange` for advanced use cases
 - 🧩 Session Lifecycle methods: `prewarm` and `updateConfig`
 - 👆 Configurable Haptic Feedback on start and finish
-- 🎚️ Speech-quality features:
-  - Result is grouped by speech segments into Batches.
-  - Check `SpeechRecognitionConfig` for all the params
-  - Use `MutableSpeechRecognitionConfig` params for `updateConfig` method
+- 🎚️ Speech-quality features: see full list [here](./docs/features/real-time-transcription.md#real-time-transcription)
 - 🔓 Embedded Permission handling
-  - Callback `onPermissionDenied` - if user denied the request
-  - Configure `SpeechRecognitionPrewarm.requestPermission` option for `prewarm` method
-  - Method `getPermissions(): PermissionStatus`
+  - Callback `onPermissionDenied` and method `getPermissions`
+  - Option `requestPermission` for `prewarm` method
 - 📦 Everything else that could be found in Expo or other libraries
 
 ## Table of Contents
@@ -54,26 +40,27 @@ Please, use `react-native-nitro-speech` instead or check the [compatibility sect
 - [Installation](#installation)
 - [Permissions](#permissions)
 - [Features](#features)
-- [Usage](#usage)
-  - [Recommended: useRecognizer Hook](#recommended-userecognizer-hook)
-  - [With React Navigation (important)](#with-react-navigation-important)
-  - [Cross-component control: RecognizerRef](#cross-component-control-recognizerref)
-  - [Multithreading (react-native-worklets)](#multithreading-react-native-worklets)
-  - [Voice input volume](#voice-input-volume)
-  - [useRecognizerIsActive](#userecognizerisactive)
-  - [Unsafe: SpeechRecognizer](#unsafe-speechrecognizer)
 - [Requirements](#requirements)
 - [Compatibility](#compatibility)
+- [Contributions and feedback](#contributions-and-feedback)
 - [Troubleshooting](#troubleshooting)
+- Usage:
+  - [Recommended: useRecognizer Hook](./docs/examples/use-recognizer.md#hook-userecognizer)
+  - [With React Navigation (important)](./docs/examples/use-recognizer.md#with-react-navigation)
+  - [Cross-component control: RecognizerRef](./docs/examples/use-recognizer.md#recognizerref)
+  - [Multithreading (react-native-worklets)](./docs/features/worklets.md#worklets)
+  - [Voice input volume](./docs/features/voice-input-volume.md#voice-input-volume)
+  - [Is active](./docs/features/is-recognizer-active.md#is-recognizer-active)
+  - [Direct access to SpeechRecognizer](./docs/examples/speech-recognizer.md#speechrecognizer)
 
 ## Installation
 
 ```bash
-npm install react-native-nitro-speech react-native-nitro-modules
+npm install @gmessier/nitro-speech react-native-nitro-modules
 # or
-yarn add react-native-nitro-speech react-native-nitro-modules
-# or 
-bun add react-native-nitro-speech react-native-nitro-modules
+yarn add @gmessier/nitro-speech react-native-nitro-modules
+# or
+bun add @gmessier/nitro-speech react-native-nitro-modules
 ```
 
 ### Expo
@@ -97,6 +84,8 @@ cd ios && pod install
 No additional setup required.
 
 ## Permissions
+
+More about permissions [here](./docs/features/permissions.md#permissions)
 
 ### Android
 
@@ -123,359 +112,35 @@ Both permissions are required for speech recognition to work on iOS.
 
 ## Features
 
-| Feature | Description | iOS | Android |
-|---------|-------------|-----|---------|
-| **Real-time transcription** | Gets partial results as the user speaks | ✅ | ✅ |
-| **Locale support** | 60+ Supported locales | ✅ | ✅ |
-| **Auto-finish on silence** | Automatically stops recognition after configurable inactivity period | ✅ | ✅ |
-| **Auto-finish progress** | Callback `onAutoFinishProgress` with countdown until auto-stop | ✅ | ✅ |
-| **Add Auto-finish Time** | Adds time to the auto finish timer once without changing the timer threshold | ✅ | ✅ |
-| **Reset Auto-finish Time** | Resets the Timer to the threshold | ✅ | ✅ |
-| **Voice input volume** | `useVoiceInputVolume`, `getVoiceInputVolume()`, `onVolumeChange` | ✅ | ✅ |
-| **Reset Auto-finish Sensitivity** | The voice detector sensitivity to reset the Auto-finish time | ✅ | ✅ |
-| **Prewarm** | Prepares resources, downloads assets, confirms locale availability, requests permissions | ✅ | ✅ |
-| **Update config** | Static method `updateConfig` updates the config on the fly | ✅ | ✅ |
-| **Is Active** | `useRecognizerIsActive()` and `getIsActive()`, `onReadyForSpeech` and `onRecordingStopped`| ✅ | ✅ |
-| **Haptic feedback** | Haptic feedback on recording start/stop | ✅ | ✅ |
-| **Permission handling** | Auto-request permissions with `prewarm` and `startListening`, `getPermissions()` and `onPermissionDenied` | ✅ | ✅ |
-| **Background handling** | Stop when app loses focus/goes to background | ✅ | ✅ |
-| **Repeating word filter** | Removes consecutive duplicate words from artifacts | ✅ | ✅ |
-| **Offensive word masking** | Control whether offensive words are masked with * | iOS 26+ | ✅ |
-| **Contextual strings** | Domain-specific vocabulary for improved accuracy | ✅ | ✅ |
-| **Language model selection** | Choose between web search vs free-form models | Auto | ✅ |
-| **Batch handling** | Filters out empty or repeated results | Auto | ✅ |
-| **Formatting quality** | Prefer quality vs speed in formatting | Auto | ✅ |
-| **Transcription preset** | `iosPreset` adapts for different scenarios | ✅ | Auto |
-| **Automatic punctuation** | Adds punctuation to transcription (iOS 16+) | ✅ | Auto |
-| **Atypical speech hint** | Hint iOS that speech may include accent, lisp, or other confounding traits | ✅ | Auto |
-| **getSupportedLocalesIOS** | Supported locales for iOS (No available API for Android) | ✅ | X |
-
-
-## Usage
-
-### Recommended: useRecognizer Hook
-
-`useRecognizer` is lifecycle-aware. It calls `stopListening()` during cleanup (unmount or `destroyDeps` change).  
-Because of that, treat it as a **single session owner** setup hook: use it once per recognition session/screen, where you define callbacks.
-
-```typescript
-import { useRecognizer } from 'react-native-nitro-speech';
-
-function MyComponent() {
-  const {
-    prewarm,
-    startListening, 
-    stopListening, 
-    resetAutoFinishTime, 
-    addAutoFinishTime, 
-    updateConfig,
-    getIsActive,
-    getVoiceInputVolume,
-    getPermissions,
-    getSupportedLocalesIOS,
-  } = useRecognizer({
-    onReadyForSpeech: () => {
-      console.log('Listening...');
-    },
-    onResult: (textBatches) => {
-      console.log('Result:', textBatches.join('\n'));
-    },
-    onRecordingStopped: () => {
-      console.log('Stopped');
-    },
-    onAutoFinishProgress: (timeLeftMs) => {
-      console.log('Auto-stop in:', timeLeftMs, 'ms');
-    },
-    onError: (error) => {
-      console.log('Error:', error);
-    },
-    onPermissionDenied: () => {
-      console.log('Permission denied');
-    },
-  });
-
-  return (
-    <View>
-      <TouchableOpacity onPress={() => startListening({ 
-        // Universal
-        locale: "en-US",
-        contextualStrings: ['custom', 'words'],
-        maskOffensiveWords: false,
-        // Mutable properties
-        autoFinishRecognitionMs: 12000,
-        autoFinishProgressIntervalMs: 1000,
-        resetAutoFinishVoiceSensitivity: 0.4,
-        disableRepeatingFilter: false,
-        startHapticFeedbackStyle: 'medium',
-        stopHapticFeedbackStyle: 'light',
-        // iOS specific, non-mutable
-        iosAddPunctuation: true,
-        iosPreset: 'general',
-        iosAtypicalSpeech: false,
-        // Android specific, non-mutable
-        androidFormattingPreferQuality: false,
-        androidUseWebSearchModel: false,
-        androidDisableBatchHandling: false,
-      })}>
-        <Text>Start Listening</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={stopListening}>
-        <Text>Stop Listening</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => addAutoFinishTime(5000)}>
-        <Text>Add 5s to Timer</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => resetAutoFinishTime()}>
-        <Text>Reset Timer</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => updateConfig(
-            {
-              autoFinishRecognitionMs: 12000,
-              autoFinishProgressIntervalMs: 500,
-              resetAutoFinishVoiceSensitivity: 0.65,
-            },
-            true
-          )>
-        <Text>Update Timer to 12s, 500ms interval, 0.65 sensitivity, with reset</Text>
-      </TouchableOpacity>
-      <TouchableOpacity 
-        onPress={() => {
-          scheduleOnRuntime(workletRuntime, () => {
-            RecognizerRef.prewarm({
-              iosPreset: 'speed',
-            }, { requestPermission: true });
-          });
-        }}
-      >
-        <Text>Prewarm from worklet with permission request (default behavior)</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
-```
-
-On iOS 26+, the recognizer prefers the newer `SpeechTranscriber` path for general cases. Setting `iosPreset: 'shortForm' OR 'speed'`, `iosAddPunctuation: false`, or `iosAtypicalSpeech: true` switches priority to `DictationTranscriber` that is better suited for short utterances or non-standard speech patterns.
-
-### With React Navigation (important)
-
-React Navigation **doesn’t unmount screens** when you navigate — the screen can stay mounted in the background and come back without remounting. See: [Navigation lifecycle (React Navigation)](https://reactnavigation.org/docs/8.x/navigation-lifecycle/#summary).
-
-Because of that, prefer tying recognition cleanup to **focus state**, not just component unmount. A simple approach is `useIsFocused()` and passing it into `useRecognizer`’s `destroyDeps` so recognition stops when the screen blurs. See: [`useIsFocused` (React Navigation)](https://reactnavigation.org/docs/8.x/use-is-focused).
-
-```typescript
-const isFocused = useIsFocused();
-const { 
-  // ...
-} = useRecognizer(
-  {
-    // ...
-  },
-  [isFocused]
-);
-```
-
-### Cross-component control: RecognizerRef
-
-If you need to call recognizer methods from other components without prop drilling, use `RecognizerRef`.
-
-```typescript
-import { RecognizerRef } from 'react-native-nitro-speech';
-
-RecognizerRef.prewarm({ locale: 'en-US' }, { requestPermission: true });
-RecognizerRef.startListening({ locale: 'en-US' });
-RecognizerRef.addAutoFinishTime(5000);
-RecognizerRef.resetAutoFinishTime();
-RecognizerRef.updateConfig(
-  {
-    autoFinishRecognitionMs: 12000,
-    autoFinishProgressIntervalMs: 500,
-    resetAutoFinishVoiceSensitivity: 0.65,
-  },
-  true
-);
-RecognizerRef.getIsActive();
-RecognizerRef.getVoiceInputVolume();
-RecognizerRef.getPermissions();
-RecognizerRef.stopListening();
-// iOS only
-RecognizerRef.getSupportedLocalesIOS();
-```
-
-`RecognizerRef` exposes only method handlers and is safe for cross-component method access.
-
-### Multithreading (react-native-worklets)
-All methods are thread-safe and can be called from UI thread or custom worklets 
-```typescript
-import { createWorkletRuntime, scheduleOnRuntime } from 'react-native-worklets';
-const workletRuntime = createWorkletRuntime({ name: 'background' });
-
-onPress={() => {
-  scheduleOnRuntime(workletRuntime, () => {
-    // or SpeechRecognizer
-    // or just updateConfig from useRecognizer
-    RecognizerRef.updateConfig({
-      autoFinishRecognitionMs: 10000,
-      autoFinishProgressIntervalMs: 200,
-      resetAutoFinishVoiceSensitivity: 0.10,
-    });
-  });
-}}
-```
-
-### Voice input volume
-
-#### useVoiceInputVolume
-
-Use `useVoiceInputVolume(config?: UseVoiceInputVolumeConfig)` to subscribe to volume changes. 
-
-`config` is optional and can be used to limit the number of events per second.
-
-By default, there is no limit and the hook might re-render a lot.
-
-```typescript
-import { useVoiceInputVolume } from 'react-native-nitro-speech';
-
-function VoiceMeter() {
-  const volumeEvent = useVoiceInputVolume({
-    eventsPerSecond: 5,
-  });
-  return <>
-    <Text>{volumeEvent.smoothedVolume}</Text>
-    <Text>{volumeEvent.rawVolume}</Text>
-    <Text>{volumeEvent.db}</Text>
-  </>;
-}
-```
-
-#### Reanimated: useSharedValue, worklets, UI thread
-
-As a better alternative you can control volume via SharedValue and apply it only on UI thread with Reanimated.
-This way you will avoid re-renders since the volume will be stored on UI thread
-
-```typescript
-function VoiceMeter() {
-  const sharedVolume = useSharedValue(0)
-  const {
-    // ...
-  } = useRecognizer(
-    {
-      // ...
-      onVolumeChange: (volumeEvent) => {
-        "worklet";
-        sharedVolume.value = volumeEvent.smoothedVolume
-      },
-      // ...
-    }
-  );
-}
-```
-
-### useRecognizerIsActive
-
-```typescript
-import { useRecognizerIsActive } from 'react-native-nitro-speech';
-
-function MyComponent() {
-  const isActive = useRecognizerIsActive();
-  return <Text>{isActive ? 'Listening...' : 'Not listening'}</Text>;
-}
-```
-
-### Unsafe: SpeechRecognizer
-
-`SpeechRecognizer` is the hybrid object. It gives direct access to callbacks and control methods, but it is unsafe to orchestrate the full session directly from it.
-
-**Warning**: Since it reflects the original hybrid object, its API may change in the future.
-
-```typescript
-import { 
-  SpeechRecognizer, 
-  speechRecognizerVolumeChangeHandler,
-  speechRecognizerActiveStateHandler,
-} from 'react-native-nitro-speech';
-
-// Set up callbacks
-SpeechRecognizer.onReadyForSpeech = () => {
-  console.log('Listening...');
-  // Add speechRecognizerActiveStateHandler to enable useRecognizerIsActive hook manually
-  speechRecognizerActiveStateHandler(true);
-};
-
-SpeechRecognizer.onResult = (textBatches) => {
-  console.log('Result:', textBatches.join('\n'));
-};
-
-SpeechRecognizer.onRecordingStopped = () => {
-  console.log('Stopped');
-  // Add speechRecognizerActiveStateHandler to enable useRecognizerIsActive hook manually
-  speechRecognizerActiveStateHandler(false);
-};
-
-SpeechRecognizer.onAutoFinishProgress = (timeLeftMs) => {
-  console.log('Auto-stop in:', timeLeftMs, 'ms');
-};
-
-SpeechRecognizer.onError = (error) => {
-  console.log('Error:', error);
-};
-
-SpeechRecognizer.onPermissionDenied = () => {
-  console.log('Permission denied');
-};
-
-SpeechRecognizer.onVolumeChange = (volume) => {
-  console.log('new volume: ', volume);
-  // Add speechRecognizerVolumeChangeHandler to enable useVoiceInputVolume hook manually
-  speechRecognizerVolumeChangeHandler(volume);
-};
-
-// Get permissions
-SpeechRecognizer.getPermissions();
-
-// Prepare resources, download assets, confirms locale availability
-SpeechRecognizer.prewarm({
-  locale: 'en-US',
-  // ... your config to prepare
-}, { requestPermission: true });
-);
-// OR `await` if you want to react to the success
-await SpeechRecognizer.prewarm({
-  locale: 'en-US',
-  // ... your config to prepare
-});
-// OR from worklet (only sync)
-scheduleOnRuntime(workletRuntime, () => {
-  SpeechRecognizer.prewarm({
-    locale: 'en-US',
-    // ... your config to prepare
-  }, { requestPermission: false });
-});
-
-// Start listening
-SpeechRecognizer.startListening({
-  locale: 'en-US',
-});
-
-// Stop listening
-SpeechRecognizer.stopListening();
-
-// Manually add time to auto finish timer
-SpeechRecognizer.addAutoFinishTime(5000); // Add 5 seconds
-SpeechRecognizer.addAutoFinishTime(); // Reset to original time
-
-// Update config
-SpeechRecognizer.updateConfig({
-  autoFinishRecognitionMs: 10000,
-  autoFinishProgressIntervalMs: 200,
-  resetAutoFinishVoiceSensitivity: 0.10,
-}, true); // Set to 10 seconds, 200ms interval, 0.10 sensitivity, with reset
-```
-
-### ⚠️ About dispose()
-
-The `SpeechRecognizer.dispose()` method is **NOT SAFE** and should rarely be used. Hybrid Objects in Nitro are typically managed by the JS garbage collector automatically. Only call `dispose()` in performance-critical scenarios where you need to eagerly destroy objects.
-
-**See:** [Nitro dispose() documentation](https://nitro.margelo.com/docs/hybrid-objects#dispose)
+| Feature                           | Documentation page                                                              | iOS     | Android  |
+| --------------------------------- | ------------------------------------------------------------------------------- | ------- | -------- |
+| **Real-time transcription**       | [Link 🔗](./docs/features/real-time-transcription.md#real-time-transcription)        | ✅       | ✅       |
+| **Full worklets support**         | [Link 🔗](./docs/features/worklets.md#worklets)                                      | ✅       | ✅       |
+| **New advanced iOS models**       | [Link 🔗](./docs/features/supported-locales.md#ios)                                  | ✅       | ✅       |
+| **Locale support**                | [Link 🔗](./docs/features/supported-locales.md#supported-locales)                    | ✅       | ✅       |
+| **Auto-finish on silence**        | [Link 🔗](./docs/features/silence-timer.md#auto-finish-on-silence)                   | ✅       | ✅       |
+| **Auto-finish progress**          | [Link 🔗](./docs/features/silence-timer.md#auto-finish-progress)                     | ✅       | ✅       |
+| **Auto-finish progress interval** | [Link 🔗](./docs/features/silence-timer.md#auto-finish-progress-interval)            | ✅       | ✅       |
+| **Add Auto-finish Time**          | [Link 🔗](./docs/features/silence-timer.md#add-auto-finish-time)                     | ✅       | ✅       |
+| **Reset Auto-finish Time**        | [Link 🔗](./docs/features/silence-timer.md#reset-auto-finish-time)                   | ✅       | ✅       |
+| **Reset Auto-finish Sensitivity** | [Link 🔗](./docs/features/silence-timer.md#reset-auto-finish-time-voice-sensitivity) | ✅       | ✅       |
+| **Voice input volume**            | [Link 🔗](./docs/features/voice-input-volume.md#voice-input-volume)                  | ✅       | ✅       |
+| **Prewarm**                       | [Link 🔗](./docs/features/prewarm.md#prewarm)                                        | ✅       | ✅       |
+| **Update config**                 | [Link 🔗](./docs/features/update-config.md#update-config)                            | ✅       | ✅       |
+| **Active state**                  | [Link 🔗](./docs/features/is-recognizer-active.md#is-recognizer-active)              | ✅       | ✅       |
+| **Haptic feedback**               | [Link 🔗](./docs/features/real-time-transcription.md#haptic-feedback)                | ✅       | ✅       |
+| **Permission handling**           | [Link 🔗](./docs/features/permissions.md#lifecycle)                                  | ✅       | ✅       |
+| **Background handling**           | [Link 🔗](./docs/features/edge-cases.md#background-handling)                         | ✅       | ✅       |
+| **Repeating word filter**         | [Link 🔗](./docs/features/real-time-transcription.md#repeating-word-filter)          | ✅       | ✅       |
+| **Offensive word masking**        | [Link 🔗](./docs/features/real-time-transcription.md#offensive-word-masking)         | iOS 26+  | ✅       |
+| **Contextual strings**            | [Link 🔗](./docs/features/real-time-transcription.md#contextual-strings)             | ✅       | ✅       |
+| **Language model selection**      | [Link 🔗](./docs/features/real-time-transcription.md#language-model-selection)       | Auto     | ✅       |
+| **Batch handling**                | [Link 🔗](./docs/features/real-time-transcription.md#batch-handling)                 | Auto     | ✅       |
+| **Formatting quality**            | [Link 🔗](./docs/features/real-time-transcription.md#formatting-quality)             | Auto     | ✅       |
+| **Transcription preset**          | [Link 🔗](./docs/features/real-time-transcription.md#transcription-preset)           | ✅       | Auto     |
+| **Automatic punctuation**         | [Link 🔗](./docs/features/real-time-transcription.md#automatic-punctuation)          | ✅       | Auto     |
+| **Atypical speech hint**          | [Link 🔗](./docs/features/real-time-transcription.md#atypical-speech-hint)           | ✅       | Auto     |
+| **getSupportedLocalesIOS**        | [Link 🔗](./docs/features/supported-locales.md#ios)                                  | ✅       | X        |
 
 ## Requirements
 
@@ -485,14 +150,24 @@ The `SpeechRecognizer.dispose()` method is **NOT SAFE** and should rarely be use
 
 ## Compatibility
 
-Old versions of `@gmessier/nitro-speech` are incompatible with the latest [react-native-nitro-modules 0.35.0+](https://github.com/mrousavy/nitro/releases/tag/v0.35.0), but might be useful if your project depends on `nitro-modules` < 0.35.0
+`react-native-nitro-modules` [published a version 0.35.0](https://github.com/mrousavy/nitro/releases/tag/v0.35.0) that is incompatible with older versions.
+
+If your project can't migrate to the latest version of `react-native-nitro-modules`, you can use the older versions of `@gmessier/nitro-speech`
+
+| nitro-speech                      | react-native-nitro-modules             |
+| ----------------------------------| -------------------------------------- |
+| `@gmessier/nitro-speech < 0.3.*`  | `react-native-nitro-modules < 0.35.0`  |
+| `@gmessier/nitro-speech >= 0.3.*` | `react-native-nitro-modules >= 0.35.0` |
+| `react-native-nitro-speech *`     | `react-native-nitro-modules >= 0.35.0` |
 
 
-| Compatibility                          | Supported versions                |
-| -------------------------------------- | --------------------------------- |
-| `react-native-nitro-modules <= 0.34.*` | `@gmessier/nitro-speech <= 0.2.*` |
-| `react-native-nitro-modules >= 0.35.*` | `@gmessier/nitro-speech >= 0.3.*` |
-| `react-native-nitro-modules >= 0.35.*` | `react-native-nitro-speech *` |
+## Contributions and feedback
+
+> If you hit an issue or want to request a feature, please open a GitHub issue or reach out to me on Discord / Twitter (X) — response is guaranteed.
+>
+> - [GitHub Issues](https://github.com/NotGeorgeMessier/nitro-speech/issues)
+> - [Twitter (X)](https://x.com/sufferinggeorge)
+> - Discord: `@gmessier`
 
 ## Troubleshooting
 

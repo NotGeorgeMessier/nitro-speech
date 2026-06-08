@@ -1,7 +1,7 @@
 {
-  "name": "react-native-nitro-speech",
-  "version": "0.4.5",
-  "description": "React Native Real-time Speech Recognition Library powered by Nitro Modules",
+  "name": "@gmessier/nitro-speech",
+  "version": "0.4.6",
+  "description": "React Native real-time Speech Recognition Library powered by Nitro Modules",
   "main": "./lib/index.js",
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -82,7 +82,6 @@
     "react-native": "0.84.1",
     "react-native-nitro-modules": "0.35.9",
     "nitrogen": "0.35.9",
-    "react-native-builder-bob": "0.37.0",
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
@@ -123,19 +122,5 @@
     "trailingComma": "es5",
     "useTabs": false,
     "semi": false
-  },
-  "react-native-builder-bob": {
-    "source": "src",
-    "output": "lib",
-    "targets": [
-      "commonjs",
-      "module",
-      [
-        "typescript",
-        {
-          "project": "tsconfig.json"
-        }
-      ]
-    ]
   }
 }
