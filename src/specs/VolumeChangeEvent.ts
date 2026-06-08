@@ -21,7 +21,7 @@ export interface VolumeChangeEvent {
   /**
    * Audio buffer volume in decibels.
    *
-   * May vary on different devices and audio engines.
+   * Values will vary on different devices, however still appropriate for displaying in UI.
    *
    * db 0 is still a sound, undefined is no sound or disabled event.
    */

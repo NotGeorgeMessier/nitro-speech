@@ -15,14 +15,14 @@ export interface Recognizer extends HybridObject<{
    * Prepare the speech recognition engine and the model for the given parameters.
    *
    * @notes
-   * - Not required, {@linkcode startListening} will prewarm automatically.
+   * - Optional, {@linkcode startListening} will prewarm automatically.
    *
    * - Omit the {@linkcode Promise} result if you want to run synchronously.
    * {@linkcode startListening} will start and resolve it automatically.
    *
    * - Only `await` if run beforehand and you want to react to the success
    *
-   * @worklet **Do not** use `await` on Worklet or UI runtimes. It will not work properly.
+   * @worklet **Do not** use `await` on Worklet or UI runtimes. It is not supported.
    *
    * You can run it synchronously:
    * ```typescript
