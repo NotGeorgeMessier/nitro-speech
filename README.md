@@ -42,7 +42,7 @@ The API is identical — no migration needed.
 - [Features](#features)
 - [Requirements](#requirements)
 - [Compatibility](#compatibility)
-- [Feedback and contributions](#feedback-and-contributions)
+- [Contributions and feedback](#contributions-and-feedback)
 - [Troubleshooting](#troubleshooting)
 - Usage:
   - [Recommended: useRecognizer Hook](./docs/examples/use-recognizer.md#hook-userecognizer)
@@ -161,7 +161,7 @@ If your project can't migrate to the latest version of `react-native-nitro-modul
 | `react-native-nitro-speech *`     | `react-native-nitro-modules >= 0.35.0` |
 
 
-## Feedback and contributions
+## Contributions and feedback
 
 > If you hit an issue or want to request a feature, please open a GitHub issue or reach out to me on Discord / Twitter (X) — response is guaranteed.
 >
