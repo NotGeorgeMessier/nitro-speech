@@ -29,10 +29,7 @@ The API is identical — no migration needed.
   - Callback `onVolumeChange` for advanced use cases
 - 🧩 Session Lifecycle methods: `prewarm` and `updateConfig`
 - 👆 Configurable Haptic Feedback on start and finish
-- 🎚️ Speech-quality features:
-  - Result is grouped by speech segments into Batches.
-  - Check `SpeechRecognitionConfig` for all the params
-  - Use `MutableSpeechRecognitionConfig` params for `updateConfig` method
+- 🎚️ Speech-quality features: see full list [here](./docs/features/real-time-transcription.md#real-time-transcription)
 - 🔓 Embedded Permission handling
   - Callback `onPermissionDenied` - if the user denied the request
   - Configure `SpeechRecognitionPrewarm.requestPermission` option for `prewarm` method
