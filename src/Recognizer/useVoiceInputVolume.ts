@@ -114,7 +114,7 @@ export const useVoiceInputVolume = (config?: UseVoiceInputVolumeConfig) => {
  * In case you use static Speech Recognizer:
  *
  * ```typescript
- * import { speechRecognizerVolumeChangeHandler } from '@gmessier/nitro-speech'
+ * import { speechRecognizerVolumeChangeHandler } from 'react-native-nitro-speech'
  *
  * SpeechRecognizer.onVolumeChange = (event) => {
  *  speechRecognizerVolumeChangeHandler(event)
