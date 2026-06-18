@@ -83,6 +83,7 @@ class RecognizerEngine {
     
     func stop() {
         guard isActive, !isStopping else { return }
+        lg.log("[stop]")
         isStopping = true
         HapticImpact.trigger(with: self.recognizerDelegate?.config?.stopHapticFeedbackStyle)
     }
@@ -138,17 +139,32 @@ class RecognizerEngine {
     
     func startSession() async {
         lg.log("[startSession.startSession]")
-        // Init everything
+        
         isStopping = false
+    }
+    
+    func sendFeedbackOnStart() {
+        guard let recognizerDelegate else { return }
+        
+        // Indicate everything is working
         isActive = true
         
+        // Trigger watchers
         initAutoStop()
         lg.log("[startSession.initAutoStop]")
         startAppStateObserver()
         lg.log("[startSession.startAppStateObserver]")
+        
+        // Sending feedback
+        lg.log("[sendFeedbackOnStart]")
+        HapticImpact.trigger(with: recognizerDelegate.config?.startHapticFeedbackStyle)
+        autoStopper?.resetTimer(from: "startListening.sendFeedbackOnStart")
+        recognizerDelegate.readyForSpeech()
+        recognizerDelegate.result(batches: [])
     }
     
     // MARK: Audio Engine
+    
     func startAudioEngine(
         onBuffer: @escaping (AVAudioPCMBuffer) -> Void
     ) {
@@ -195,15 +211,6 @@ class RecognizerEngine {
         }
     }
     
-    func sendFeedbackOnStart() {
-        guard let recognizerDelegate else { return }
-        lg.log("[sendFeedbackOnStart]")
-        HapticImpact.trigger(with: recognizerDelegate.config?.startHapticFeedbackStyle)
-        autoStopper?.resetTimer(from: "startListening.sendFeedbackOnStart")
-        recognizerDelegate.readyForSpeech()
-        recognizerDelegate.result(batches: [])
-    }
-    
     // MARK: Cleanup
 
     func cleanup(from: String) {
@@ -234,6 +241,8 @@ class RecognizerEngine {
             self.recognizerDelegate?.recordingStopped()
         }
     }
+    
+    // MARK: Report error
     
     func reportFailure(from: String, message: String, type: FailureType) {
         // Log message
