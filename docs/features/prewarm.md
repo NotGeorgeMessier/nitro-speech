@@ -34,6 +34,8 @@ Triggers `onError` callback if fails.
 - asset download fails
 - request permission isn't disabled but denied
 
+Possible codes: `LocaleNotSupported`, `SessionStartFailed`, `IosSpeechPermissionNotDetermined` (see `ErrorDictionary`).
+
 ## Android
 
 Responsibility:

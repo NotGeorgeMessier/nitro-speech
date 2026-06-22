@@ -15,29 +15,22 @@ final class SFSpeechEngine: RecognizerEngine {
         recognitionTask?.finish()
     }
     
-    override func prewarm(for type: PrewarmType, _ options: SpeechRecognitionPrewarm? = nil) async {
+    override func prewarm(forPrewarm: Bool, _ options: SpeechRecognitionPrewarm? = nil) async {
         speechRecognizer = SFSpeechRecognizer(
             locale: Locale(identifier: self.recognizerDelegate?.config?.locale ?? "en-US")
         )
         if speechRecognizer?.isAvailable != true {
-            let failureType: FailureType = switch type {
-                case .prewarm: .prewarm
-                case .start: .start
-            }
-            self.reportFailure(
-                from: "prewarm",
-                message: "SFSpeechRecognizer is not available",
-                type: failureType
-            )
+            self.retry(from: "prewarm.isAvailable", isPrewarm: forPrewarm)
+            return
         }
-        await super.prewarm(for: type, options)
+        await super.prewarm(forPrewarm: forPrewarm, options)
     }
     
     override func startSession() async {
         await super.startSession()
         lg.log("[startSession.startSession]")
         
-        await prewarm(for: .start)
+        await prewarm(forPrewarm: false)
         lg.log("[startSession.prewarm]")
         guard let speechRecognizer else { return }
         
@@ -69,14 +62,14 @@ final class SFSpeechEngine: RecognizerEngine {
                 }
             }
             
-            if let error = error {
+            if error != nil {
                 if !self.isStopping {
-                    self.reportFailure(
+                    self.reportError(
                         from: "startSession.recognitionTask.error",
-                        message: "Recognition Error: \(error.localizedDescription)",
-                        type: .onSession
+                        code: SpeechRecognitionError.recognitiontaskfailed
                     )
                 } else {
+                    // Manual stop, not an error
                     self.cleanup(from: "startRecognition.recognitionTask.manualStop")
                 }
             }

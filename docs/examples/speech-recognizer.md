@@ -60,8 +60,9 @@ SpeechRecognizer.onAutoFinishProgress = (timeLeftMs) => {
   console.log('Auto-stop in:', timeLeftMs, 'ms');
 };
 
-SpeechRecognizer.onError = (message) => {
-  console.log('Error:', message);
+SpeechRecognizer.onError = (error) => {
+  console.log('Error code:', error);
+  console.log('Message:', ErrorDictionary[error].message);
 };
 
 SpeechRecognizer.onPermissionDenied = () => {

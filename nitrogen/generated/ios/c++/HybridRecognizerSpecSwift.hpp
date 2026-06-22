@@ -12,6 +12,8 @@
 // Forward declaration of `HybridRecognizerSpec_cxx` to properly resolve imports.
 namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 
+// Forward declaration of `SpeechRecognitionError` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
@@ -31,6 +33,7 @@ namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 #include <optional>
 #include <string>
 #include <vector>
+#include "SpeechRecognitionError.hpp"
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include "SpeechRecognitionConfig.hpp"
@@ -114,11 +117,11 @@ namespace margelo::nitro::nitrospeech {
     inline void setOnAutoFinishProgress(const std::optional<std::function<void(double /* timeLeftMs */)>>& onAutoFinishProgress) noexcept override {
       _swiftPart.setOnAutoFinishProgress(onAutoFinishProgress);
     }
-    inline std::optional<std::function<void(const std::string& /* message */)>> getOnError() noexcept override {
+    inline std::optional<std::function<void(SpeechRecognitionError /* error */)>> getOnError() noexcept override {
       auto __result = _swiftPart.getOnError();
       return __result;
     }
-    inline void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) noexcept override {
+    inline void setOnError(const std::optional<std::function<void(SpeechRecognitionError /* error */)>>& onError) noexcept override {
       _swiftPart.setOnError(onError);
     }
     inline std::optional<std::function<void()>> getOnPermissionDenied() noexcept override {

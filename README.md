@@ -18,14 +18,13 @@ The API is identical — no migration needed.
 - 🧵 Full support of `react-native-worklets` - each method is accessible from any runtime
 - ⏱️ Timer for silence
   - Configurable and mutable `autoFinishRecognitionMs` value (default: 8 sec)
-  - Callback `onAutoFinishProgress` fires periodically with a configurable interval
+  - Callback `onAutoFinishProgress` fires periodically with an interval
   - Configurable and mutable interval `autoFinishProgressIntervalMs` value (default: 1 sec)
-  allows changing the value on the fly
   - Method `resetAutoFinishTime` resets the timer to the threshold
-  - Method `addAutoFinishTime` adds ms once without changing threshold
-  - Configurable volume-based sensitivity `resetAutoFinishVoiceSensitivity` for the timer from 0 to 1
+  - Method `addAutoFinishTime` adds time once without changing threshold
+  - Configurable volume-based sensitivity `resetAutoFinishVoiceSensitivity`
 - 🎤 Rich user voice input management 
-  - Hook `useVoiceInputVolume` and method `getVoiceInputVolume` for displaying volume in dB and making smooth UI animations
+  - Hook `useVoiceInputVolume` and method `getVoiceInputVolume` for displaying volume in dB or making UI animations with smoothedVolume
   - Callback `onVolumeChange` for advanced use cases
 - 🧩 Session Lifecycle methods: `prewarm` and `updateConfig`
 - 👆 Configurable Haptic Feedback on start and finish

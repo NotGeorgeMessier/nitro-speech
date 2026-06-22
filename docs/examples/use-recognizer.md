@@ -26,6 +26,21 @@ On iOS 26+, the recognizer prefers the most advanced `SpeechTranscriber` path fo
 - Mutable properties [here](../features/update-config.md#update-config)
 - Silence timer [here](../features/silence-timer.md#silence-timer)  
 
+### Methods
+
+The session lifecycle:
+
+- `startListening` - Start the session with the given configuration, sync, track status with `onReadyForSpeech`, `onError` or `useRecognizerIsActive`
+- `stopListening` - Stop the session, sync, track status with `onRecordingStopped` or `useRecognizerIsActive`
+- `prewarm` - [Link 🔗](../features/prewarm.md#prewarm)
+- `updateConfig` - [Link 🔗](../features/update-config.md#update-config)
+- `addAutoFinishTime` - [Link 🔗](../features/silence-timer.md#add-auto-finish-time)
+- `resetAutoFinishTime` - [Link 🔗](../features/silence-timer.md#reset-auto-finish-time)
+- `getIsActive` - [Link 🔗](../features/is-recognizer-active.md#is-recognizer-active)
+- `getVoiceInputVolume` - [Link 🔗](../features/voice-input-volume.md#voice-input-volume)
+- `getPermissions` - [Link 🔗](../features/permissions.md#permissions)
+- `getSupportedLocalesIOS` - [Link 🔗](../features/supported-locales.md#ios)
+
 ### With React Navigation
 
 React Navigation **doesn’t unmount screens** when you navigate — the screen can stay mounted in the background and come back without remounting. See: [Navigation lifecycle (React Navigation)](https://reactnavigation.org/docs/8.x/navigation-lifecycle/#summary).
@@ -39,6 +54,7 @@ Because of that, prefer tying recognition cleanup to **focus state**, not just c
 const isFocused = useIsFocused();
 
 const {
+  // The methods to control the session
     prewarm,
     startListening, 
     stopListening, 
@@ -65,7 +81,8 @@ const {
         console.log('Auto-stop in:', timeLeftMs, 'ms');
       },
       onError: (error) => {
-        console.log('Error:', error);
+        console.log('Error code:', error);
+        console.log('Message:', ErrorDictionary[error].message);
       },
       onPermissionDenied: () => {
         console.log('Permission denied');

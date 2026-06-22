@@ -9,7 +9,7 @@ final class AppStateObserver {
         self.onResignActive = onResignActive
         
         observer = NotificationCenter.default.addObserver(
-            forName: UIApplication.willResignActiveNotification,
+            forName: UIApplication.didEnterBackgroundNotification,
             object: nil,
             queue: .main
         ) { [weak self] _ in

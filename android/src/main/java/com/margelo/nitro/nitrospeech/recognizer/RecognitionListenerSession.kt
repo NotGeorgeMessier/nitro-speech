@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.SpeechRecognizer
 import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
+import com.margelo.nitro.nitrospeech.SpeechRecognitionError
 import com.margelo.nitro.nitrospeech.VolumeChangeEvent
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -12,7 +13,7 @@ class RecognitionListenerSession (
     private val autoStopper: AutoStopper?,
     private val config: SpeechRecognitionConfig?,
     private val fireVolumeChangeEvent: (event: VolumeChangeEvent) -> Unit,
-    private val onFinishRecognition: (result: ArrayList<String>?, errorMessage: String?, recordingStopped: Boolean) -> Unit,
+    private val onFinishRecognition: (result: ArrayList<String>?, error: SpeechRecognitionError?, recordingStopped: Boolean) -> Unit,
 ) {
     private val logger = Logger(disable = false)
     companion object {
@@ -42,7 +43,7 @@ class RecognitionListenerSession (
                 fireVolumeChangeEvent(volumeEvent)
                 val threshold =
                     config?.resetAutoFinishVoiceSensitivity?.coerceIn(0.0, 1.0)
-                        ?: SPEECH_LEVEL_THRESHOLD.toDouble()
+                        ?: SPEECH_LEVEL_THRESHOLD
                 // logger.log("onRmsChanged: ${volumeEvent}")
                 if (threshold < 1 && volumeEvent.rawVolume > threshold) {
                     autoStopper?.resetTimer()
@@ -64,9 +65,10 @@ class RecognitionListenerSession (
                     SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech input"
                     else -> "Unknown error"
                 }
+                logger.log("onError: $message")
                 onFinishRecognition(
                     null,
-                    "Error at RecognitionListener: $message",
+                    SpeechRecognitionError.RECOGNITIONTASKFAILED,
                     true
                 )
                 autoStopper?.stop()

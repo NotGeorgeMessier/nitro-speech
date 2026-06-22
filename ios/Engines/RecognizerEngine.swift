@@ -2,21 +2,6 @@ import Foundation
 import Speech
 import AVFoundation
 
-// No practical diff between "system" and "onSession" for now.
-// For future: send the level of error to RN
-// "onSession" is less critical level, since the session has been started successfully
-enum FailureType {
-    case system
-    case start
-    case prewarm
-    case onSession
-}
-
-enum PrewarmType {
-    case start
-    case prewarm
-}
-
 class RecognizerEngine {
     var isActive = false
     var isStopping = false
@@ -37,7 +22,7 @@ class RecognizerEngine {
     
     // MARK: - Recognizer Methods
     
-    func prewarm(for type: PrewarmType, _ options: SpeechRecognitionPrewarm? = nil) async {
+    func prewarm(forPrewarm: Bool, _ options: SpeechRecognitionPrewarm? = nil) async {
         // Prepare audioEngine
         audioEngine = AVAudioEngine()
         lg.log("[prewarm.audioEngine]")
@@ -45,26 +30,26 @@ class RecognizerEngine {
         guard let recognizerDelegate else { return }
         
         // Everything is set, return early
-        if type == .prewarm, recognizerDelegate.hardwareFormat != nil {
+        if forPrewarm, recognizerDelegate.hardwareFormat != nil {
             lg.log("[prewarm.return]: Everything set")
             return
         }
         
         // User explicitly asked for prewarm without requesting permissions, return early
-        if type == .prewarm, options?.requestPermission == false {
+        if forPrewarm, options?.requestPermission == false {
             lg.log("[prewarm.return]: requestPermission: false")
             return
         }
         
-        if type == .prewarm {
+        if forPrewarm {
             // options.requestPermission is true by default
             // Start Permission sequence
             let granted = await requestPermissions()
             if granted {
-                self.prewarmAudioSession(for: type)
+                self.prewarmAudioSession(forPrewarm)
             }
         } else {
-            self.prewarmAudioSession(for: type)
+            self.prewarmAudioSession(forPrewarm)
         }
         
         // for SpeechTranscriber: .isAvailable and async assets
@@ -83,6 +68,7 @@ class RecognizerEngine {
     
     func stop() {
         guard isActive, !isStopping else { return }
+        lg.log("[stop]")
         isStopping = true
         HapticImpact.trigger(with: self.recognizerDelegate?.config?.stopHapticFeedbackStyle)
     }
@@ -138,17 +124,32 @@ class RecognizerEngine {
     
     func startSession() async {
         lg.log("[startSession.startSession]")
-        // Init everything
+        
         isStopping = false
+    }
+    
+    func sendFeedbackOnStart() {
+        guard let recognizerDelegate else { return }
+        
+        // Indicate everything is working
         isActive = true
         
+        // Trigger watchers
         initAutoStop()
         lg.log("[startSession.initAutoStop]")
         startAppStateObserver()
         lg.log("[startSession.startAppStateObserver]")
+        
+        // Sending feedback
+        lg.log("[sendFeedbackOnStart]")
+        HapticImpact.trigger(with: recognizerDelegate.config?.startHapticFeedbackStyle)
+        autoStopper?.resetTimer(from: "startListening.sendFeedbackOnStart")
+        recognizerDelegate.readyForSpeech()
+        recognizerDelegate.result(batches: [])
     }
     
     // MARK: Audio Engine
+    
     func startAudioEngine(
         onBuffer: @escaping (AVAudioPCMBuffer) -> Void
     ) {
@@ -186,22 +187,11 @@ class RecognizerEngine {
             try audioEngine.start()
             lg.log("[startAudioEngine.start]")
         } catch {
-            self.reportFailure(
+            self.reportError(
                 from: "Audio Engine",
-                message: "Audio Engine failed to start",
-                // RecognizerEngine-agnostic Error
-                type: .system
+                code: SpeechRecognitionError.sessionstartfailed
             )
         }
-    }
-    
-    func sendFeedbackOnStart() {
-        guard let recognizerDelegate else { return }
-        lg.log("[sendFeedbackOnStart]")
-        HapticImpact.trigger(with: recognizerDelegate.config?.startHapticFeedbackStyle)
-        autoStopper?.resetTimer(from: "startListening.sendFeedbackOnStart")
-        recognizerDelegate.readyForSpeech()
-        recognizerDelegate.result(batches: [])
     }
     
     // MARK: Cleanup
@@ -235,22 +225,25 @@ class RecognizerEngine {
         }
     }
     
-    func reportFailure(from: String, message: String, type: FailureType) {
-        // Log message
-        lg.log("[Failure] type: \(type), message: \(message)")
+    // MARK: Report error
+    
+    // Try to reselect engine and try again
+    func retry(from: String, isPrewarm: Bool) {
+        // Cleanup on engine level anyway
+        self.cleanup(from: from)
+        self.recognizerDelegate?.reselectEngine(forPrewarm: isPrewarm)
+    }
+    
+    // Error might be silent if it doesn't affect the session lifecycle
+    func reportError(from: String, code: SpeechRecognitionError? = nil) {
+        lg.log("[Failure] from: \(from)")
         
         // Cleanup on engine level anyway
         self.cleanup(from: from)
         
-        switch type {
-            // Try to reselect engine and try again
-            case .prewarm, .start:
-                let isPrewarm = type == .prewarm
-                self.recognizerDelegate?.reselectEngine(forPrewarm: isPrewarm)
-            // System level issue: send onError with description and clean
-            // Session has already started: send onError and cleanup
-            case .system, .onSession:
-                self.recognizerDelegate?.error(message: message)
+        
+        if let code, let recognizer = self.recognizerDelegate {
+            recognizer.error(error: code)
         }
     }
     
@@ -272,7 +265,7 @@ class RecognizerEngine {
         
         if authStatus != .authorized {
             // .notDetermined or unknown issue
-            recognizerDelegate.error(message: "Speech recognition permission is not determined")
+            recognizerDelegate.error(error: SpeechRecognitionError.iosspeechpermissionnotdetermined)
             return false
         }
         
@@ -324,13 +317,11 @@ class RecognizerEngine {
     
     // MARK: Audio Session
     
-    private func prewarmAudioSession(for type: PrewarmType) {
+    private func prewarmAudioSession(_ forPrewarm: Bool) {
         guard let audioEngine else {
-            self.reportFailure(
+            self.reportError(
                 from: "Audio Engine",
-                message: "Audio Engine failed to initiate",
-                // RecognizerEngine-agnostic Error
-                type: .system
+                code: SpeechRecognitionError.sessionstartfailed
             )
             return
         }
@@ -343,7 +334,7 @@ class RecognizerEngine {
             lg.log("[prewarmAudioSession.hardwareFormat]")
         }
         
-        if type == .prewarm {
+        if forPrewarm {
             stopAudioSession()
             lg.log("[prewarmAudioSession.stopAudioSession]")
         }
@@ -357,11 +348,9 @@ class RecognizerEngine {
             try audioSession.setAllowHapticsAndSystemSoundsDuringRecording(true)
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
-            self.reportFailure(
+            self.reportError(
                 from: "startAudioSession",
-                message: "Failed to activate audio session: \(error.localizedDescription)",
-                // RecognizerEngine-agnostic Error
-                type: .system
+                code: SpeechRecognitionError.sessionstartfailed
             )
         }
     }

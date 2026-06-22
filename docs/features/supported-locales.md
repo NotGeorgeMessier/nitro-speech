@@ -37,7 +37,7 @@ Depends on the device and OS version.
 
 If locale is not supported
 - Session won't be started
-- `onError` callback will be called
+- `onError` callback will be called with `SpeechRecognitionError.LocaleNotSupported` (use `ErrorDictionary` for the message)
 
 ## Usage
 
