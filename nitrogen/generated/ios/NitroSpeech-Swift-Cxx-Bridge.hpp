@@ -22,6 +22,8 @@ namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
+// Forward declaration of `SpeechRecognitionError` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
 // Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
@@ -41,6 +43,7 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 #include "MutableSpeechRecognitionConfig.hpp"
 #include "PermissionStatus.hpp"
 #include "SpeechRecognitionConfig.hpp"
+#include "SpeechRecognitionError.hpp"
 #include "SpeechRecognitionPrewarm.hpp"
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
@@ -374,40 +377,40 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.value();
   }
   
-  // pragma MARK: std::function<void(const std::string& /* message */)>
+  // pragma MARK: std::function<void(SpeechRecognitionError /* error */)>
   /**
-   * Specialized version of `std::function<void(const std::string&)>`.
+   * Specialized version of `std::function<void(SpeechRecognitionError)>`.
    */
-  using Func_void_std__string = std::function<void(const std::string& /* message */)>;
+  using Func_void_SpeechRecognitionError = std::function<void(SpeechRecognitionError /* error */)>;
   /**
-   * Wrapper class for a `std::function<void(const std::string& / * message * /)>`, this can be used from Swift.
+   * Wrapper class for a `std::function<void(SpeechRecognitionError / * error * /)>`, this can be used from Swift.
    */
-  class Func_void_std__string_Wrapper final {
+  class Func_void_SpeechRecognitionError_Wrapper final {
   public:
-    explicit Func_void_std__string_Wrapper(std::function<void(const std::string& /* message */)>&& func): _function(std::make_unique<std::function<void(const std::string& /* message */)>>(std::move(func))) {}
-    inline void call(std::string message) const noexcept {
-      _function->operator()(message);
+    explicit Func_void_SpeechRecognitionError_Wrapper(std::function<void(SpeechRecognitionError /* error */)>&& func): _function(std::make_unique<std::function<void(SpeechRecognitionError /* error */)>>(std::move(func))) {}
+    inline void call(int error) const noexcept {
+      _function->operator()(static_cast<SpeechRecognitionError>(error));
     }
   private:
-    std::unique_ptr<std::function<void(const std::string& /* message */)>> _function;
+    std::unique_ptr<std::function<void(SpeechRecognitionError /* error */)>> _function;
   } SWIFT_NONCOPYABLE;
-  Func_void_std__string create_Func_void_std__string(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__string_Wrapper wrap_Func_void_std__string(Func_void_std__string value) noexcept {
-    return Func_void_std__string_Wrapper(std::move(value));
+  Func_void_SpeechRecognitionError create_Func_void_SpeechRecognitionError(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_SpeechRecognitionError_Wrapper wrap_Func_void_SpeechRecognitionError(Func_void_SpeechRecognitionError value) noexcept {
+    return Func_void_SpeechRecognitionError_Wrapper(std::move(value));
   }
   
-  // pragma MARK: std::optional<std::function<void(const std::string& /* message */)>>
+  // pragma MARK: std::optional<std::function<void(SpeechRecognitionError /* error */)>>
   /**
-   * Specialized version of `std::optional<std::function<void(const std::string& / * message * /)>>`.
+   * Specialized version of `std::optional<std::function<void(SpeechRecognitionError / * error * /)>>`.
    */
-  using std__optional_std__function_void_const_std__string_____message______ = std::optional<std::function<void(const std::string& /* message */)>>;
-  inline std::optional<std::function<void(const std::string& /* message */)>> create_std__optional_std__function_void_const_std__string_____message______(const std::function<void(const std::string& /* message */)>& value) noexcept {
-    return std::optional<std::function<void(const std::string& /* message */)>>(value);
+  using std__optional_std__function_void_SpeechRecognitionError____error______ = std::optional<std::function<void(SpeechRecognitionError /* error */)>>;
+  inline std::optional<std::function<void(SpeechRecognitionError /* error */)>> create_std__optional_std__function_void_SpeechRecognitionError____error______(const std::function<void(SpeechRecognitionError /* error */)>& value) noexcept {
+    return std::optional<std::function<void(SpeechRecognitionError /* error */)>>(value);
   }
-  inline bool has_value_std__optional_std__function_void_const_std__string_____message______(const std::optional<std::function<void(const std::string& /* message */)>>& optional) noexcept {
+  inline bool has_value_std__optional_std__function_void_SpeechRecognitionError____error______(const std::optional<std::function<void(SpeechRecognitionError /* error */)>>& optional) noexcept {
     return optional.has_value();
   }
-  inline std::function<void(const std::string& /* message */)> get_std__optional_std__function_void_const_std__string_____message______(const std::optional<std::function<void(const std::string& /* message */)>>& optional) noexcept {
+  inline std::function<void(SpeechRecognitionError /* error */)> get_std__optional_std__function_void_SpeechRecognitionError____error______(const std::optional<std::function<void(SpeechRecognitionError /* error */)>>& optional) noexcept {
     return optional.value();
   }
   

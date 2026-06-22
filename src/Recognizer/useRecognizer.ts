@@ -11,7 +11,11 @@ import {
   recognizerPrewarm,
   recognizerGetPermissions,
 } from './methods'
-import type { RecognizerCallbacks, RecognizerMethods } from './types'
+import type {
+  RecognizerCallbacks,
+  RecognizerMethods,
+  SpeechRecognitionError,
+} from './types'
 import { SpeechRecognizer } from './SpeechRecognizer'
 import { speechRecognizerVolumeChangeHandler } from './useVoiceInputVolume'
 import { speechRecognizerActiveStateHandler } from './useRecognizerIsActive'
@@ -48,8 +52,8 @@ export const useRecognizer = (
     SpeechRecognizer.onAutoFinishProgress = (timeLeftMs: number) => {
       callbacks.onAutoFinishProgress?.(timeLeftMs)
     }
-    SpeechRecognizer.onError = (message: string) => {
-      callbacks.onError?.(message)
+    SpeechRecognizer.onError = (error: SpeechRecognitionError) => {
+      callbacks.onError?.(error)
     }
     SpeechRecognizer.onPermissionDenied = () => {
       callbacks.onPermissionDenied?.()

@@ -6,6 +6,7 @@ import type {
 import type { VolumeChangeEvent } from './VolumeChangeEvent'
 import type { SpeechRecognitionPrewarm } from './SpeechRecognitionPrewarm'
 import type { PermissionStatus } from './Permissions'
+import type { SpeechRecognitionError } from './Errors'
 
 export interface Recognizer extends HybridObject<{
   ios: 'swift'
@@ -124,7 +125,7 @@ export interface Recognizer extends HybridObject<{
   /**
    * Error of the speech recognition.
    */
-  onError?: (message: string) => void
+  onError?: (error: SpeechRecognitionError) => void
   /**
    * The permission to use the microphone or recognize speech has been denied.
    */

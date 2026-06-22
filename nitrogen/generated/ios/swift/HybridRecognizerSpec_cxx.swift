@@ -255,14 +255,14 @@ open class HybridRecognizerSpec_cxx {
     }
   }
   
-  public final var onError: bridge.std__optional_std__function_void_const_std__string_____message______ {
+  public final var onError: bridge.std__optional_std__function_void_SpeechRecognitionError____error______ {
     @inline(__always)
     get {
-      return { () -> bridge.std__optional_std__function_void_const_std__string_____message______ in
+      return { () -> bridge.std__optional_std__function_void_SpeechRecognitionError____error______ in
         if let __unwrappedValue = self.__implementation.onError {
-          return bridge.create_std__optional_std__function_void_const_std__string_____message______({ () -> bridge.Func_void_std__string in
-            let __closureWrapper = Func_void_std__string(__unwrappedValue)
-            return bridge.create_Func_void_std__string(__closureWrapper.toUnsafe())
+          return bridge.create_std__optional_std__function_void_SpeechRecognitionError____error______({ () -> bridge.Func_void_SpeechRecognitionError in
+            let __closureWrapper = Func_void_SpeechRecognitionError(__unwrappedValue)
+            return bridge.create_Func_void_SpeechRecognitionError(__closureWrapper.toUnsafe())
           }())
         } else {
           return .init()
@@ -271,13 +271,13 @@ open class HybridRecognizerSpec_cxx {
     }
     @inline(__always)
     set {
-      self.__implementation.onError = { () -> ((_ message: String) -> Void)? in
-        if bridge.has_value_std__optional_std__function_void_const_std__string_____message______(newValue) {
-          let __unwrapped = bridge.get_std__optional_std__function_void_const_std__string_____message______(newValue)
-          return { () -> (String) -> Void in
-            let __wrappedFunction = bridge.wrap_Func_void_std__string(__unwrapped)
-            return { (__message: String) -> Void in
-              __wrappedFunction.call(std.string(__message))
+      self.__implementation.onError = { () -> ((_ error: SpeechRecognitionError) -> Void)? in
+        if bridge.has_value_std__optional_std__function_void_SpeechRecognitionError____error______(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__function_void_SpeechRecognitionError____error______(newValue)
+          return { () -> (SpeechRecognitionError) -> Void in
+            let __wrappedFunction = bridge.wrap_Func_void_SpeechRecognitionError(__unwrapped)
+            return { (__error: SpeechRecognitionError) -> Void in
+              __wrappedFunction.call(__error.rawValue)
             }
           }()
         } else {

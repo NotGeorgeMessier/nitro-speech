@@ -14,7 +14,7 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
   var onRecordingStopped: (() -> Void)? { get set }
   var onResult: ((_ resultBatches: [String]) -> Void)? { get set }
   var onAutoFinishProgress: ((_ timeLeftMs: Double) -> Void)? { get set }
-  var onError: ((_ message: String) -> Void)? { get set }
+  var onError: ((_ error: SpeechRecognitionError) -> Void)? { get set }
   var onPermissionDenied: (() -> Void)? { get set }
   var onVolumeChange: ((_ event: VolumeChangeEvent) -> Void)? { get set }
 

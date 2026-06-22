@@ -13,6 +13,8 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
+// Forward declaration of `SpeechRecognitionError` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
@@ -28,6 +30,7 @@ namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 #include <optional>
 #include <string>
 #include <vector>
+#include "SpeechRecognitionError.hpp"
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include "SpeechRecognitionConfig.hpp"
@@ -70,8 +73,8 @@ namespace margelo::nitro::nitrospeech {
       virtual void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>& onResult) = 0;
       virtual std::optional<std::function<void(double /* timeLeftMs */)>> getOnAutoFinishProgress() = 0;
       virtual void setOnAutoFinishProgress(const std::optional<std::function<void(double /* timeLeftMs */)>>& onAutoFinishProgress) = 0;
-      virtual std::optional<std::function<void(const std::string& /* message */)>> getOnError() = 0;
-      virtual void setOnError(const std::optional<std::function<void(const std::string& /* message */)>>& onError) = 0;
+      virtual std::optional<std::function<void(SpeechRecognitionError /* error */)>> getOnError() = 0;
+      virtual void setOnError(const std::optional<std::function<void(SpeechRecognitionError /* error */)>>& onError) = 0;
       virtual std::optional<std::function<void()>> getOnPermissionDenied() = 0;
       virtual void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) = 0;
       virtual std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> getOnVolumeChange() = 0;
