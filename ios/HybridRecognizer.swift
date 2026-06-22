@@ -58,8 +58,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
     }
     
     func resetAutoFinishTime() {
-        // engine?.updateSession(resetTimer: true)
-        AVCaptureDevice.requestAccess(for: .video) { _ in }
+        engine?.updateSession(resetTimer: true)
     }
     
     func addAutoFinishTime(additionalTimeMs: Double?) {
