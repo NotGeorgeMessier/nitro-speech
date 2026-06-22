@@ -22,6 +22,8 @@ namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
+// Forward declaration of `SpeechRecognitionError` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
 // Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
@@ -35,6 +37,7 @@ namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 #include "MutableSpeechRecognitionConfig.hpp"
 #include "PermissionStatus.hpp"
 #include "SpeechRecognitionConfig.hpp"
+#include "SpeechRecognitionError.hpp"
 #include "SpeechRecognitionPrewarm.hpp"
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>

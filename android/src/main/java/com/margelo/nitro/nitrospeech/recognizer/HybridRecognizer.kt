@@ -15,6 +15,7 @@ import com.margelo.nitro.nitrospeech.MutableSpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.HybridRecognizerSpec
 import com.margelo.nitro.nitrospeech.PermissionStatus
 import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
+import com.margelo.nitro.nitrospeech.SpeechRecognitionError
 import com.margelo.nitro.nitrospeech.SpeechRecognitionPrewarm
 import com.margelo.nitro.nitrospeech.VolumeChangeEvent
 
@@ -39,7 +40,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   override var onResult: ((resultBatches: Array<String>) -> Unit)? = null
 
   override var onAutoFinishProgress: ((timeLeftMs: Double) -> Unit)? = null
-  override var onError: ((error: String) -> Unit)? = null
+  override var onError: ((error: SpeechRecognitionError) -> Unit)? = null
   override var onPermissionDenied: (() -> Unit)? = null
   override var onVolumeChange: ((event: VolumeChangeEvent) -> Unit)? = null
 
@@ -112,7 +113,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
     newConfig: MutableSpeechRecognitionConfig?,
     resetAutoFinishTime: Boolean?
   ) {
-    logger.log("updateConfig $newConfig",)
+    logger.log("updateConfig $newConfig")
     if (!isActive) return
 
     val newTimeMs = if (newConfig?.autoFinishRecognitionMs != null) newConfig.autoFinishRecognitionMs else config?.autoFinishRecognitionMs
@@ -183,28 +184,32 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   private suspend fun preparePermissions(params: SpeechRecognitionConfig?, isPrewarm: Boolean) {
     if (isActive) {
-      onFinishRecognition(
-        null,
-        "Error: SpeechRecognizer is already active",
-        false
-      )
+      // Ignore prepare if active
       return
     }
 
     val context = NitroModules.applicationContext
     if (context == null) {
+      if (isPrewarm) {
+        // Do not report error for prepare
+        return
+      }
       onFinishRecognition(
         null,
-        "Error: Context not available",
+        SpeechRecognitionError.SESSIONSTARTFAILED,
         true
       )
       return
     }
     val activity = context.currentActivity
     if (activity == null) {
+      if (isPrewarm) {
+        // Do not report error for prepare
+        return
+      }
       onFinishRecognition(
         null,
-        "Error: Activity not found",
+        SpeechRecognitionError.SESSIONSTARTFAILED,
         true
       )
       return
@@ -241,8 +246,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
             autoStopper,
             config,
             fireVolumeChangeEvent = { event -> fireVolumeChangeEvent(event) },
-            onFinishRecognition = { result, errorMessage, recordingStopped ->
-              onFinishRecognition(result, errorMessage, recordingStopped)
+            onFinishRecognition = { result, error, recordingStopped ->
+              onFinishRecognition(result, error, recordingStopped)
             }
         )
 
@@ -276,9 +281,9 @@ class HybridRecognizer: HybridRecognizerSpec() {
         speechRecognizer?.startListening(intent)
         isActive = true
         
-        val hapticImpact = config?.startHapticFeedbackStyle
+        val hapticStyle = config?.startHapticFeedbackStyle
 
-        HapticImpact(hapticImpact).trigger(context)
+        HapticImpact(hapticStyle).trigger(context)
         mainHandler.postDelayed({
           if (isActive) {
             onReadyForSpeech?.invoke()
@@ -286,10 +291,10 @@ class HybridRecognizer: HybridRecognizerSpec() {
             autoStopper?.resetTimer()
           }
         }, 500)
-      } catch (e: Exception) {
+      } catch (_: Exception) {
         onFinishRecognition(
           null,
-          "Error at start.mainHandler.post: ${e.message ?: "Unknown error"}",
+          SpeechRecognitionError.SESSIONSTARTFAILED,
           true
         )
       }
@@ -297,6 +302,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   }
 
   private fun cleanup() {
+    isActive = false
     try {
       logger.log("cleanup called")
       autoStopper?.stop()
@@ -304,24 +310,28 @@ class HybridRecognizer: HybridRecognizerSpec() {
       speechRecognizer?.stopListening()
       speechRecognizer?.destroy()
       speechRecognizer = null
-      isActive = false
       // Reset voice meter in JS consumers after stop/error cleanup.
       fireVolumeChangeEvent(VolumeChangeEvent(0.0,0.0,null))
-    } catch (e: Exception) {
+    } catch (_: Exception) {
+      speechRecognizer = null
       onFinishRecognition(
         null,
-        "Error at stopListening.mainHandler.postDelayed: ${e.message ?: "Unknown error"}",
+        SpeechRecognitionError.UNKNOWN,
         true
       )
     }
   }
 
-  private fun onFinishRecognition(result: ArrayList<String>?, errorMessage: String?, recordingStopped: Boolean) {
+  private fun onFinishRecognition(
+    result: ArrayList<String>?,
+    error: SpeechRecognitionError?,
+    recordingStopped: Boolean
+  ) {
     if (recordingStopped) {
       onRecordingStopped?.invoke()
     }
-    if (!errorMessage.isNullOrEmpty()) {
-      onError?.invoke(errorMessage)
+    if (error != null) {
+      onError?.invoke(error)
     }
     if (!result.isNullOrEmpty()) {
       onResult?.invoke(result.toTypedArray())
@@ -329,7 +339,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   }
 
   private fun fireVolumeChangeEvent(event: VolumeChangeEvent) {
-    logger.log("fireVolumeChangeEvent ${event}")
+    logger.log("fireVolumeChangeEvent $event")
     volumeChangeEvent = event
     onVolumeChange?.invoke(event)
   }

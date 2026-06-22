@@ -17,7 +17,7 @@ class AudioPermissionRequester(
   private val recordAudioPermission = Manifest.permission.RECORD_AUDIO
   private val componentActivity = activity as? ComponentActivity ?: error("Host activity must be a ComponentActivity")
 
-  private val prefs = activity.getSharedPreferences(Companion.PREFS_NAME, android.content.Context.MODE_PRIVATE)
+  private val prefs = activity.getSharedPreferences(PREFS_NAME, android.content.Context.MODE_PRIVATE)
 
   private var callback: ((Boolean) -> Unit)? = null
 
@@ -28,15 +28,15 @@ class AudioPermissionRequester(
     callback?.invoke(granted)
   }
 
-  private fun hasRequested(): Boolean = prefs.getBoolean(Companion.REQUESTED_KEY, false)
+  private fun hasRequested(): Boolean = prefs.getBoolean(REQUESTED_KEY, false)
 
   private fun markRequested() {
-    prefs.edit { putBoolean(Companion.REQUESTED_KEY, true) }
+    prefs.edit { putBoolean(REQUESTED_KEY, true) }
   }
 
   fun check(): Boolean = checkStatus() == PermissionStatus.GRANTED
 
-  fun checkStatus(): PermissionStatus = Companion.checkStatus(activity)
+  fun checkStatus(): PermissionStatus = checkStatus(activity)
 
   suspend fun checkAndRequest(): Boolean {
     if (check()) {

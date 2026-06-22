@@ -81,7 +81,8 @@ const {
         console.log('Auto-stop in:', timeLeftMs, 'ms');
       },
       onError: (error) => {
-        console.log('Error:', error);
+        console.log('Error code:', error);
+        console.log('Message:', ErrorDictionary[error].message);
       },
       onPermissionDenied: () => {
         console.log('Permission denied');

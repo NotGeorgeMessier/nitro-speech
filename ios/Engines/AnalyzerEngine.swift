@@ -33,35 +33,22 @@ final class AnalyzerEngine: RecognizerEngine {
             
             do {
                 try await self.analyzer?.finalizeAndFinishThroughEndOfInput()
+                self.cleanup(from: "stopListening")
             } catch {
-                self.reportFailure(
-                    from: "stop.finalizeAndFinishThroughEndOfInput",
-                    message: "Failed to finalize the end of input",
-                    type: .onSession
-                )
                 await self.analyzer?.cancelAndFinishNow()
+                self.reportError(from: "stop.finalizeAndFinishThroughEndOfInput")
             }
-            
-            self.cleanup(from: "stopListening")
         }
     }
     
-    override func prewarm(for type: PrewarmType, _ options: SpeechRecognitionPrewarm? = nil) async {
-        await super.prewarm(for: type, options)
+    override func prewarm(forPrewarm: Bool, _ options: SpeechRecognitionPrewarm? = nil) async {
+        await super.prewarm(forPrewarm: forPrewarm, options)
         do {
             // Create transcriber and install assets
             try await transcriber.create(config: self.recognizerDelegate?.config)
         }
         catch {
-            let failureType: FailureType = switch type {
-                case .prewarm: .prewarm
-                case .start: .start
-            }
-            self.reportFailure(
-                from: "prewarm.assets",
-                message: "Failed to create transcriber",
-                type: failureType
-            )
+            self.retry(from: "prewarm.assets", isPrewarm: forPrewarm)
         }
     }
     
@@ -70,7 +57,7 @@ final class AnalyzerEngine: RecognizerEngine {
         
         // Prepares transcriber and handles errors.
         // On failure, reportFailure triggers cleanup + engine reselection.
-        await prewarm(for: .start)
+        await prewarm(forPrewarm: false)
         
         // 3. Input sequence
         (inputSequence, inputBuilder) = AsyncStream.makeStream(of: AnalyzerInput.self)
@@ -80,10 +67,9 @@ final class AnalyzerEngine: RecognizerEngine {
         guard let audioFormat = await SpeechAnalyzer.bestAvailableAudioFormat(
             compatibleWith: modules
         ) else {
-            self.reportFailure(
+            self.retry(
                 from: "startRecognition.SpeechAnalyzer.bestAvailableAudioFormat",
-                message: "Failed to find SpeechAnalyzer audio format",
-                type: .start
+                isPrewarm: false
             )
             return
         }
@@ -92,9 +78,9 @@ final class AnalyzerEngine: RecognizerEngine {
         
         // 5. Supply audio
         audioProducerTask = Task {
-            self.startAudioEngine(
-                onBuffer: { [weak self] buffer in
-                    self?.outputContinuation?.yield(buffer)
+            startAudioEngine(
+                onBuffer: { buffer in
+                    self.outputContinuation?.yield(buffer)
                 }
             )
             guard let hardwareFormat = recognizerDelegate?.hardwareFormat else { return }
@@ -142,12 +128,7 @@ final class AnalyzerEngine: RecognizerEngine {
                 if Task.isCancelled || self.isStopping {
                     return
                 }
-                self.reportFailure(
-                    from: "startRecognition.audioProducerTask",
-                    message: "Failed to convert audio format",
-                    type: .start
-                )
-                return
+                self.retry(from: "startRecognition.audioProducerTask", isPrewarm: false)
             }
         }
         
@@ -155,8 +136,7 @@ final class AnalyzerEngine: RecognizerEngine {
         recognizerTask = Task {
             do {
                 try await transcriber.handleResults(
-                    onResult: { [weak self] result in
-                        guard let self else { return }
+                    onResult: { result in
                         self.handleBatch(
                             attrString: result.text,
                             rangeStart: result.rangeStart,
@@ -168,10 +148,9 @@ final class AnalyzerEngine: RecognizerEngine {
                 if self.isStopping || error is CancellationError {
                     return
                 }
-                self.reportFailure(
+                self.reportError(
                     from: "startRecognition.recognizerTask",
-                    message: "Failed to retrieve transcriber result",
-                    type: .onSession
+                    code: SpeechRecognitionError.recognitiontaskfailed
                 )
             }
         }
@@ -188,11 +167,7 @@ final class AnalyzerEngine: RecognizerEngine {
                 try await analyzer.start(inputSequence: inputSequence)
             }
         } catch {
-            self.reportFailure(
-                from: "startRecognition.analyzerStart",
-                message: "Failed to start analyze input sequence",
-                type: .start
-            )
+            self.retry(from: "startRecognition.analyzerStart", isPrewarm: false)
             return
         }
 

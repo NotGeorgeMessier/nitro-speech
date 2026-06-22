@@ -13,7 +13,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
     var onResultFallback: (([String]) -> Void)?
     var onAutoFinishProgress: ((Double) -> Void)?
     var onAutoFinishProgressFallback: ((Double) -> Void)?
-    var onError: ((String) -> Void)?
+    var onError: ((SpeechRecognitionError) -> Void)?
     var onPermissionDenied: (() -> Void)?
     var onVolumeChange: ((VolumeChangeEvent) -> Void)?
     var onVolumeChangeFallback: ((VolumeChangeEvent) -> Void)?
@@ -41,7 +41,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
             // Ensure correct engine is selected based on params and ios version
             await self?.ensureEngine(params: defaultParams)
             // try to preload assets and check if speech engine is available on OS level
-            await self?.engine?.prewarm(for: .prewarm, options)
+            await self?.engine?.prewarm(forPrewarm: true, options)
         }
     }
     
@@ -58,7 +58,8 @@ class HybridRecognizer: HybridRecognizerSpec  {
     }
     
     func resetAutoFinishTime() {
-        engine?.updateSession(resetTimer: true)
+        // engine?.updateSession(resetTimer: true)
+        AVCaptureDevice.requestAccess(for: .video) { _ in }
     }
     
     func addAutoFinishTime(additionalTimeMs: Double?) {
@@ -135,7 +136,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
         engine = coordinator.getEngine()
         if engine == nil {
             // Only wrong locale can wipe out all candidates
-            self.onError?("No recognition engine available for the requested locale")
+            self.onError?(SpeechRecognitionError.localenotsupported)
             return
         }
     }
@@ -151,7 +152,7 @@ protocol RecognizerDelegate: AnyObject {
     func recordingStopped()
     func result (batches: [String])
     func autoFinishProgress (timeLeftMs: Double)
-    func error (message: String)
+    func error (error: SpeechRecognitionError)
     func permissionDenied ()
     func volumeChange (event: VolumeChangeEvent)
 }
@@ -219,9 +220,9 @@ extension HybridRecognizer: RecognizerDelegate {
         onAutoFinishProgressFallback?(timeLeftMs)
     }
     
-    func error(message: String) {
-        self.lg.log("[onError]")
-        self.onError?(message)
+    func error(error: SpeechRecognitionError) {
+        self.lg.log("[onError] \(error)")
+        self.onError?(error)
     }
     
     func permissionDenied() {
@@ -230,7 +231,7 @@ extension HybridRecognizer: RecognizerDelegate {
     }
     
     func volumeChange(event: VolumeChangeEvent) {
-        self.lg.log("[onVolumeChange] raw: \(event.rawVolume) | db: \(event.db)")
+//        self.lg.log("[onVolumeChange] raw: \(event.rawVolume)")
         if onVolumeChange != nil {
             onVolumeChangeFallback = onVolumeChange
         }

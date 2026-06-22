@@ -7,6 +7,7 @@ import type { VolumeChangeEvent } from '../specs/VolumeChangeEvent'
 import type { SpeechRecognitionPrewarm } from '../specs/SpeechRecognitionPrewarm'
 import type { UseVoiceInputVolumeConfig } from './useVoiceInputVolume'
 export { PermissionStatus } from '../specs/Permissions'
+export { SpeechRecognitionError } from '../specs/Errors'
 
 type RecognizerCallbacks = Pick<
   RecognizerSpec,
