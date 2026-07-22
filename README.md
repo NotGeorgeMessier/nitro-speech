@@ -1,8 +1,8 @@
 # react-native-nitro-speech
 
-[![npm version](https://img.shields.io/npm/v/@gmessier/nitro-speech.svg)](https://www.npmjs.com/package/@gmessier/nitro-speech)
-[![license](https://img.shields.io/npm/l/@gmessier/nitro-speech.svg)](https://github.com/NotGeorgeMessier/nitro-speech/blob/main/LICENSE)
-[![npm downloads](https://img.shields.io/npm/dm/@gmessier/nitro-speech.svg)](https://www.npmjs.com/package/@gmessier/nitro-speech)
+[![npm version](https://img.shields.io/npm/v/react-native-nitro-speech.svg)](https://www.npmjs.com/package/react-native-nitro-speech)
+[![license](https://img.shields.io/npm/l/react-native-nitro-speech.svg)](https://github.com/NotGeorgeMessier/nitro-speech/blob/main/LICENSE)
+[![npm downloads](https://img.shields.io/npm/dm/react-native-nitro-speech.svg)](https://www.npmjs.com/package/react-native-nitro-speech)
 
 ### React Native real-time Speech Recognition Library powered by Nitro Modules
 
