@@ -28,6 +28,8 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
+// Forward declaration of `OnDeviceMode` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class OnDeviceMode; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 // Forward declaration of `IosPreset` to properly resolve imports.
@@ -36,6 +38,7 @@ namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 #include <string>
 #include <optional>
 #include <vector>
+#include "OnDeviceMode.hpp"
 #include "HapticFeedbackStyle.hpp"
 #include "IosPreset.hpp"
 
@@ -49,6 +52,7 @@ namespace margelo::nitro::nitrospeech {
     std::optional<std::string> locale     SWIFT_PRIVATE;
     std::optional<std::vector<std::string>> contextualStrings     SWIFT_PRIVATE;
     std::optional<bool> maskOffensiveWords     SWIFT_PRIVATE;
+    std::optional<OnDeviceMode> onDevice     SWIFT_PRIVATE;
     std::optional<double> autoFinishRecognitionMs     SWIFT_PRIVATE;
     std::optional<double> autoFinishProgressIntervalMs     SWIFT_PRIVATE;
     std::optional<double> resetAutoFinishVoiceSensitivity     SWIFT_PRIVATE;
@@ -64,7 +68,7 @@ namespace margelo::nitro::nitrospeech {
 
   public:
     SpeechRecognitionConfig() = default;
-    explicit SpeechRecognitionConfig(std::optional<std::string> locale, std::optional<std::vector<std::string>> contextualStrings, std::optional<bool> maskOffensiveWords, std::optional<double> autoFinishRecognitionMs, std::optional<double> autoFinishProgressIntervalMs, std::optional<double> resetAutoFinishVoiceSensitivity, std::optional<bool> disableRepeatingFilter, std::optional<HapticFeedbackStyle> startHapticFeedbackStyle, std::optional<HapticFeedbackStyle> stopHapticFeedbackStyle, std::optional<bool> androidFormattingPreferQuality, std::optional<bool> androidUseWebSearchModel, std::optional<bool> androidDisableBatchHandling, std::optional<bool> iosAddPunctuation, std::optional<IosPreset> iosPreset, std::optional<bool> iosAtypicalSpeech): locale(locale), contextualStrings(contextualStrings), maskOffensiveWords(maskOffensiveWords), autoFinishRecognitionMs(autoFinishRecognitionMs), autoFinishProgressIntervalMs(autoFinishProgressIntervalMs), resetAutoFinishVoiceSensitivity(resetAutoFinishVoiceSensitivity), disableRepeatingFilter(disableRepeatingFilter), startHapticFeedbackStyle(startHapticFeedbackStyle), stopHapticFeedbackStyle(stopHapticFeedbackStyle), androidFormattingPreferQuality(androidFormattingPreferQuality), androidUseWebSearchModel(androidUseWebSearchModel), androidDisableBatchHandling(androidDisableBatchHandling), iosAddPunctuation(iosAddPunctuation), iosPreset(iosPreset), iosAtypicalSpeech(iosAtypicalSpeech) {}
+    explicit SpeechRecognitionConfig(std::optional<std::string> locale, std::optional<std::vector<std::string>> contextualStrings, std::optional<bool> maskOffensiveWords, std::optional<OnDeviceMode> onDevice, std::optional<double> autoFinishRecognitionMs, std::optional<double> autoFinishProgressIntervalMs, std::optional<double> resetAutoFinishVoiceSensitivity, std::optional<bool> disableRepeatingFilter, std::optional<HapticFeedbackStyle> startHapticFeedbackStyle, std::optional<HapticFeedbackStyle> stopHapticFeedbackStyle, std::optional<bool> androidFormattingPreferQuality, std::optional<bool> androidUseWebSearchModel, std::optional<bool> androidDisableBatchHandling, std::optional<bool> iosAddPunctuation, std::optional<IosPreset> iosPreset, std::optional<bool> iosAtypicalSpeech): locale(locale), contextualStrings(contextualStrings), maskOffensiveWords(maskOffensiveWords), onDevice(onDevice), autoFinishRecognitionMs(autoFinishRecognitionMs), autoFinishProgressIntervalMs(autoFinishProgressIntervalMs), resetAutoFinishVoiceSensitivity(resetAutoFinishVoiceSensitivity), disableRepeatingFilter(disableRepeatingFilter), startHapticFeedbackStyle(startHapticFeedbackStyle), stopHapticFeedbackStyle(stopHapticFeedbackStyle), androidFormattingPreferQuality(androidFormattingPreferQuality), androidUseWebSearchModel(androidUseWebSearchModel), androidDisableBatchHandling(androidDisableBatchHandling), iosAddPunctuation(iosAddPunctuation), iosPreset(iosPreset), iosAtypicalSpeech(iosAtypicalSpeech) {}
 
   public:
     friend bool operator==(const SpeechRecognitionConfig& lhs, const SpeechRecognitionConfig& rhs) = default;
@@ -83,6 +87,7 @@ namespace margelo::nitro {
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "locale"))),
         JSIConverter<std::optional<std::vector<std::string>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "contextualStrings"))),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "maskOffensiveWords"))),
+        JSIConverter<std::optional<margelo::nitro::nitrospeech::OnDeviceMode>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "onDevice"))),
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "autoFinishRecognitionMs"))),
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "autoFinishProgressIntervalMs"))),
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "resetAutoFinishVoiceSensitivity"))),
@@ -102,6 +107,7 @@ namespace margelo::nitro {
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "locale"), JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.locale));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "contextualStrings"), JSIConverter<std::optional<std::vector<std::string>>>::toJSI(runtime, arg.contextualStrings));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "maskOffensiveWords"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.maskOffensiveWords));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "onDevice"), JSIConverter<std::optional<margelo::nitro::nitrospeech::OnDeviceMode>>::toJSI(runtime, arg.onDevice));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "autoFinishRecognitionMs"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.autoFinishRecognitionMs));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "autoFinishProgressIntervalMs"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.autoFinishProgressIntervalMs));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "resetAutoFinishVoiceSensitivity"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.resetAutoFinishVoiceSensitivity));
@@ -127,6 +133,7 @@ namespace margelo::nitro {
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "locale")))) return false;
       if (!JSIConverter<std::optional<std::vector<std::string>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "contextualStrings")))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "maskOffensiveWords")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::nitrospeech::OnDeviceMode>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "onDevice")))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "autoFinishRecognitionMs")))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "autoFinishProgressIntervalMs")))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "resetAutoFinishVoiceSensitivity")))) return false;

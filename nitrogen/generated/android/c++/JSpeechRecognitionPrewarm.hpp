@@ -17,7 +17,7 @@ namespace margelo::nitro::nitrospeech {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "SpeechRecognitionPrewarm" and the the Kotlin data class "SpeechRecognitionPrewarm".
+   * The C++ JNI bridge between the C++ struct "SpeechRecognitionPrewarm" and the Kotlin data class "SpeechRecognitionPrewarm".
    */
   struct JSpeechRecognitionPrewarm final: public jni::JavaClass<JSpeechRecognitionPrewarm> {
   public:

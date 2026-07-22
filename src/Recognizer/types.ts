@@ -32,6 +32,7 @@ type RecognizerMethods = Pick<
   | 'getVoiceInputVolume'
   | 'getPermissions'
   | 'getSupportedLocalesIOS'
+  | 'onDeviceRecognitionAvailable'
 >
 
 export type {

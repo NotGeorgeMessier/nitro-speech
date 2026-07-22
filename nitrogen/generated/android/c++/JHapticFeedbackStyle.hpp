@@ -15,7 +15,7 @@ namespace margelo::nitro::nitrospeech {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "HapticFeedbackStyle" and the the Kotlin enum "HapticFeedbackStyle".
+   * The C++ JNI bridge between the C++ enum "HapticFeedbackStyle" and the Kotlin enum "HapticFeedbackStyle".
    */
   struct JHapticFeedbackStyle final: public jni::JavaClass<JHapticFeedbackStyle> {
   public:

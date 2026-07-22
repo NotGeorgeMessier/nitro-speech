@@ -105,6 +105,11 @@ export interface Recognizer extends HybridObject<{
   getSupportedLocalesIOS(): string[]
 
   /**
+   * Returns whether on-device speech recognition is available for the locale.
+   */
+  onDeviceRecognitionAvailable(locale: string): Promise<boolean>
+
+  /**
    * The speech recognition session has started.
    */
   onReadyForSpeech?: () => void

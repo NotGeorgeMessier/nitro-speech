@@ -20,14 +20,18 @@ final class Coordinator {
         }
     }
     
-    func initialize() async {
-        let params = self.recognizerDelegate?.config
-        Log.log("[Coordinator] LocaleManager - init (\(params?.locale))")
+    private func prepareLocaleManager() async {
         if self.localeManager == nil {
             self.localeTask?.cancel()
             self.localeTask = nil
             self.localeManager = await LocaleManager()
         }
+    }
+    
+    func initialize() async {
+        let params = self.recognizerDelegate?.config
+        Log.log("[Coordinator] LocaleManager - init (\(params?.locale))")
+        await prepareLocaleManager()
         guard let localeManager else { return }
         await localeManager.ensureLocale(localeString: params?.locale)
         self.candidates = []
@@ -102,5 +106,14 @@ final class Coordinator {
     
     func getSupportedLocales() -> [String] {
         return localeManager?.supportedLocales ?? []
+    }
+    
+    @available(iOS 26.0, *)
+    func isLocaleDownloadable(locale: String) async -> Bool {
+        await prepareLocaleManager()
+        // if any locale exists -> it is supported and downloadable
+        let speechLocale = await localeManager?.speechEquivalent(locale)
+        let dictationLocale = await localeManager?.dictationEquivalent(locale)
+        return speechLocale != nil || dictationLocale != nil
     }
 }

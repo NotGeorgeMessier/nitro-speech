@@ -60,6 +60,8 @@ interface ParamsIOS {
 
 type HapticFeedbackStyle = 'light' | 'medium' | 'heavy' | 'none'
 
+type OnDeviceMode = 'prefer' | 'require'
+
 export interface MutableSpeechRecognitionConfig {
   /**
    * Silence timer duration with no voice detected
@@ -170,4 +172,18 @@ export interface SpeechRecognitionConfig
    * @default false
    */
   maskOffensiveWords?: boolean
+  /**
+   * Prefer or require on-device speech recognition.
+   *
+   * `"prefer"` - Use on-device when available; otherwise fall back.
+   *
+   * `"require"` - Fail via `onError` if on-device recognition is unavailable
+   * (`OnDeviceNotSupported` or `OnDeviceModelNotInstalled`).
+   *
+   * Defaults
+   * - iOS 26+: "prefer"
+   * - iOS <26: disabled
+   * - Android: disabled
+   */
+  onDevice?: OnDeviceMode
 }

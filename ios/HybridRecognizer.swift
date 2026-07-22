@@ -1,6 +1,7 @@
 import Foundation
 import NitroModules
 import AVFoundation
+import Speech
 
 class HybridRecognizer: HybridRecognizerSpec  {
     var prewarmOptions: SpeechRecognitionPrewarm?
@@ -115,6 +116,19 @@ class HybridRecognizer: HybridRecognizerSpec  {
     func getSupportedLocalesIOS() -> [String] {
         return self.coordinator.getSupportedLocales()
     }
+    
+    func onDeviceRecognitionAvailable(locale: String) -> Promise<Bool> {
+        return Promise.async(.userInitiated) { [weak self] in
+            let sfRecognizer = SFSpeechRecognizer(locale: Locale(identifier: locale))
+            if let sfRecognizer, sfRecognizer.supportsOnDeviceRecognition {
+                return true
+            }
+            if #available(iOS 26.0, *) {
+                return await self?.coordinator.isLocaleDownloadable(locale: locale) == true
+            }
+            return false
+        }
+    }
 
     private func ensureEngine(params: SpeechRecognitionConfig?) async {
         // Remember new params
@@ -166,6 +180,7 @@ extension HybridRecognizer: RecognizerDelegate {
                 locale: config?.locale,
                 contextualStrings: config?.contextualStrings,
                 maskOffensiveWords: config?.maskOffensiveWords,
+                onDevice: config?.onDevice,
                 autoFinishRecognitionMs: newConfig.autoFinishRecognitionMs ?? config?.autoFinishRecognitionMs,
                 autoFinishProgressIntervalMs: newConfig.autoFinishProgressIntervalMs ?? config?.autoFinishProgressIntervalMs,
                 resetAutoFinishVoiceSensitivity: newConfig.resetAutoFinishVoiceSensitivity ?? config?.resetAutoFinishVoiceSensitivity,
@@ -206,7 +221,7 @@ extension HybridRecognizer: RecognizerDelegate {
     }
     
     func autoFinishProgress(timeLeftMs: Double) {
-        self.lg.log("[onAutoFinishProgress] \(timeLeftMs)ms")
+//        self.lg.log("[onAutoFinishProgress] \(timeLeftMs)ms")
         
         if onAutoFinishProgress != nil {
             onAutoFinishProgressFallback = onAutoFinishProgress

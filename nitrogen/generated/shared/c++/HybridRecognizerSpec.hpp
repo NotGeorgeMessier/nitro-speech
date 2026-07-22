@@ -92,6 +92,7 @@ namespace margelo::nitro::nitrospeech {
       virtual VolumeChangeEvent getVoiceInputVolume() = 0;
       virtual PermissionStatus getPermissions() = 0;
       virtual std::vector<std::string> getSupportedLocalesIOS() = 0;
+      virtual std::shared_ptr<Promise<bool>> onDeviceRecognitionAvailable(const std::string& locale) = 0;
 
     protected:
       // Hybrid Setup

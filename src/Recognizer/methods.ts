@@ -64,3 +64,9 @@ export const recognizerGetSupportedLocalesIOS: RecognizerMethods['getSupportedLo
     'worklet'
     return SpeechRecognizer.getSupportedLocalesIOS().sort()
   }
+
+export const recognizerOnDeviceRecognitionAvailable: RecognizerMethods['onDeviceRecognitionAvailable'] =
+  (locale) => {
+    'worklet'
+    return SpeechRecognizer.onDeviceRecognitionAvailable(locale)
+  }

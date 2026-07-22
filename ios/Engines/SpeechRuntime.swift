@@ -12,7 +12,7 @@ final class SpeechRuntime: TranscriberRuntime {
     
     func create(config: SpeechRecognitionConfig?) async throws {
         if !SpeechTranscriber.isAvailable {
-            throw NSError()
+            throw RecognizerError.speechTranscriberNotAvailable
         }
         var speechTranscriptionOptions: Set<SpeechTranscriber.TranscriptionOption> = []
         if config?.maskOffensiveWords == true {

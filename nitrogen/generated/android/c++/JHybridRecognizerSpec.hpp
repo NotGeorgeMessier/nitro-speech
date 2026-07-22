@@ -77,6 +77,7 @@ namespace margelo::nitro::nitrospeech {
     VolumeChangeEvent getVoiceInputVolume() override;
     PermissionStatus getPermissions() override;
     std::vector<std::string> getSupportedLocalesIOS() override;
+    std::shared_ptr<Promise<bool>> onDeviceRecognitionAvailable(const std::string& locale) override;
 
   private:
     jni::global_ref<JHybridRecognizerSpec::JavaPart> _javaPart;

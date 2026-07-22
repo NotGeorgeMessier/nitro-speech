@@ -18,6 +18,8 @@ namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
+// Forward declaration of `OnDeviceMode` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class OnDeviceMode; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 // Forward declaration of `IosPreset` to properly resolve imports.
@@ -37,6 +39,7 @@ namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include "SpeechRecognitionConfig.hpp"
+#include "OnDeviceMode.hpp"
 #include "HapticFeedbackStyle.hpp"
 #include "IosPreset.hpp"
 #include "SpeechRecognitionPrewarm.hpp"
@@ -205,6 +208,14 @@ namespace margelo::nitro::nitrospeech {
     }
     inline std::vector<std::string> getSupportedLocalesIOS() override {
       auto __result = _swiftPart.getSupportedLocalesIOS();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<bool>> onDeviceRecognitionAvailable(const std::string& locale) override {
+      auto __result = _swiftPart.onDeviceRecognitionAvailable(locale);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

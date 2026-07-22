@@ -10,6 +10,7 @@ import {
   recognizerGetVoiceInputVolume,
   recognizerPrewarm,
   recognizerGetPermissions,
+  recognizerOnDeviceRecognitionAvailable,
 } from './methods'
 
 /**
@@ -28,4 +29,5 @@ export const RecognizerRef: RecognizerMethods = {
   getVoiceInputVolume: recognizerGetVoiceInputVolume,
   getPermissions: recognizerGetPermissions,
   getSupportedLocalesIOS: recognizerGetSupportedLocalesIOS,
+  onDeviceRecognitionAvailable: recognizerOnDeviceRecognitionAvailable,
 }

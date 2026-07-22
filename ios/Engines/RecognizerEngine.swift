@@ -13,6 +13,9 @@ class RecognizerEngine {
     private var autoStopper: AutoStopper?
     private let lg = Lg(prefix: "RecognizerEngine")
     
+    static let queueLabel = "com.margelo.nitrospeech.engine"
+    let queue = DispatchQueue(label: queueLabel)
+
     let locale: Locale
     
     init(locale: Locale, delegate: RecognizerDelegate) {

@@ -164,6 +164,10 @@ abstract class HybridRecognizerSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun getSupportedLocalesIOS(): Array<String>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun onDeviceRecognitionAvailable(locale: String): Promise<Boolean>
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

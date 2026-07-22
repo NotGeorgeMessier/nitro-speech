@@ -18,6 +18,8 @@ namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
 namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 // Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
+// Forward declaration of `OnDeviceMode` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class OnDeviceMode; }
 // Forward declaration of `PermissionStatus` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
@@ -41,6 +43,7 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 #include "HybridRecognizerSpec.hpp"
 #include "IosPreset.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
+#include "OnDeviceMode.hpp"
 #include "PermissionStatus.hpp"
 #include "SpeechRecognitionConfig.hpp"
 #include "SpeechRecognitionError.hpp"
@@ -198,6 +201,21 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.value();
   }
   
+  // pragma MARK: std::optional<OnDeviceMode>
+  /**
+   * Specialized version of `std::optional<OnDeviceMode>`.
+   */
+  using std__optional_OnDeviceMode_ = std::optional<OnDeviceMode>;
+  inline std::optional<OnDeviceMode> create_std__optional_OnDeviceMode_(const OnDeviceMode& value) noexcept {
+    return std::optional<OnDeviceMode>(value);
+  }
+  inline bool has_value_std__optional_OnDeviceMode_(const std::optional<OnDeviceMode>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline OnDeviceMode get_std__optional_OnDeviceMode_(const std::optional<OnDeviceMode>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::optional<double>
   /**
    * Specialized version of `std::optional<double>`.
@@ -286,6 +304,40 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
   }
   inline MutableSpeechRecognitionConfig get_std__optional_MutableSpeechRecognitionConfig_(const std::optional<MutableSpeechRecognitionConfig>& optional) noexcept {
     return optional.value();
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<bool>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<bool>>`.
+   */
+  using std__shared_ptr_Promise_bool__ = std::shared_ptr<Promise<bool>>;
+  inline std::shared_ptr<Promise<bool>> create_std__shared_ptr_Promise_bool__() noexcept {
+    return Promise<bool>::create();
+  }
+  inline PromiseHolder<bool> wrap_std__shared_ptr_Promise_bool__(std::shared_ptr<Promise<bool>> promise) noexcept {
+    return PromiseHolder<bool>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(bool /* result */)>
+  /**
+   * Specialized version of `std::function<void(bool)>`.
+   */
+  using Func_void_bool = std::function<void(bool /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(bool / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_bool_Wrapper final {
+  public:
+    explicit Func_void_bool_Wrapper(std::function<void(bool /* result */)>&& func): _function(std::make_unique<std::function<void(bool /* result */)>>(std::move(func))) {}
+    inline void call(bool result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(bool /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_bool_Wrapper wrap_Func_void_bool(Func_void_bool value) noexcept {
+    return Func_void_bool_Wrapper(std::move(value));
   }
   
   // pragma MARK: std::optional<std::function<void()>>
@@ -503,6 +555,15 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
   }
   inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::exception_ptr& error) noexcept {
     return Result<std::vector<std::string>>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<bool>>>
+  using Result_std__shared_ptr_Promise_bool___ = Result<std::shared_ptr<Promise<bool>>>;
+  inline Result_std__shared_ptr_Promise_bool___ create_Result_std__shared_ptr_Promise_bool___(const std::shared_ptr<Promise<bool>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<bool>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_bool___ create_Result_std__shared_ptr_Promise_bool___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<bool>>>::withError(error);
   }
 
 } // namespace margelo::nitro::nitrospeech::bridge::swift

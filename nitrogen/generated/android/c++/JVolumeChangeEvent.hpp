@@ -17,7 +17,7 @@ namespace margelo::nitro::nitrospeech {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "VolumeChangeEvent" and the the Kotlin data class "VolumeChangeEvent".
+   * The C++ JNI bridge between the C++ struct "VolumeChangeEvent" and the Kotlin data class "VolumeChangeEvent".
    */
   struct JVolumeChangeEvent final: public jni::JavaClass<JVolumeChangeEvent> {
   public:

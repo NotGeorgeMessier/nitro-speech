@@ -35,6 +35,7 @@ final class LocaleManager {
         }
     }
 
+    // Counting locale equivalents for each engine
     func ensureLocale(localeString: String?) async {
         let identifier = localeString ?? "en-US"
         if self.equivalentsCountedFor == identifier {
@@ -43,23 +44,8 @@ final class LocaleManager {
             return
         }
         if #available(iOS 26.0, *) {
-            let speechEquivalent = await SpeechTranscriber.supportedLocale(
-                equivalentTo: Locale(identifier: identifier)
-            )?.identifier
-            if let speechEquivalent, speechLocales.contains(speechEquivalent) {
-                self.speechLocale = Locale(identifier: speechEquivalent)
-            } else {
-                self.speechLocale = nil
-            }
-            
-            let dictationEquivalent = await DictationTranscriber.supportedLocale(
-                equivalentTo: Locale(identifier: identifier)
-            )?.identifier
-            if let dictationEquivalent, self.dictationLocales.contains(dictationEquivalent) {
-                self.dictationLocale = Locale(identifier: dictationEquivalent)
-            } else {
-                self.dictationLocale = nil
-            }
+            self.speechLocale = await speechEquivalent(identifier)
+            self.dictationLocale = await dictationEquivalent(identifier)
         }
         if sfSpeechLocales.contains(identifier) {
             self.SFLocale = Locale(identifier: identifier)
@@ -69,5 +55,27 @@ final class LocaleManager {
         self.equivalentsCountedFor = identifier
         Log.log("[Coordinator] equivalents: speechLocale: \(self.speechLocale?.identifier), dictationLocale: \(self.dictationLocale?.identifier), SFLocale: \(self.SFLocale?.identifier)")
         Log.log("[Coordinator] ensureLocale: \(identifier) -> New")
+    }
+    
+    @available(iOS 26.0, *)
+    func speechEquivalent(_ identifier: String) async -> Locale? {
+        let speechEquivalent = await SpeechTranscriber.supportedLocale(
+            equivalentTo: Locale(identifier: identifier)
+        )?.identifier
+        if let speechEquivalent, speechLocales.contains(speechEquivalent) {
+            return Locale(identifier: speechEquivalent)
+        }
+        return nil
+    }
+    
+    @available(iOS 26.0, *)
+    func dictationEquivalent(_ identifier: String) async -> Locale? {
+        let dictationEquivalent = await DictationTranscriber.supportedLocale(
+            equivalentTo: Locale(identifier: identifier)
+        )?.identifier
+        if let dictationEquivalent, self.dictationLocales.contains(dictationEquivalent) {
+            return Locale(identifier: dictationEquivalent)
+        }
+        return nil
     }
 }

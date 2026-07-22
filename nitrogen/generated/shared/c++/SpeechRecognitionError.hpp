@@ -29,6 +29,8 @@ namespace margelo::nitro::nitrospeech {
     RECOGNITIONTASKFAILED      SWIFT_NAME(recognitiontaskfailed) = 2,
     IOSSPEECHPERMISSIONNOTDETERMINED      SWIFT_NAME(iosspeechpermissionnotdetermined) = 3,
     SESSIONSTARTFAILED      SWIFT_NAME(sessionstartfailed) = 4,
+    ONDEVICENOTSUPPORTED      SWIFT_NAME(ondevicenotsupported) = 5,
+    ONDEVICEMODELNOTINSTALLED      SWIFT_NAME(ondevicemodelnotinstalled) = 6,
   } CLOSED_ENUM;
 
 } // namespace margelo::nitro::nitrospeech
@@ -58,7 +60,7 @@ namespace margelo::nitro {
         return false;
       }
       // Check if we are within the bounds of the enum.
-      return integer >= 0 && integer <= 4;
+      return integer >= 0 && integer <= 6;
     }
   };
 
