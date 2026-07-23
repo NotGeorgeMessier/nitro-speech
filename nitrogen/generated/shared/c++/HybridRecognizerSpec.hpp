@@ -25,6 +25,8 @@ namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 // Forward declaration of `PermissionStatus` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
+// Forward declaration of `SupportedLocales` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
 
 #include <functional>
 #include <optional>
@@ -37,6 +39,7 @@ namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 #include "SpeechRecognitionPrewarm.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
 #include "PermissionStatus.hpp"
+#include "SupportedLocales.hpp"
 
 namespace margelo::nitro::nitrospeech {
 
@@ -91,8 +94,9 @@ namespace margelo::nitro::nitrospeech {
       virtual bool getIsActive() = 0;
       virtual VolumeChangeEvent getVoiceInputVolume() = 0;
       virtual PermissionStatus getPermissions() = 0;
+      virtual std::shared_ptr<Promise<SupportedLocales>> getSupportedLocales() = 0;
       virtual std::vector<std::string> getSupportedLocalesIOS() = 0;
-      virtual std::shared_ptr<Promise<bool>> onDeviceRecognitionAvailable(const std::string& locale) = 0;
+      virtual bool onDeviceRecognitionAvailable(const std::optional<std::string>& locale) = 0;
 
     protected:
       // Hybrid Setup

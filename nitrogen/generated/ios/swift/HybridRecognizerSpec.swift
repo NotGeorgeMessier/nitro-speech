@@ -28,8 +28,9 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
   func getIsActive() throws -> Bool
   func getVoiceInputVolume() throws -> VolumeChangeEvent
   func getPermissions() throws -> PermissionStatus
+  func getSupportedLocales() throws -> Promise<SupportedLocales>
   func getSupportedLocalesIOS() throws -> [String]
-  func onDeviceRecognitionAvailable(locale: String) throws -> Promise<Bool>
+  func onDeviceRecognitionAvailable(locale: String?) throws -> Bool
 }
 
 public extension HybridRecognizerSpec_protocol {

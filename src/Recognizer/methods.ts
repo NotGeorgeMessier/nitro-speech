@@ -59,6 +59,13 @@ export const recognizerGetPermissions: RecognizerMethods['getPermissions'] =
     return SpeechRecognizer.getPermissions()
   }
 
+export const recognizerGetSupportedLocales: RecognizerMethods['getSupportedLocales'] =
+  () => {
+    'worklet'
+    return SpeechRecognizer.getSupportedLocales()
+  }
+
+/** @deprecated Use {@linkcode recognizerGetSupportedLocales} instead. */
 export const recognizerGetSupportedLocalesIOS: RecognizerMethods['getSupportedLocalesIOS'] =
   () => {
     'worklet'

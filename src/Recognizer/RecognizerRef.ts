@@ -1,6 +1,7 @@
 import type { RecognizerMethods } from './types'
 import {
   recognizerAddAutoFinishTime,
+  recognizerGetSupportedLocales,
   recognizerGetSupportedLocalesIOS,
   recognizerGetIsActive,
   recognizerResetAutoFinishTime,
@@ -28,6 +29,7 @@ export const RecognizerRef: RecognizerMethods = {
   getIsActive: recognizerGetIsActive,
   getVoiceInputVolume: recognizerGetVoiceInputVolume,
   getPermissions: recognizerGetPermissions,
+  getSupportedLocales: recognizerGetSupportedLocales,
   getSupportedLocalesIOS: recognizerGetSupportedLocalesIOS,
   onDeviceRecognitionAvailable: recognizerOnDeviceRecognitionAvailable,
 }

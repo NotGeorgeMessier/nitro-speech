@@ -108,12 +108,11 @@ final class Coordinator {
         return localeManager?.supportedLocales ?? []
     }
     
-    @available(iOS 26.0, *)
-    func isLocaleDownloadable(locale: String) async -> Bool {
+    func getSupportedLocalesReport() async -> SupportedLocales {
         await prepareLocaleManager()
-        // if any locale exists -> it is supported and downloadable
-        let speechLocale = await localeManager?.speechEquivalent(locale)
-        let dictationLocale = await localeManager?.dictationEquivalent(locale)
-        return speechLocale != nil || dictationLocale != nil
+        let locales = localeManager?.supportedLocales ?? []
+        // SF locales are preloaded. Speech/Dictation assets install via AssetInventory in prewarm.
+        let installedLocales = localeManager?.installedLocales ?? locales
+        return SupportedLocales(locales: locales, installedLocales: installedLocales)
     }
 }

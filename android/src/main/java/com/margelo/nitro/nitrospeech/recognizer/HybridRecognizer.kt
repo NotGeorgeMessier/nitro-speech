@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.NitroModules
@@ -17,6 +16,7 @@ import com.margelo.nitro.nitrospeech.PermissionStatus
 import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.SpeechRecognitionError
 import com.margelo.nitro.nitrospeech.SpeechRecognitionPrewarm
+import com.margelo.nitro.nitrospeech.SupportedLocales
 import com.margelo.nitro.nitrospeech.VolumeChangeEvent
 
 @DoNotStrip
@@ -24,6 +24,7 @@ import com.margelo.nitro.nitrospeech.VolumeChangeEvent
 class HybridRecognizer: HybridRecognizerSpec() {
   companion object {
     private const val POST_RECOGNITION_DELAY = 250L
+    private const val DEFAULT_LOCALE = "en-US"
   }
 
   private val logger = Logger(disable = false)
@@ -32,7 +33,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   private var config: SpeechRecognitionConfig? = null
   private var volumeChangeEvent: VolumeChangeEvent = VolumeChangeEvent(0.0,0.0,null)
   private var autoStopper: AutoStopper? = null
-  private var speechRecognizer: SpeechRecognizer? = null
+  private var speechRecognizer: android.speech.SpeechRecognizer? = null
   private val mainHandler = Handler(Looper.getMainLooper())
 
   override var onReadyForSpeech: (() -> Unit)? = null
@@ -51,12 +52,29 @@ class HybridRecognizer: HybridRecognizerSpec() {
     options: SpeechRecognitionPrewarm?
   ): Promise<Unit> {
     logger.log("prewarm called")
-    // nothing to prewarm
-    // only request permissions
     return Promise.async {
+      if (defaultParams != null) {
+        config = defaultParams
+      }
       // Enabled by default for user
       if (options?.requestPermission != false) {
         preparePermissions(null, isPrewarm = true)
+      }
+      val context = NitroModules.applicationContext ?: return@async
+      val onDevice = config?.onDevice ?: return@async
+      when (
+        val result = OnDeviceSupport.prepare(
+          context = context,
+          locale = config?.locale ?: DEFAULT_LOCALE,
+          mode = onDevice,
+        )
+      ) {
+        is OnDevicePrepareResult.Failed -> {
+          // Mirror startListening require failures (e.g. cancel download).
+          onError?.invoke(result.error)
+        }
+        OnDevicePrepareResult.UseOnDevice,
+        OnDevicePrepareResult.UseFallback -> Unit
       }
     }
   }
@@ -134,6 +152,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
         locale = config?.locale,
         contextualStrings = config?.contextualStrings,
         maskOffensiveWords = config?.maskOffensiveWords,
+        onDevice = config?.onDevice,
         autoFinishRecognitionMs = newConfig.autoFinishRecognitionMs ?: config?.autoFinishRecognitionMs,
         autoFinishProgressIntervalMs = newConfig.autoFinishProgressIntervalMs ?: config?.autoFinishProgressIntervalMs,
         resetAutoFinishVoiceSensitivity = newConfig.resetAutoFinishVoiceSensitivity ?: config?.resetAutoFinishVoiceSensitivity,
@@ -172,8 +191,25 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   @DoNotStrip
   @Keep
+  override fun getSupportedLocales(): Promise<SupportedLocales> {
+    return Promise.async {
+      val context = NitroModules.applicationContext
+        ?: return@async SupportedLocales(emptyArray(), emptyArray())
+      OnDeviceSupport.getSupportedLocales(context)
+    }
+  }
+
+  @DoNotStrip
+  @Keep
   override fun getSupportedLocalesIOS(): Array<String> {
     return emptyArray()
+  }
+
+  @DoNotStrip
+  @Keep
+  override fun onDeviceRecognitionAvailable(locale: String?): Boolean {
+    val context = NitroModules.applicationContext ?: return false
+    return OnDeviceSupport.isServiceAvailable(context)
   }
 
   @DoNotStrip
@@ -225,13 +261,40 @@ class HybridRecognizer: HybridRecognizerSpec() {
       return
     }
     config = params
-    start(context)
+    val useOnDevice = resolveUseOnDevice(context)
+    if (useOnDevice == null) {
+      // Fatal on-device error already reported
+      return
+    }
+    start(context, useOnDevice)
   }
 
-  private fun start(context: Context) {
+  /**
+   * @return true = on-device, false = network/default, null = aborted with error
+   */
+  private suspend fun resolveUseOnDevice(context: Context): Boolean? {
+    val mode = config?.onDevice ?: return false
+    return when (
+      val result = OnDeviceSupport.prepare(
+        context = context,
+        locale = config?.locale ?: DEFAULT_LOCALE,
+        mode = mode,
+      )
+    ) {
+      OnDevicePrepareResult.UseOnDevice -> true
+      OnDevicePrepareResult.UseFallback -> false
+      is OnDevicePrepareResult.Failed -> {
+        onFinishRecognition(null, result.error, true)
+        null
+      }
+    }
+  }
+
+  private fun start(context: Context, useOnDevice: Boolean) {
     mainHandler.post {
       try {
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
+        speechRecognizer = OnDeviceSupport.createRecognizer(context, useOnDevice)
+        logger.log("start useOnDevice=$useOnDevice")
         autoStopper = AutoStopper(
             silenceThresholdMs = config?.autoFinishRecognitionMs,
             progressIntervalMs = config?.autoFinishProgressIntervalMs,
@@ -257,7 +320,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, languageModel)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, config?.locale ?: "en-US")
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, config?.locale ?: DEFAULT_LOCALE)
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
         // Set a lot of time to avoid cutting early
         intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 300000)

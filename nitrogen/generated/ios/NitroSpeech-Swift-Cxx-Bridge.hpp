@@ -28,6 +28,8 @@ namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
 // Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
+// Forward declaration of `SupportedLocales` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 
@@ -48,6 +50,7 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 #include "SpeechRecognitionConfig.hpp"
 #include "SpeechRecognitionError.hpp"
 #include "SpeechRecognitionPrewarm.hpp"
+#include "SupportedLocales.hpp"
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/PromiseHolder.hpp>
@@ -306,38 +309,38 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.value();
   }
   
-  // pragma MARK: std::shared_ptr<Promise<bool>>
+  // pragma MARK: std::shared_ptr<Promise<SupportedLocales>>
   /**
-   * Specialized version of `std::shared_ptr<Promise<bool>>`.
+   * Specialized version of `std::shared_ptr<Promise<SupportedLocales>>`.
    */
-  using std__shared_ptr_Promise_bool__ = std::shared_ptr<Promise<bool>>;
-  inline std::shared_ptr<Promise<bool>> create_std__shared_ptr_Promise_bool__() noexcept {
-    return Promise<bool>::create();
+  using std__shared_ptr_Promise_SupportedLocales__ = std::shared_ptr<Promise<SupportedLocales>>;
+  inline std::shared_ptr<Promise<SupportedLocales>> create_std__shared_ptr_Promise_SupportedLocales__() noexcept {
+    return Promise<SupportedLocales>::create();
   }
-  inline PromiseHolder<bool> wrap_std__shared_ptr_Promise_bool__(std::shared_ptr<Promise<bool>> promise) noexcept {
-    return PromiseHolder<bool>(std::move(promise));
+  inline PromiseHolder<SupportedLocales> wrap_std__shared_ptr_Promise_SupportedLocales__(std::shared_ptr<Promise<SupportedLocales>> promise) noexcept {
+    return PromiseHolder<SupportedLocales>(std::move(promise));
   }
   
-  // pragma MARK: std::function<void(bool /* result */)>
+  // pragma MARK: std::function<void(const SupportedLocales& /* result */)>
   /**
-   * Specialized version of `std::function<void(bool)>`.
+   * Specialized version of `std::function<void(const SupportedLocales&)>`.
    */
-  using Func_void_bool = std::function<void(bool /* result */)>;
+  using Func_void_SupportedLocales = std::function<void(const SupportedLocales& /* result */)>;
   /**
-   * Wrapper class for a `std::function<void(bool / * result * /)>`, this can be used from Swift.
+   * Wrapper class for a `std::function<void(const SupportedLocales& / * result * /)>`, this can be used from Swift.
    */
-  class Func_void_bool_Wrapper final {
+  class Func_void_SupportedLocales_Wrapper final {
   public:
-    explicit Func_void_bool_Wrapper(std::function<void(bool /* result */)>&& func): _function(std::make_unique<std::function<void(bool /* result */)>>(std::move(func))) {}
-    inline void call(bool result) const noexcept {
+    explicit Func_void_SupportedLocales_Wrapper(std::function<void(const SupportedLocales& /* result */)>&& func): _function(std::make_unique<std::function<void(const SupportedLocales& /* result */)>>(std::move(func))) {}
+    inline void call(SupportedLocales result) const noexcept {
       _function->operator()(result);
     }
   private:
-    std::unique_ptr<std::function<void(bool /* result */)>> _function;
+    std::unique_ptr<std::function<void(const SupportedLocales& /* result */)>> _function;
   } SWIFT_NONCOPYABLE;
-  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_bool_Wrapper wrap_Func_void_bool(Func_void_bool value) noexcept {
-    return Func_void_bool_Wrapper(std::move(value));
+  Func_void_SupportedLocales create_Func_void_SupportedLocales(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_SupportedLocales_Wrapper wrap_Func_void_SupportedLocales(Func_void_SupportedLocales value) noexcept {
+    return Func_void_SupportedLocales_Wrapper(std::move(value));
   }
   
   // pragma MARK: std::optional<std::function<void()>>
@@ -548,6 +551,15 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return Result<PermissionStatus>::withError(error);
   }
   
+  // pragma MARK: Result<std::shared_ptr<Promise<SupportedLocales>>>
+  using Result_std__shared_ptr_Promise_SupportedLocales___ = Result<std::shared_ptr<Promise<SupportedLocales>>>;
+  inline Result_std__shared_ptr_Promise_SupportedLocales___ create_Result_std__shared_ptr_Promise_SupportedLocales___(const std::shared_ptr<Promise<SupportedLocales>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<SupportedLocales>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_SupportedLocales___ create_Result_std__shared_ptr_Promise_SupportedLocales___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<SupportedLocales>>>::withError(error);
+  }
+  
   // pragma MARK: Result<std::vector<std::string>>
   using Result_std__vector_std__string__ = Result<std::vector<std::string>>;
   inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::vector<std::string>& value) noexcept {
@@ -555,15 +567,6 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
   }
   inline Result_std__vector_std__string__ create_Result_std__vector_std__string__(const std::exception_ptr& error) noexcept {
     return Result<std::vector<std::string>>::withError(error);
-  }
-  
-  // pragma MARK: Result<std::shared_ptr<Promise<bool>>>
-  using Result_std__shared_ptr_Promise_bool___ = Result<std::shared_ptr<Promise<bool>>>;
-  inline Result_std__shared_ptr_Promise_bool___ create_Result_std__shared_ptr_Promise_bool___(const std::shared_ptr<Promise<bool>>& value) noexcept {
-    return Result<std::shared_ptr<Promise<bool>>>::withValue(value);
-  }
-  inline Result_std__shared_ptr_Promise_bool___ create_Result_std__shared_ptr_Promise_bool___(const std::exception_ptr& error) noexcept {
-    return Result<std::shared_ptr<Promise<bool>>>::withError(error);
   }
 
 } // namespace margelo::nitro::nitrospeech::bridge::swift

@@ -6,6 +6,8 @@ final class LocaleManager {
     private var speechLocales: [String]
     private var dictationLocales: [String]
     var supportedLocales: [String]
+    /// Locales that are ready without an AssetInventory download (SFSpeechRecognizer packs).
+    var installedLocales: [String] { sfSpeechLocales }
     var SFLocale: Locale?
     var speechLocale: Locale?
     var dictationLocale: Locale?

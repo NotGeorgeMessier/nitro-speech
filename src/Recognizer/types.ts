@@ -6,6 +6,7 @@ import type {
 import type { VolumeChangeEvent } from '../specs/VolumeChangeEvent'
 import type { SpeechRecognitionPrewarm } from '../specs/SpeechRecognitionPrewarm'
 import type { UseVoiceInputVolumeConfig } from './useVoiceInputVolume'
+import type { SupportedLocales } from '../specs/SupportedLocales'
 export { PermissionStatus } from '../specs/Permissions'
 export { SpeechRecognitionError } from '../specs/Errors'
 
@@ -31,6 +32,7 @@ type RecognizerMethods = Pick<
   | 'getIsActive'
   | 'getVoiceInputVolume'
   | 'getPermissions'
+  | 'getSupportedLocales'
   | 'getSupportedLocalesIOS'
   | 'onDeviceRecognitionAvailable'
 >
@@ -41,6 +43,7 @@ export type {
   SpeechRecognitionPrewarm,
   MutableSpeechRecognitionConfig,
   VolumeChangeEvent,
+  SupportedLocales,
   RecognizerCallbacks,
   RecognizerMethods,
   UseVoiceInputVolumeConfig,

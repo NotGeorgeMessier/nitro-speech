@@ -477,6 +477,25 @@ open class HybridRecognizerSpec_cxx {
   }
   
   @inline(__always)
+  public final func getSupportedLocales() -> bridge.Result_std__shared_ptr_Promise_SupportedLocales___ {
+    do {
+      let __result = try self.__implementation.getSupportedLocales()
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_SupportedLocales__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_SupportedLocales__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_SupportedLocales__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(__result) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_SupportedLocales___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_SupportedLocales___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func getSupportedLocalesIOS() -> bridge.Result_std__vector_std__string__ {
     do {
       let __result = try self.__implementation.getSupportedLocalesIOS()
@@ -495,21 +514,21 @@ open class HybridRecognizerSpec_cxx {
   }
   
   @inline(__always)
-  public final func onDeviceRecognitionAvailable(locale: std.string) -> bridge.Result_std__shared_ptr_Promise_bool___ {
+  public final func onDeviceRecognitionAvailable(locale: bridge.std__optional_std__string_) -> bridge.Result_bool_ {
     do {
-      let __result = try self.__implementation.onDeviceRecognitionAvailable(locale: String(locale))
-      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_bool__ in
-        let __promise = bridge.create_std__shared_ptr_Promise_bool__()
-        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_bool__(__promise)
-        __result
-          .then({ __result in __promiseHolder.resolve(__result) })
-          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
-        return __promise
-      }()
-      return bridge.create_Result_std__shared_ptr_Promise_bool___(__resultCpp)
+      let __result = try self.__implementation.onDeviceRecognitionAvailable(locale: { () -> String? in
+        if bridge.has_value_std__optional_std__string_(locale) {
+          let __unwrapped = bridge.get_std__optional_std__string_(locale)
+          return String(__unwrapped)
+        } else {
+          return nil
+        }
+      }())
+      let __resultCpp = __result
+      return bridge.create_Result_bool_(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_std__shared_ptr_Promise_bool___(__exceptionPtr)
+      return bridge.create_Result_bool_(__exceptionPtr)
     }
   }
 }

@@ -7,6 +7,7 @@ import type { VolumeChangeEvent } from './VolumeChangeEvent'
 import type { SpeechRecognitionPrewarm } from './SpeechRecognitionPrewarm'
 import type { PermissionStatus } from './Permissions'
 import type { SpeechRecognitionError } from './Errors'
+import type { SupportedLocales } from './SupportedLocales'
 
 export interface Recognizer extends HybridObject<{
   ios: 'swift'
@@ -98,6 +99,19 @@ export interface Recognizer extends HybridObject<{
   getPermissions(): PermissionStatus
 
   /**
+   * Returns supported and installed on-device locales.
+   *
+   * - `locales` — supported (including downloadable / not yet installed)
+   * - `installedLocales` — ready to use without download
+   *
+   * iOS: SFSpeechRecognizer locales; on iOS 26+ also Speech/Dictation locales.
+   * Android: on-device recognition support via `checkRecognitionSupport`.
+   */
+  getSupportedLocales(): Promise<SupportedLocales>
+
+  /**
+   * @deprecated Use {@linkcode getSupportedLocales} instead.
+   *
    * Returns a list of supported locales.
    *
    * @platform iOS only
@@ -105,9 +119,15 @@ export interface Recognizer extends HybridObject<{
   getSupportedLocalesIOS(): string[]
 
   /**
-   * Returns whether on-device speech recognition is available for the locale.
+   * Returns whether the on-device speech recognition **service** is available.
+   *
+   * Service-layer check only — does not verify that a locale model is installed.
+   * Use {@linkcode getSupportedLocales} for locale/model readiness.
+   *
+   * @param locale - Used to probe `SFSpeechRecognizer` on iOS. Ignored on Android.
+   * @default "en-US"
    */
-  onDeviceRecognitionAvailable(locale: string): Promise<boolean>
+  onDeviceRecognitionAvailable(locale?: string): boolean
 
   /**
    * The speech recognition session has started.

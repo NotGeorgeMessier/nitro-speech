@@ -113,21 +113,28 @@ class HybridRecognizer: HybridRecognizerSpec  {
         return PermissionStatus.granted
     }
     
+    func getSupportedLocales() -> Promise<SupportedLocales> {
+        return Promise.async(.userInitiated) { [weak self] in
+            await self?.coordinator.getSupportedLocalesReport()
+                ?? SupportedLocales(locales: [], installedLocales: [])
+        }
+    }
+    
     func getSupportedLocalesIOS() -> [String] {
         return self.coordinator.getSupportedLocales()
     }
     
-    func onDeviceRecognitionAvailable(locale: String) -> Promise<Bool> {
-        return Promise.async(.userInitiated) { [weak self] in
-            let sfRecognizer = SFSpeechRecognizer(locale: Locale(identifier: locale))
-            if let sfRecognizer, sfRecognizer.supportsOnDeviceRecognition {
-                return true
-            }
-            if #available(iOS 26.0, *) {
-                return await self?.coordinator.isLocaleDownloadable(locale: locale) == true
-            }
-            return false
+    func onDeviceRecognitionAvailable(locale: String?) -> Bool {
+        let identifier = locale ?? "en-US"
+        if let sfRecognizer = SFSpeechRecognizer(locale: Locale(identifier: identifier)),
+           sfRecognizer.supportsOnDeviceRecognition {
+            return true
         }
+        if #available(iOS 26.0, *) {
+            // Speech/Dictation service availability; assets are handled separately in prewarm.
+            return SpeechTranscriber.isAvailable
+        }
+        return false
     }
 
     private func ensureEngine(params: SpeechRecognitionConfig?) async {
