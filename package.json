@@ -33,7 +33,9 @@
     "build": "rm -rf lib && rm -f tsconfig.tsbuildinfo && bun tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\" --fix",
     "nitro": "rm -rf nitrogen && npx nitrogen@latest",
-    "localnitro": "rm -rf nitrogen && node ../../../nitro/nitro/packages/nitrogen/lib/index.js"
+    "localnitro": "rm -rf nitrogen && node ../../../nitro/nitro/packages/nitrogen/lib/index.js",
+    "docs:start": "npm --prefix website start",
+    "docs:build": "npm --prefix website run build"
   },
   "keywords": [
     "react-native",
@@ -62,7 +64,7 @@
     "url": "https://github.com/NotGeorgeMessier/nitro-speech/issues"
   },
   "author": "George Messier",
-  "homepage": "https://github.com/NotGeorgeMessier/nitro-speech#readme",
+  "homepage": "https://NotGeorgeMessier.github.io/nitro-speech/",
   "license": "MIT",
   "engines": {
     "node": ">=14"
