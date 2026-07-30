@@ -10,7 +10,6 @@ package com.margelo.nitro.nitrospeech
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
-import dalvik.annotation.optimization.FastNative
 
 
 /**
@@ -59,7 +58,6 @@ class Func_void_double_cxx: Func_void_double {
   override fun invoke(timeLeftMs: Double): Unit
     = invoke_cxx(timeLeftMs)
 
-  @FastNative
   private external fun invoke_cxx(timeLeftMs: Double): Unit
 }
 

@@ -10,7 +10,6 @@ package com.margelo.nitro.nitrospeech
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
-import dalvik.annotation.optimization.FastNative
 
 
 /**
@@ -59,7 +58,6 @@ class Func_void_SpeechRecognitionError_cxx: Func_void_SpeechRecognitionError {
   override fun invoke(error: SpeechRecognitionError): Unit
     = invoke_cxx(error)
 
-  @FastNative
   private external fun invoke_cxx(error: SpeechRecognitionError): Unit
 }
 
