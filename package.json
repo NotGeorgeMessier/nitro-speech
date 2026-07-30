@@ -1,6 +1,6 @@
 {
   "name": "react-native-nitro-speech",
-  "version": "0.4.9-preview.1",
+  "version": "0.4.9",
   "description": "React Native real-time Speech Recognition Library powered by Nitro Modules",
   "main": "./lib/index.js",
   "module": "./lib/index.js",
