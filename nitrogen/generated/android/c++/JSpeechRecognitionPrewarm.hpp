@@ -33,8 +33,11 @@ namespace margelo::nitro::nitrospeech {
       static const auto clazz = javaClassStatic();
       static const auto fieldRequestPermission = clazz->getField<jni::JBoolean>("requestPermission");
       jni::local_ref<jni::JBoolean> requestPermission = this->getFieldValue(fieldRequestPermission);
+      static const auto fieldLoadOnDeviceModel = clazz->getField<jni::JBoolean>("loadOnDeviceModel");
+      jni::local_ref<jni::JBoolean> loadOnDeviceModel = this->getFieldValue(fieldLoadOnDeviceModel);
       return SpeechRecognitionPrewarm(
-        requestPermission != nullptr ? std::make_optional(static_cast<bool>(requestPermission->value())) : std::nullopt
+        requestPermission != nullptr ? std::make_optional(static_cast<bool>(requestPermission->value())) : std::nullopt,
+        loadOnDeviceModel != nullptr ? std::make_optional(static_cast<bool>(loadOnDeviceModel->value())) : std::nullopt
       );
     }
 
@@ -44,12 +47,13 @@ namespace margelo::nitro::nitrospeech {
      */
     [[maybe_unused]]
     static jni::local_ref<JSpeechRecognitionPrewarm::javaobject> fromCpp(const SpeechRecognitionPrewarm& value) {
-      using JSignature = JSpeechRecognitionPrewarm(jni::alias_ref<jni::JBoolean>);
+      using JSignature = JSpeechRecognitionPrewarm(jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
-        value.requestPermission.has_value() ? jni::JBoolean::valueOf(value.requestPermission.value()) : nullptr
+        value.requestPermission.has_value() ? jni::JBoolean::valueOf(value.requestPermission.value()) : nullptr,
+        value.loadOnDeviceModel.has_value() ? jni::JBoolean::valueOf(value.loadOnDeviceModel.value()) : nullptr
       );
     }
   };

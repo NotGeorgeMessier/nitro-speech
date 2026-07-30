@@ -25,39 +25,36 @@ class RecognizerEngine {
     
     // MARK: - Recognizer Methods
     
-    func prewarm(forPrewarm: Bool, _ options: SpeechRecognitionPrewarm? = nil) async {
+    func prewarm(
+        forPrewarm: Bool,
+        _ options: SpeechRecognitionPrewarm? = nil
+    ) async {
         // Prepare audioEngine
         audioEngine = AVAudioEngine()
         lg.log("[prewarm.audioEngine]")
         
         guard let recognizerDelegate else { return }
         
-        // Everything is set, return early
-        if forPrewarm, recognizerDelegate.hardwareFormat != nil {
-            lg.log("[prewarm.return]: Everything set")
+        // for Start request permissions already happened
+        if !forPrewarm {
+            self.prewarmAudioSession(forPrewarm: false)
             return
-        }
+        }        
         
-        // User explicitly asked for prewarm without requesting permissions, return early
-        if forPrewarm, options?.requestPermission == false {
-            lg.log("[prewarm.return]: requestPermission: false")
-            return
-        }
-        
-        if forPrewarm {
-            // options.requestPermission is true by default
+        // options.requestPermission is true by default
+        let requestPermission = options?.requestPermission != false
+        if requestPermission && Permissions.someNotRequested() {
+            lg.log("[prewarm.permission.request]")
             // Start Permission sequence
             let granted = await requestPermissions()
             if granted {
-                self.prewarmAudioSession(forPrewarm)
+                self.prewarmAudioSession(forPrewarm: true)
             }
-        } else {
-            self.prewarmAudioSession(forPrewarm)
         }
         
         // for SpeechTranscriber: .isAvailable and async assets
         // for Dictation: only async assets
-        // for legacy SF: only sync .isAvailable
+        // for legacy SF: only sync .isAvailable and onDevice?
     }
     
     func start() async {
@@ -320,7 +317,7 @@ class RecognizerEngine {
     
     // MARK: Audio Session
     
-    private func prewarmAudioSession(_ forPrewarm: Bool) {
+    private func prewarmAudioSession(forPrewarm: Bool) {
         guard let audioEngine else {
             self.reportError(
                 from: "Audio Engine",

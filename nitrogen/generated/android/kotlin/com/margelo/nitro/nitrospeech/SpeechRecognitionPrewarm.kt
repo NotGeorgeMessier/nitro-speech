@@ -20,7 +20,10 @@ import java.util.Objects
 data class SpeechRecognitionPrewarm(
   @DoNotStrip
   @Keep
-  val requestPermission: Boolean?
+  val requestPermission: Boolean?,
+  @DoNotStrip
+  @Keep
+  val loadOnDeviceModel: Boolean?
 ) {
   /* primary constructor */
 
@@ -28,11 +31,13 @@ data class SpeechRecognitionPrewarm(
     if (this === other) return true
     if (other !is SpeechRecognitionPrewarm) return false
     return Objects.deepEquals(this.requestPermission, other.requestPermission)
+      && Objects.deepEquals(this.loadOnDeviceModel, other.loadOnDeviceModel)
   }
 
   override fun hashCode(): Int {
     return arrayOf<Any?>(
-      requestPermission
+      requestPermission,
+      loadOnDeviceModel
     ).contentDeepHashCode()
   }
 
@@ -44,8 +49,8 @@ data class SpeechRecognitionPrewarm(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(requestPermission: Boolean?): SpeechRecognitionPrewarm {
-      return SpeechRecognitionPrewarm(requestPermission)
+    private fun fromCpp(requestPermission: Boolean?, loadOnDeviceModel: Boolean?): SpeechRecognitionPrewarm {
+      return SpeechRecognitionPrewarm(requestPermission, loadOnDeviceModel)
     }
   }
 }

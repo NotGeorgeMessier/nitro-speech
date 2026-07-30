@@ -91,26 +91,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
     }
     
     func getPermissions() -> PermissionStatus {
-        // Return early for the speech recognition permission first
-        let speechRecognitionStatus = Permissions.authorizationStatus()
-        if speechRecognitionStatus == PermissionStatus.denied {
-            return PermissionStatus.denied
-        }
-        if speechRecognitionStatus == PermissionStatus.notRequested {
-            return PermissionStatus.notRequested
-        }
-        
-        // Check micro then
-        let micStatus = Permissions.microphonePermissionStatus()
-        if micStatus == PermissionStatus.denied {
-            return PermissionStatus.denied
-        }
-        if micStatus == PermissionStatus.notRequested {
-            return PermissionStatus.notRequested
-        }
-        
-        // Everything is granted
-        return PermissionStatus.granted
+        return Permissions.getCombinedStatus()
     }
     
     func getSupportedLocales() -> Promise<SupportedLocales> {

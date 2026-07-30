@@ -10,7 +10,7 @@ final class DictationRuntime: TranscriberRuntime {
         self.locale = locale
     }
     
-    func create(config: SpeechRecognitionConfig?) async throws {
+    func create(config: SpeechRecognitionConfig?, loadAssets: Bool?) async throws {
         var dictationTranscriptionOptions: Set<DictationTranscriber.TranscriptionOption> = [
             .punctuation
         ]
@@ -36,7 +36,10 @@ final class DictationRuntime: TranscriberRuntime {
             attributeOptions: [.audioTimeRange]
         )
 
-        if let transcriber, let installationRequest = try await AssetInventory.assetInstallationRequest(supporting: [transcriber]) {
+        if loadAssets != false,
+           let transcriber,
+           let installationRequest = try await AssetInventory.assetInstallationRequest(supporting: [transcriber])
+        {
             try await installationRequest.downloadAndInstall()
         }
     }

@@ -16,12 +16,23 @@ final class SFSpeechEngine: RecognizerEngine {
         recognitionTask?.finish()
     }
     
-    override func prewarm(forPrewarm: Bool, _ options: SpeechRecognitionPrewarm? = nil) async {
+    override func prewarm(
+        forPrewarm: Bool,
+        _ options: SpeechRecognitionPrewarm? = nil
+    ) async {
         speechRecognizer = SFSpeechRecognizer(
             locale: Locale(identifier: self.recognizerDelegate?.config?.locale ?? "en-US")
         )
         if speechRecognizer?.isAvailable != true {
             self.retry(from: "prewarm.isAvailable", isPrewarm: forPrewarm)
+            return
+        }
+        if self.recognizerDelegate?.config?.onDevice == OnDeviceMode.require &&
+           speechRecognizer?.supportsOnDeviceRecognition != true {
+            self.reportError(
+                from: "prewarm.supportsOnDeviceRecognition",
+                code: SpeechRecognitionError.ondevicenotsupported
+            )
             return
         }
         await super.prewarm(forPrewarm: forPrewarm, options)
@@ -42,14 +53,8 @@ final class SFSpeechEngine: RecognizerEngine {
         
         speechRecognizer.queue = recognizerQ
         
-        do {
-            recognitionRequest = try createRecognitionRequest()
-        } catch {
-            self.reportError(
-                from: "startSession.createRecognitionRequest.onDevice",
-                code: SpeechRecognitionError.ondevicenotsupported
-            )
-        }
+        
+        recognitionRequest = createRecognitionRequest()
         guard let recognitionRequest else { return }
         lg.log("[startSession.createRecognitionRequest]")
         
@@ -131,7 +136,7 @@ final class SFSpeechEngine: RecognizerEngine {
         resultBatches = []
     }
     
-    private func createRecognitionRequest() throws -> SFSpeechAudioBufferRecognitionRequest {
+    private func createRecognitionRequest() -> SFSpeechAudioBufferRecognitionRequest {
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
         
@@ -142,15 +147,9 @@ final class SFSpeechEngine: RecognizerEngine {
         
         // onDevice prefer or required
         if let onDevice = self.recognizerDelegate?.config?.onDevice {
-            // either way try to make onDevice
-            if speechRecognizer?.supportsOnDeviceRecognition == true {
-                request.requiresOnDeviceRecognition = true
-                lg.log("[createRecognitionRequest.requiresOnDeviceRecognition.true]")
-            } else if onDevice == OnDeviceMode.require {
-                // if not supported but required -> throw specific onError in JS
-                throw RecognizerError.onDeviceNotAvailable
-            }
-            // if prefer -> ignore
+            // check happens on prewarm
+            request.requiresOnDeviceRecognition = true
+            lg.log("[createRecognitionRequest.requiresOnDeviceRecognition.true]")
         }
         
         if #available(iOS 16, *) {

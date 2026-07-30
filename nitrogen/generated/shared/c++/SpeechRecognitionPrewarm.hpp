@@ -40,10 +40,11 @@ namespace margelo::nitro::nitrospeech {
   struct SpeechRecognitionPrewarm final {
   public:
     std::optional<bool> requestPermission     SWIFT_PRIVATE;
+    std::optional<bool> loadOnDeviceModel     SWIFT_PRIVATE;
 
   public:
     SpeechRecognitionPrewarm() = default;
-    explicit SpeechRecognitionPrewarm(std::optional<bool> requestPermission): requestPermission(requestPermission) {}
+    explicit SpeechRecognitionPrewarm(std::optional<bool> requestPermission, std::optional<bool> loadOnDeviceModel): requestPermission(requestPermission), loadOnDeviceModel(loadOnDeviceModel) {}
 
   public:
     friend bool operator==(const SpeechRecognitionPrewarm& lhs, const SpeechRecognitionPrewarm& rhs) = default;
@@ -59,12 +60,14 @@ namespace margelo::nitro {
     static inline margelo::nitro::nitrospeech::SpeechRecognitionPrewarm fromJSI(jsi::Runtime& runtime, const jsi::Value& arg) {
       jsi::Object obj = arg.asObject(runtime);
       return margelo::nitro::nitrospeech::SpeechRecognitionPrewarm(
-        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "requestPermission")))
+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "requestPermission"))),
+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "loadOnDeviceModel")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::nitrospeech::SpeechRecognitionPrewarm& arg) {
       jsi::Object obj(runtime);
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "requestPermission"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.requestPermission));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "loadOnDeviceModel"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.loadOnDeviceModel));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -76,6 +79,7 @@ namespace margelo::nitro {
         return false;
       }
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "requestPermission")))) return false;
+      if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "loadOnDeviceModel")))) return false;
       return true;
     }
   };

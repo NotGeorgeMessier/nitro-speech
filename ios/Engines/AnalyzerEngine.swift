@@ -41,11 +41,17 @@ final class AnalyzerEngine: RecognizerEngine {
         }
     }
     
-    override func prewarm(forPrewarm: Bool, _ options: SpeechRecognitionPrewarm? = nil) async {
+    override func prewarm(
+        forPrewarm: Bool,
+        _ options: SpeechRecognitionPrewarm? = nil
+    ) async {
         await super.prewarm(forPrewarm: forPrewarm, options)
         do {
             // Create transcriber and install assets
-            try await transcriber.create(config: self.recognizerDelegate?.config)
+            try await transcriber.create(
+                config: self.recognizerDelegate?.config,
+                loadAssets: options?.loadOnDeviceModel
+            )
         }
         catch {
             self.retry(from: "prewarm.assets", isPrewarm: forPrewarm)

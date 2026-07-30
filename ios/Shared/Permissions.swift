@@ -48,4 +48,32 @@ enum Permissions {
             @unknown default: return PermissionStatus.notRequested
         }
     }
+    
+    static func getCombinedStatus() -> PermissionStatus {
+        // Return early for the speech recognition permission first
+        let speechRecognitionStatus = Permissions.authorizationStatus()
+        if speechRecognitionStatus == PermissionStatus.denied {
+            return PermissionStatus.denied
+        }
+        if speechRecognitionStatus == PermissionStatus.notRequested {
+            return PermissionStatus.notRequested
+        }
+        
+        // Check micro then
+        let micStatus = Permissions.microphonePermissionStatus()
+        if micStatus == PermissionStatus.denied {
+            return PermissionStatus.denied
+        }
+        if micStatus == PermissionStatus.notRequested {
+            return PermissionStatus.notRequested
+        }
+        
+        // Everything is granted
+        return PermissionStatus.granted
+    }
+    
+    static func someNotRequested() -> Bool {
+        return Permissions.authorizationStatus() == PermissionStatus.notRequested ||
+        Permissions.microphonePermissionStatus() == PermissionStatus.notRequested
+    }
 }
