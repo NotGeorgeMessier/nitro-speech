@@ -76,13 +76,13 @@ The session lifecycle:
 
 - `startListening` - Start the session with the given configuration, sync, track status with `onReadyForSpeech`, `onError` or `useRecognizerIsActive`
 - `stopListening` - Stop the session, sync, track status with `onRecordingStopped` or `useRecognizerIsActive`
-- `prewarm` - [Link 🔗](../features/prewarm.md#prewarm)
-- `updateConfig` - [Link 🔗](../features/update-config.md#update-config)
+- `prewarm` - [Link 🔗](../features/prewarm.md)
+- `updateConfig` - [Link 🔗](../features/update-config.md)
 - `addAutoFinishTime` - [Link 🔗](../features/silence-timer.md#add-auto-finish-time)
 - `resetAutoFinishTime` - [Link 🔗](../features/silence-timer.md#reset-auto-finish-time)
-- `getIsActive` - [Link 🔗](../features/is-recognizer-active.md#is-recognizer-active)
-- `getVoiceInputVolume` - [Link 🔗](../features/voice-input-volume.md#voice-input-volume)
-- `getPermissions` - [Link 🔗](../features/permissions.md#permissions)
+- `getIsActive` - [Link 🔗](../features/is-recognizer-active.md)
+- `getVoiceInputVolume` - [Link 🔗](../features/voice-input-volume.md)
+- `getPermissions` - [Link 🔗](../features/permissions.md)
 - `getSupportedLocalesIOS` - [Link 🔗](../features/supported-locales.md#ios)
 
 ```typescript
@@ -153,7 +153,7 @@ const permissions = SpeechRecognizer.getPermissions();
 console.log('Permissions:', permissions);
 ```
 
-Full worklet support, see [Worklets](../features/worklets.md#worklets).
+Full worklet support, see [Worklets](../features/worklets.md).
 
 ```typescript
 // Schedule it from anywhere

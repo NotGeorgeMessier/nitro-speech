@@ -1,0 +1,92 @@
+.phone {
+  position: absolute;
+  z-index: 2;
+  box-sizing: border-box;
+  color: #2d2926;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: auto;
+  cursor: default;
+  touch-action: manipulation;
+}
+
+.glass {
+  position: absolute;
+  z-index: 0;
+  box-sizing: border-box;
+  background: #faeed2;
+  pointer-events: none;
+}
+
+.chrome {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.screen {
+  position: absolute;
+  z-index: 1;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.5em;
+  padding: 0.35em 0.4em;
+  overflow: hidden;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55em;
+  flex: 0 0 auto;
+  width: 100%;
+}
+
+.start {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45em;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55em 0.85em;
+  border: 1.5px solid #2d2926;
+  border-radius: 999px;
+  background: #2d2926;
+  color: #faeed2;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  font-family:
+    'SF Pro Text',
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+  font-size: clamp(11px, 1.4vw, 14px);
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  line-height: 1;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.start:hover {
+  background: #faeed2;
+  color: #2d2926;
+  text-decoration: none;
+}
+
+.mic {
+  width: 1.15em;
+  height: 1.15em;
+  flex: 0 0 auto;
+}

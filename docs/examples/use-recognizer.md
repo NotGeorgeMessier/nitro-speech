@@ -22,9 +22,9 @@ On iOS 26+, the recognizer prefers the most advanced `SpeechTranscriber` path fo
 
 ### Session configuration
 
-- Common features [here](../features/real-time-transcription.md#real-time-transcription)
-- Mutable properties [here](../features/update-config.md#update-config)
-- Silence timer [here](../features/silence-timer.md#silence-timer)  
+- Common features [here](../features/real-time-transcription.md)
+- Mutable properties [here](../features/update-config.md)
+- Silence timer [here](../features/silence-timer.md)  
 
 ### Methods
 
@@ -32,13 +32,13 @@ The session lifecycle:
 
 - `startListening` - Start the session with the given configuration, sync, track status with `onReadyForSpeech`, `onError` or `useRecognizerIsActive`
 - `stopListening` - Stop the session, sync, track status with `onRecordingStopped` or `useRecognizerIsActive`
-- `prewarm` - [Link 🔗](../features/prewarm.md#prewarm)
-- `updateConfig` - [Link 🔗](../features/update-config.md#update-config)
+- `prewarm` - [Link 🔗](../features/prewarm.md)
+- `updateConfig` - [Link 🔗](../features/update-config.md)
 - `addAutoFinishTime` - [Link 🔗](../features/silence-timer.md#add-auto-finish-time)
 - `resetAutoFinishTime` - [Link 🔗](../features/silence-timer.md#reset-auto-finish-time)
-- `getIsActive` - [Link 🔗](../features/is-recognizer-active.md#is-recognizer-active)
-- `getVoiceInputVolume` - [Link 🔗](../features/voice-input-volume.md#voice-input-volume)
-- `getPermissions` - [Link 🔗](../features/permissions.md#permissions)
+- `getIsActive` - [Link 🔗](../features/is-recognizer-active.md)
+- `getVoiceInputVolume` - [Link 🔗](../features/voice-input-volume.md)
+- `getPermissions` - [Link 🔗](../features/permissions.md)
 - `getSupportedLocalesIOS` - [Link 🔗](../features/supported-locales.md#ios)
 
 ### With React Navigation

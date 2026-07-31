@@ -3,7 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'react-native-nitro-speech',
+  title: 'React Native Nitro Speech',
   tagline: 'React Native real-time Speech Recognition powered by Nitro Modules',
   favicon: 'img/favicon.ico',
 
@@ -50,15 +50,15 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/social-card.jpg',
     colorMode: {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'nitro-speech',
+      title: 'Nitro Speech',
       logo: {
-        alt: 'nitro-speech',
-        src: 'img/logo.svg',
+        alt: 'Nitro Speech',
+        src: 'img/logo.png',
       },
       items: [
         {
@@ -68,14 +68,10 @@ const config: Config = {
           label: 'Docs',
         },
         {
-          href: 'https://www.npmjs.com/package/react-native-nitro-speech',
-          label: 'npm',
-          position: 'right',
-        },
-        {
           href: 'https://github.com/NotGeorgeMessier/nitro-speech',
-          label: 'GitHub',
           position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
         },
       ],
     },
