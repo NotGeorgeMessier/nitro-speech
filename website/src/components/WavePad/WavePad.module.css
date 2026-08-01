@@ -1,0 +1,41 @@
+.wavePad {
+  --pulse: 0.2;
+  position: absolute;
+  z-index: 1;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: #faeed2;
+  box-shadow:
+    0 0 0 calc(1px + var(--pulse) * 5px) rgba(45, 41, 38, calc(0.1 + var(--pulse) * 0.28)),
+    0 calc(3px + var(--pulse) * 6px) calc(14px + var(--pulse) * 22px)
+      rgba(45, 41, 38, calc(0.12 + var(--pulse) * 0.22));
+  transform-origin: center center;
+}
+
+.waveClip {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  transform: scale(calc(1 + var(--pulse) * 0.035));
+  transform-origin: center center;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wavePad {
+    box-shadow:
+      0 0 0 2px rgba(45, 41, 38, 0.16),
+      0 4px 14px rgba(45, 41, 38, 0.12);
+  }
+
+  .waveClip {
+    transform: none;
+  }
+}

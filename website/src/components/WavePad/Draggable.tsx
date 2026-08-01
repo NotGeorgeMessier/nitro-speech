@@ -1,4 +1,5 @@
 import {
+  forwardRef,
   useCallback,
   useEffect,
   useRef,
@@ -18,11 +19,10 @@ type Props = {
 }
 
 /** Pointer-drag wrapper; suppresses click if the pointer moved. */
-export default function Draggable({
-  className,
-  style,
-  children,
-}: Props): ReactNode {
+const Draggable = forwardRef<HTMLDivElement, Props>(function Draggable(
+  {className, style, children},
+  ref,
+): ReactNode {
   const [pos, setPos] = useState({x: 0, y: 0})
   const [dragging, setDragging] = useState(false)
   const [hovering, setHovering] = useState(false)
@@ -117,6 +117,7 @@ export default function Draggable({
   return (
     <>
       <div
+        ref={ref}
         className={className}
         style={{
           ...style,
@@ -142,4 +143,6 @@ export default function Draggable({
       ) : null}
     </>
   )
-}
+})
+
+export default Draggable

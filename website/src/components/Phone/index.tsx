@@ -1,18 +1,25 @@
 import Link from '@docusaurus/Link'
 import type {CSSProperties, ReactNode} from 'react'
 
-import MeterCharts from './MeterCharts'
-import {MicroSvg} from './microSvg'
+import MeterCharts from '../Charts'
+import PhraseFeed from '../Phrases'
+import {MicroSvg} from './MicroSvg'
 import type {PhoneLayout} from './phoneLayout'
 import PhoneSvg from './PhoneSvg'
-import PhraseFeed from './PhraseFeed'
-import styles from './PhonePanel.module.css'
+import styles from './Phone.module.css'
+import {useDemoSync} from './useDemoSync'
 
 type Props = {
   layout: PhoneLayout | null
 }
 
-export default function PhonePanel({layout}: Props): ReactNode {
+/**
+ * Gravity center for hero features that share demo timing
+ * (phrases ↔ silence ↔ charts, and future synced features).
+ */
+export default function Phone({layout}: Props): ReactNode {
+  const {silent, beginSilence} = useDemoSync()
+
   if (!layout) return null
 
   const {frame, inner, screen} = layout
@@ -44,15 +51,22 @@ export default function PhonePanel({layout}: Props): ReactNode {
       <div className={styles.glass} style={glassStyle} />
       <PhoneSvg className={styles.chrome} />
       <div className={styles.screen} style={screenStyle}>
-        <MeterCharts />
+        <MeterCharts silent={silent} />
         <div className={styles.bottom}>
-          <PhraseFeed layout={layout} />
+          <PhraseFeed
+            layout={layout}
+            silent={silent}
+            onSilenceRequest={beginSilence}
+          />
           <Link className={styles.start} to="/docs/">
             <MicroSvg className={styles.mic} />
-            <span>Start</span>
+            <span>Get started</span>
           </Link>
         </div>
       </div>
     </div>
   )
 }
+
+export type {PhoneLayout} from './phoneLayout'
+export {computePhoneLayout} from './phoneLayout'

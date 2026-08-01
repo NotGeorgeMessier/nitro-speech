@@ -1,13 +1,14 @@
 import {
   useEffect,
+  useRef,
   useState,
   type CSSProperties,
   type ReactNode,
   type TransitionEvent,
 } from 'react'
 
-import {phrases} from './phrases'
-import type {PhoneLayout} from './phoneLayout'
+import type {PhoneLayout} from '../Phone/phoneLayout'
+import {phrases, SILENCE_AFTER_PHRASE_INDEX} from './phrases'
 import styles from './PhraseFeed.module.css'
 
 const VISIBLE_ROWS = 3
@@ -15,6 +16,9 @@ const ROW_MS = 1600
 
 type Props = {
   layout: PhoneLayout | null
+  silent?: boolean
+  /** Ask Phone sync to start silence after the trigger phrase. */
+  onSilenceRequest?: () => void
 }
 
 type Row = {
@@ -22,31 +26,43 @@ type Row = {
   text: string
 }
 
-export default function PhraseFeed({layout}: Props): ReactNode {
+export default function PhraseFeed({
+  layout,
+  silent = false,
+  onSilenceRequest,
+}: Props): ReactNode {
   const [rows, setRows] = useState<Row[]>([])
   const [animateScroll, setAnimateScroll] = useState(true)
+  const indexRef = useRef(0)
+  const onSilenceRequestRef = useRef(onSilenceRequest)
+  onSilenceRequestRef.current = onSilenceRequest
   const ready = layout !== null
   const reduce =
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   useEffect(() => {
-    if (!ready || phrases.length === 0) return
+    if (!ready || phrases.length === 0 || silent) return
 
-    let i = 0
     const gap = reduce ? 400 : ROW_MS
 
     const push = () => {
-      const text = phrases[i % phrases.length] ?? ''
+      const i = indexRef.current
+      const phraseIndex = i % phrases.length
+      const text = phrases[phraseIndex] ?? ''
       setAnimateScroll(!reduce)
       setRows((prev) => [...prev, {id: i, text}])
-      i += 1
+      indexRef.current = i + 1
+      if (phraseIndex === SILENCE_AFTER_PHRASE_INDEX) {
+        onSilenceRequestRef.current?.()
+      }
     }
 
+    // Resume immediately when silence ends so the next phrases continue.
     push()
     const id = window.setInterval(push, gap)
     return () => window.clearInterval(id)
-  }, [ready, reduce])
+  }, [ready, reduce, silent])
 
   useEffect(() => {
     if (!reduce) return

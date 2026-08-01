@@ -1,3 +1,5 @@
+import {leadingWaveLevel} from './waveField'
+
 const VERT = `#version 300 es
 in vec2 aPosition;
 void main() {
@@ -29,24 +31,6 @@ float hash11(float n) {
 float sdPill(vec2 p, float halfLen, float radius) {
   p.y = abs(p.y) - halfLen;
   return length(vec2(p.x, max(p.y, 0.0))) - radius;
-}
-
-const float PHONE_ASPECT = 0.48;
-const float PHONE_ISLAND_HY = 0.095;
-const float PHONE_HOME_HY = 0.055;
-const float PHONE_ISLAND_GAP = 2.4;
-const float PHONE_HOME_GAP = 2.6;
-
-float phoneStroke(vec2 halfSize) {
-  return max(1.6, halfSize.x * 0.085);
-}
-
-// Bezel + island + home bar — clear display sits between island and home.
-float phoneChromeY(vec2 halfSize) {
-  float stroke = phoneStroke(halfSize);
-  float iy = halfSize.x * PHONE_ISLAND_HY;
-  float hy = halfSize.x * PHONE_HOME_HY;
-  return 2.0 * stroke + (PHONE_ISLAND_GAP + 1.0) * iy + (PHONE_HOME_GAP + 1.0) * hy;
 }
 
 float sampleNormal(float u1, float u2, float mu, float sigma) {
@@ -97,34 +81,14 @@ void main() {
   float cssW = uResolution.x / uDpr;
   float cssH = uResolution.y / uDpr;
 
-  float pitch = max(14.0, cssW / 48.0);
-  float barW = pitch * 0.58;
+  // Thicker pillars.
+  float pitch = max(9.0, cssW / 28.0);
+  float barW = pitch * 0.62;
   float radius = barW * 0.5;
 
-  // Phone size unchanged (clear display sized to original full pillar).
-  float pillarH = cssH * 0.34 * 2.0;
-  float phoneH = pillarH * 1.2;
-  float phoneW = phoneH * PHONE_ASPECT;
-  vec2 phoneHalf = vec2(phoneW, phoneH) * 0.5;
-  phoneH = pillarH + phoneChromeY(phoneHalf);
-  phoneW = phoneH * PHONE_ASPECT;
-  phoneHalf = vec2(phoneW, phoneH) * 0.5;
-  phoneH = pillarH + phoneChromeY(phoneHalf);
-  phoneW = phoneH * PHONE_ASPECT;
-  phoneHalf = vec2(phoneW, phoneH) * 0.5;
-  vec2 phoneC = vec2(cssW * 0.5, cssH * 0.5);
+  float waveCenterY = cssH * 0.5;
+  float maxHalf = cssH * 0.38;
 
-  // Clear display bounds (below island, above home bar).
-  float stroke = phoneStroke(phoneHalf);
-  float iy = phoneHalf.x * PHONE_ISLAND_HY;
-  float hy = phoneHalf.x * PHONE_HOME_HY;
-  float displayTop = phoneC.y + phoneHalf.y - stroke - iy * (PHONE_ISLAND_GAP + 1.0);
-  float displayBot = phoneC.y - phoneHalf.y + stroke + hy * (PHONE_HOME_GAP + 1.0);
-  float displayMid = 0.5 * (displayTop + displayBot);
-
-  // Wave fits the top half of the clear display — no island overflow.
-  float waveCenterY = 0.5 * (displayTop + displayMid);
-  float maxHalf = 0.5 * (displayTop - displayMid);
   float barIndex = floor(p.x / pitch);
   float localX = (fract(p.x / pitch) - 0.5) * pitch;
   float x = barIndex * BAR_STEP + uTime * SCROLL_SPEED;
@@ -155,8 +119,13 @@ export type WaveShaderHandle = {
   destroy: () => void
 }
 
+export type WaveShaderOptions = {
+  onLevel?: (level: number) => void
+}
+
 export function mountWaveShader(
   canvas: HTMLCanvasElement,
+  options: WaveShaderOptions = {},
 ): WaveShaderHandle | null {
   const gl = canvas.getContext('webgl2', {
     alpha: false,
@@ -203,6 +172,7 @@ export function mountWaveShader(
   let start = performance.now()
   let sizeDirty = true
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+  const onLevel = options.onLevel
 
   const applySize = () => {
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -235,6 +205,9 @@ export function mountWaveShader(
     const t = reduceMotion.matches ? 0 : (now - start) / 1000
     gl.uniform1f(uTime, t)
     gl.drawArrays(gl.TRIANGLES, 0, 6)
+    onLevel?.(
+      reduceMotion.matches ? 0.2 : leadingWaveLevel(t, canvas.clientWidth),
+    )
     raf = requestAnimationFrame(frame)
   }
 

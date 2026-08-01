@@ -1,4 +1,4 @@
-/** Phone geometry shared by SVG chrome + HTML overlays (+ mirrored in wave GLSL). */
+/** Phone geometry shared by SVG chrome + HTML overlays. */
 
 export const PHONE_ASPECT = 0.48
 export const PHONE_ISLAND_HY = 0.095

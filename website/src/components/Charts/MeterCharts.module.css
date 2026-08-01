@@ -59,3 +59,26 @@
   background: #2d2926;
   border-radius: 0;
 }
+
+.chart {
+  display: block;
+  flex: 1 1 auto;
+  min-height: 1.1em;
+  width: 100%;
+  overflow: visible;
+  border-bottom: 1px solid rgba(45, 41, 38, 0.25);
+}
+
+.area {
+  fill: rgba(45, 41, 38, 0.14);
+  stroke: none;
+}
+
+.line {
+  fill: none;
+  stroke: #2d2926;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}

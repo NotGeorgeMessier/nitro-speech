@@ -37,7 +37,7 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 0.5em;
-  padding: 0.35em 0.4em;
+  padding: 0.35em 0.4em 0.95em;
   overflow: hidden;
 }
 
@@ -53,40 +53,52 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45em;
+  gap: 0.4em;
   width: 100%;
   box-sizing: border-box;
-  padding: 0.55em 0.85em;
-  border: 1.5px solid #2d2926;
-  border-radius: 999px;
-  background: #2d2926;
-  color: #faeed2;
+  min-height: 2.75em;
+  padding: 0.65em 1em;
+  border: none;
+  border-radius: 0.85em;
+  background: #1c1c1e;
+  color: #fff;
   cursor: pointer;
   pointer-events: auto;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   font-family:
+    -apple-system,
     'SF Pro Text',
     'Segoe UI',
     system-ui,
     sans-serif;
-  font-size: clamp(11px, 1.4vw, 14px);
-  font-weight: 650;
-  letter-spacing: 0.02em;
+  font-size: clamp(12px, 1.45vw, 15px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
   text-decoration: none;
-  line-height: 1;
+  line-height: 1.1;
+  box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 12%);
   transition:
-    background 160ms ease,
-    color 160ms ease;
+    background 120ms ease,
+    transform 120ms ease,
+    opacity 120ms ease;
 }
 
 .start:hover {
-  background: #faeed2;
-  color: #2d2926;
+  background: #2c2c2e;
+  color: #fff;
   text-decoration: none;
 }
 
+.start:active {
+  background: #3a3a3c;
+  transform: scale(0.98);
+  opacity: 0.92;
+}
+
 .mic {
-  width: 1.15em;
-  height: 1.15em;
+  width: 1.05em;
+  height: 1.05em;
   flex: 0 0 auto;
+  opacity: 0.92;
 }
