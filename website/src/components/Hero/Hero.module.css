@@ -6,3 +6,15 @@
   overflow: hidden;
   background: #faeed2;
 }
+
+/* Phone + timer share this layer (above WavePad). */
+.foreground {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.foreground > * {
+  pointer-events: auto;
+}

@@ -3,6 +3,10 @@ import {METER_WINDOW, meterSamples, type MeterSample} from './meterData'
 /** One meter sample step (bars advance on this cadence). */
 export const DEMO_TICK_MS = 220
 
+/** Imitation of iOS AudioLevelTracker attack / release (not a port). */
+const METER_ATTACK = 0.35
+const METER_RELEASE = 0.08
+
 const LOOP = meterSamples.length
 
 function lerp(a: number, b: number, t: number) {
@@ -24,10 +28,11 @@ export function silenceSample(t: number): MeterSample {
  *
  * Silence only affects newly pushed samples — existing history keeps scrolling
  * off the left edge instead of rewriting the whole window.
+ * Smooth is EMA'd from scaled raw (attack/release), not the baked smooth field.
  */
 export type MeterStream = {
   /** Ensure history covers [floor(t), floor(t) + METER_WINDOW). */
-  ensure: (t: number, silent: boolean) => void
+  ensure: (t: number, silent: boolean, volumeRatio?: number) => void
   /** Discrete visible window (bar charts). */
   windowAt: (tick: number) => MeterSample[]
   /** Linearly interpolated sample at continuous time t. */
@@ -46,20 +51,37 @@ export type MeterStream = {
 
 export function createMeterStream(): MeterStream {
   const history: MeterSample[] = []
-  for (let i = 0; i < METER_WINDOW; i++) {
-    history.push(meterSamples[i % LOOP]!)
-  }
-
-  let speechIndex = METER_WINDOW
+  let smoothedLevel = 0
+  let speechIndex = 0
   let silenceIndex = 0
 
-  const push = (silent: boolean) => {
+  const pushScaled = (base: MeterSample, volumeRatio: number) => {
+    const r = Math.min(2, Math.max(0.15, volumeRatio))
+    // Hard cap on displayed raw — never slam to 1 when close to the phone.
+    const raw = Math.min(0.95, Math.max(0, base.raw * r))
+    const db = base.db + 20 * Math.log10(r)
+    const coeff = raw > smoothedLevel ? METER_ATTACK : METER_RELEASE
+    smoothedLevel += coeff * (raw - smoothedLevel)
+    history.push({
+      raw,
+      smooth: Math.min(0.95, Math.max(0, smoothedLevel)),
+      db,
+    })
+  }
+
+  // Seed visible window through the same path as live samples.
+  for (let i = 0; i < METER_WINDOW; i++) {
+    pushScaled(meterSamples[speechIndex % LOOP]!, 1)
+    speechIndex += 1
+  }
+
+  const push = (silent: boolean, volumeRatio: number) => {
     if (silent) {
-      history.push(silenceSample(silenceIndex++))
+      pushScaled(silenceSample(silenceIndex++), volumeRatio)
       return
     }
     silenceIndex = 0
-    history.push(meterSamples[speechIndex % LOOP]!)
+    pushScaled(meterSamples[speechIndex % LOOP]!, volumeRatio)
     speechIndex += 1
   }
 
@@ -80,9 +102,9 @@ export function createMeterStream(): MeterStream {
   }
 
   return {
-    ensure(t, silent) {
+    ensure(t, silent, volumeRatio = 1) {
       const need = Math.floor(t) + METER_WINDOW
-      while (history.length < need) push(silent)
+      while (history.length < need) push(silent, volumeRatio)
     },
 
     windowAt(tick) {

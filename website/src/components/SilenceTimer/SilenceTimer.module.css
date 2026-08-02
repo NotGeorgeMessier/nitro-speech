@@ -1,0 +1,126 @@
+.wrap {
+  position: absolute;
+  left: clamp(12px, 2.5vw, 28px);
+  bottom: clamp(12px, 2.5vw, 28px);
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+  width: min(12.5rem, 46vw);
+  box-sizing: border-box;
+  padding: 0.45em 0.55em;
+  border-radius: 0.55em;
+  background: #faeed2;
+  pointer-events: auto;
+  color: #2d2926;
+  font-family:
+    'SF Pro Text',
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  font-size: clamp(10px, 1.2vw, 12px);
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.label {
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15em;
+}
+
+.value {
+  min-width: 2.6em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.9;
+}
+
+.step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35em;
+  height: 1.35em;
+  padding: 0;
+  border: none;
+  border-radius: 0.3em;
+  background: transparent;
+  color: #2d2926;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  transition:
+    background 120ms ease,
+    opacity 120ms ease,
+    transform 120ms ease;
+}
+
+.step:hover:not(:disabled) {
+  background: rgba(45, 41, 38, 0.08);
+}
+
+.step:active:not(:disabled) {
+  transform: scale(0.92);
+  background: rgba(45, 41, 38, 0.14);
+}
+
+.step:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+.stepPrev .arrow {
+  transform: scaleX(-1);
+}
+
+.arrow {
+  display: block;
+  width: 0.85em;
+  height: 0.85em;
+  overflow: visible;
+}
+
+.arrow path {
+  fill: currentColor;
+}
+
+.track {
+  width: 100%;
+  height: 0.35em;
+  border-radius: 999px;
+  background: rgba(45, 41, 38, 0.12);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #2d2926;
+  transform-origin: left center;
+  transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transition: none;
+  }
+}

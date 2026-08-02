@@ -7,16 +7,19 @@ import {
   type TransitionEvent,
 } from 'react'
 
+import {useDemoSync} from '../Phone/DemoSync'
 import type {PhoneLayout} from '../Phone/phoneLayout'
-import {phrases, SILENCE_AFTER_PHRASE_INDEX} from './phrases'
+import {phrases, SILENCE_AFTER_PHRASE_INDICES} from './phrases'
 import styles from './PhraseFeed.module.css'
 
 const VISIBLE_ROWS = 3
-const ROW_MS = 1600
+const ROW_MS = 900
 
 type Props = {
   layout: PhoneLayout | null
   silent?: boolean
+  /** Fired on every new phrase row (resets silence timer / drives language clock). */
+  onPhrase?: (phraseIndex: number) => void
   /** Ask Phone sync to start silence after the trigger phrase. */
   onSilenceRequest?: () => void
 }
@@ -29,11 +32,18 @@ type Row = {
 export default function PhraseFeed({
   layout,
   silent = false,
+  onPhrase,
   onSilenceRequest,
 }: Props): ReactNode {
+  const {seekEpoch, seekPhraseIndex} = useDemoSync()
   const [rows, setRows] = useState<Row[]>([])
   const [animateScroll, setAnimateScroll] = useState(true)
   const indexRef = useRef(0)
+  const lastSeekRef = useRef(0)
+  const silentRef = useRef(silent)
+  silentRef.current = silent
+  const onPhraseRef = useRef(onPhrase)
+  onPhraseRef.current = onPhrase
   const onSilenceRequestRef = useRef(onSilenceRequest)
   onSilenceRequestRef.current = onSilenceRequest
   const ready = layout !== null
@@ -42,27 +52,78 @@ export default function PhraseFeed({
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   useEffect(() => {
-    if (!ready || phrases.length === 0 || silent) return
+    if (!ready || phrases.length === 0) return
 
+    let cancelled = false
+    let timer = 0
     const gap = reduce ? 400 : ROW_MS
 
-    const push = () => {
+    const push = (opts: {
+      allowSilence: boolean
+      /** When false, feed still scrolls but clock/timer don't step per line. */
+      notify: boolean
+    }): number => {
       const i = indexRef.current
       const phraseIndex = i % phrases.length
       const text = phrases[phraseIndex] ?? ''
       setAnimateScroll(!reduce)
       setRows((prev) => [...prev, {id: i, text}])
       indexRef.current = i + 1
-      if (phraseIndex === SILENCE_AFTER_PHRASE_INDEX) {
+      if (opts.notify) onPhraseRef.current?.(phraseIndex)
+      if (opts.allowSilence && SILENCE_AFTER_PHRASE_INDICES.has(phraseIndex)) {
         onSilenceRequestRef.current?.()
+      }
+      return phraseIndex
+    }
+
+    const clear = () => window.clearTimeout(timer)
+
+    const scheduleNormal = () => {
+      timer = window.setTimeout(function tick() {
+        if (cancelled || silentRef.current) return
+        push({allowSilence: true, notify: true})
+        timer = window.setTimeout(tick, gap)
+      }, gap)
+    }
+
+    // Flag seek: jump to the language's first phrase (no intermediate scrub).
+    if (seekEpoch !== lastSeekRef.current) {
+      lastSeekRef.current = seekEpoch
+      const target = seekPhraseIndex
+      const shown =
+        indexRef.current === 0
+          ? -1
+          : (indexRef.current - 1 + phrases.length) % phrases.length
+
+      if (shown === target) {
+        if (!silent) scheduleNormal()
+        return () => {
+          cancelled = true
+          clear()
+        }
+      }
+
+      const next = indexRef.current % phrases.length
+      const skip = (target - next + phrases.length) % phrases.length
+      indexRef.current += skip
+      push({allowSilence: false, notify: true})
+      if (!silentRef.current) scheduleNormal()
+      return () => {
+        cancelled = true
+        clear()
       }
     }
 
+    if (silent) return
+
     // Resume immediately when silence ends so the next phrases continue.
-    push()
-    const id = window.setInterval(push, gap)
-    return () => window.clearInterval(id)
-  }, [ready, reduce, silent])
+    push({allowSilence: true, notify: true})
+    scheduleNormal()
+    return () => {
+      cancelled = true
+      clear()
+    }
+  }, [ready, reduce, silent, seekEpoch, seekPhraseIndex])
 
   useEffect(() => {
     if (!reduce) return

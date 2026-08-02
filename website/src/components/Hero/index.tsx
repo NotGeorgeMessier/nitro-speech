@@ -1,6 +1,12 @@
 import {useEffect, useRef, useState, type CSSProperties, type ReactNode} from 'react'
 
-import Phone, {computePhoneLayout, type PhoneLayout} from '../Phone'
+import Phone, {
+  computePhoneLayout,
+  DemoSyncProvider,
+  type PhoneLayout,
+} from '../Phone'
+import LanguageClock from '../LanguageClock'
+import SilenceTimer from '../SilenceTimer'
 import WavePad from '../WavePad'
 import styles from './Hero.module.css'
 
@@ -12,8 +18,8 @@ type Props = {
 }
 
 /**
- * Hero stage: composes independent features.
- * Cross-feature sync (phrases / silence / charts) lives under Phone.
+ * Hero stage: composes features.
+ * Cross-feature sync lives in DemoSyncProvider (Phone domain).
  */
 export default function Hero({className}: Props): ReactNode {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -46,20 +52,35 @@ export default function Hero({className}: Props): ReactNode {
   const waveStyle: CSSProperties = layout
     ? (() => {
         const size = layout.frame.width * WAVE_SCALE
-        const inset = Math.max(12, Math.min(layout.cssW, layout.cssH) * 0.03)
+        // Centered in the gap between the left edge and the phone.
+        const left = Math.max(0, layout.frame.left * 0.5 - size * 0.5)
         return {
-          left: inset,
-          top: inset,
+          left,
+          top: layout.frame.top,
           width: size,
           height: size,
         }
       })()
     : {left: 0, top: 0, width: 1, height: 1, opacity: 0}
 
+  const phoneCenter = layout
+    ? {
+        x: layout.frame.left + layout.frame.width * 0.5,
+        y: layout.frame.top + layout.frame.height * 0.5,
+      }
+    : null
+
   return (
     <div ref={rootRef} className={`${styles.root} ${className ?? ''}`.trim()}>
-      <WavePad style={waveStyle} />
-      <Phone layout={layout} />
+      <DemoSyncProvider>
+        <WavePad style={waveStyle} phoneCenter={phoneCenter} />
+        {/* Same stacking layer as the phone — above the wave pad. */}
+        <div className={styles.foreground}>
+          <Phone layout={layout} />
+          <SilenceTimer />
+          <LanguageClock />
+        </div>
+      </DemoSyncProvider>
     </div>
   )
 }

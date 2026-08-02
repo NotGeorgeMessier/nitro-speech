@@ -16,17 +16,21 @@ type Props = {
   className?: string
   style?: CSSProperties
   children: ReactNode
+  /** Drag offset from the laid-out position (px). */
+  onOffsetChange?: (offset: {x: number; y: number}) => void
 }
 
 /** Pointer-drag wrapper; suppresses click if the pointer moved. */
 const Draggable = forwardRef<HTMLDivElement, Props>(function Draggable(
-  {className, style, children},
+  {className, style, children, onOffsetChange},
   ref,
 ): ReactNode {
   const [pos, setPos] = useState({x: 0, y: 0})
   const [dragging, setDragging] = useState(false)
   const [hovering, setHovering] = useState(false)
   const [pointer, setPointer] = useState({x: 0, y: 0})
+  const onOffsetChangeRef = useRef(onOffsetChange)
+  onOffsetChangeRef.current = onOffsetChange
   const drag = useRef<{
     pid: number
     x0: number
@@ -37,6 +41,10 @@ const Draggable = forwardRef<HTMLDivElement, Props>(function Draggable(
   } | null>(null)
 
   const showCursor = dragging || hovering
+
+  useEffect(() => {
+    onOffsetChangeRef.current?.(pos)
+  }, [pos])
 
   useEffect(() => {
     if (!showCursor) return

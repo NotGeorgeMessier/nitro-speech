@@ -3,11 +3,11 @@ import type {CSSProperties, ReactNode} from 'react'
 
 import MeterCharts from '../Charts'
 import PhraseFeed from '../Phrases'
+import {useDemoSync} from './DemoSync'
 import {MicroSvg} from './MicroSvg'
 import type {PhoneLayout} from './phoneLayout'
 import PhoneSvg from './PhoneSvg'
 import styles from './Phone.module.css'
-import {useDemoSync} from './useDemoSync'
 
 type Props = {
   layout: PhoneLayout | null
@@ -15,10 +15,10 @@ type Props = {
 
 /**
  * Gravity center for hero features that share demo timing
- * (phrases ↔ silence ↔ charts, and future synced features).
+ * (phrases ↔ silence ↔ charts ↔ silence timer).
  */
 export default function Phone({layout}: Props): ReactNode {
-  const {silent, beginSilence} = useDemoSync()
+  const {silent, beginSilence, notifyPhrase} = useDemoSync()
 
   if (!layout) return null
 
@@ -56,6 +56,7 @@ export default function Phone({layout}: Props): ReactNode {
           <PhraseFeed
             layout={layout}
             silent={silent}
+            onPhrase={notifyPhrase}
             onSilenceRequest={beginSilence}
           />
           <Link className={styles.start} to="/docs/">
@@ -70,3 +71,4 @@ export default function Phone({layout}: Props): ReactNode {
 
 export type {PhoneLayout} from './phoneLayout'
 export {computePhoneLayout} from './phoneLayout'
+export {DemoSyncProvider, useDemoSync} from './DemoSync'

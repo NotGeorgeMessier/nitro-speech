@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState, type ReactNode} from 'react'
 
+import {useDemoSync} from '../Phone/DemoSync'
 import {METER_WINDOW} from './meterData'
 import styles from './MeterCharts.module.css'
 import {
@@ -89,13 +90,18 @@ function SmoothRow({
 }
 
 /** Shared playback clock + append-only sample stream. */
-function useMeterPlayback(silent: boolean): {t: number; stream: MeterStream} {
+function useMeterPlayback(
+  silent: boolean,
+  volumeRatio: number,
+): {t: number; stream: MeterStream} {
   const streamRef = useRef<MeterStream | null>(null)
   if (streamRef.current == null) streamRef.current = createMeterStream()
   const stream = streamRef.current
 
   const silentRef = useRef(silent)
   silentRef.current = silent
+  const volumeRef = useRef(volumeRatio)
+  volumeRef.current = volumeRatio
   const startRef = useRef<number | null>(null)
   const [t, setT] = useState(0)
 
@@ -108,7 +114,7 @@ function useMeterPlayback(silent: boolean): {t: number; stream: MeterStream} {
       const id = window.setInterval(() => {
         setT((prev) => {
           let next = prev + 1
-          stream.ensure(next, silentRef.current)
+          stream.ensure(next, silentRef.current, volumeRef.current)
           next -= stream.compact(next)
           return next
         })
@@ -120,7 +126,7 @@ function useMeterPlayback(silent: boolean): {t: number; stream: MeterStream} {
     const frame = (now: number) => {
       if (startRef.current == null) startRef.current = now
       let next = (now - startRef.current) / DEMO_TICK_MS
-      stream.ensure(next, silentRef.current)
+      stream.ensure(next, silentRef.current, volumeRef.current)
       const dropped = stream.compact(next)
       if (dropped > 0) {
         startRef.current += dropped * DEMO_TICK_MS
@@ -147,7 +153,8 @@ type Props = {
  * - silence: only newly appended samples go quiet; older bars scroll off naturally
  */
 export default function MeterCharts({silent = false}: Props): ReactNode {
-  const {t, stream} = useMeterPlayback(silent)
+  const {volumeRatio} = useDemoSync()
+  const {t, stream} = useMeterPlayback(silent, volumeRatio)
   const tick = Math.floor(t)
 
   const windowSamples = stream.windowAt(tick)

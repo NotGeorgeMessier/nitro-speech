@@ -1,6 +1,6 @@
 .phone {
   position: absolute;
-  z-index: 2;
+  z-index: 0;
   box-sizing: border-box;
   color: #2d2926;
   user-select: none;
