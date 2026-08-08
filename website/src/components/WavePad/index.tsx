@@ -6,6 +6,9 @@ import {
   type ReactNode,
 } from 'react'
 
+import InfoCorner from '../DemoConfig/InfoCorner'
+import {useDemoConfig} from '../DemoConfig/DemoConfig'
+import {DEMO_CONFIG_DEFAULTS} from '../DemoConfig/defaults'
 import {useDemoSync} from '../Phone/DemoSync'
 import Draggable from './Draggable'
 import {mountWaveShader} from './waveShader'
@@ -35,13 +38,15 @@ function cssNumber(v: string | number | undefined): number {
 
 /**
  * Draggable WebGL wave pad — stage chrome outside the phone.
- * Distance from phone center drives chart volume ratio
- * (1 at default seat; further < 1; closer > 1 up to a min-distance cap).
+ * Distance from phone:
+ * - game: chart volume ratio (1 at default seat)
+ * - API bind: resetAutoFinishVoiceSensitivity (default 0.4 at seat)
  */
 export default function WavePad({style, phoneCenter}: Props): ReactNode {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const padRef = useRef<HTMLDivElement>(null)
   const {setVolumeRatio} = useDemoSync()
+  const {setResetAutoFinishVoiceSensitivity, resetEpoch} = useDemoConfig()
   const offsetRef = useRef<Point>({x: 0, y: 0})
 
   useEffect(() => {
@@ -68,6 +73,9 @@ export default function WavePad({style, phoneCenter}: Props): ReactNode {
       const base = Math.hypot(baseCx - phoneCenter.x, baseCy - phoneCenter.y)
       if (base <= 0) {
         setVolumeRatio(1)
+        setResetAutoFinishVoiceSensitivity(
+          DEMO_CONFIG_DEFAULTS.resetAutoFinishVoiceSensitivity,
+        )
         return
       }
       const dist = Math.hypot(
@@ -77,11 +85,17 @@ export default function WavePad({style, phoneCenter}: Props): ReactNode {
       // Min distance ≪ default seat so closer can still raise ratio, but not to ∞.
       const minDist = base * MIN_DIST_FRAC
       const ratio = base / Math.max(dist, minDist)
-      setVolumeRatio(
-        Math.min(VOLUME_RATIO_MAX, Math.max(VOLUME_RATIO_MIN, ratio)),
+      const clamped = Math.min(
+        VOLUME_RATIO_MAX,
+        Math.max(VOLUME_RATIO_MIN, ratio),
+      )
+      setVolumeRatio(clamped)
+      // Feature bind: seat = default sensitivity; closer → higher threshold.
+      setResetAutoFinishVoiceSensitivity(
+        DEMO_CONFIG_DEFAULTS.resetAutoFinishVoiceSensitivity * clamped,
       )
     },
-    [phoneCenter, style, setVolumeRatio],
+    [phoneCenter, style, setVolumeRatio, setResetAutoFinishVoiceSensitivity],
   )
 
   useEffect(() => {
@@ -93,10 +107,15 @@ export default function WavePad({style, phoneCenter}: Props): ReactNode {
       ref={padRef}
       className={styles.wavePad}
       style={style}
-      onOffsetChange={syncRatio}>
+      onOffsetChange={syncRatio}
+      resetSignal={resetEpoch}>
       <div className={styles.waveClip}>
         <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
       </div>
+      <InfoCorner
+        featureId="resetAutoFinishVoiceSensitivity"
+        label="About voice sensitivity"
+      />
     </Draggable>
   )
 }

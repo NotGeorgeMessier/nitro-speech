@@ -6,6 +6,9 @@ import {
   type ReactNode,
 } from 'react'
 
+import InfoCorner from '../DemoConfig/InfoCorner'
+import {useDemoConfig} from '../DemoConfig/DemoConfig'
+import {LANGUAGE_LOCALES} from '../DemoConfig/defaults'
 import {useDemoSync} from '../Phone/DemoSync'
 import {languageIndexForPhrase, languages} from '../Phrases/phrases'
 import DialSvg from './DialSvg'
@@ -22,6 +25,7 @@ const STEP = 360 / LANG_COUNT
  */
 export default function LanguageClock(): ReactNode {
   const {phraseIndex, seekToPhrase} = useDemoSync()
+  const {setLocale} = useDemoConfig()
   const langIndex = languageIndexForPhrase(phraseIndex)
   const prevLangRef = useRef(langIndex)
   const [handAngle, setHandAngle] = useState(langIndex * STEP)
@@ -35,8 +39,16 @@ export default function LanguageClock(): ReactNode {
     prevLangRef.current = langIndex
   }, [langIndex])
 
+  // Mirror active language into DemoConfig.locale for live code samples.
+  useEffect(() => {
+    const lang = languages[langIndex]
+    if (!lang) return
+    setLocale(LANGUAGE_LOCALES[lang.id])
+  }, [langIndex, setLocale])
+
   return (
     <div className={styles.wrap}>
+      <InfoCorner featureId="locale" label="About locale" />
       <DialSvg
         className={styles.dial}
         count={LANG_COUNT}
@@ -63,6 +75,7 @@ export default function LanguageClock(): ReactNode {
                   aria-current={active ? 'true' : undefined}
                   onClick={() => {
                     if (i === langIndex) return
+                    setLocale(LANGUAGE_LOCALES[item.id])
                     seekToPhrase(item.start)
                   }}>
                   <FlagIcon id={item.id} className={styles.flagSvg} />

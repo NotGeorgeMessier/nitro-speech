@@ -18,11 +18,13 @@ type Props = {
   children: ReactNode
   /** Drag offset from the laid-out position (px). */
   onOffsetChange?: (offset: {x: number; y: number}) => void
+  /** Bump to snap back to the laid-out position. */
+  resetSignal?: number
 }
 
 /** Pointer-drag wrapper; suppresses click if the pointer moved. */
 const Draggable = forwardRef<HTMLDivElement, Props>(function Draggable(
-  {className, style, children, onOffsetChange},
+  {className, style, children, onOffsetChange, resetSignal},
   ref,
 ): ReactNode {
   const [pos, setPos] = useState({x: 0, y: 0})
@@ -45,6 +47,11 @@ const Draggable = forwardRef<HTMLDivElement, Props>(function Draggable(
   useEffect(() => {
     onOffsetChangeRef.current?.(pos)
   }, [pos])
+
+  // Same-object bail keeps this a no-op on mount and when already seated.
+  useEffect(() => {
+    setPos((p) => (p.x === 0 && p.y === 0 ? p : {x: 0, y: 0}))
+  }, [resetSignal])
 
   useEffect(() => {
     if (!showCursor) return

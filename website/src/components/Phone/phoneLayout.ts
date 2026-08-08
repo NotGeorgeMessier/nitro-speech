@@ -6,7 +6,7 @@ export const PHONE_HOME_HY = 0.055
 export const PHONE_ISLAND_GAP = 2.4
 export const PHONE_HOME_GAP = 2.6
 
-export type CssRect = {
+type CssRect = {
   left: number
   top: number
   width: number

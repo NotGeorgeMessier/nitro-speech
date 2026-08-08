@@ -2,7 +2,7 @@ export const phrases = [
   'Hello World',
   'Start speech recognition',
   'with React Native Nitro Speech.',
-  "Let's ******* go!",
+  "Let's fucking go!",
   'Press Get started',
   // Spanish
   'Hola Mundo',

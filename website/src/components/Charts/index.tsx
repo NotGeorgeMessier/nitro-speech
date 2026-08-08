@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState, type ReactNode} from 'react'
 
+import InfoCorner from '../DemoConfig/InfoCorner'
 import {useDemoSync} from '../Phone/DemoSync'
 import {METER_WINDOW} from './meterData'
 import styles from './MeterCharts.module.css'
@@ -93,6 +94,7 @@ function SmoothRow({
 function useMeterPlayback(
   silent: boolean,
   volumeRatio: number,
+  frozen: boolean,
 ): {t: number; stream: MeterStream} {
   const streamRef = useRef<MeterStream | null>(null)
   if (streamRef.current == null) streamRef.current = createMeterStream()
@@ -102,7 +104,10 @@ function useMeterPlayback(
   silentRef.current = silent
   const volumeRef = useRef(volumeRatio)
   volumeRef.current = volumeRatio
+  const frozenRef = useRef(frozen)
+  frozenRef.current = frozen
   const startRef = useRef<number | null>(null)
+  const freezeHoldRef = useRef<number | null>(null)
   const [t, setT] = useState(0)
 
   const reduce =
@@ -112,6 +117,7 @@ function useMeterPlayback(
   useEffect(() => {
     if (reduce) {
       const id = window.setInterval(() => {
+        if (frozenRef.current) return
         setT((prev) => {
           let next = prev + 1
           stream.ensure(next, silentRef.current, volumeRef.current)
@@ -124,6 +130,18 @@ function useMeterPlayback(
 
     let raf = 0
     const frame = (now: number) => {
+      if (frozenRef.current) {
+        // Hold the clock so resume continues from the frozen instant.
+        if (freezeHoldRef.current == null) freezeHoldRef.current = now
+        raf = window.requestAnimationFrame(frame)
+        return
+      }
+      if (freezeHoldRef.current != null) {
+        if (startRef.current != null) {
+          startRef.current += now - freezeHoldRef.current
+        }
+        freezeHoldRef.current = null
+      }
       if (startRef.current == null) startRef.current = now
       let next = (now - startRef.current) / DEMO_TICK_MS
       stream.ensure(next, silentRef.current, volumeRef.current)
@@ -144,6 +162,8 @@ function useMeterPlayback(
 
 type Props = {
   silent?: boolean
+  /** Permissions locked — freeze meters in place (no new chunks). */
+  frozen?: boolean
 }
 
 /**
@@ -151,10 +171,15 @@ type Props = {
  * - raw / db: discrete bars from the shared stream window
  * - smooth: continuous SVG stroke (interpolated); readout stays on the discrete sample
  * - silence: only newly appended samples go quiet; older bars scroll off naturally
+ * - frozen: stop appending; keep the current window on screen;
+ *   readouts reset to inactive EmptyVolume (0 / 0 / —)
  */
-export default function MeterCharts({silent = false}: Props): ReactNode {
+export default function MeterCharts({
+  silent = false,
+  frozen = false,
+}: Props): ReactNode {
   const {volumeRatio} = useDemoSync()
-  const {t, stream} = useMeterPlayback(silent, volumeRatio)
+  const {t, stream} = useMeterPlayback(silent, volumeRatio, frozen)
   const tick = Math.floor(t)
 
   const windowSamples = stream.windowAt(tick)
@@ -163,21 +188,33 @@ export default function MeterCharts({silent = false}: Props): ReactNode {
   const dbVals = windowSamples.map((s) => normDb(s.db))
   const smoothVals = stream.smoothSeries(t, SMOOTH_POINTS)
 
+  // Match inactive useVoiceInputVolume: raw/smooth 0, db undefined.
+  const readoutRaw = frozen ? 0 : last.raw
+  const readoutSmooth = frozen ? 0 : last.smooth
+  const readoutDb = frozen ? undefined : last.db
+
   return (
-    <div className={styles.stack} aria-hidden="true">
-      <BarRow
-        label="raw"
-        values={rawVals}
-        current={last.raw}
-        format={(v) => v.toFixed(3)}
+    <div className={styles.stack}>
+      <InfoCorner
+        placement="head"
+        featureId="voiceVolume"
+        label="About voice input volume"
       />
-      <SmoothRow values={smoothVals} current={last.smooth} />
-      <BarRow
-        label="db"
-        values={dbVals}
-        current={last.db}
-        format={(v) => v.toFixed(1)}
-      />
+      <div aria-hidden="true" className={styles.charts}>
+        <BarRow
+          label="raw"
+          values={rawVals}
+          current={readoutRaw}
+          format={(v) => v.toFixed(3)}
+        />
+        <SmoothRow values={smoothVals} current={readoutSmooth} />
+        <BarRow
+          label="db"
+          values={dbVals}
+          current={readoutDb ?? 0}
+          format={(v) => (readoutDb == null ? '—' : v.toFixed(1))}
+        />
+      </div>
     </div>
   )
 }

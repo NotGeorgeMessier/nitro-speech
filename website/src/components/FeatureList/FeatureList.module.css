@@ -1,0 +1,138 @@
+.featureList {
+  --ink: #2d2926;
+  --cream: #faeed2;
+  --rule: rgba(45, 41, 38, 0.12);
+  --panel-radius: 0.65rem; /* match CodeSamples panel */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  /* One outer shell — rounding lives here, never on each row. */
+  border: 1px solid var(--rule);
+  border-radius: var(--panel-radius);
+  background: rgba(45, 41, 38, 0.03);
+  overflow: hidden;
+}
+
+.featureRow {
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 0.75rem);
+}
+
+.featureRow + .featureRow {
+  border-top: 1px solid var(--rule);
+}
+
+.featureBtn {
+  --title-size: 1.02rem;
+  --title-lh: 1.25;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.55rem minmax(0, 1fr);
+  column-gap: 0.9rem;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 1.05rem 1.15rem;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 160ms ease;
+}
+
+.featureBtn:focus,
+.featureBtn:focus-visible {
+  outline: none;
+}
+
+.featureBtn:hover {
+  background: rgba(45, 41, 38, 0.04);
+}
+
+.featureRowActive .featureBtn {
+  background: rgba(45, 41, 38, 0.07);
+}
+
+.featureRowActive .featureBtn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--ink);
+}
+
+.markSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  pointer-events: none;
+}
+
+.mark {
+  display: block;
+  width: 1.55rem;
+  height: 1.55rem;
+  margin: 0;
+}
+
+.featureCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28em;
+  min-width: 0;
+}
+
+.featureTitle {
+  font-size: var(--title-size);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: var(--title-lh);
+  color: var(--ink);
+}
+
+.featureBlurb {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  opacity: 0.84;
+  font-weight: 500;
+  max-width: 34em;
+  color: var(--ink);
+  transition: opacity 160ms ease;
+}
+
+.featureBtn:hover .featureBlurb,
+.featureRowActive .featureBlurb {
+  opacity: 0.96;
+}
+
+/* Links are stamped with a global class from features.tsx (no CSS module there). */
+.featureCopy :global(a.featureDocLink) {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.14em;
+  text-decoration-thickness: 1px;
+}
+
+.featureCopy :global(a.featureDocLink:hover) {
+  text-decoration-thickness: 2px;
+}
+
+@media (max-width: 860px) {
+  .featureBtn {
+    --title-size: 0.98rem;
+    column-gap: 0.75rem;
+    padding: 0.95rem 1rem;
+  }
+}

@@ -14,7 +14,7 @@ function lerp(a: number, b: number, t: number) {
 }
 
 /** Low, still-varied noise-floor sample for the silence phase. */
-export function silenceSample(t: number): MeterSample {
+function silenceSample(t: number): MeterSample {
   const a = 0.5 + 0.5 * Math.sin(t * 0.61)
   const b = 0.5 + 0.5 * Math.sin(t * 1.27 + 1.1)
   const raw = 0.05 + 0.04 * a + 0.025 * b

@@ -7,6 +7,8 @@ import {
   type ReactNode,
 } from 'react'
 
+import InfoCorner from '../DemoConfig/InfoCorner'
+import {useDemoConfig} from '../DemoConfig/DemoConfig'
 import {
   TIMER_INTERVAL_MAX_MS,
   TIMER_INTERVAL_MIN_MS,
@@ -14,8 +16,8 @@ import {
   TIMER_THRESHOLD_MAX_MS,
   TIMER_THRESHOLD_MIN_MS,
   TIMER_THRESHOLD_STEP_MS,
-  useDemoSync,
-} from '../Phone/DemoSync'
+} from '../DemoConfig/defaults'
+import {useDemoSync} from '../Phone/DemoSync'
 import {ArrowRightSvg} from './ArrowRightSvg'
 import styles from './SilenceTimer.module.css'
 
@@ -145,45 +147,63 @@ function Stepper({
  * Resets on each phrase; steps down every interval — including during feed silence.
  */
 export default function SilenceTimer(): ReactNode {
+  const {phraseEpoch, permissionsLocked} = useDemoSync()
   const {
-    phraseEpoch,
-    timerThresholdMs,
-    timerIntervalMs,
-    setTimerThresholdMs,
-    setTimerIntervalMs,
-  } = useDemoSync()
-  const [remainingMs, setRemainingMs] = useState(timerThresholdMs)
+    autoFinishRecognitionMs,
+    autoFinishProgressIntervalMs,
+    setAutoFinishRecognitionMs,
+    setAutoFinishProgressIntervalMs,
+  } = useDemoConfig()
+  const [remainingMs, setRemainingMs] = useState(autoFinishRecognitionMs)
 
   useEffect(() => {
-    setRemainingMs(timerThresholdMs)
+    setRemainingMs(autoFinishRecognitionMs)
+
+    // Pause countdown while permissions are locked; steppers stay live.
+    if (permissionsLocked) return
 
     let id = 0
     const schedule = () => {
       id = window.setTimeout(() => {
-        setRemainingMs((r) => Math.max(0, r - timerIntervalMs))
+        setRemainingMs((r) => Math.max(0, r - autoFinishProgressIntervalMs))
         schedule()
-      }, timerIntervalMs)
+      }, autoFinishProgressIntervalMs)
     }
     schedule()
     return () => window.clearTimeout(id)
-  }, [phraseEpoch, timerThresholdMs, timerIntervalMs])
+  }, [
+    phraseEpoch,
+    autoFinishRecognitionMs,
+    autoFinishProgressIntervalMs,
+    permissionsLocked,
+  ])
 
-  const progress = Math.max(0, Math.min(1, remainingMs / timerThresholdMs))
-  const thresholdSec = Math.round(timerThresholdMs / 1000)
+  const progress = Math.max(
+    0,
+    Math.min(1, remainingMs / autoFinishRecognitionMs),
+  )
+  const thresholdSec = Math.round(autoFinishRecognitionMs / 1000)
 
   return (
-    <div className={styles.wrap}>
+    <div
+      className={styles.wrap}
+      data-disabled={permissionsLocked ? 'true' : 'false'}>
+      <InfoCorner
+        placement="head"
+        featureId="autoFinishRecognitionMs"
+        label="About auto-finish silence timer"
+      />
       <Stepper
         label="auto-finish"
         valueLabel={`${thresholdSec}s`}
         onDec={() =>
-          setTimerThresholdMs((v) => v - TIMER_THRESHOLD_STEP_MS)
+          setAutoFinishRecognitionMs((v) => v - TIMER_THRESHOLD_STEP_MS)
         }
         onInc={() =>
-          setTimerThresholdMs((v) => v + TIMER_THRESHOLD_STEP_MS)
+          setAutoFinishRecognitionMs((v) => v + TIMER_THRESHOLD_STEP_MS)
         }
-        decDisabled={timerThresholdMs <= TIMER_THRESHOLD_MIN_MS}
-        incDisabled={timerThresholdMs >= TIMER_THRESHOLD_MAX_MS}
+        decDisabled={autoFinishRecognitionMs <= TIMER_THRESHOLD_MIN_MS}
+        incDisabled={autoFinishRecognitionMs >= TIMER_THRESHOLD_MAX_MS}
         decAria="Decrease auto-finish timer"
         incAria="Increase auto-finish timer"
       />
@@ -195,11 +215,15 @@ export default function SilenceTimer(): ReactNode {
       </div>
       <Stepper
         label="interval"
-        valueLabel={formatInterval(timerIntervalMs)}
-        onDec={() => setTimerIntervalMs((v) => v - TIMER_INTERVAL_STEP_MS)}
-        onInc={() => setTimerIntervalMs((v) => v + TIMER_INTERVAL_STEP_MS)}
-        decDisabled={timerIntervalMs <= TIMER_INTERVAL_MIN_MS}
-        incDisabled={timerIntervalMs >= TIMER_INTERVAL_MAX_MS}
+        valueLabel={formatInterval(autoFinishProgressIntervalMs)}
+        onDec={() =>
+          setAutoFinishProgressIntervalMs((v) => v - TIMER_INTERVAL_STEP_MS)
+        }
+        onInc={() =>
+          setAutoFinishProgressIntervalMs((v) => v + TIMER_INTERVAL_STEP_MS)
+        }
+        decDisabled={autoFinishProgressIntervalMs <= TIMER_INTERVAL_MIN_MS}
+        incDisabled={autoFinishProgressIntervalMs >= TIMER_INTERVAL_MAX_MS}
         decAria="Decrease progress interval"
         incAria="Increase progress interval"
       />

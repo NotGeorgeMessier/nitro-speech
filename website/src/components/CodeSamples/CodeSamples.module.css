@@ -1,0 +1,130 @@
+.codePanel {
+  min-width: 0;
+  border-radius: 0.65rem;
+  background: #2d2926;
+  color: #f4efe4;
+  overflow: hidden;
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 0.75rem);
+}
+
+.tabsHeader {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(244, 239, 228, 0.12);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 0;
+  overflow-x: auto;
+}
+
+.tab {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.65em 0.9em;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  opacity: 0.5;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  opacity: 0.85;
+}
+
+.tabActive {
+  opacity: 1;
+  box-shadow: inset 0 -2px 0 #f4efe4;
+}
+
+.toolBtn {
+  flex: 0 0 auto;
+  align-self: center;
+  margin: 0;
+  padding: 0 0.85rem;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  opacity: 0.55;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.toolBtn:hover {
+  opacity: 1;
+}
+
+.codeBody {
+  position: relative;
+}
+
+.copyBtn {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0.3em;
+  border: none;
+  border-radius: 0.3em;
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.copyBtn:hover {
+  opacity: 1;
+}
+
+.toolIcon {
+  display: block;
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.code {
+  margin: 0;
+  padding: 1rem 2.4rem 1.2rem 1.1rem;
+  overflow-x: auto;
+  font-family:
+    'SF Mono',
+    'Menlo',
+    'Consolas',
+    monospace;
+  font-size: clamp(0.7rem, 1.2vw, 0.8rem);
+  line-height: 1.55;
+  white-space: pre;
+}
+
+.codeMark {
+  border-radius: 0.2em;
+  transition:
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.codeMarkActive {
+  background: rgba(250, 238, 210, 0.22);
+  box-shadow: 0 0 0 2px rgba(250, 238, 210, 0.35);
+}

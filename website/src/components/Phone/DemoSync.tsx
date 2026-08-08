@@ -4,33 +4,25 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
 
 /** How long phrase/chart silence lasts after the trigger phrase. */
-export const DEMO_SILENCE_MS = 3500
+const DEMO_SILENCE_MS = 3500
 
 /** Flip on to restore phrase/chart silence breaks. */
-export const DEMO_SILENCE_ENABLED = true
+const DEMO_SILENCE_ENABLED = true
 
-/** Default auto-finish silence timer length (ms). */
-export const DEMO_TIMER_THRESHOLD_MS = 8000
+/** Beat between mic allow → speech alert. */
+const NEXT_PROMPT_MS = 520
 
-/** Default progress step between expiration animations (ms). */
-export const DEMO_TIMER_INTERVAL_MS = 1000
+export type PermissionKind = 'microphone' | 'speechRecognition'
 
-export const TIMER_THRESHOLD_MIN_MS = 3000
-export const TIMER_THRESHOLD_MAX_MS = 99_000
-export const TIMER_THRESHOLD_STEP_MS = 1000
-
-export const TIMER_INTERVAL_MIN_MS = 200
-export const TIMER_INTERVAL_MAX_MS = 2000
-export const TIMER_INTERVAL_STEP_MS = 200
-
-function clampStep(value: number, min: number, max: number, step: number): number {
-  const clamped = Math.min(max, Math.max(min, value))
-  return Math.round(clamped / step) * step
+export type PermissionGrants = {
+  microphone: boolean
+  speechRecognition: boolean
 }
 
 type DemoSyncValue = {
@@ -51,20 +43,30 @@ type DemoSyncValue = {
   /**
    * Mic distance volume (1 = default wave position).
    * Closer → >1, further → <1. Applied to newly pushed chart samples only.
+   * Game only — API binding for WavePad is resetAutoFinishVoiceSensitivity.
    */
   volumeRatio: number
   setVolumeRatio: (ratio: number) => void
-  timerThresholdMs: number
-  timerIntervalMs: number
-  setTimerThresholdMs: (ms: number | ((prev: number) => number)) => void
-  setTimerIntervalMs: (ms: number | ((prev: number) => number)) => void
+
+  /** Permissions locked — freeze charts/phrases; dim timer. */
+  permissionsLocked: boolean
+  grants: PermissionGrants
+  /** Active iOS-style prompt on the phone, or null. */
+  permissionPrompt: PermissionKind | null
+  /** Latch blocked while a prompt is open / transitioning. */
+  permissionBusy: boolean
+  lockPermissions: () => void
+  requestUnlock: () => void
+  allowPermission: () => void
+  denyPermission: () => void
 }
 
 const DemoSyncContext = createContext<DemoSyncValue | null>(null)
 
 /**
  * Hero-wide demo sync (owned by Phone domain).
- * Wrap features that share phrase / silence / timer timing.
+ * Wrap features that share phrase / silence / timer / permission timing.
+ * API-shaped config lives in DemoConfigProvider.
  */
 export function DemoSyncProvider({children}: {children: ReactNode}): ReactNode {
   const [silent, setSilent] = useState(false)
@@ -73,8 +75,17 @@ export function DemoSyncProvider({children}: {children: ReactNode}): ReactNode {
   const [seekEpoch, setSeekEpoch] = useState(0)
   const [seekPhraseIndex, setSeekPhraseIndex] = useState(0)
   const [volumeRatio, setVolumeRatioRaw] = useState(1)
-  const [timerThresholdMs, setThresholdRaw] = useState(DEMO_TIMER_THRESHOLD_MS)
-  const [timerIntervalMs, setIntervalRaw] = useState(DEMO_TIMER_INTERVAL_MS)
+
+  // Start unlocked — both lines checked.
+  const [permissionsLocked, setPermissionsLocked] = useState(false)
+  const [grants, setGrants] = useState<PermissionGrants>({
+    microphone: true,
+    speechRecognition: true,
+  })
+  const [permissionPrompt, setPermissionPrompt] =
+    useState<PermissionKind | null>(null)
+  const [permissionBusy, setPermissionBusy] = useState(false)
+  const nextPromptTimer = useRef(0)
 
   useEffect(() => {
     if (!silent) return
@@ -82,10 +93,17 @@ export function DemoSyncProvider({children}: {children: ReactNode}): ReactNode {
     return () => window.clearTimeout(id)
   }, [silent])
 
+  useEffect(
+    () => () => window.clearTimeout(nextPromptTimer.current),
+    [],
+  )
+
   const beginSilence = useCallback(() => {
     if (!DEMO_SILENCE_ENABLED) return
+    if (permissionsLocked) return
     setSilent(true)
-  }, [])
+  }, [permissionsLocked])
+
   const notifyPhrase = useCallback((index: number) => {
     setPhraseIndex(index)
     setPhraseEpoch((n) => n + 1)
@@ -101,33 +119,59 @@ export function DemoSyncProvider({children}: {children: ReactNode}): ReactNode {
     setVolumeRatioRaw(Math.min(2, Math.max(0.15, ratio)))
   }, [])
 
-  const setTimerThresholdMs = useCallback(
-    (ms: number | ((prev: number) => number)) => {
-      setThresholdRaw((prev) =>
-        clampStep(
-          typeof ms === 'function' ? ms(prev) : ms,
-          TIMER_THRESHOLD_MIN_MS,
-          TIMER_THRESHOLD_MAX_MS,
-          TIMER_THRESHOLD_STEP_MS,
-        ),
-      )
-    },
-    [],
-  )
+  const lockPermissions = useCallback(() => {
+    window.clearTimeout(nextPromptTimer.current)
+    setPermissionsLocked(true)
+    setGrants({microphone: false, speechRecognition: false})
+    setPermissionPrompt(null)
+    setPermissionBusy(false)
+  }, [])
 
-  const setTimerIntervalMs = useCallback(
-    (ms: number | ((prev: number) => number)) => {
-      setIntervalRaw((prev) =>
-        clampStep(
-          typeof ms === 'function' ? ms(prev) : ms,
-          TIMER_INTERVAL_MIN_MS,
-          TIMER_INTERVAL_MAX_MS,
-          TIMER_INTERVAL_STEP_MS,
-        ),
-      )
-    },
-    [],
-  )
+  const requestUnlock = useCallback(() => {
+    if (!permissionsLocked || permissionBusy) return
+    setPermissionBusy(true)
+    // Resume at speech if mic was already granted in a prior attempt.
+    if (grants.microphone && !grants.speechRecognition) {
+      setPermissionPrompt('speechRecognition')
+      return
+    }
+    setPermissionPrompt('microphone')
+  }, [permissionsLocked, permissionBusy, grants])
+
+  const allowPermission = useCallback(() => {
+    if (!permissionPrompt || !permissionBusy) return
+    const kind = permissionPrompt
+
+    if (kind === 'microphone') {
+      setGrants((g) => ({...g, microphone: true}))
+      setPermissionPrompt(null)
+      window.clearTimeout(nextPromptTimer.current)
+      nextPromptTimer.current = window.setTimeout(() => {
+        setPermissionPrompt('speechRecognition')
+      }, NEXT_PROMPT_MS)
+      return
+    }
+
+    // Speech allowed — both grants complete → unlock + resume.
+    setGrants({microphone: true, speechRecognition: true})
+    setPermissionPrompt(null)
+    setPermissionBusy(false)
+    setPermissionsLocked(false)
+  }, [permissionPrompt, permissionBusy])
+
+  const denyPermission = useCallback(() => {
+    if (!permissionPrompt || !permissionBusy) return
+    const kind = permissionPrompt
+    window.clearTimeout(nextPromptTimer.current)
+    setPermissionPrompt(null)
+    setPermissionBusy(false)
+    // Stay locked. Mic may already be checked if speech was denied.
+    if (kind === 'microphone') {
+      setGrants({microphone: false, speechRecognition: false})
+    } else {
+      setGrants((g) => ({...g, speechRecognition: false}))
+    }
+  }, [permissionPrompt, permissionBusy])
 
   const value = useMemo(
     () => ({
@@ -141,10 +185,14 @@ export function DemoSyncProvider({children}: {children: ReactNode}): ReactNode {
       seekToPhrase,
       volumeRatio,
       setVolumeRatio,
-      timerThresholdMs,
-      timerIntervalMs,
-      setTimerThresholdMs,
-      setTimerIntervalMs,
+      permissionsLocked,
+      grants,
+      permissionPrompt,
+      permissionBusy,
+      lockPermissions,
+      requestUnlock,
+      allowPermission,
+      denyPermission,
     }),
     [
       silent,
@@ -157,10 +205,14 @@ export function DemoSyncProvider({children}: {children: ReactNode}): ReactNode {
       seekToPhrase,
       volumeRatio,
       setVolumeRatio,
-      timerThresholdMs,
-      timerIntervalMs,
-      setTimerThresholdMs,
-      setTimerIntervalMs,
+      permissionsLocked,
+      grants,
+      permissionPrompt,
+      permissionBusy,
+      lockPermissions,
+      requestUnlock,
+      allowPermission,
+      denyPermission,
     ],
   )
 

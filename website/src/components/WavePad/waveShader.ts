@@ -115,11 +115,11 @@ function compile(gl: WebGL2RenderingContext, type: number, source: string) {
   return shader
 }
 
-export type WaveShaderHandle = {
+type WaveShaderHandle = {
   destroy: () => void
 }
 
-export type WaveShaderOptions = {
+type WaveShaderOptions = {
   onLevel?: (level: number) => void
 }
 

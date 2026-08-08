@@ -5,6 +5,7 @@ import MeterCharts from '../Charts'
 import PhraseFeed from '../Phrases'
 import {useDemoSync} from './DemoSync'
 import {MicroSvg} from './MicroSvg'
+import PermissionAlert from './PermissionAlert'
 import type {PhoneLayout} from './phoneLayout'
 import PhoneSvg from './PhoneSvg'
 import styles from './Phone.module.css'
@@ -15,10 +16,10 @@ type Props = {
 
 /**
  * Gravity center for hero features that share demo timing
- * (phrases ↔ silence ↔ charts ↔ silence timer).
+ * (phrases ↔ silence ↔ charts ↔ silence timer ↔ permissions).
  */
 export default function Phone({layout}: Props): ReactNode {
-  const {silent, beginSilence, notifyPhrase} = useDemoSync()
+  const {silent, beginSilence, notifyPhrase, permissionsLocked} = useDemoSync()
 
   if (!layout) return null
 
@@ -46,16 +47,19 @@ export default function Phone({layout}: Props): ReactNode {
     height: screen.height,
   }
 
+  // Dim the full glass (island + home bands), not only the clear screen.
+  const alertStyle: CSSProperties = glassStyle
+
   return (
     <div className={styles.phone} style={phoneStyle}>
       <div className={styles.glass} style={glassStyle} />
-      <PhoneSvg className={styles.chrome} />
       <div className={styles.screen} style={screenStyle}>
-        <MeterCharts silent={silent} />
+        <MeterCharts silent={silent} frozen={permissionsLocked} />
         <div className={styles.bottom}>
           <PhraseFeed
             layout={layout}
             silent={silent}
+            frozen={permissionsLocked}
             onPhrase={notifyPhrase}
             onSilenceRequest={beginSilence}
           />
@@ -65,6 +69,8 @@ export default function Phone({layout}: Props): ReactNode {
           </Link>
         </div>
       </div>
+      <PermissionAlert style={alertStyle} />
+      <PhoneSvg className={styles.chrome} />
     </div>
   )
 }

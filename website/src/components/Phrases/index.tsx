@@ -7,8 +7,10 @@ import {
   type TransitionEvent,
 } from 'react'
 
+import InfoCorner from '../DemoConfig/InfoCorner'
 import {useDemoSync} from '../Phone/DemoSync'
 import type {PhoneLayout} from '../Phone/phoneLayout'
+import PhraseText from './PhraseText'
 import {phrases, SILENCE_AFTER_PHRASE_INDICES} from './phrases'
 import styles from './PhraseFeed.module.css'
 
@@ -18,6 +20,8 @@ const ROW_MS = 900
 type Props = {
   layout: PhoneLayout | null
   silent?: boolean
+  /** Permissions locked — stop rolling new phrases. */
+  frozen?: boolean
   /** Fired on every new phrase row (resets silence timer / drives language clock). */
   onPhrase?: (phraseIndex: number) => void
   /** Ask Phone sync to start silence after the trigger phrase. */
@@ -32,6 +36,7 @@ type Row = {
 export default function PhraseFeed({
   layout,
   silent = false,
+  frozen = false,
   onPhrase,
   onSilenceRequest,
 }: Props): ReactNode {
@@ -42,6 +47,8 @@ export default function PhraseFeed({
   const lastSeekRef = useRef(0)
   const silentRef = useRef(silent)
   silentRef.current = silent
+  const frozenRef = useRef(frozen)
+  frozenRef.current = frozen
   const onPhraseRef = useRef(onPhrase)
   onPhraseRef.current = onPhrase
   const onSilenceRequestRef = useRef(onSilenceRequest)
@@ -57,6 +64,7 @@ export default function PhraseFeed({
     let cancelled = false
     let timer = 0
     const gap = reduce ? 400 : ROW_MS
+    const paused = () => silentRef.current || frozenRef.current
 
     const push = (opts: {
       allowSilence: boolean
@@ -80,7 +88,7 @@ export default function PhraseFeed({
 
     const scheduleNormal = () => {
       timer = window.setTimeout(function tick() {
-        if (cancelled || silentRef.current) return
+        if (cancelled || paused()) return
         push({allowSilence: true, notify: true})
         timer = window.setTimeout(tick, gap)
       }, gap)
@@ -96,7 +104,7 @@ export default function PhraseFeed({
           : (indexRef.current - 1 + phrases.length) % phrases.length
 
       if (shown === target) {
-        if (!silent) scheduleNormal()
+        if (!paused()) scheduleNormal()
         return () => {
           cancelled = true
           clear()
@@ -107,23 +115,23 @@ export default function PhraseFeed({
       const skip = (target - next + phrases.length) % phrases.length
       indexRef.current += skip
       push({allowSilence: false, notify: true})
-      if (!silentRef.current) scheduleNormal()
+      if (!paused()) scheduleNormal()
       return () => {
         cancelled = true
         clear()
       }
     }
 
-    if (silent) return
+    if (silent || frozen) return
 
-    // Resume immediately when silence ends so the next phrases continue.
+    // Resume immediately when silence / lock ends so the next phrases continue.
     push({allowSilence: true, notify: true})
     scheduleNormal()
     return () => {
       cancelled = true
       clear()
     }
-  }, [ready, reduce, silent, seekEpoch, seekPhraseIndex])
+  }, [ready, reduce, silent, frozen, seekEpoch, seekPhraseIndex])
 
   useEffect(() => {
     if (!reduce) return
@@ -160,6 +168,11 @@ export default function PhraseFeed({
 
   return (
     <div className={styles.feed} style={feedStyle}>
+      <InfoCorner
+        placement="head"
+        featureId="maskOffensiveWords"
+        label="About maskOffensiveWords"
+      />
       <div
         className={styles.clip}
         aria-live="polite"
@@ -176,7 +189,7 @@ export default function PhraseFeed({
           onTransitionEnd={onScrollEnd}>
           {rows.map((row) => (
             <div key={row.id} className={styles.row}>
-              {row.text}
+              <PhraseText text={row.text} />
             </div>
           ))}
         </div>

@@ -1,0 +1,96 @@
+/* Covers full glass (incl. island / home bands), not only the clear screen. */
+.scrim {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0;
+  background: rgb(0 0 0 / 36%);
+  border-radius: inherit;
+  pointer-events: auto;
+  container-type: inline-size;
+}
+
+.card {
+  /* ~270pt / ~390pt ≈ 0.69 of device width (system alert). */
+  width: 70cqw;
+  overflow: hidden;
+  border-radius: 0.9em;
+  background: rgb(242 242 247 / 96%);
+  color: #1c1c1e;
+  font-family:
+    -apple-system,
+    'SF Pro Text',
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+  text-align: center;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 28%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+  padding: 1.1em 1.05em 1em;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(11px, 3.6cqw, 13.5px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+.message {
+  margin: 0;
+  font-size: clamp(10px, 3.2cqw, 12px);
+  font-weight: 400;
+  line-height: 1.35;
+  opacity: 0.78;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  border-top: 0.5px solid rgb(60 60 67 / 29%);
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.55em;
+  margin: 0;
+  padding: 0.5em 0.75em;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: #007aff;
+  font: inherit;
+  font-size: clamp(11px, 3.6cqw, 14px);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.action + .action {
+  border-top: 0.5px solid rgb(60 60 67 / 29%);
+}
+
+.action:active {
+  background: rgb(0 0 0 / 6%);
+}
+
+.allow {
+  font-weight: 600;
+}
+
+.deny {
+  font-weight: 400;
+}

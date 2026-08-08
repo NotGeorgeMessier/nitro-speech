@@ -9,6 +9,14 @@
   justify-content: flex-start;
 }
 
+.charts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 .row {
   display: flex;
   flex-direction: column;

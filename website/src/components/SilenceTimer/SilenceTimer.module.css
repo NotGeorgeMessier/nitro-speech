@@ -22,6 +22,17 @@
   -webkit-user-select: none;
 }
 
+/* Permissions locked — countdown looks disabled; steppers stay usable. */
+.wrap[data-disabled='true'] .label,
+.wrap[data-disabled='true'] .value,
+.wrap[data-disabled='true'] .track {
+  opacity: 0.42;
+}
+
+.wrap[data-disabled='true'] .fill {
+  opacity: 0.55;
+}
+
 .row {
   display: flex;
   align-items: center;
