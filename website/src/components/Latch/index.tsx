@@ -5,6 +5,7 @@ import {
   type ReactNode,
 } from 'react'
 
+import InfoButton from '../DemoConfig/InfoButton'
 import {useDemoSync} from '../Phone/DemoSync'
 import {AndroidSvg} from './AndroidSvg'
 import {AppleSvg} from './AppleSvg'
@@ -70,95 +71,104 @@ export default function Latch({style}: Props): ReactNode {
   const link = linkProgress(permissionsLocked, grants)
 
   return (
-    <button
-      type="button"
-      className={styles.wrap}
+    <div
+      className={styles.shell}
       style={
         {
           ...style,
           '--link': String(link),
         } as CSSProperties
-      }
-      data-locked={permissionsLocked ? 'true' : 'false'}
-      data-busy={permissionBusy ? 'true' : 'false'}
-      data-prompt={permissionPrompt ?? undefined}
-      aria-label={
-        permissionBusy
-          ? 'Permission request in progress'
-          : permissionsLocked
-            ? 'Permissions locked'
-            : 'Permissions unlocked'
-      }
-      aria-pressed={permissionsLocked}
-      aria-disabled={permissionBusy || undefined}
-      disabled={permissionBusy}
-      onClick={onPress}>
-      <span className={styles.lock} aria-hidden="true">
-        <canvas ref={canvasRef} className={styles.canvas} />
-      </span>
-
-      <span className={styles.sheet} aria-hidden="true">
-        <span className={styles.rows}>
-          <span
-            className={styles.point}
-            data-ok={grants.microphone ? 'true' : 'false'}>
-            <span className={styles.icons}>
-              <AppleSvg className={styles.icon} />
-              <AndroidSvg className={styles.icon} />
-            </span>
-            <span className={styles.label}>Microphone</span>
-          </span>
-          <span
-            className={styles.point}
-            data-ok={grants.speechRecognition ? 'true' : 'false'}>
-            <span className={styles.icons}>
-              <AppleSvg className={styles.icon} />
-            </span>
-            <span className={styles.label}>Speech recognition</span>
-          </span>
+      }>
+      <div className={styles.infoAbove}>
+        <InfoButton
+          featureId="requestPermission"
+          label="About requestPermission"
+        />
+      </div>
+      <button
+        type="button"
+        className={styles.wrap}
+        data-locked={permissionsLocked ? 'true' : 'false'}
+        data-busy={permissionBusy ? 'true' : 'false'}
+        data-prompt={permissionPrompt ?? undefined}
+        aria-label={
+          permissionBusy
+            ? 'Permission request in progress'
+            : permissionsLocked
+              ? 'Permissions locked'
+              : 'Permissions unlocked'
+        }
+        aria-pressed={permissionsLocked}
+        aria-disabled={permissionBusy || undefined}
+        disabled={permissionBusy}
+        onClick={onPress}>
+        <span className={styles.lock} aria-hidden="true">
+          <canvas ref={canvasRef} className={styles.canvas} />
         </span>
 
-        {/*
-          Fresh stepper: mark → flex link → mark.
-          The link is the only rail; it lives in the gap and tucks under marks.
-        */}
-        <span className={styles.steps}>
-          <span
-            className={styles.mark}
-            data-ok={grants.microphone ? 'true' : 'false'}
-            data-active={
-              permissionPrompt === 'microphone' && !grants.microphone
-                ? 'true'
-                : 'false'
-            }>
-            {grants.microphone ? (
-              <CheckSvg className={styles.markIcon} />
-            ) : (
-              <CrossSvg className={styles.markIcon} />
-            )}
+        <span className={styles.sheet} aria-hidden="true">
+          <span className={styles.rows}>
+            <span
+              className={styles.point}
+              data-ok={grants.microphone ? 'true' : 'false'}>
+              <span className={styles.icons}>
+                <AppleSvg className={styles.icon} />
+                <AndroidSvg className={styles.icon} />
+              </span>
+              <span className={styles.label}>Microphone</span>
+            </span>
+            <span
+              className={styles.point}
+              data-ok={grants.speechRecognition ? 'true' : 'false'}>
+              <span className={styles.icons}>
+                <AppleSvg className={styles.icon} />
+              </span>
+              <span className={styles.label}>Speech recognition</span>
+            </span>
           </span>
 
-          <span className={styles.link}>
-            <span className={styles.linkFill} />
-          </span>
+          {/*
+            Fresh stepper: mark → flex link → mark.
+            The link is the only rail; it lives in the gap and tucks under marks.
+          */}
+          <span className={styles.steps}>
+            <span
+              className={styles.mark}
+              data-ok={grants.microphone ? 'true' : 'false'}
+              data-active={
+                permissionPrompt === 'microphone' && !grants.microphone
+                  ? 'true'
+                  : 'false'
+              }>
+              {grants.microphone ? (
+                <CheckSvg className={styles.markIcon} />
+              ) : (
+                <CrossSvg className={styles.markIcon} />
+              )}
+            </span>
 
-          <span
-            className={styles.mark}
-            data-ok={grants.speechRecognition ? 'true' : 'false'}
-            data-active={
-              permissionPrompt === 'speechRecognition' &&
-              !grants.speechRecognition
-                ? 'true'
-                : 'false'
-            }>
-            {grants.speechRecognition ? (
-              <CheckSvg className={styles.markIcon} />
-            ) : (
-              <CrossSvg className={styles.markIcon} />
-            )}
+            <span className={styles.link}>
+              <span className={styles.linkFill} />
+            </span>
+
+            <span
+              className={styles.mark}
+              data-ok={grants.speechRecognition ? 'true' : 'false'}
+              data-active={
+                permissionPrompt === 'speechRecognition' &&
+                !grants.speechRecognition
+                  ? 'true'
+                  : 'false'
+              }>
+              {grants.speechRecognition ? (
+                <CheckSvg className={styles.markIcon} />
+              ) : (
+                <CrossSvg className={styles.markIcon} />
+              )}
+            </span>
           </span>
         </span>
-      </span>
-    </button>
+      </button>
+    </div>
   )
 }

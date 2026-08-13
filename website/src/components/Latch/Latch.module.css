@@ -1,5 +1,5 @@
 /* Cream permission card docked to the phone; ink lock stamp for contrast. */
-.wrap {
+.shell {
   --disc: 3rem;
   --ink: #2d2926;
   --cream: #faeed2;
@@ -7,6 +7,29 @@
   --mark: 1.35em;
   position: absolute;
   z-index: 0;
+  color: var(--ink);
+  font-family:
+    'SF Pro Text',
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+  font-size: calc(var(--disc) * 0.145);
+  pointer-events: auto;
+}
+
+/* Sit just above the cream card, not inside its rounded corner. */
+.infoAbove {
+  position: absolute;
+  right: 0.2em;
+  bottom: 100%;
+  margin-bottom: 0.25em;
+  z-index: 5;
+  line-height: 0;
+  color: inherit;
+  pointer-events: auto;
+}
+
+.wrap {
   display: grid;
   grid-template-columns: calc(var(--disc) * 0.72) minmax(0, auto);
   align-items: center;
@@ -22,20 +45,14 @@
   box-shadow:
     0 0 0 1.5px rgba(45, 41, 38, 0.1),
     0 4px 16px rgba(45, 41, 38, 0.14);
-  color: var(--ink);
-  font-family:
-    'SF Pro Text',
-    'Segoe UI',
-    system-ui,
-    sans-serif;
-  font-size: calc(var(--disc) * 0.145);
+  color: inherit;
+  font: inherit;
   text-align: left;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
-  pointer-events: auto;
   appearance: none;
 }
 

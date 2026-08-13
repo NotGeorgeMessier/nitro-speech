@@ -187,6 +187,11 @@ const FEATURES: Feature[] = [
         'Prepare the engine, request permissions, resolve the locale, and install the on-device model in advance.',
     },
   },
+  {
+    id: 'requestPermission',
+    tab: 'prewarm',
+    anchor: 'prewarm',
+  },
 
   {
     id: 'updateConfig',

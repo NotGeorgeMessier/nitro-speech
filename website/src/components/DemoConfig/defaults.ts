@@ -67,6 +67,7 @@ export type FeatureId =
   | 'voiceVolume'
   | 'speechAnalyzer'
   | 'prewarm'
+  | 'requestPermission'
   | 'updateConfig'
   | 'worklets'
   | 'resetAutoFinishTime'

@@ -165,7 +165,7 @@ await [[prewarm|RecognizerRef.prewarm]](
     [[locale|locale: '${locale}']],
   },
   {
-    // requestPermission: true, // default
+    [[requestPermission|// requestPermission: true, // default; startListening also requests by default]]
     [[prewarm|// loadOnDeviceModel: true, // default; no-op unless onDevice is 'prefer' | 'require'
     // (onDevice defaults: iOS 26+ 'prefer'; iOS <26 & Android: disabled)]]
   },
