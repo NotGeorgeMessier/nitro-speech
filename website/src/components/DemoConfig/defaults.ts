@@ -11,12 +11,35 @@ export const LANGUAGE_LOCALES: Record<LanguageId, string> = {
   zh: 'zh-CN',
 }
 
+export const WORKLET_THREADS = ['ui', 'js', 'background'] as const
+export type WorkletThread = (typeof WORKLET_THREADS)[number]
+
+export const WORKLET_METHODS = [
+  'startListening',
+  'updateConfig',
+  'getVoiceInputVolume',
+  'stopListening',
+] as const
+export type WorkletMethod = (typeof WORKLET_METHODS)[number]
+
+/** Which runtime each method chunk sits on. Order of methods is fixed. */
+export type WorkletPlacement = Record<WorkletMethod, WorkletThread>
+
+/** Volume starts on a background worklet; the rest on JS. */
+export const WORKLET_PLACEMENT_DEFAULT: WorkletPlacement = {
+  startListening: 'js',
+  updateConfig: 'js',
+  getVoiceInputVolume: 'background',
+  stopListening: 'js',
+}
+
 export type DemoConfigState = {
   locale: string
   maskOffensiveWords: boolean
   autoFinishRecognitionMs: number
   autoFinishProgressIntervalMs: number
   resetAutoFinishVoiceSensitivity: number
+  workletPlacement: WorkletPlacement
 }
 
 /** Package / API defaults (what the code sample treats as default). */
@@ -26,6 +49,7 @@ export const API_CONFIG_DEFAULTS: DemoConfigState = {
   autoFinishRecognitionMs: 8000,
   autoFinishProgressIntervalMs: 1000,
   resetAutoFinishVoiceSensitivity: 0.4,
+  workletPlacement: WORKLET_PLACEMENT_DEFAULT,
 }
 
 /** Hero demo starting state (masking on so ******* is visible). */
@@ -70,11 +94,14 @@ export type FeatureId =
   | 'requestPermission'
   | 'updateConfig'
   | 'worklets'
+  | 'startListening'
+  | 'stopListening'
+  | 'getVoiceInputVolume'
   | 'resetAutoFinishTime'
   | 'addAutoFinishTime'
 
 /** A config field the demo chrome can actually change. */
-export type ConfigKey = keyof DemoConfigState
+export type ConfigKey = Exclude<keyof DemoConfigState, 'workletPlacement'>
 
 /**
  * A sample line that can be revealed. `iosPreset` is revealable but not

@@ -1,0 +1,175 @@
+.shell {
+  --ink: #111111;
+  --paper: #ffffff;
+  --track-hot: #f3f3f3;
+  position: absolute;
+  right: clamp(12px, 2.5vw, 28px);
+  bottom: clamp(12px, 2.5vw, 28px);
+  z-index: 1;
+  width: min(36rem, 62vw);
+  color: var(--ink);
+  font-family:
+    'SF Pro Text',
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+  font-size: 13px;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.infoAbove {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  margin-bottom: 0.25em;
+  z-index: 5;
+  line-height: 0;
+  color: inherit;
+  pointer-events: auto;
+}
+
+.wrap {
+  position: relative;
+  box-sizing: border-box;
+  padding: 0.7em 0.75em 0.75em;
+  border: 1.5px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+  color: var(--ink);
+}
+
+.board {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+}
+
+.lane {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.28em;
+}
+
+.lane:has([data-dragging='true']) {
+  z-index: 2;
+}
+
+.laneTitle {
+  font-size: clamp(11px, 1.25vw, 13px);
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--ink);
+  opacity: 0.7;
+}
+
+.lane[data-hot='true'] .laneTitle {
+  opacity: 1;
+}
+
+.track {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1.55fr 1.15fr;
+  align-items: stretch;
+  min-height: 1.85em;
+  padding: 0;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+}
+
+.lane[data-hot='true'] .track {
+  background: var(--track-hot);
+}
+
+.slot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  border-right: 1px solid rgba(17, 17, 17, 0.12);
+}
+
+.slot:last-child {
+  border-right: none;
+}
+
+.chunk {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0 0.4em;
+  border: none;
+  border-radius: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family:
+    'SF Mono',
+    'Menlo',
+    'Consolas',
+    monospace;
+  font-size: clamp(9px, 0.95vw, 11px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.chunk:focus {
+  outline: none;
+}
+
+.chunk:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.chunk[data-dragging='true'] {
+  z-index: 4;
+  overflow: visible;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+}
+
+.cursor {
+  position: fixed;
+  z-index: 10000;
+  width: 28px;
+  height: 28px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  overflow: visible;
+}
+
+.glyph {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+@media (max-width: 860px) {
+  .shell {
+    width: min(32rem, calc(100vw - 1.5rem));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chunk {
+    box-shadow: none;
+  }
+}

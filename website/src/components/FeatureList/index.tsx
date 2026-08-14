@@ -62,8 +62,12 @@ function isDocLinkTarget(target: EventTarget | null): boolean {
 
 /** Package differentiators; selecting one focuses it in the code samples. */
 export default function FeatureList(): ReactNode {
-  const {highlightId, focusFeature} = useDemoConfig()
-  const activeAnchor = highlightId ? featureListAnchor(highlightId) : null
+  const {highlightId, highlightTab, focusFeature} = useDemoConfig()
+  const activeAnchor = highlightTab === 'worklets'
+    ? 'worklets'
+    : highlightId
+      ? featureListAnchor(highlightId)
+      : null
   const [hoveredId, setHoveredId] = useState<FeatureId | null>(null)
 
   return (

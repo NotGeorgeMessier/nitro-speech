@@ -97,6 +97,7 @@ export default function CodeSamples(): ReactNode {
         autoFinishRecognitionMs: config.autoFinishRecognitionMs,
         autoFinishProgressIntervalMs: config.autoFinishProgressIntervalMs,
         resetAutoFinishVoiceSensitivity: config.resetAutoFinishVoiceSensitivity,
+        workletPlacement: config.workletPlacement,
         dirty: config.dirty,
       }),
     [
@@ -105,15 +106,16 @@ export default function CodeSamples(): ReactNode {
       config.autoFinishRecognitionMs,
       config.autoFinishProgressIntervalMs,
       config.resetAutoFinishVoiceSensitivity,
+      config.workletPlacement,
       config.dirty,
     ],
   )
 
   useEffect(() => {
     if (!config.highlightId) return
-    const next = featureTab(config.highlightId)
+    const next = config.highlightTab ?? featureTab(config.highlightId)
     if (next) setTab(next)
-  }, [config.highlightEpoch, config.highlightId])
+  }, [config.highlightEpoch, config.highlightId, config.highlightTab])
 
   const source = samples[tab] ?? ''
 

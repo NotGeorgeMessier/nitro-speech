@@ -8,6 +8,7 @@ import {
 } from 'react'
 
 import {featureRevealKeys} from './features'
+import type {CodeTabId} from '../CodeSamples/samples'
 import {
   almostEqual,
   clampStep,
@@ -21,6 +22,8 @@ import {
   type DemoConfigState,
   type DirtyKey,
   type FeatureId,
+  type WorkletMethod,
+  type WorkletThread,
 } from './defaults'
 
 type DemoConfigValue = DemoConfigState & {
@@ -33,12 +36,15 @@ type DemoConfigValue = DemoConfigState & {
     ms: number | ((prev: number) => number),
   ) => void
   setResetAutoFinishVoiceSensitivity: (v: number) => void
+  setWorkletThread: (method: WorkletMethod, thread: WorkletThread) => void
   resetConfig: () => void
   /** Bumps on reset so chrome holding its own position can snap back. */
   resetEpoch: number
   highlightId: FeatureId | null
   highlightEpoch: number
-  focusFeature: (id: FeatureId) => void
+  /** When set, the samples panel opens this tab instead of featureTab(id). */
+  highlightTab: CodeTabId | null
+  focusFeature: (id: FeatureId, tab?: CodeTabId, scroll?: boolean) => void
 }
 
 const DemoConfigContext = createContext<DemoConfigValue | null>(null)
@@ -89,6 +95,7 @@ export function DemoConfigProvider({
   const [dirty, setDirty] = useState<Partial<Record<DirtyKey, boolean>>>({})
   const [highlightId, setHighlightId] = useState<FeatureId | null>(null)
   const [highlightEpoch, setHighlightEpoch] = useState(0)
+  const [highlightTab, setHighlightTab] = useState<CodeTabId | null>(null)
   const [resetEpoch, setResetEpoch] = useState(0)
 
   const markDirty = useCallback((key: DirtyKey) => {
@@ -178,23 +185,39 @@ export function DemoConfigProvider({
     [markDirty],
   )
 
+  const setWorkletThread = useCallback(
+    (method: WorkletMethod, thread: WorkletThread) => {
+      setConfig((c) => {
+        if (c.workletPlacement[method] === thread) return c
+        return {
+          ...c,
+          workletPlacement: {...c.workletPlacement, [method]: thread},
+        }
+      })
+    },
+    [],
+  )
+
   const resetConfig = useCallback(() => {
     // locale is demo-driven — the language clock mirrors whatever the phrase
     // feed is showing — so snapping it to en-US would contradict the phone.
     setConfig((c) => ({...DEMO_CONFIG_DEFAULTS, locale: c.locale}))
     setDirty({})
     setHighlightId(null)
+    setHighlightTab(null)
     setResetEpoch((n) => n + 1)
   }, [])
 
   const focusFeature = useCallback(
-    (id: FeatureId) => {
+    (id: FeatureId, tab?: CodeTabId, scroll = true) => {
       const reveal = featureRevealKeys(id)
       if (reveal.length) markDirtyKeys(reveal)
 
       setHighlightId(id)
+      setHighlightTab(tab ?? null)
       setHighlightEpoch((n) => n + 1)
 
+      if (!scroll) return
       // Wait for reveal + tab switch layout, then one explicit window scroll.
       window.setTimeout(scrollToFeatures, 100)
     },
@@ -211,10 +234,12 @@ export function DemoConfigProvider({
       setAutoFinishRecognitionMs,
       setAutoFinishProgressIntervalMs,
       setResetAutoFinishVoiceSensitivity,
+      setWorkletThread,
       resetConfig,
       resetEpoch,
       highlightId,
       highlightEpoch,
+      highlightTab,
       focusFeature,
     }),
     [
@@ -226,10 +251,12 @@ export function DemoConfigProvider({
       setAutoFinishRecognitionMs,
       setAutoFinishProgressIntervalMs,
       setResetAutoFinishVoiceSensitivity,
+      setWorkletThread,
       resetConfig,
       resetEpoch,
       highlightId,
       highlightEpoch,
+      highlightTab,
       focusFeature,
     ],
   )

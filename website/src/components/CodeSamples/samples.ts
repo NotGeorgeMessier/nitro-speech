@@ -1,10 +1,13 @@
 import {
   almostEqual,
   API_CONFIG_DEFAULTS,
+  WORKLET_METHODS,
   type ConfigKey,
   type DemoConfigState,
   type DirtyKey,
   type FeatureId,
+  type WorkletMethod,
+  type WorkletThread,
 } from '../DemoConfig/defaults'
 
 export type CodeTabId =
@@ -140,6 +143,85 @@ function buildLiveUpdateConfig(): string {
 )`
 }
 
+function indentLines(block: string, indent: string): string {
+  if (!indent) return block
+  return block
+    .split('\n')
+    .map((line) => (line.length ? indent + line : line))
+    .join('\n')
+}
+
+function methodCall(
+  input: SampleInput,
+  method: WorkletMethod,
+  indent: string,
+): string {
+  switch (method) {
+    case 'startListening': {
+      const call = stripMarkers(
+        buildQuickstartConfig(input).replace(
+          /^startListening/,
+          'RecognizerRef.startListening',
+        ),
+      )
+      return indentLines(call, indent)
+    }
+    case 'updateConfig':
+      return indentLines(stripMarkers(buildLiveUpdateConfig()), indent)
+    case 'getVoiceInputVolume':
+      return `${indent}const volume = RecognizerRef.getVoiceInputVolume()`
+    case 'stopListening':
+      return `${indent}RecognizerRef.stopListening()`
+  }
+}
+
+function wrapThread(thread: WorkletThread, body: string): string {
+  if (thread === 'js') return body
+  if (thread === 'ui') {
+    return `[[worklets|scheduleOnUI(() => {
+${body}
+})]]`
+  }
+  return `[[worklets|scheduleOnRuntime(runtime, () => {
+${body}
+})]]`
+}
+
+function workletImports(): string {
+  return `import {
+  createWorkletRuntime,
+  scheduleOnRuntime,
+  scheduleOnUI,
+} from 'react-native-worklets'
+import { RecognizerRef } from 'react-native-nitro-speech'`
+}
+
+function buildWorkletsSample(input: SampleInput): string {
+  const placement = input.workletPlacement
+  const groups: {thread: WorkletThread; methods: WorkletMethod[]}[] = []
+  for (const method of WORKLET_METHODS) {
+    const thread = placement[method]
+    const last = groups[groups.length - 1]
+    if (last && last.thread === thread) last.methods.push(method)
+    else groups.push({thread, methods: [method]})
+  }
+
+  const usesBackground = groups.some((g) => g.thread === 'background')
+  const blocks = groups.map((g) => {
+    const inner = g.thread === 'js' ? '' : '  '
+    const body = g.methods.map((m) => methodCall(input, m, inner)).join('\n')
+    return wrapThread(g.thread, body)
+  })
+
+  const runtimeLine = usesBackground
+    ? `\n\nconst runtime = createWorkletRuntime({ name: 'speech' })`
+    : ''
+
+  return `${workletImports()}${runtimeLine}
+
+${blocks.join('\n\n')}`
+}
+
 export function buildSamples(input: SampleInput): Record<CodeTabId, string> {
   const locale = input.locale
 
@@ -190,17 +272,6 @@ ${buildLiveUpdateConfig()}
 [[addAutoFinishTime|RecognizerRef.addAutoFinishTime(5000)]]
 `,
 
-    worklets: `import { createWorkletRuntime, scheduleOnRuntime } from 'react-native-worklets'
-import { RecognizerRef } from 'react-native-nitro-speech'
-
-const runtime = createWorkletRuntime({ name: 'speech' })
-
-// Every RecognizerRef / useRecognizer method is worklet-safe
-[[worklets|scheduleOnRuntime]](runtime, () => {
-  RecognizerRef.updateConfig({
-    [[resetAutoFinishVoiceSensitivity|resetAutoFinishVoiceSensitivity: ${sens(input.resetAutoFinishVoiceSensitivity)}]],
-  })
-  const volume = RecognizerRef.getVoiceInputVolume()
-})`,
+    worklets: buildWorkletsSample(input),
   }
 }

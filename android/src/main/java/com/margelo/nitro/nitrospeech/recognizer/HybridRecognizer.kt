@@ -172,6 +172,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @DoNotStrip
   @Keep
   override fun getIsActive(): Boolean {
+    logger.log("getIsActive")
     return isActive
   }
 

@@ -1,5 +1,6 @@
 package com.margelo.nitro.nitrospeech.recognizer
 
+import android.os.Looper
 import android.util.Log
 
 class Logger (
@@ -11,6 +12,7 @@ class Logger (
   }
   fun log(message: String) {
     if (disable || !isLogging) return
-    Log.d(TAG, message)
+    val tn = if (Looper.getMainLooper().isCurrentThread) "main" else "bg"
+    Log.d(TAG, "[thread]: $tn | $message")
   }
 }

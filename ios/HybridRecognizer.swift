@@ -79,10 +79,12 @@ class HybridRecognizer: HybridRecognizerSpec  {
     }
 
     func getIsActive() -> Bool {
-        engine?.isActive ?? false
+        lg.log("getIsActive: \(engine?.isActive ?? false)")
+        return engine?.isActive ?? false
     }
 
     func getVoiceInputVolume() -> VolumeChangeEvent {
+        lg.log("getVoiceInputVolume: \(engine?.getVoiceInputVolume()?.rawVolume)")
         return engine?.getVoiceInputVolume() ?? VolumeChangeEvent(
             smoothedVolume: 0,
             rawVolume: 0,

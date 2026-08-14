@@ -5,6 +5,7 @@ import LanguageClock from '../LanguageClock'
 import Latch from '../Latch'
 import SilenceTimer from '../SilenceTimer'
 import WavePad from '../WavePad'
+import Worklets from '../Worklets'
 import styles from './Hero.module.css'
 
 /** Wave pad edge length relative to phone frame width. */
@@ -103,6 +104,7 @@ export default function Hero({className}: Props): ReactNode {
       <div className={styles.foreground}>
         <Phone layout={layout} />
         <Latch style={latchStyle} />
+        <Worklets />
         <SilenceTimer />
         <LanguageClock />
       </div>

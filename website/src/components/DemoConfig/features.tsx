@@ -123,6 +123,9 @@ const FEATURES: Feature[] = [
         'All methods are thread-safe and can be called from the UI thread or custom worklets.',
     },
   },
+  {id: 'startListening', tab: 'worklets', anchor: 'worklets'},
+  {id: 'getVoiceInputVolume', tab: 'worklets', anchor: 'worklets'},
+  {id: 'stopListening', tab: 'worklets', anchor: 'worklets'},
 
   {
     id: 'autoFinishRecognitionMs',
