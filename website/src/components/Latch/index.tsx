@@ -77,6 +77,7 @@ export default function Latch({style}: Props): ReactNode {
         {
           ...style,
           '--link': String(link),
+          pointerEvents: 'none',
         } as CSSProperties
       }>
       <div className={styles.infoAbove}>
@@ -87,10 +88,9 @@ export default function Latch({style}: Props): ReactNode {
       </div>
       <button
         type="button"
-        className={styles.wrap}
+        className={styles.lock}
         data-locked={permissionsLocked ? 'true' : 'false'}
         data-busy={permissionBusy ? 'true' : 'false'}
-        data-prompt={permissionPrompt ?? undefined}
         aria-label={
           permissionBusy
             ? 'Permission request in progress'
@@ -102,10 +102,13 @@ export default function Latch({style}: Props): ReactNode {
         aria-disabled={permissionBusy || undefined}
         disabled={permissionBusy}
         onClick={onPress}>
-        <span className={styles.lock} aria-hidden="true">
-          <canvas ref={canvasRef} className={styles.canvas} />
-        </span>
-
+        <canvas ref={canvasRef} className={styles.canvas} />
+      </button>
+      <div
+        className={styles.wrap}
+        data-locked={permissionsLocked ? 'true' : 'false'}
+        data-busy={permissionBusy ? 'true' : 'false'}
+        data-prompt={permissionPrompt ?? undefined}>
         <span className={styles.sheet} aria-hidden="true">
           <span className={styles.rows}>
             <span
@@ -168,7 +171,7 @@ export default function Latch({style}: Props): ReactNode {
             </span>
           </span>
         </span>
-      </button>
+      </div>
     </div>
   )
 }

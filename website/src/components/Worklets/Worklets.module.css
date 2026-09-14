@@ -2,11 +2,9 @@
   --ink: #111111;
   --paper: #ffffff;
   --track-hot: #f3f3f3;
-  position: absolute;
-  right: clamp(12px, 2.5vw, 28px);
-  bottom: clamp(12px, 2.5vw, 28px);
+  position: relative;
   z-index: 1;
-  width: min(36rem, 62vw);
+  width: 100%;
   color: var(--ink);
   font-family:
     'SF Pro Text',
@@ -164,7 +162,7 @@
 
 @media (max-width: 860px) {
   .shell {
-    width: min(32rem, calc(100vw - 1.5rem));
+    width: 100%;
   }
 }
 

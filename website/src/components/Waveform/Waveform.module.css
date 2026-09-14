@@ -1,0 +1,46 @@
+.root {
+  position: relative;
+  z-index: 0;
+  flex: 0 1 12.5rem;
+  width: min(12.5rem, 100%);
+  box-sizing: border-box;
+  padding: 0.45em 0.55em;
+  border-radius: 0.55em;
+  background: #faeed2;
+  box-shadow:
+    0 0 0 1.5px rgba(45, 41, 38, 0.1),
+    0 4px 16px rgba(45, 41, 38, 0.14);
+  color: #2d2926;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.infoAbove {
+  position: absolute;
+  right: 0.2em;
+  bottom: 100%;
+  margin-bottom: 0.25em;
+  z-index: 5;
+  line-height: 0;
+  color: inherit;
+  pointer-events: auto;
+}
+
+.pad {
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 120 / 48;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.bar {
+  fill: #2d2926;
+}

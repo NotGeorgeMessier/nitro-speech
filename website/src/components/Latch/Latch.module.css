@@ -5,8 +5,13 @@
   --cream: #faeed2;
   --link: 0;
   --mark: 1.35em;
-  position: absolute;
+  position: relative;
   z-index: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: center;
+  gap: calc(var(--disc) * 0.14);
   color: var(--ink);
   font-family:
     'SF Pro Text',
@@ -14,7 +19,7 @@
     system-ui,
     sans-serif;
   font-size: calc(var(--disc) * 0.145);
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 /* Sit just above the cream card, not inside its rounded corner. */
@@ -31,15 +36,11 @@
 
 .wrap {
   display: grid;
-  grid-template-columns: calc(var(--disc) * 0.72) minmax(0, auto);
   align-items: center;
-  column-gap: calc(var(--disc) * 0.14);
   box-sizing: border-box;
   height: calc(var(--disc) * 1.02);
   margin: 0;
-  padding: calc(var(--disc) * 0.1) calc(var(--disc) * 0.16)
-    calc(var(--disc) * 0.1) calc(var(--disc) * 0.1);
-  border: none;
+  padding: calc(var(--disc) * 0.1) calc(var(--disc) * 0.16);
   border-radius: calc(var(--disc) * 0.28);
   background: var(--cream);
   box-shadow:
@@ -48,26 +49,9 @@
   color: inherit;
   font: inherit;
   text-align: left;
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+  pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
-  appearance: none;
-}
-
-.wrap[data-busy='true'],
-.wrap:disabled {
-  cursor: default;
-}
-
-.wrap:focus {
-  outline: none;
-}
-
-.wrap:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
 }
 
 .lock {
@@ -78,12 +62,34 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  border: none;
   border-radius: 50%;
   background: var(--ink);
   box-shadow: 0 2px 8px rgba(45, 41, 38, 0.22);
+  color: inherit;
   line-height: 0;
   overflow: hidden;
-  pointer-events: none;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  appearance: none;
+}
+
+.lock[data-busy='true'],
+.lock:disabled {
+  cursor: default;
+}
+
+.lock:focus {
+  outline: none;
+}
+
+.lock:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
 }
 
 .canvas {

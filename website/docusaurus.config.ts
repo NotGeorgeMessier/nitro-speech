@@ -1,10 +1,11 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
-import type * as Preset from '@docusaurus/preset-classic';
+import { themes as prismThemes } from 'prism-react-renderer'
+import type { Config } from '@docusaurus/types'
+import type * as Preset from '@docusaurus/preset-classic'
 
 const config: Config = {
   title: 'React Native Nitro Speech',
-  tagline: 'React Native real-time Speech Recognition powered by Nitro Modules',
+  tagline:
+    'The most advanced and feature-rich real-time Speech Recognition library powered by Nitro Modules',
   favicon: 'img/favicon.ico',
 
   future: {
@@ -68,9 +69,9 @@ const config: Config = {
           label: 'Docs',
         },
         {
-          href: 'https://github.com/NotGeorgeMessier/nitro-speech',
-          position: 'right',
-          className: 'header-github-link',
+          'href': 'https://github.com/NotGeorgeMessier/nitro-speech',
+          'position': 'right',
+          'className': 'header-github-link',
           'aria-label': 'GitHub repository',
         },
       ],
@@ -117,6 +118,6 @@ const config: Config = {
       additionalLanguages: ['bash', 'swift', 'kotlin', 'java', 'groovy'],
     },
   } satisfies Preset.ThemeConfig,
-};
+}
 
-export default config;
+export default config

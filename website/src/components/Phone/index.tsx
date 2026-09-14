@@ -1,8 +1,11 @@
 import Link from '@docusaurus/Link'
-import type {CSSProperties, ReactNode} from 'react'
+import {useCallback, type CSSProperties, type ReactNode} from 'react'
 
 import MeterCharts from '../Charts'
+import {useDemoConfig} from '../DemoConfig/DemoConfig'
+import {LANGUAGE_LOCALES} from '../DemoConfig/defaults'
 import PhraseFeed from '../Phrases'
+import {languageIndexForPhrase, languages} from '../Phrases/phrases'
 import {useDemoSync} from './DemoSync'
 import {MicroSvg} from './MicroSvg'
 import PermissionAlert from './PermissionAlert'
@@ -20,6 +23,15 @@ type Props = {
  */
 export default function Phone({layout}: Props): ReactNode {
   const {silent, beginSilence, notifyPhrase, permissionsLocked} = useDemoSync()
+  const {setLocale} = useDemoConfig()
+  const onPhrase = useCallback(
+    (index: number) => {
+      notifyPhrase(index)
+      const lang = languages[languageIndexForPhrase(index)]
+      if (lang != null) setLocale(LANGUAGE_LOCALES[lang.id])
+    },
+    [notifyPhrase, setLocale],
+  )
 
   if (!layout) return null
 
@@ -60,7 +72,7 @@ export default function Phone({layout}: Props): ReactNode {
             layout={layout}
             silent={silent}
             frozen={permissionsLocked}
-            onPhrase={notifyPhrase}
+            onPhrase={onPhrase}
             onSilenceRequest={beginSilence}
           />
           <Link className={styles.start} to="/docs/">
@@ -76,5 +88,5 @@ export default function Phone({layout}: Props): ReactNode {
 }
 
 export type {PhoneLayout} from './phoneLayout'
-export {computePhoneLayout} from './phoneLayout'
+export {computePhoneLayout, computePhoneLayoutForFrame} from './phoneLayout'
 export {DemoSyncProvider, useDemoSync} from './DemoSync'

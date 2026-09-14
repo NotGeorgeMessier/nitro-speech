@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from 'react'
 
-import InfoCorner from '../DemoConfig/InfoCorner'
+import InfoButton from '../DemoConfig/InfoButton'
 import {useDemoConfig} from '../DemoConfig/DemoConfig'
 import {
   TIMER_INTERVAL_MAX_MS,
@@ -188,11 +188,12 @@ export default function SilenceTimer(): ReactNode {
     <div
       className={styles.wrap}
       data-disabled={permissionsLocked ? 'true' : 'false'}>
-      <InfoCorner
-        placement="head"
-        featureId="autoFinishRecognitionMs"
-        label="About auto-finish silence timer"
-      />
+      <div className={styles.infoAbove}>
+        <InfoButton
+          featureId="autoFinishRecognitionMs"
+          label="About auto-finish silence timer"
+        />
+      </div>
       <Stepper
         label="auto-finish"
         valueLabel={`${thresholdSec}s`}

@@ -1,39 +1,42 @@
+import Link from '@docusaurus/Link'
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import {useEffect, useRef, useState, type CSSProperties, type ReactNode} from 'react'
 
-import Phone, {computePhoneLayout, type PhoneLayout} from '../Phone'
-import LanguageClock from '../LanguageClock'
+import {useDemoConfig} from '../DemoConfig/DemoConfig'
 import Latch from '../Latch'
+import Phone, {computePhoneLayoutForFrame, type PhoneLayout} from '../Phone'
 import SilenceTimer from '../SilenceTimer'
-import WavePad from '../WavePad'
+import Waveform from '../Waveform'
 import Worklets from '../Worklets'
+import WorldMap from '../WorldMap'
 import styles from './Hero.module.css'
 
-/** Wave pad edge length relative to phone frame width. */
-const WAVE_SCALE = 1.05
 /** Permissions latch size token relative to phone frame width. */
-const LATCH_SCALE = 0.28
+const LATCH_SCALE = 0.32
 
 type Props = {
   className?: string
 }
 
 /**
- * Hero stage: composes features.
+ * Hero stage: three columns — map + copy, phone, then latch / meters / worklets.
  * Cross-feature sync / config providers live on the page (shared with the
  * code samples and feature list below).
  */
 export default function Hero({className}: Props): ReactNode {
-  const rootRef = useRef<HTMLDivElement>(null)
+  const {siteConfig} = useDocusaurusContext()
+  const {focusFeature} = useDemoConfig()
+  const phoneSlotRef = useRef<HTMLDivElement>(null)
   const [layout, setLayout] = useState<PhoneLayout | null>(null)
 
   useEffect(() => {
-    const root = rootRef.current
-    if (!root) return
+    const slot = phoneSlotRef.current
+    if (!slot) return
 
     const syncLayout = () => {
-      const w = root.clientWidth
-      const h = root.clientHeight
-      if (w > 0 && h > 0) setLayout(computePhoneLayout(w, h))
+      const w = slot.clientWidth
+      const h = slot.clientHeight
+      if (w > 0 && h > 0) setLayout(computePhoneLayoutForFrame(w, h))
     }
     syncLayout()
 
@@ -41,7 +44,7 @@ export default function Hero({className}: Props): ReactNode {
       typeof ResizeObserver !== 'undefined'
         ? new ResizeObserver(syncLayout)
         : null
-    ro?.observe(root)
+    ro?.observe(slot)
     window.addEventListener('resize', syncLayout)
 
     return () => {
@@ -50,63 +53,46 @@ export default function Hero({className}: Props): ReactNode {
     }
   }, [])
 
-  const waveStyle: CSSProperties = layout
-    ? (() => {
-        const size = layout.frame.width * WAVE_SCALE
-        // Centered in the gap between the left edge and the phone.
-        const left = Math.max(0, layout.frame.left * 0.5 - size * 0.5)
-        return {
-          left,
-          top: layout.frame.top,
-          width: size,
-          height: size,
-        }
-      })()
-    : {left: 0, top: 0, width: 1, height: 1, opacity: 0}
-
-  // Cream card docks to the phone's left edge near the start CTA.
-  const latchStyle: CSSProperties = layout
-    ? (() => {
-        const size = layout.frame.width * LATCH_SCALE
-        const gap = Math.max(8, layout.frame.width * 0.05)
-        const top =
-          layout.frame.top + layout.frame.height * 0.62 - size * 0.46
-        return {
-          left: layout.frame.left - gap,
-          top,
-          opacity: 1,
-          '--disc': `${size}px`,
-          transform: 'translateX(-100%)',
-        } as CSSProperties
-      })()
-    : ({
-        left: 0,
-        top: 0,
-        opacity: 0,
-        '--disc': '1px',
-        transform: 'translateX(-100%)',
-      } as CSSProperties)
-
-  const phoneCenter = layout
-    ? {
-        x: layout.frame.left + layout.frame.width * 0.5,
-        y: layout.frame.top + layout.frame.height * 0.5,
-      }
-    : null
+  const latchStyle: CSSProperties | undefined = layout
+    ? ({'--disc': `${layout.frame.width * LATCH_SCALE}px`} as CSSProperties)
+    : undefined
 
   return (
     <div
-      ref={rootRef}
       className={`${styles.root} ${className ?? ''}`.trim()}
       data-hero-root>
-      <WavePad style={waveStyle} phoneCenter={phoneCenter} />
-      {/* Same stacking layer as the phone — above the wave pad. */}
-      <div className={styles.foreground}>
-        <Phone layout={layout} />
-        <Latch style={latchStyle} />
-        <Worklets />
-        <SilenceTimer />
-        <LanguageClock />
+      <div className={styles.row}>
+        <div className={styles.left}>
+          <WorldMap className={styles.map} />
+          <header className={styles.copy}>
+            <h1 className={styles.name}>{siteConfig.title}</h1>
+            <p className={styles.subtitle}>
+              The most{' '}
+              <button
+                type="button"
+                className={styles.subLink}
+                onClick={() => focusFeature('speechAnalyzer')}>
+                advanced
+              </button>{' '}
+              and{' '}
+              <Link className={styles.subLink} to="/docs/">
+                feature-rich
+              </Link>{' '}
+              real-time Speech Recognition library powered by Nitro Modules
+            </p>
+          </header>
+        </div>
+        <div ref={phoneSlotRef} className={styles.phoneSlot}>
+          <Phone layout={layout} />
+        </div>
+        <div className={styles.right}>
+          <Latch style={latchStyle} />
+          <div className={styles.mid}>
+            <Waveform />
+            <SilenceTimer />
+          </div>
+          <Worklets />
+        </div>
       </div>
     </div>
   )

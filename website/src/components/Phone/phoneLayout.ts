@@ -48,6 +48,72 @@ function phoneChromeY(halfX: number) {
   )
 }
 
+/** Phone fills a sized slot at the origin (document-flow hero). */
+export function computePhoneLayoutForFrame(
+  phoneW: number,
+  phoneH: number,
+): PhoneLayout {
+  const cssW = phoneW
+  const cssH = phoneH
+  const phoneHalf = {x: phoneW * 0.5, y: phoneH * 0.5}
+  const phoneC = {x: cssW * 0.5, y: cssH * 0.5}
+
+  const stroke = phoneStroke(phoneHalf.x)
+  const iy = phoneHalf.x * PHONE_ISLAND_HY
+  const hy = phoneHalf.x * PHONE_HOME_HY
+  const displayTop =
+    phoneC.y + phoneHalf.y - stroke - iy * (PHONE_ISLAND_GAP + 1)
+  const displayBot =
+    phoneC.y - phoneHalf.y + stroke + hy * (PHONE_HOME_GAP + 1)
+  const displayMid = 0.5 * (displayTop + displayBot)
+
+  const frame: CssRect = {
+    left: phoneC.x - phoneHalf.x,
+    top: cssH - (phoneC.y + phoneHalf.y),
+    width: phoneW,
+    height: phoneH,
+  }
+
+  const innerTopGl = phoneC.y + phoneHalf.y - stroke
+  const innerBotGl = phoneC.y - phoneHalf.y + stroke
+  const inner: CssRect = {
+    left: phoneC.x - phoneHalf.x + stroke,
+    top: cssH - innerTopGl,
+    width: phoneW - 2 * stroke,
+    height: innerTopGl - innerBotGl,
+  }
+
+  const screen: CssRect = {
+    left: phoneC.x - phoneHalf.x + stroke,
+    top: cssH - displayTop,
+    width: phoneW - 2 * stroke,
+    height: displayTop - displayBot,
+  }
+
+  const padX = phoneHalf.x * 0.12
+  const bottomHalf: CssRect = {
+    left: phoneC.x - phoneHalf.x + stroke + padX,
+    top: cssH - displayMid,
+    width: Math.max(0, phoneW - 2 * stroke - 2 * padX),
+    height: Math.max(0, displayMid - displayBot),
+  }
+
+  return {
+    cssW,
+    cssH,
+    phoneC,
+    phoneHalf,
+    stroke,
+    displayTop,
+    displayMid,
+    displayBot,
+    frame,
+    inner,
+    screen,
+    bottomHalf,
+  }
+}
+
 export function computePhoneLayout(cssW: number, cssH: number): PhoneLayout {
   const pillarH = cssH * 0.34 * 2
   let phoneH = pillarH * 1.2

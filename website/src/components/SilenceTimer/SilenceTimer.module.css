@@ -1,12 +1,11 @@
 .wrap {
-  position: absolute;
-  left: clamp(12px, 2.5vw, 28px);
-  bottom: clamp(12px, 2.5vw, 28px);
+  position: relative;
   z-index: 0;
   display: flex;
+  flex: 0 1 12.2rem;
   flex-direction: column;
   gap: 0.4em;
-  width: min(12.5rem, 46vw);
+  width: min(12.2rem, 100%);
   box-sizing: border-box;
   padding: 0.45em 0.55em;
   border-radius: 0.55em;
@@ -20,6 +19,18 @@
     sans-serif;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* Sit just above the cream card, not inside its rounded corner. */
+.infoAbove {
+  position: absolute;
+  right: 0.2em;
+  bottom: 100%;
+  margin-bottom: 0.25em;
+  z-index: 5;
+  line-height: 0;
+  color: inherit;
+  pointer-events: auto;
 }
 
 /* Permissions locked — countdown looks disabled; steppers stay usable. */
