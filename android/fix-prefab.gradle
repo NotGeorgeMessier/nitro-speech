@@ -12,40 +12,120 @@ tasks.configureEach { task ->
   }
 }
 
-afterEvaluate {
+// Touch prefab_config.json so ExternalNativeJsonGenerator re-runs prefab CLI.
+// AGP 9 removes applicationVariants/libraryVariants when android.newDsl=true.
+// Official replacement: androidComponents.onVariants (must be registered BEFORE
+// that project's variant callbacks have run — see android/gradle-recipes
+// allProjectsApkAction: gradle.beforeProject + plugins.withType/withId).
+
+def touchPrefabConfigs = { Project targetProj, String variantName ->
   def abis = reactNativeArchitectures()
-  rootProject.allprojects.each { proj ->
-    if (proj === rootProject) return
+  abis.each { abi ->
+    def searchDir = new File(targetProj.projectDir, ".cxx/${variantName}")
+    if (!searchDir.exists()) return
+    def matches = []
+    searchDir.eachDir { randomDir ->
+      def prefabFile = new File(randomDir, "${abi}/prefab_config.json")
+      if (prefabFile.exists()) matches << prefabFile
+    }
+    matches.each { prefabConfig ->
+      prefabConfig.setLastModified(System.currentTimeMillis())
+    }
+  }
+}
 
-    def dependsOnThisLib = proj.configurations.findAll { it.canBeResolved }.any { config ->
-      config.dependencies.any { dep ->
-        dep.group == project.group && dep.name == project.name
+def touchPrefabConfigsByScan = { Project targetProj ->
+  def abis = reactNativeArchitectures()
+  def cxxRoot = new File(targetProj.projectDir, ".cxx")
+  if (!cxxRoot.exists()) return
+  cxxRoot.eachDir { variantDir ->
+    abis.each { abi ->
+      def matches = []
+      variantDir.eachDir { randomDir ->
+        def prefabFile = new File(randomDir, "${abi}/prefab_config.json")
+        if (prefabFile.exists()) matches << prefabFile
       }
-    }
-    if (!dependsOnThisLib && proj != project) return
-
-    if (!proj.plugins.hasPlugin('com.android.application') && !proj.plugins.hasPlugin('com.android.library')) {
-      return
-    }
-
-    def variants = proj.android.hasProperty('applicationVariants') ? proj.android.applicationVariants : proj.android.libraryVariants
-    // Touch the prefab_config.json files to ensure that in ExternalNativeJsonGenerator.kt we will re-trigger the prefab CLI to
-    // generate a libnameConfig.cmake file that will contain our native library (.so).
-    // See this condition: https://cs.android.com/android-studio/platform/tools/base/+/mirror-goog-studio-main:build-system/gradle-core/src/main/java/com/android/build/gradle/tasks/ExternalNativeJsonGenerator.kt;l=207-219?q=createPrefabBuildSystemGlue
-    variants.all { variant ->
-      def variantName = variant.name
-      abis.each { abi ->
-        def searchDir = new File(proj.projectDir, ".cxx/${variantName}")
-        if (!searchDir.exists()) return
-        def matches = []
-        searchDir.eachDir { randomDir ->
-          def prefabFile = new File(randomDir, "${abi}/prefab_config.json")
-          if (prefabFile.exists()) matches << prefabFile
-        }
-        matches.each { prefabConfig ->
-          prefabConfig.setLastModified(System.currentTimeMillis())
-        }
+      matches.each { prefabConfig ->
+        prefabConfig.setLastModified(System.currentTimeMillis())
       }
     }
   }
 }
+
+def dependsOnThisLib = { Project targetProj ->
+  if (targetProj == project) return true
+  try {
+    return targetProj.configurations.findAll { it.canBeResolved }.any { config ->
+      config.dependencies.any { dep ->
+        dep.group == project.group && dep.name == project.name
+      }
+    }
+  } catch (Throwable ignored) {
+    return targetProj == project
+  }
+}
+
+def wireWithAndroidComponents = { Project targetProj ->
+  def androidComponents = targetProj.extensions.findByName('androidComponents')
+  if (androidComponents == null) return false
+  try {
+    androidComponents.onVariants(androidComponents.selector().all()) { variant ->
+      if (!dependsOnThisLib(targetProj)) return
+      touchPrefabConfigs(targetProj, variant.name)
+    }
+    return true
+  } catch (IllegalStateException ex) {
+    // "It is too late to add actions as the callbacks already executed"
+    return false
+  }
+}
+
+def wireLegacyVariants = { Project targetProj ->
+  targetProj.afterEvaluate {
+    if (!dependsOnThisLib(targetProj)) return
+    def variants = null
+    if (targetProj.android.hasProperty('applicationVariants')) {
+      variants = targetProj.android.applicationVariants
+    } else if (targetProj.android.hasProperty('libraryVariants')) {
+      variants = targetProj.android.libraryVariants
+    }
+    if (variants != null) {
+      variants.all { variant ->
+        touchPrefabConfigs(targetProj, variant.name)
+      }
+    } else {
+      // newDsl already on and onVariants was too late — best-effort scan
+      touchPrefabConfigsByScan(targetProj)
+    }
+  }
+}
+
+def wirePrefabTouches = { Project targetProj ->
+  if (targetProj.ext.has('nitroPrefabTouchesWired') && targetProj.ext.nitroPrefabTouchesWired) {
+    return
+  }
+  targetProj.ext.nitroPrefabTouchesWired = true
+
+  if (wireWithAndroidComponents(targetProj)) {
+    return
+  }
+  wireLegacyVariants(targetProj)
+}
+
+def hookProject = { Project targetProj ->
+  if (targetProj == targetProj.rootProject) return
+  targetProj.plugins.withId('com.android.application') {
+    wirePrefabTouches(targetProj)
+  }
+  targetProj.plugins.withId('com.android.library') {
+    wirePrefabTouches(targetProj)
+  }
+}
+
+// Early registration for projects not yet created (Google recipe pattern)
+gradle.beforeProject { proj ->
+  hookProject(proj)
+}
+
+// This module: android plugin is usually already applied before `apply from: fix-prefab`
+hookProject(project)
