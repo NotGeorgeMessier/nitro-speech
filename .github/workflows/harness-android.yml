@@ -1,0 +1,144 @@
+name: Harness Android
+
+on:
+  workflow_dispatch:
+    inputs:
+      device_api_level:
+        description: 'Android API level for the emulator'
+        required: false
+        default: '35'
+        type: string
+      device_profile:
+        description: 'Android device profile'
+        required: false
+        default: 'pixel'
+        type: string
+  push:
+    branches:
+      - main
+      - v4_9
+    paths:
+      - 'apps/example/__tests__/**'
+      - 'apps/example/src/**'
+      - 'apps/example/android/**'
+      - 'apps/example/rn-harness.config.mjs'
+      - 'apps/example/package.json'
+      - 'src/**'
+      - 'android/**'
+      - '.github/workflows/harness-android.yml'
+  pull_request:
+    paths:
+      - 'apps/example/__tests__/**'
+      - 'apps/example/src/**'
+      - 'apps/example/android/**'
+      - 'apps/example/rn-harness.config.mjs'
+      - 'apps/example/package.json'
+      - 'src/**'
+      - 'android/**'
+      - '.github/workflows/harness-android.yml'
+
+env:
+  DEVICE_API_LEVEL: ${{ inputs.device_api_level || '35' }}
+  DEVICE_PROFILE: ${{ inputs.device_profile || 'pixel' }}
+  DEVICE_ARCH: x86_64
+  AVD_NAME: test_avd
+
+jobs:
+  harness_android:
+    name: Harness Tests Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Install root dependencies
+        run: bun install
+
+      - name: Install example app dependencies
+        working-directory: apps/example
+        run: bun install
+
+      - name: Restore Gradle/CMake cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            apps/example/android/.gradle
+            apps/example/android/app/.cxx
+          key: ${{ runner.os }}-gradle-${{ env.DEVICE_ARCH }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-${{ env.DEVICE_ARCH }}-
+            ${{ runner.os }}-gradle-
+
+      - name: Build Android app
+        working-directory: apps/example/android
+        run: ./gradlew :app:assembleDebug --no-daemon --build-cache -PreactNativeArchitectures=${{ env.DEVICE_ARCH }}
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.DEVICE_API_LEVEL }}
+          arch: ${{ env.DEVICE_ARCH }}
+          profile: ${{ env.DEVICE_PROFILE }}
+          disk-size: 2G
+          heap-size: 1G
+          force-avd-creation: false
+          avd-name: ${{ env.AVD_NAME }}
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Run Harness E2E tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          working-directory: apps/example
+          api-level: ${{ env.DEVICE_API_LEVEL }}
+          arch: ${{ env.DEVICE_ARCH }}
+          profile: ${{ env.DEVICE_PROFILE }}
+          disk-size: 2G
+          heap-size: 1G
+          force-avd-creation: false
+          avd-name: ${{ env.AVD_NAME }}
+          disable-animations: true
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: |
+            # Grant permissions
+            adb shell pm grant com.nitrospeechexample android.permission.RECORD_AUDIO || true
+            # Install APK
+            adb install -r "./android/app/build/outputs/apk/debug/app-debug.apk"
+            # Run harness tests with emulator mode
+            HARNESS_ANDROID_DEVICE_MODE=emulator bun run test:harness:android
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: harness-android-results
+          path: |
+            apps/example/junit.xml
+            apps/example/.harness/
+
+      - name: Stop Gradle Daemon
+        working-directory: apps/example/android
+        run: ./gradlew --stop

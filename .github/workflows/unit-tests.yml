@@ -1,0 +1,58 @@
+name: Unit Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - v4_9
+    paths:
+      - 'src/**'
+      - 'apps/example/__tests__/*.test.ts'
+      - 'apps/example/jest.config.mjs'
+      - 'package.json'
+      - '.github/workflows/unit-tests.yml'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'apps/example/__tests__/*.test.ts'
+      - 'apps/example/jest.config.mjs'
+      - 'package.json'
+      - '.github/workflows/unit-tests.yml'
+
+jobs:
+  unit_tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install root dependencies
+        run: bun install
+
+      - name: Install example app dependencies
+        working-directory: apps/example
+        run: bun install
+
+      - name: Build library
+        run: bun run build
+
+      - name: Run unit tests
+        working-directory: apps/example
+        run: bun run test:unit
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-test-results
+          path: |
+            apps/example/junit.xml

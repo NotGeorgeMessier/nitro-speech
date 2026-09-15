@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build artifacts
+*.jsbundle
+*.jsbundle.map
+
+# Android
+android/app/build/
+android/.gradle/
+android/build/
+android/local.properties
+
+# iOS
+ios/build/
+ios/Pods/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/xcuserdata/
+ios/DerivedData/
+
+# Metro
+.metro-health-check*
+
+# Harness
+.harness/
+junit.xml
+
+# Debug
+*.log
+
+# TypeScript
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.xcode.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

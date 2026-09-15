@@ -1,0 +1,41 @@
+{
+  "name": "nitro-speech-example",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "build:android": "./android/gradlew -p android :app:assembleDebug --no-daemon --build-cache",
+    "build:ios": "cd ios && xcodebuild -workspace NitroSpeechExample.xcworkspace -scheme NitroSpeechExample -sdk iphonesimulator -configuration Debug -derivedDataPath build -UseModernBuildSystem=YES ONLY_ACTIVE_ARCH=YES",
+    "test:harness:android": "react-native-harness --harnessRunner android",
+    "test:harness:ios": "react-native-harness --harnessRunner ios",
+    "test:unit": "jest --config jest.config.mjs"
+  },
+  "dependencies": {
+    "react": "19.0.0",
+    "react-native": "0.79.2",
+    "react-native-nitro-modules": "0.35.9",
+    "react-native-nitro-speech": "link:../.."
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/runtime": "^7.26.0",
+    "@react-native-harness/bridge": "^1.4.0",
+    "@react-native-harness/platform-android": "^1.4.0",
+    "@react-native-harness/platform-apple": "^1.4.0",
+    "@react-native/babel-preset": "0.79.2",
+    "@react-native/metro-config": "0.79.2",
+    "@react-native/typescript-config": "0.79.2",
+    "@types/jest": "^29.5.14",
+    "@types/react": "^19.0.0",
+    "jest": "^29.7.0",
+    "metro-react-native-babel-preset": "^0.77.0",
+    "react-native-harness": "^1.4.0",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
