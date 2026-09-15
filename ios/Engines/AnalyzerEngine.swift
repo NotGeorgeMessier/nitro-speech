@@ -25,6 +25,11 @@ final class AnalyzerEngine: RecognizerEngine {
     }
     
     override func stop() {
+        // super.stop() guards on `isActive, !isStopping`, but returns Void, so
+        // without repeating the check here a second call still runs the work
+        // below: another inputBuilder.finish() and another cleanup Task. Two
+        // cleanups then race on the same stored properties and over-release.
+        guard isActive, !isStopping else { return }
         super.stop()
         inputBuilder?.finish()
         
