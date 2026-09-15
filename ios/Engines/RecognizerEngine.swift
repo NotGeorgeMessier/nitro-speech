@@ -155,6 +155,12 @@ class RecognizerEngine {
     ) {
         lg.log("[startAudioEngine]")
         guard let audioEngine, let hardwareFormat = self.recognizerDelegate?.hardwareFormat else { return }
+        // installTap throws an uncatchable Objective-C exception when bus 0
+        // already carries a tap, which happens when a session starts before the
+        // previous one's cleanup removed it (a quick stop then start).
+        // removeTap on an untapped bus is a no-op, so this is safe to call
+        // unconditionally.
+        audioEngine.inputNode.removeTap(onBus: 0)
         audioEngine.inputNode.installTap(
             onBus: 0,
             bufferSize: 1024,
