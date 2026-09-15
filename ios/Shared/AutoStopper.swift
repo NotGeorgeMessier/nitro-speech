@@ -35,10 +35,20 @@ final class AutoStopper {
     }
 
     deinit {
-        queue.sync {
-            stopLocked()
-            timeLeftMs = 0
-        }
+        // Never `queue.sync` here. Every method dispatches with
+        // `queue.async { guard let self ... }`, which creates a strong
+        // reference that is released when the block ends, i.e. ON `queue`.
+        // Once the owner has released its own reference (RecognizerEngine's
+        // cleanup calls deinitAutoStop on every stop), that block-local
+        // reference is the last one, so deinit runs on `queue` and a sync onto
+        // the current serial queue deadlocks: libdispatch traps in
+        // __DISPATCH_WAIT_FOR_QUEUE__ and the app dies with SIGTRAP.
+        //
+        // No synchronisation is needed instead: deinit means no other
+        // reference exists, and the timer's event handler is [weak self].
+        isStopped = true
+        timer?.cancel()
+        timer = nil
     }
 
     func resetTimer(from: String) {
