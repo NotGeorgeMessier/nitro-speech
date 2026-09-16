@@ -1,0 +1,135 @@
+name: Bug Report
+description: Report a bug in react-native-nitro-speech
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Nothing is required — fill what you can. More detail = faster fix.
+
+  - type: input
+    attributes:
+      label: React Native version
+      placeholder: ex. 0.84.1
+
+  - type: input
+    attributes:
+      label: react-native-nitro-modules version
+      placeholder: ex. 0.35.9
+
+  - type: input
+    attributes:
+      label: react-native-nitro-speech version
+      placeholder: ex. 0.4.8
+
+  - type: input
+    attributes:
+      label: Expo
+      description: Write `none` if not using Expo, otherwise the SDK version.
+      placeholder: none / 53
+
+  - type: input
+    attributes:
+      label: Device or simulator
+      description: Name and OS version (physical device or simulator/emulator).
+      placeholder: ex. iPhone 15 Pro (iOS 18.2) / Pixel 8 (Android 15 emulator)
+
+  - type: input
+    attributes:
+      label: AGP version
+      description: Android Gradle Plugin version if relevant (Android builds).
+      placeholder: ex. 8.7.2 / 9.2.1
+
+  - type: input
+    attributes:
+      label: Xcode version
+      description: Xcode version if relevant (iOS builds).
+      placeholder: ex. 16.2
+
+  - type: checkboxes
+    attributes:
+      label: Platform
+      options:
+        - label: iOS
+        - label: Android
+
+  - type: checkboxes
+    attributes:
+      label: Before filing
+      options:
+        - label: I have read the README and related docs — nothing helps
+        - label: I have searched for issues and found none
+
+  - type: textarea
+    attributes:
+      label: What happened
+      placeholder: Short summary of the bug.
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. …
+        2. …
+        3. …
+
+  - type: textarea
+    attributes:
+      label: Expected
+      placeholder: What you expected to happen.
+
+  - type: textarea
+    attributes:
+      label: Actual
+      placeholder: What actually happened.
+
+  - type: textarea
+    attributes:
+      label: Config
+      description: Relevant options (locale, autoFinishRecognitionMs, offline, callbacks, etc.).
+      render: tsx
+
+  - type: textarea
+    attributes:
+      label: Code sample
+      description: Minimal snippet that reproduces the issue.
+      render: tsx
+
+  - type: textarea
+    attributes:
+      label: Logs
+      description: JS and/or native logs (Metro, Xcode, Logcat).
+      render: shell
+
+  - type: checkboxes
+    attributes:
+      label: Related to feature
+      description: Check any features involved (from the README Features table).
+      options:
+        - label: Real-time transcription
+        - label: Full worklets support
+        - label: New advanced iOS models
+        - label: Locale support
+        - label: Auto-finish on silence
+        - label: Auto-finish progress
+        - label: Auto-finish progress interval
+        - label: Add Auto-finish Time
+        - label: Reset Auto-finish Time
+        - label: Reset Auto-finish Sensitivity
+        - label: Voice input volume
+        - label: Prewarm
+        - label: Update config
+        - label: Active state
+        - label: Haptic feedback
+        - label: Permission handling
+        - label: Background handling
+        - label: Repeating word filter
+        - label: Offensive word masking
+        - label: Contextual strings
+        - label: Language model selection
+        - label: Batch handling
+        - label: Formatting quality
+        - label: Transcription preset
+        - label: Automatic punctuation
+        - label: Atypical speech hint
+        - label: getSupportedLocalesIOS
