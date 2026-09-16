@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState, type ReactNode} from 'react'
 
 import InfoCorner from '../DemoConfig/InfoCorner'
+import LockCover from '../LockCover'
 import {useDemoSync} from '../Phone/DemoSync'
 import {METER_WINDOW} from './meterData'
 import styles from './MeterCharts.module.css'
@@ -47,7 +48,7 @@ function BarRow({
   format: (v: number) => string
 }): ReactNode {
   return (
-    <div className={styles.row}>
+    <div className={styles.row} aria-hidden="true">
       <div className={styles.meta}>
         <span className={styles.label}>{label}</span>
         <span className={styles.value}>{format(current)}</span>
@@ -73,7 +74,7 @@ function SmoothRow({
   current: number
 }): ReactNode {
   return (
-    <div className={styles.row}>
+    <div className={styles.row} aria-hidden="true">
       <div className={styles.meta}>
         <span className={styles.label}>smooth</span>
         <span className={styles.value}>{current.toFixed(3)}</span>
@@ -200,7 +201,8 @@ export default function MeterCharts({
         featureId="voiceVolume"
         label="About voice input volume"
       />
-      <div aria-hidden="true" className={styles.charts}>
+      <div className={styles.charts}>
+        <LockCover label="Show volume meters" />
         <BarRow
           label="raw"
           values={rawVals}

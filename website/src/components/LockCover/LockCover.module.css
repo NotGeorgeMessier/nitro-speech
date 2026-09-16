@@ -1,0 +1,29 @@
+.cover {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: inherit;
+  background: rgba(250, 238, 210, 0.55);
+  backdrop-filter: blur(14px) saturate(0.4);
+  -webkit-backdrop-filter: blur(14px) saturate(0.4);
+  color: #2d2926;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.cover:focus-visible {
+  outline: 2px solid #2d2926;
+  outline-offset: -2px;
+}
+
+.glyph {
+  display: block;
+  width: 1.35rem;
+  height: 1.35rem;
+  opacity: 0.72;
+}

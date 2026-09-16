@@ -131,7 +131,7 @@ function useFlagHrefs(): Record<string, string> {
 
 /**
  * Schematic world — Natural Earth 110m.
- * Phrase roller owns config locale. Tabs follow it until a tab or country click.
+ * Phrase roller owns config locale; the map only reads it.
  */
 export default function WorldMap({className}: Props): ReactNode {
   const {locale} = useDemoConfig()
@@ -140,7 +140,6 @@ export default function WorldMap({className}: Props): ReactNode {
   const [region, setRegion] = useState<RegionId>(
     () => (activeId && regionForCountry(activeId)) || 'na',
   )
-  const [followLocale, setFollowLocale] = useState(true)
   const [picked, setPicked] = useState<string | null>(null)
   const [copied, setCopied] = useState<string | null>(null)
   const [tag, setTag] = useState<string | null>(null)
@@ -156,13 +155,6 @@ export default function WorldMap({className}: Props): ReactNode {
   useEffect(() => {
     setReady(true)
   }, [])
-
-  useEffect(() => {
-    if (!followLocale || activeId == null) return
-    const next = regionForCountry(activeId)
-    if (next == null) return
-    setRegion((prev) => (prev === next ? prev : next))
-  }, [followLocale, activeId])
 
   useEffect(() => {
     if (picked == null) {
@@ -201,13 +193,11 @@ export default function WorldMap({className}: Props): ReactNode {
 
   const onCountry = (id: string) => {
     if (!tab.ids.has(id)) return
-    setFollowLocale(false)
     setCopied(null)
     setPicked((prev) => (prev === id ? null : id))
   }
 
   const onRegion = (id: RegionId) => {
-    setFollowLocale(false)
     setRegion(id)
     setCopied(null)
     setPicked((prev) => (prev != null && regionForCountry(prev) === id ? prev : null))

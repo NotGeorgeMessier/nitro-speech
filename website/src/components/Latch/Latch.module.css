@@ -35,6 +35,7 @@
 }
 
 .wrap {
+  position: relative;
   display: grid;
   align-items: center;
   box-sizing: border-box;

@@ -222,6 +222,7 @@ function buildWorkletsSample(input: SampleInput): string {
 ${blocks.join('\n\n')}`
 }
 
+/** Demo samples — source and comments stay English even if the page is i18n’d. */
 export function buildSamples(input: SampleInput): Record<CodeTabId, string> {
   const locale = input.locale
 

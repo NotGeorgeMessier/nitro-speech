@@ -11,6 +11,7 @@ import {
 
 import InfoButton from '../DemoConfig/InfoButton'
 import {useDemoConfig} from '../DemoConfig/DemoConfig'
+import LockCover from '../LockCover'
 import {
   WORKLET_METHODS,
   WORKLET_THREADS,
@@ -195,6 +196,7 @@ export default function Worklets({style}: Props): ReactNode {
         <InfoButton featureId="worklets" label="About worklets" />
       </div>
       <div className={styles.wrap}>
+        <LockCover label="Show worklet runtimes" />
         <div className={styles.board} role="group" aria-label="Worklet runtimes">
           {WORKLET_THREADS.map((thread) => (
             <div

@@ -9,6 +9,7 @@ import {
 
 import InfoButton from '../DemoConfig/InfoButton'
 import {useDemoConfig} from '../DemoConfig/DemoConfig'
+import LockCover from '../LockCover'
 import {DEMO_CONFIG_DEFAULTS} from '../DemoConfig/defaults'
 import {useDemoSync} from '../Phone/DemoSync'
 import styles from './Waveform.module.css'
@@ -148,6 +149,7 @@ export default function Waveform(): ReactNode {
           label="About voice sensitivity"
         />
       </div>
+      <LockCover label="Show voice spectrum" />
       <div
         ref={padRef}
         className={styles.pad}

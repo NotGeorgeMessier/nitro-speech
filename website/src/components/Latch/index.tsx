@@ -7,6 +7,7 @@ import {
 
 import InfoButton from '../DemoConfig/InfoButton'
 import {useDemoSync} from '../Phone/DemoSync'
+import LockCover from '../LockCover'
 import {AndroidSvg} from './AndroidSvg'
 import {AppleSvg} from './AppleSvg'
 import {CheckSvg} from './CheckSvg'
@@ -109,6 +110,7 @@ export default function Latch({style}: Props): ReactNode {
         data-locked={permissionsLocked ? 'true' : 'false'}
         data-busy={permissionBusy ? 'true' : 'false'}
         data-prompt={permissionPrompt ?? undefined}>
+        <LockCover label="Show permission status" />
         <span className={styles.sheet} aria-hidden="true">
           <span className={styles.rows}>
             <span

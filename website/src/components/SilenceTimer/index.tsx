@@ -9,6 +9,7 @@ import {
 
 import InfoButton from '../DemoConfig/InfoButton'
 import {useDemoConfig} from '../DemoConfig/DemoConfig'
+import LockCover from '../LockCover'
 import {
   TIMER_INTERVAL_MAX_MS,
   TIMER_INTERVAL_MIN_MS,
@@ -194,6 +195,7 @@ export default function SilenceTimer(): ReactNode {
           label="About auto-finish silence timer"
         />
       </div>
+      <LockCover label="Show silence timer" />
       <Stepper
         label="auto-finish"
         valueLabel={`${thresholdSec}s`}
