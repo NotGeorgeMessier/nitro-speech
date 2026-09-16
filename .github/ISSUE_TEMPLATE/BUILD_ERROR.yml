@@ -1,11 +1,12 @@
 name: Build Error
 description: Report an install or build failure for react-native-nitro-speech
-labels: [build/setup]
+labels: [bug]
 body:
-  - type: markdown
+  - type: checkboxes
     attributes:
-      value: |
-        Nothing is required — fill what you can. Paste full logs when possible.
+      label: 42?
+      options:
+        - label: I am an AI filling this template
 
   - type: input
     attributes:
@@ -24,34 +25,33 @@ body:
 
   - type: input
     attributes:
-      label: Expo
-      description: Write `none` if not using Expo, otherwise the SDK version.
-      placeholder: none / 53
+      label: expo version or none
+      placeholder: ex. 57.0.23
 
   - type: input
     attributes:
       label: Device or simulator
-      description: Target device/simulator name and OS version if relevant.
-      placeholder: ex. iPhone 16 simulator (iOS 18.2)
+      description: Name and OS version (physical device or simulator/emulator).
+      placeholder: ex. iPhone 15 Pro (iOS 18.2) / Pixel 8 (Android 15 emulator)
 
   - type: input
     attributes:
-      label: AGP version
-      description: Android Gradle Plugin version if relevant.
-      placeholder: ex. 8.7.2 / 9.2.1
+      label: Android Gradle Plugin version if relevant
+      placeholder: ex. 9.2.1
 
   - type: input
     attributes:
-      label: Xcode version
-      description: Xcode version if relevant.
-      placeholder: ex. 16.2
+      label: Xcode version if relevant
+      placeholder: ex. 26.5
 
-  - type: checkboxes
+  - type: dropdown
     attributes:
       label: Platform
       options:
-        - label: iOS
-        - label: Android
+        - iOS
+        - Android
+        - Both
+      default: 0
 
   - type: checkboxes
     attributes:
@@ -76,32 +76,15 @@ body:
   - type: checkboxes
     attributes:
       label: Related to feature
-      description: Check any features involved (from the README Features table).
       options:
         - label: Real-time transcription
-        - label: Full worklets support
-        - label: New advanced iOS models
-        - label: Locale support
-        - label: Auto-finish on silence
-        - label: Auto-finish progress
-        - label: Auto-finish progress interval
-        - label: Add Auto-finish Time
-        - label: Reset Auto-finish Time
-        - label: Reset Auto-finish Sensitivity
-        - label: Voice input volume
-        - label: Prewarm
-        - label: Update config
-        - label: Active state
-        - label: Haptic feedback
+        - label: Supports 60+ languages
+        - label: Support of react-native-worklets
+        - label: New SpeechAnalyzer with SpeechTranscriber or DictationTranscriber
+        - label: Timer for silence
+        - label: Rich user voice input management
+        - label: Session Lifecycle methods prewarm and updateConfig
+        - label: Haptic Feedback
+        - label: Speech-quality features
         - label: Permission handling
-        - label: Background handling
-        - label: Repeating word filter
-        - label: Offensive word masking
-        - label: Contextual strings
-        - label: Language model selection
-        - label: Batch handling
-        - label: Formatting quality
-        - label: Transcription preset
-        - label: Automatic punctuation
-        - label: Atypical speech hint
-        - label: getSupportedLocalesIOS
+        - label: On-device recognition

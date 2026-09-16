@@ -2,55 +2,46 @@ name: Feature request / Enhancement
 description: Request a feature or improvement for react-native-nitro-speech
 labels: [enhancement]
 body:
-  - type: markdown
+  - type: checkboxes
     attributes:
-      value: |
-        Nothing is required — fill what you can.
+      label: 42?
+      options:
+        - label: I am an AI filling this template
 
   - type: checkboxes
     attributes:
       label: About this request
       options:
-        - label: I am an AI filling this template
-        - label: iOS
-        - label: Android
         - label: I have read the README and Docs
         - label: There are no other issues about this
         - label: I can help to test it
+        - label: I can create a PR with implementation
+
+  - type: dropdown
+    attributes:
+      label: Platform
+      options:
+        - iOS
+        - Android
+        - Both
+      default: 0
 
   - type: checkboxes
     attributes:
       label: Related to
       options:
         - label: New feature
-        - label: Improvement
         - label: Real-time transcription
-        - label: Full worklets support
-        - label: New advanced iOS models
-        - label: Locale support
-        - label: Auto-finish on silence
-        - label: Auto-finish progress
-        - label: Auto-finish progress interval
-        - label: Add Auto-finish Time
-        - label: Reset Auto-finish Time
-        - label: Reset Auto-finish Sensitivity
-        - label: Voice input volume
-        - label: Prewarm
-        - label: Update config
-        - label: Active state
-        - label: Haptic feedback
+        - label: Supports 60+ languages
+        - label: Support of react-native-worklets
+        - label: New SpeechAnalyzer with SpeechTranscriber or DictationTranscriber
+        - label: Timer for silence
+        - label: Rich user voice input management
+        - label: Session Lifecycle methods prewarm and updateConfig
+        - label: Haptic Feedback
+        - label: Speech-quality features
         - label: Permission handling
-        - label: Background handling
-        - label: Repeating word filter
-        - label: Offensive word masking
-        - label: Contextual strings
-        - label: Language model selection
-        - label: Batch handling
-        - label: Formatting quality
-        - label: Transcription preset
-        - label: Automatic punctuation
-        - label: Atypical speech hint
-        - label: getSupportedLocalesIOS
+        - label: On-device recognition
 
   - type: textarea
     attributes:
