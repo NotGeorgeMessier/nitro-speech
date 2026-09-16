@@ -1,0 +1,68 @@
+name: Feature request / Enhancement
+description: Request a feature or improvement for react-native-nitro-speech
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Nothing is required — fill what you can.
+
+  - type: checkboxes
+    attributes:
+      label: About this request
+      options:
+        - label: I am an AI filling this template
+        - label: iOS
+        - label: Android
+        - label: I have read the README and Docs
+        - label: There are no other issues about this
+        - label: I can help to test it
+
+  - type: checkboxes
+    attributes:
+      label: Related to
+      options:
+        - label: New feature
+        - label: Improvement
+        - label: Real-time transcription
+        - label: Full worklets support
+        - label: New advanced iOS models
+        - label: Locale support
+        - label: Auto-finish on silence
+        - label: Auto-finish progress
+        - label: Auto-finish progress interval
+        - label: Add Auto-finish Time
+        - label: Reset Auto-finish Time
+        - label: Reset Auto-finish Sensitivity
+        - label: Voice input volume
+        - label: Prewarm
+        - label: Update config
+        - label: Active state
+        - label: Haptic feedback
+        - label: Permission handling
+        - label: Background handling
+        - label: Repeating word filter
+        - label: Offensive word masking
+        - label: Contextual strings
+        - label: Language model selection
+        - label: Batch handling
+        - label: Formatting quality
+        - label: Transcription preset
+        - label: Automatic punctuation
+        - label: Atypical speech hint
+        - label: getSupportedLocalesIOS
+
+  - type: textarea
+    attributes:
+      label: Motivation
+      description: What you want and why it matters.
+
+  - type: textarea
+    attributes:
+      label: Workarounds
+      description: Any current workarounds so you are not fully blocked.
+
+  - type: textarea
+    attributes:
+      label: References
+      description: Links to docs, other libraries, issues, or designs.
