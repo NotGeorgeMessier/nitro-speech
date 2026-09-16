@@ -37,14 +37,40 @@ cd ios && pod install
 
 No additional setup required.
 
+## Quickstart
+
+After install (and iOS `Info.plist` keys — see [Permissions](./features/permissions.md)):
+
+```typescript
+import { useRecognizer } from 'react-native-nitro-speech'
+
+const { startListening, stopListening } = useRecognizer({
+  onReadyForSpeech: () => console.log('Listening...'),
+  onRecordingStopped: () => console.log('Stopped'),
+  onResult: (textBatches) => console.log('Result:', textBatches.join('\n')),
+  onAutoFinishProgress: (timeLeftMs) =>
+    console.log('Auto-finish in:', timeLeftMs, 'ms'),
+  onError: (code) => console.log('Error:', code),
+  onPermissionDenied: () => console.log('Permission denied'),
+})
+
+startListening({
+  locale: 'en-US',
+})
+```
+
+`useRecognizer` is the recommended session owner. Full example: [useRecognizer](./examples/use-recognizer.md). On-device: [On-device speech recognition](./features/on-device.md).
+
 ## Requirements
 
 - React Native >= 0.76
 - New Architecture only
-- `react-native-nitro-modules`
+- `react-native-nitro-modules` — the 4.9 line is developed against **0.36.x** (`0.36.4`)
 
 ## Next steps
 
 - [Permissions](./features/permissions.md)
 - [useRecognizer hook](./examples/use-recognizer.md)
 - [Real-time transcription](./features/real-time-transcription.md)
+- [On-device speech recognition](./features/on-device.md)
+- [Supported locales](./features/supported-locales.md)

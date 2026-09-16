@@ -1,8 +1,8 @@
-# On-Device Speech Recognition (Early Preview)
+# On-Device Speech Recognition
 
 Prefer or require recognition that runs on the device (no network speech service).
 
-This is an **early preview**. Behavior differs by OS version and OEM.
+The 4.9 line exposes this as a first-class config and query API. Behavior still differs by OS version and OEM — especially on Android, where model download UI is inconsistent.
 
 ---
 
@@ -76,7 +76,24 @@ Passed to `prewarm` / `startListening` like other config fields.
 | `SpeechRecognitionError.OnDeviceNotSupported` | `require` and device has no on-device recognition service. |
 | `SpeechRecognitionError.OnDeviceModelNotInstalled` | `require` and locale model is not installed (download failed, canceled, or not possible). |
 
-Use `ErrorDictionary` for messages. Delivered via `onError` (including failed `prewarm` on Android when `require` cannot prepare the model).
+Use `ErrorDictionary` for messages:
+
+```typescript
+import { ErrorDictionary, SpeechRecognitionError } from 'react-native-nitro-speech'
+
+onError: (error) => {
+  if (error === SpeechRecognitionError.OnDeviceNotSupported) {
+    console.log(ErrorDictionary[error].message)
+    // "On-device speech recognition is not supported on this device"
+  }
+  if (error === SpeechRecognitionError.OnDeviceModelNotInstalled) {
+    console.log(ErrorDictionary[error].message)
+    // "On-device speech recognition model is not installed for this locale"
+  }
+}
+```
+
+Delivered via `onError` (including failed `prewarm` on Android when `require` cannot prepare the model).
 
 ---
 
@@ -123,6 +140,8 @@ With `onDevice` set:
 
 - **iOS:** SF path sets `requiresOnDeviceRecognition` when supported; Speech/Dictation download assets via `AssetInventory` in engine prewarm.
 - **Android:** uses `createOnDeviceSpeechRecognizer` when on-device is selected (not `EXTRA_PREFER_OFFLINE`). On API 33+, may call `triggerModelDownload` if the locale pack is missing (OEM may show a system dialog — or nothing).
+
+`prewarm` also accepts `loadOnDeviceModel` (default `true`). See [Prewarm](./prewarm.md#load-on-device-model).
 
 ---
 
@@ -173,10 +192,15 @@ if (!onDeviceRecognitionAvailable()) {
 
 const { locales, installedLocales } = await getSupportedLocales()
 
-await prewarm({
-  locale: 'en-US',
-  onDevice: 'require', // or 'prefer'
-})
+await prewarm(
+  {
+    locale: 'en-US',
+    onDevice: 'require', // or 'prefer'
+  },
+  {
+    loadOnDeviceModel: true, // default; no-op unless onDevice is set
+  }
+)
 
 startListening({
   locale: 'en-US',
@@ -192,6 +216,6 @@ Or via `RecognizerRef` (same method names).
 
 1. Call `onDeviceRecognitionAvailable()` if you need a service gate.
 2. Call `getSupportedLocales()` to see installed vs downloadable (Android: meaningful on API 33+).
-3. Prefer `prewarm({ onDevice, locale })` before first listen so model download can finish.
+3. Prefer `prewarm({ onDevice, locale }, { loadOnDeviceModel: true })` before first listen so model download can finish.
 4. Choose `prefer` vs `require` based on whether offline is optional or mandatory.
-5. Handle `SpeechRecognitionError.OnDeviceNotSupported` and `SpeechRecognitionError.OnDeviceModelNotInstalled` in `onError`.
+5. Handle `SpeechRecognitionError.OnDeviceNotSupported` and `SpeechRecognitionError.OnDeviceModelNotInstalled` in `onError` via `ErrorDictionary`.

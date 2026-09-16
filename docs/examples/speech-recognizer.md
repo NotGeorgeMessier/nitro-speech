@@ -83,13 +83,17 @@ The session lifecycle:
 - `getIsActive` - [Link 🔗](../features/is-recognizer-active.md#is-recognizer-active)
 - `getVoiceInputVolume` - [Link 🔗](../features/voice-input-volume.md#voice-input-volume)
 - `getPermissions` - [Link 🔗](../features/permissions.md#permissions)
-- `getSupportedLocalesIOS` - [Link 🔗](../features/supported-locales.md#ios)
+- `getSupportedLocales` - [Link 🔗](../features/supported-locales.md#supported-locales)
+- `onDeviceRecognitionAvailable` - [Link 🔗](../features/on-device.md)
+- `getSupportedLocalesIOS` (deprecated) - [Link 🔗](../features/supported-locales.md#getsupportedlocalesios-deprecated)
 
 ```typescript
 // Start from anywhere
 SpeechRecognizer.startListening({
   // Universal
   locale: "en-US",
+  // On-device: 'prefer' | 'require' (omitted uses platform default)
+  // onDevice: 'prefer',
   contextualStrings: ['custom', 'words'],
   maskOffensiveWords: false,
   // Mutable properties
@@ -118,11 +122,13 @@ SpeechRecognizer.stopListening();
 SpeechRecognizer.prewarm(
   {
     locale: 'en-US',
+    // onDevice: 'prefer',
     // ... your config to prepare
   },
   // Prewarm config, optional
-  { 
-    requestPermission: true
+  {
+    requestPermission: true,
+    loadOnDeviceModel: true, // default; no-op unless onDevice is set
   }
 );
 
@@ -151,6 +157,14 @@ console.log('Volume:', volumeEvent)
 // Get the permissions
 const permissions = SpeechRecognizer.getPermissions();
 console.log('Permissions:', permissions);
+
+// Cross-platform on-device locales
+const { locales, installedLocales } = await SpeechRecognizer.getSupportedLocales();
+console.log('Supported locales:', locales);
+console.log('Installed locales:', installedLocales);
+
+const onDeviceOk = SpeechRecognizer.onDeviceRecognitionAvailable();
+console.log('On-device service:', onDeviceOk);
 ```
 
 Full worklet support, see [Worklets](../features/worklets.md#worklets).

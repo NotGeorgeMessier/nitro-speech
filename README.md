@@ -29,6 +29,11 @@ The API is identical — no migration needed.
 - 🧩 Session Lifecycle methods: `prewarm` and `updateConfig`
 - 👆 Configurable Haptic Feedback on start and finish
 - 🎚️ Speech-quality features: see full list [here](./docs/features/real-time-transcription.md#real-time-transcription)
+- 📴 On-device recognition via `onDevice: 'prefer' | 'require'`
+  - Probe the service with `onDeviceRecognitionAvailable`
+  - Cross-platform locales via `getSupportedLocales` (`locales` / `installedLocales`)
+  - Optional model load during `prewarm` with `loadOnDeviceModel`
+  - Failures via `SpeechRecognitionError.OnDeviceNotSupported` / `OnDeviceModelNotInstalled` (`ErrorDictionary`)
 - 🔓 Embedded Permission handling
   - Callback `onPermissionDenied` and method `getPermissions`
   - Option `requestPermission` for `prewarm` method
@@ -37,6 +42,7 @@ The API is identical — no migration needed.
 ## Table of Contents
 
 - [Installation](#installation)
+- [Quickstart](#quickstart)
 - [Permissions](#permissions)
 - [Features](#features)
 - [Requirements](#requirements)
@@ -50,6 +56,8 @@ The API is identical — no migration needed.
   - [Multithreading (react-native-worklets)](./docs/features/worklets.md#worklets)
   - [Voice input volume](./docs/features/voice-input-volume.md#voice-input-volume)
   - [Is active](./docs/features/is-recognizer-active.md#is-recognizer-active)
+  - [On-device recognition](./docs/features/on-device.md)
+  - [Supported locales](./docs/features/supported-locales.md#supported-locales)
   - [Direct access to SpeechRecognizer](./docs/examples/speech-recognizer.md#speechrecognizer)
 
 ## Installation
@@ -81,6 +89,30 @@ cd ios && pod install
 ### Android
 
 No additional setup required.
+
+## Quickstart
+
+After install (and iOS `Info.plist` keys — see [Permissions](#permissions)):
+
+```typescript
+import { useRecognizer } from 'react-native-nitro-speech'
+
+const { startListening, stopListening } = useRecognizer({
+  onReadyForSpeech: () => console.log('Listening...'),
+  onRecordingStopped: () => console.log('Stopped'),
+  onResult: (textBatches) => console.log('Result:', textBatches.join('\n')),
+  onAutoFinishProgress: (timeLeftMs) =>
+    console.log('Auto-finish in:', timeLeftMs, 'ms'),
+  onError: (code) => console.log('Error:', code),
+  onPermissionDenied: () => console.log('Permission denied'),
+})
+
+startListening({
+  locale: 'en-US',
+})
+```
+
+`useRecognizer` is the recommended session owner. For the full callback/config surface, see [useRecognizer](./docs/examples/use-recognizer.md#hook-userecognizer). For on-device (`onDevice: 'prefer' | 'require'`), see [On-device speech recognition](./docs/features/on-device.md).
 
 ## Permissions
 
@@ -139,7 +171,9 @@ Both permissions are required for speech recognition to work on iOS.
 | **Transcription preset**          | [Link 🔗](./docs/features/real-time-transcription.md#transcription-preset)           | ✅       | Auto     |
 | **Automatic punctuation**         | [Link 🔗](./docs/features/real-time-transcription.md#automatic-punctuation)          | ✅       | Auto     |
 | **Atypical speech hint**          | [Link 🔗](./docs/features/real-time-transcription.md#atypical-speech-hint)           | ✅       | Auto     |
-| **getSupportedLocalesIOS**        | [Link 🔗](./docs/features/supported-locales.md#ios)                                  | ✅       | X        |
+| **On-device recognition**         | [Link 🔗](./docs/features/on-device.md)                                              | ✅       | ✅       |
+| **getSupportedLocales**           | [Link 🔗](./docs/features/supported-locales.md#supported-locales)                    | ✅       | ✅       |
+| **getSupportedLocalesIOS** (deprecated) | [Link 🔗](./docs/features/supported-locales.md#getsupportedlocalesios-deprecated) | ✅       | X        |
 
 ## Requirements
 
@@ -158,6 +192,8 @@ If your project can't migrate to the latest version of `react-native-nitro-modul
 | `@gmessier/nitro-speech < 0.3.*`  | `react-native-nitro-modules < 0.35.0`  |
 | `@gmessier/nitro-speech >= 0.3.*` | `react-native-nitro-modules >= 0.35.0` |
 | `react-native-nitro-speech *`     | `react-native-nitro-modules >= 0.35.0` |
+
+The 4.9 line (`0.4.9`) is developed against `react-native-nitro-modules` **0.36.x** (`0.36.4`).
 
 
 ## Contributions and feedback

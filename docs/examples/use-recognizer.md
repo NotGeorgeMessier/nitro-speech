@@ -24,7 +24,9 @@ On iOS 26+, the recognizer prefers the most advanced `SpeechTranscriber` path fo
 
 - Common features [here](../features/real-time-transcription.md#real-time-transcription)
 - Mutable properties [here](../features/update-config.md#update-config)
-- Silence timer [here](../features/silence-timer.md#silence-timer)  
+- Silence timer [here](../features/silence-timer.md#silence-timer)
+- On-device [here](../features/on-device.md)
+- Locales [here](../features/supported-locales.md#supported-locales)  
 
 ### Methods
 
@@ -39,7 +41,9 @@ The session lifecycle:
 - `getIsActive` - [Link 🔗](../features/is-recognizer-active.md#is-recognizer-active)
 - `getVoiceInputVolume` - [Link 🔗](../features/voice-input-volume.md#voice-input-volume)
 - `getPermissions` - [Link 🔗](../features/permissions.md#permissions)
-- `getSupportedLocalesIOS` - [Link 🔗](../features/supported-locales.md#ios)
+- `getSupportedLocales` - [Link 🔗](../features/supported-locales.md#supported-locales)
+- `onDeviceRecognitionAvailable` - [Link 🔗](../features/on-device.md)
+- `getSupportedLocalesIOS` (deprecated) - [Link 🔗](../features/supported-locales.md#getsupportedlocalesios-deprecated)
 
 ### With React Navigation
 
@@ -64,7 +68,9 @@ const {
     getIsActive,
     getVoiceInputVolume,
     getPermissions,
-    getSupportedLocalesIOS,
+    getSupportedLocales,
+    onDeviceRecognitionAvailable,
+    getSupportedLocalesIOS, // deprecated — prefer getSupportedLocales
   } = useRecognizer(
     // Set up the callbacks
     {
@@ -101,6 +107,8 @@ const handleStartListening = () => {
   startListening({
     // Universal
     locale: "en-US",
+    // On-device: 'prefer' | 'require' (omitted uses platform default)
+    // onDevice: 'prefer',
     contextualStrings: ['custom', 'words'],
     maskOffensiveWords: false,
     // Mutable properties
@@ -191,10 +199,14 @@ scheduleOnRuntime(workletRuntime, () => {
   // PermissionStatus enum: 0: GRANTED, 1: DENIED, 2: NOT_REQUESTED
   const permissions = RecognizerRef.getPermissions();
   console.log('Permissions:', permissions);
-  // Array of supported locales, empty array on Android
-  const supportedLocalesIOS = RecognizerRef.getSupportedLocalesIOS();
-  console.log('Supported locales:', supportedLocalesIOS);
 });
+
+// JS thread — getSupportedLocales is async (do not await on worklets)
+const { locales, installedLocales } = await RecognizerRef.getSupportedLocales();
+console.log('Supported locales:', locales);
+console.log('Installed locales:', installedLocales);
+const onDeviceOk = RecognizerRef.onDeviceRecognitionAvailable();
+console.log('On-device service:', onDeviceOk);
 
 scheduleOnUI(() => {
   // UI thread scope...
