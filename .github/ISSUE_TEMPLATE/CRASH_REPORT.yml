@@ -1,5 +1,5 @@
-name: Bug Report
-description: Report a bug in react-native-nitro-speech
+name: Crash Report
+description: Report a hard crash in react-native-nitro-speech
 labels: [bug]
 body:
   - type: checkboxes
@@ -70,7 +70,7 @@ body:
   - type: textarea
     attributes:
       label: What happened
-      placeholder: Short summary of the bug.
+      placeholder: When it crashed (e.g. stop/start, unmount while listening).
 
   - type: textarea
     attributes:
@@ -88,7 +88,7 @@ body:
   - type: textarea
     attributes:
       label: Actual behaviour
-      placeholder: What actually happened.
+      placeholder: Crash type / signal if known (SIGTRAP, EXC_BAD_ACCESS, …).
 
   - type: textarea
     attributes:
@@ -104,8 +104,8 @@ body:
 
   - type: textarea
     attributes:
-      label: Logs
-      description: JS and/or native logs (Metro, Xcode, Logcat).
+      label: Crash logs / stack
+      description: Native stack + JS logs (Xcode / Logcat / crash report).
       render: shell
 
   - type: checkboxes
