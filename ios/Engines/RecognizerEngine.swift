@@ -3,8 +3,7 @@ import Speech
 import AVFoundation
 
 class RecognizerEngine {
-    var isActive = false
-    var isStopping = false
+    var status: EngineStatus = .stopped
     weak var recognizerDelegate: RecognizerDelegate?
     
     private let audioLevelTracker = AudioLevelTracker()
@@ -58,18 +57,22 @@ class RecognizerEngine {
     }
     
     func start() async {
-        guard !isActive else { return }
+        guard status == .stopped else { return }
+        
+        status = .starting
         
         let granted = await requestPermissions()
         if granted {
             await startSession()
+        } else {
+            status = .stopped
         }
     }
     
-    func stop() {
-        guard isActive, !isStopping else { return }
+    func stop() throws {
+        guard status == .active else { throw RecognizerError.alreadyStopped }
         lg.log("[stop]")
-        isStopping = true
+        status = .finishing
         HapticImpact.trigger(with: self.recognizerDelegate?.config?.stopHapticFeedbackStyle)
     }
     
@@ -78,7 +81,7 @@ class RecognizerEngine {
         addMsToTimer: Double? = nil,
         resetTimer: Bool? = nil
     ) {
-        guard let recognizerDelegate, isActive, !isStopping else { return }
+        guard let recognizerDelegate, status == .active else { return }
         let currentConfig = recognizerDelegate.config
         // Update AutoFinish time
         if let newAutoFinish = newConfig?.autoFinishRecognitionMs,
@@ -124,15 +127,13 @@ class RecognizerEngine {
     
     func startSession() async {
         lg.log("[startSession.startSession]")
-        
-        isStopping = false
     }
     
     func sendFeedbackOnStart() {
         guard let recognizerDelegate else { return }
         
         // Indicate everything is working
-        isActive = true
+        status = .active
         
         // Trigger watchers
         initAutoStop()
@@ -154,7 +155,10 @@ class RecognizerEngine {
         onBuffer: @escaping (AVAudioPCMBuffer) -> Void
     ) {
         lg.log("[startAudioEngine]")
-        guard let audioEngine, let hardwareFormat = self.recognizerDelegate?.hardwareFormat else { return }
+        guard let audioEngine, let hardwareFormat = self.recognizerDelegate?.hardwareFormat else {
+            return
+        }
+        audioEngine.inputNode.removeTap(onBus: 0)
         audioEngine.inputNode.installTap(
             onBus: 0,
             bufferSize: 1024,
@@ -198,7 +202,7 @@ class RecognizerEngine {
 
     func cleanup(from: String) {
         lg.log("[cleanup]: \(from)")
-        let wasActive = isActive
+        let wasActive = status == .active || status == .finishing
         deinitAutoStop()
         stopAppStateObserver()
         stopAudioSession()
@@ -210,8 +214,7 @@ class RecognizerEngine {
         audioEngine?.inputNode.removeTap(onBus: 0)
         
         audioEngine = nil
-        isActive = false
-        isStopping = false
+        status = .stopped
         self.recognizerDelegate?.volumeChange(
             event:
                 VolumeChangeEvent(
@@ -248,7 +251,7 @@ class RecognizerEngine {
     }
     
     func trackPartialActivity() {
-        if !self.isStopping {
+        if status == .active {
             self.autoStopper?.resetTimer(from: "Partial results")
         }
     }
@@ -292,7 +295,7 @@ class RecognizerEngine {
                 )
             },
             onTimeout: { [weak self] in
-                self?.stop()
+                try? self?.stop()
             }
         )
     }
@@ -305,8 +308,8 @@ class RecognizerEngine {
     
     private func startAppStateObserver() {
         appStateObserver = AppStateObserver { [weak self] in
-            guard let self, self.isActive else { return }
-            self.stop()
+            guard let self else { return }
+            try? self.stop()
         }
     }
     

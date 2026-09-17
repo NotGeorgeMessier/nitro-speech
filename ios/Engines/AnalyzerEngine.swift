@@ -24,8 +24,8 @@ final class AnalyzerEngine: RecognizerEngine {
         super.init(locale: locale, delegate: delegate)
     }
     
-    override func stop() {
-        super.stop()
+    override func stop() throws {
+        try super.stop()
         inputBuilder?.finish()
         
         Task { [weak self] in
@@ -131,7 +131,7 @@ final class AnalyzerEngine: RecognizerEngine {
                     inputBuilder?.yield(input)
                 }
             } catch {
-                if Task.isCancelled || self.isStopping {
+                if Task.isCancelled || status == .finishing {
                     return
                 }
                 self.retry(from: "startRecognition.audioProducerTask", isPrewarm: false)
@@ -151,7 +151,7 @@ final class AnalyzerEngine: RecognizerEngine {
                     }
                 )
             } catch {
-                if self.isStopping || error is CancellationError {
+                if status == .finishing || error is CancellationError {
                     return
                 }
                 self.reportError(

@@ -10,8 +10,8 @@ final class SFSpeechEngine: RecognizerEngine {
 
     private let lg = Lg(prefix: "SFSpeechEngine")
 
-    override func stop() {
-        super.stop()
+    override func stop() throws {
+        try super.stop()
         recognitionRequest?.endAudio()
         recognitionTask?.finish()
     }
@@ -103,15 +103,15 @@ final class SFSpeechEngine: RecognizerEngine {
             }
             
             if error != nil {
-                if !self.isStopping {
+                if status == .finishing {
+                    // Manual stop, not an error
+                    self.cleanup(from: "startRecognition.recognitionTask.manualStop")
+                } else {
                     lg.log("[startSession.recognitionTask.error] \(error)")
                     self.reportError(
                         from: "startSession.recognitionTask.error",
                         code: SpeechRecognitionError.recognitiontaskfailed
                     )
-                } else {
-                    // Manual stop, not an error
-                    self.cleanup(from: "startRecognition.recognitionTask.manualStop")
                 }
             }
         }
@@ -146,7 +146,7 @@ final class SFSpeechEngine: RecognizerEngine {
         }
         
         // onDevice prefer or required
-        if let onDevice = self.recognizerDelegate?.config?.onDevice {
+        if self.recognizerDelegate?.config?.onDevice != nil {
             // check happens on prewarm
             request.requiresOnDeviceRecognition = true
             lg.log("[createRecognitionRequest.requiresOnDeviceRecognition.true]")

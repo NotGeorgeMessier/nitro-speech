@@ -38,7 +38,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
         prewarmOptions = options
         return Promise.async(.userInitiated) { [weak self] in
             // Ignore when standalone prewarm triggered for active session
-            guard self?.engine?.isActive != true else { return }
+            guard self?.engine == nil || self?.engine?.status == .stopped else { return }
             // Ensure correct engine is selected based on params and ios version
             await self?.ensureEngine(params: defaultParams)
             // try to preload assets and check if speech engine is available on OS level
@@ -55,7 +55,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
     }
     
     func stopListening() {
-        engine?.stop()
+        try? engine?.stop()
     }
     
     func resetAutoFinishTime() {
@@ -79,7 +79,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
     }
 
     func getIsActive() -> Bool {
-        engine?.isActive ?? false
+        return engine?.status == .active
     }
 
     func getVoiceInputVolume() -> VolumeChangeEvent {
