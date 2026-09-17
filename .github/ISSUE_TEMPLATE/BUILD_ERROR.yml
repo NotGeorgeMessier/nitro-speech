@@ -55,6 +55,13 @@ body:
 
   - type: checkboxes
     attributes:
+      label: Build variant
+      options:
+        - label: Debug
+        - label: Release
+
+  - type: checkboxes
+    attributes:
       label: Before filing
       options:
         - label: I have read the README and related docs — nothing helps
