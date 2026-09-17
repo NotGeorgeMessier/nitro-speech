@@ -27,7 +27,7 @@ interface SupportedLocales {
 const { locales, installedLocales } = await RecognizerRef.getSupportedLocales()
 ```
 
-### `getSupportedLocalesIOS(): string[]` (deprecated)
+### getSupportedLocalesIOS (deprecated)
 
 Kept for compatibility. Prefer `getSupportedLocales()`. Empty on Android.
 
