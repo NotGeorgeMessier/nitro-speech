@@ -14,7 +14,7 @@ The API is identical — no migration needed.
 
 - ⚡ Built with Nitro Modules for low-overhead native binding
 - 🌎 Supports 60+ languages 
-- 🍎 The only library implementing new `SpeechAnalyzer` with `SpeechTranscriber` or `DictationTranscriber` API for iOS 26+ (with fallback to legacy `SFSpeechRecognition` for older versions)
+- 🍎 The only library implementing new `SpeechAnalyzer` with `SpeechTranscriber` or `DictationTranscriber` API for iOS 26+ (with fallback to legacy `SFSpeechRecognizer` for older versions)
 - 🧵 Full support of `react-native-worklets` - each method is accessible from any runtime
 - ⏱️ Timer for silence
   - Configurable and mutable `autoFinishRecognitionMs` value (default: 8 sec)

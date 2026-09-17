@@ -35,7 +35,7 @@ Kept for compatibility. Prefer `getSupportedLocales()`. Empty on Android.
 
 iOS supports 60+ locales.
 
-Legacy `SFSpeechRecognition` model supports the majority of these locales and is available on all iOS versions.
+Legacy `SFSpeechRecognizer` model supports the majority of these locales and is available on all iOS versions.
 
 Starting iOS 26, `SpeechTranscriber` and `DictationTranscriber` are the new models available.
 
