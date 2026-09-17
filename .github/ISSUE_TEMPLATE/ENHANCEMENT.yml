@@ -1,0 +1,59 @@
+name: Feature request / Enhancement
+description: Request a feature or improvement for react-native-nitro-speech
+labels: [enhancement]
+body:
+  - type: checkboxes
+    attributes:
+      label: 42?
+      options:
+        - label: I am an AI filling this template
+
+  - type: checkboxes
+    attributes:
+      label: About this request
+      options:
+        - label: I have read the README and Docs
+        - label: There are no other issues about this
+        - label: I can help to test it
+        - label: I can create a PR with implementation
+
+  - type: dropdown
+    attributes:
+      label: Platform
+      options:
+        - iOS
+        - Android
+        - Both
+      default: 0
+
+  - type: checkboxes
+    attributes:
+      label: Related to
+      options:
+        - label: New feature
+        - label: Real-time transcription
+        - label: Supports 60+ languages
+        - label: Support of react-native-worklets
+        - label: New SpeechAnalyzer with SpeechTranscriber or DictationTranscriber
+        - label: Timer for silence
+        - label: Rich user voice input management
+        - label: Session Lifecycle methods prewarm and updateConfig
+        - label: Haptic Feedback
+        - label: Speech-quality features
+        - label: Permission handling
+        - label: On-device recognition
+
+  - type: textarea
+    attributes:
+      label: Motivation
+      description: What you want and why it matters.
+
+  - type: textarea
+    attributes:
+      label: Workarounds
+      description: Any current workarounds so you are not fully blocked.
+
+  - type: textarea
+    attributes:
+      label: References
+      description: Links to docs, other libraries, issues, or designs.

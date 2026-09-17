@@ -1,0 +1,97 @@
+name: Build Error
+description: Report an install or build failure for react-native-nitro-speech
+labels: [bug]
+body:
+  - type: checkboxes
+    attributes:
+      label: 42?
+      options:
+        - label: I am an AI filling this template
+
+  - type: input
+    attributes:
+      label: React Native version
+      placeholder: ex. 0.84.1
+
+  - type: input
+    attributes:
+      label: react-native-nitro-modules version
+      placeholder: ex. 0.35.9
+
+  - type: input
+    attributes:
+      label: react-native-nitro-speech version
+      placeholder: ex. 0.4.8
+
+  - type: input
+    attributes:
+      label: expo version or none
+      placeholder: ex. 57.0.23
+
+  - type: input
+    attributes:
+      label: Device or simulator
+      description: Name and OS version (physical device or simulator/emulator).
+      placeholder: ex. iPhone 15 Pro (iOS 18.2) / Pixel 8 (Android 15 emulator)
+
+  - type: input
+    attributes:
+      label: Android Gradle Plugin version if relevant
+      placeholder: ex. 9.2.1
+
+  - type: input
+    attributes:
+      label: Xcode version if relevant
+      placeholder: ex. 26.5
+
+  - type: dropdown
+    attributes:
+      label: Platform
+      options:
+        - iOS
+        - Android
+        - Both
+      default: 0
+
+  - type: checkboxes
+    attributes:
+      label: Build variant
+      options:
+        - label: Debug
+        - label: Release
+
+  - type: checkboxes
+    attributes:
+      label: Before filing
+      options:
+        - label: I have read the README and related docs — nothing helps
+        - label: I have searched for issues and found none
+
+  - type: textarea
+    attributes:
+      label: How were you trying to build
+      placeholder: >
+        e.g. npx expo prebuild, yarn ios, Android Studio sync,
+        ./gradlew :app:assembleDebug, CI, …
+
+  - type: textarea
+    attributes:
+      label: Build logs
+      description: Prefer full logs from start to failure, not only the last lines.
+      render: shell
+
+  - type: checkboxes
+    attributes:
+      label: Related to feature
+      options:
+        - label: Real-time transcription
+        - label: Supports 60+ languages
+        - label: Support of react-native-worklets
+        - label: New SpeechAnalyzer with SpeechTranscriber or DictationTranscriber
+        - label: Timer for silence
+        - label: Rich user voice input management
+        - label: Session Lifecycle methods prewarm and updateConfig
+        - label: Haptic Feedback
+        - label: Speech-quality features
+        - label: Permission handling
+        - label: On-device recognition
