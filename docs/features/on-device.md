@@ -1,8 +1,8 @@
-# On-Device Speech Recognition (Early Preview)
+# On-Device Speech Recognition
 
 Prefer or require recognition that runs on the device (no network speech service).
 
-This is an **early preview**. Behavior differs by OS version and OEM.
+Behavior differs by OS version and OEM.
 
 ---
 
@@ -76,7 +76,8 @@ Passed to `prewarm` / `startListening` like other config fields.
 | `SpeechRecognitionError.OnDeviceNotSupported` | `require` and device has no on-device recognition service. |
 | `SpeechRecognitionError.OnDeviceModelNotInstalled` | `require` and locale model is not installed (download failed, canceled, or not possible). |
 
-Use `ErrorDictionary` for messages. Delivered via `onError` (including failed `prewarm` on Android when `require` cannot prepare the model).
+Delivered via `onError`. 
+Use `ErrorDictionary` for messages.
 
 ---
 
@@ -95,27 +96,9 @@ const ok = RecognizerRef.onDeviceRecognitionAvailable()
 const ok = RecognizerRef.onDeviceRecognitionAvailable('en-US')
 ```
 
-### `getSupportedLocales(): Promise<SupportedLocales>`
+### `getSupportedLocales`
 
-```typescript
-interface SupportedLocales {
-  /** Supported, including downloadable / not yet installed */
-  locales: string[]
-  /** Ready without download */
-  installedLocales: string[]
-}
-```
-
-- **iOS:** union of SF (+ Speech/Dictation on iOS 26+). `installedLocales` ≈ SF packs (preloaded). Speech/Dictation install via `AssetInventory` during prewarm.
-- **Android:** via on-device `checkRecognitionSupport` (API 33+). Below API 33 → empty lists (service may still exist).
-
-```typescript
-const { locales, installedLocales } = await RecognizerRef.getSupportedLocales()
-```
-
-### `getSupportedLocalesIOS(): string[]` (deprecated)
-
-Kept for compatibility. Prefer `getSupportedLocales()`. Empty on Android.
+See [Supported locales](./supported-locales.md#getsupportedlocales) for more details.
 
 ### `prewarm` / `startListening`
 

@@ -2,7 +2,7 @@
  * On-device locale support report.
  *
  * - `locales` — supported (including downloadable / not yet installed)
- * - `installedLocales` — ready to use without download
+ * - `installedLocales` — installed on-device locales
  */
 export interface SupportedLocales {
   locales: string[]

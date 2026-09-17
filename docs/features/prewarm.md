@@ -16,7 +16,21 @@ Also, if prewarm hasn't finished, `startListening` will interrupt preparing and 
 
 Exposed options from `SpeechRecognitionPrewarm` interface.
 
-- `requestPermission` - Request permission to use the microphone (and speech recognition on iOS)
+- `requestPermission` — Request permission to use the microphone (and speech recognition on iOS). Default: `true`.
+- `loadOnDeviceModel` — Try to download / install the on-device locale model during prewarm. Default: `true` (but no-op without `onDevice`).
+
+## Load on-device model
+
+`loadOnDeviceModel` only runs when `defaultParams.onDevice` is `"prefer"` or `"require"`. If `onDevice` is omitted, this step is ignored.
+
+| `onDevice` | `loadOnDeviceModel` | Effect |
+| --- | --- | --- |
+| unset | any | Ignored. No on-device model work. |
+| `"prefer"` | `true` (default) | Try to load the model; on failure fall back to the remote / default engine. |
+| `"require"` | `true` (default) | Load the model, or fail with `OnDeviceNotSupported` / `OnDeviceModelNotInstalled`. |
+| `"prefer"` / `"require"` | `false` | Skip the download/install step in prewarm (iOS 26+ Speech/Dictation `AssetInventory`). |
+
+See [On-device speech recognition](./on-device.md) for `prefer` vs `require`, locale queries, and platform notes.
 
 ## iOS
 
@@ -33,16 +47,22 @@ Triggers `onError` callback if fails.
 - locale is unsupported
 - asset download fails
 - request permission isn't disabled but denied
+- `onDevice: "require"` and on-device service / model is unavailable
 
-Possible codes: `LocaleNotSupported`, `SessionStartFailed`, `IosSpeechPermissionNotDetermined` (see `ErrorDictionary`).
+Possible codes: `LocaleNotSupported`, `SessionStartFailed`, `IosSpeechPermissionNotDetermined`, `OnDeviceNotSupported`, `OnDeviceModelNotInstalled` (see `ErrorDictionary`).
 
 ## Android
 
 Responsibility:
 - Request permission to use the microphone if `requestPermission` is not disabled
+- When `onDevice` is set, prepare the on-device recognizer (may trigger a system model-download UI on API 33+)
 
 Triggers `onError` callback if fails.
 - request permission isn't disabled but denied
+- `onDevice: "require"` and on-device service is missing → `OnDeviceNotSupported`
+- `onDevice: "require"` and locale model is not installed → `OnDeviceModelNotInstalled`
+
+Possible codes: `OnDeviceNotSupported`, `OnDeviceModelNotInstalled` (see `ErrorDictionary`).
 
 ## Usage
 
@@ -59,8 +79,12 @@ const {
 // From the static reference
 RecognizerRef.prewarm({
   locale: 'en-US',
+  onDevice: 'prefer',
   // ... your config to prepare
-}, { requestPermission: false });
+}, {
+  requestPermission: false,
+  loadOnDeviceModel: true, // default; no-op unless onDevice is set
+});
 
 // From the hybrid object, 
 // Not recommended. Direct access to the hybrid object. Not safe. Only for advanced usage.
