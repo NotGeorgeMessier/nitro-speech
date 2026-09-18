@@ -4,12 +4,14 @@ import {
   recognizerAddAutoFinishTime,
   recognizerUpdateConfig,
   recognizerGetIsActive,
+  recognizerGetSupportedLocales,
   recognizerGetSupportedLocalesIOS,
   recognizerStartListening,
   recognizerStopListening,
   recognizerGetVoiceInputVolume,
   recognizerPrewarm,
   recognizerGetPermissions,
+  recognizerOnDeviceRecognitionAvailable,
 } from './methods'
 import type {
   RecognizerCallbacks,
@@ -90,6 +92,8 @@ export const useRecognizer = (
     getIsActive: recognizerGetIsActive,
     getVoiceInputVolume: recognizerGetVoiceInputVolume,
     getPermissions: recognizerGetPermissions,
+    getSupportedLocales: recognizerGetSupportedLocales,
     getSupportedLocalesIOS: recognizerGetSupportedLocalesIOS,
+    onDeviceRecognitionAvailable: recognizerOnDeviceRecognitionAvailable,
   }
 }

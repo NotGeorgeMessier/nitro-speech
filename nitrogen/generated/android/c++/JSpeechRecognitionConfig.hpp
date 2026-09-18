@@ -14,6 +14,8 @@
 #include "IosPreset.hpp"
 #include "JHapticFeedbackStyle.hpp"
 #include "JIosPreset.hpp"
+#include "JOnDeviceMode.hpp"
+#include "OnDeviceMode.hpp"
 #include <optional>
 #include <string>
 #include <vector>
@@ -23,7 +25,7 @@ namespace margelo::nitro::nitrospeech {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "SpeechRecognitionConfig" and the the Kotlin data class "SpeechRecognitionConfig".
+   * The C++ JNI bridge between the C++ struct "SpeechRecognitionConfig" and the Kotlin data class "SpeechRecognitionConfig".
    */
   struct JSpeechRecognitionConfig final: public jni::JavaClass<JSpeechRecognitionConfig> {
   public:
@@ -43,6 +45,8 @@ namespace margelo::nitro::nitrospeech {
       jni::local_ref<jni::JArrayClass<jni::JString>> contextualStrings = this->getFieldValue(fieldContextualStrings);
       static const auto fieldMaskOffensiveWords = clazz->getField<jni::JBoolean>("maskOffensiveWords");
       jni::local_ref<jni::JBoolean> maskOffensiveWords = this->getFieldValue(fieldMaskOffensiveWords);
+      static const auto fieldOnDevice = clazz->getField<JOnDeviceMode>("onDevice");
+      jni::local_ref<JOnDeviceMode> onDevice = this->getFieldValue(fieldOnDevice);
       static const auto fieldAutoFinishRecognitionMs = clazz->getField<jni::JDouble>("autoFinishRecognitionMs");
       jni::local_ref<jni::JDouble> autoFinishRecognitionMs = this->getFieldValue(fieldAutoFinishRecognitionMs);
       static const auto fieldAutoFinishProgressIntervalMs = clazz->getField<jni::JDouble>("autoFinishProgressIntervalMs");
@@ -80,6 +84,7 @@ namespace margelo::nitro::nitrospeech {
           return __vector;
         }(contextualStrings)) : std::nullopt,
         maskOffensiveWords != nullptr ? std::make_optional(static_cast<bool>(maskOffensiveWords->value())) : std::nullopt,
+        onDevice != nullptr ? std::make_optional(onDevice->toCpp()) : std::nullopt,
         autoFinishRecognitionMs != nullptr ? std::make_optional(autoFinishRecognitionMs->value()) : std::nullopt,
         autoFinishProgressIntervalMs != nullptr ? std::make_optional(autoFinishProgressIntervalMs->value()) : std::nullopt,
         resetAutoFinishVoiceSensitivity != nullptr ? std::make_optional(resetAutoFinishVoiceSensitivity->value()) : std::nullopt,
@@ -101,7 +106,7 @@ namespace margelo::nitro::nitrospeech {
      */
     [[maybe_unused]]
     static jni::local_ref<JSpeechRecognitionConfig::javaobject> fromCpp(const SpeechRecognitionConfig& value) {
-      using JSignature = JSpeechRecognitionConfig(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<JIosPreset>, jni::alias_ref<jni::JBoolean>);
+      using JSignature = JSpeechRecognitionConfig(jni::alias_ref<jni::JString>, jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<JOnDeviceMode>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<JHapticFeedbackStyle>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<JIosPreset>, jni::alias_ref<jni::JBoolean>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
@@ -118,6 +123,7 @@ namespace margelo::nitro::nitrospeech {
           return __array;
         }(value.contextualStrings.value()) : nullptr,
         value.maskOffensiveWords.has_value() ? jni::JBoolean::valueOf(value.maskOffensiveWords.value()) : nullptr,
+        value.onDevice.has_value() ? JOnDeviceMode::fromCpp(value.onDevice.value()) : nullptr,
         value.autoFinishRecognitionMs.has_value() ? jni::JDouble::valueOf(value.autoFinishRecognitionMs.value()) : nullptr,
         value.autoFinishProgressIntervalMs.has_value() ? jni::JDouble::valueOf(value.autoFinishProgressIntervalMs.value()) : nullptr,
         value.resetAutoFinishVoiceSensitivity.has_value() ? jni::JDouble::valueOf(value.resetAutoFinishVoiceSensitivity.value()) : nullptr,

@@ -16,6 +16,10 @@
  * For iOS, may be caused by version incompatibility (early Beta, or too old, etc.).
  * For Android, may be caused by unexpected behavior on mid-range device or other compatibility issues.
  *
+ * `OnDeviceNotSupported` - On-device recognition is required (`onDevice: "require"`) but the device has no on-device recognition service.
+ *
+ * `OnDeviceModelNotInstalled` - On-device recognition is required (`onDevice: "require"`) but the locale model is not installed yet.
+ *
  * @note Report any unexpected behavior to the repository issues with detailed description.
  */
 export enum SpeechRecognitionError {
@@ -24,4 +28,6 @@ export enum SpeechRecognitionError {
   RecognitionTaskFailed,
   IosSpeechPermissionNotDetermined,
   SessionStartFailed,
+  OnDeviceNotSupported,
+  OnDeviceModelNotInstalled,
 }

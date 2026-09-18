@@ -19,7 +19,13 @@ def isNewArchitectureEnabled() {
 }
 
 apply plugin: "com.android.library"
-apply plugin: 'org.jetbrains.kotlin.android'
+// AGP 9 ships built-in Kotlin support and registers the `kotlin` extension
+// itself. Applying the Kotlin plugin on top of it fails configuration with
+// "Cannot add extension with name 'kotlin'". Only apply it when nothing has
+// registered that extension yet.
+if (project.extensions.findByName('kotlin') == null) {
+  apply plugin: 'org.jetbrains.kotlin.android'
+}
 apply from: '../nitrogen/generated/android/NitroSpeech+autolinking.gradle'
 apply from: "./fix-prefab.gradle"
 
@@ -120,6 +126,11 @@ android {
           "${project.buildDir}/generated/source/codegen/java"
         ]
       }
+      // AGP9 builtInKotlin: nitrogen .kt must also be on the kotlin compile path
+      // (do not edit NitroSpeech+autolinking.gradle — it is nitrogen-generated).
+      kotlin.srcDirs += [
+        "${project.projectDir}/../nitrogen/generated/android/kotlin"
+      ]
     }
   }
 }

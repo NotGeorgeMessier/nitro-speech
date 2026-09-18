@@ -18,6 +18,8 @@ namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
+// Forward declaration of `OnDeviceMode` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class OnDeviceMode; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 // Forward declaration of `IosPreset` to properly resolve imports.
@@ -28,6 +30,8 @@ namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 // Forward declaration of `PermissionStatus` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
+// Forward declaration of `SupportedLocales` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
 
 #include <functional>
 #include <optional>
@@ -37,11 +41,13 @@ namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include "SpeechRecognitionConfig.hpp"
+#include "OnDeviceMode.hpp"
 #include "HapticFeedbackStyle.hpp"
 #include "IosPreset.hpp"
 #include "SpeechRecognitionPrewarm.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
 #include "PermissionStatus.hpp"
+#include "SupportedLocales.hpp"
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
 
@@ -203,8 +209,24 @@ namespace margelo::nitro::nitrospeech {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline std::shared_ptr<Promise<SupportedLocales>> getSupportedLocales() override {
+      auto __result = _swiftPart.getSupportedLocales();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::vector<std::string> getSupportedLocalesIOS() override {
       auto __result = _swiftPart.getSupportedLocalesIOS();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline bool onDeviceRecognitionAvailable(const std::optional<std::string>& locale) override {
+      auto __result = _swiftPart.onDeviceRecognitionAvailable(locale);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

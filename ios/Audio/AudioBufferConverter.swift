@@ -20,7 +20,7 @@ enum AudioBufferConverter {
         )
         let convertedCapacity = max(pcmBuffer.frameLength, max(1, resampledCapacity))
         guard let convertedBuffer = AVAudioPCMBuffer(pcmFormat: audioFormat, frameCapacity: convertedCapacity) else {
-            throw NSError()
+            throw RecognizerError.audioBufferConversion
         }
         
         let inputBufferBox = SendablePCMBufferBox(pcmBuffer)
@@ -36,7 +36,7 @@ enum AudioBufferConverter {
             return inputBufferBox.buffer
         }
         if let conversionError {
-            throw conversionError
+            throw RecognizerError.audioBufferConversion
         }
         guard status == .haveData || status == .inputRanDry else {
             return nil

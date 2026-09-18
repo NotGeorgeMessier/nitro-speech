@@ -18,9 +18,15 @@ public extension SpeechRecognitionPrewarm {
   /**
    * Create a new instance of `SpeechRecognitionPrewarm`.
    */
-  init(requestPermission: Bool?) {
+  init(requestPermission: Bool?, loadOnDeviceModel: Bool?) {
     self.init({ () -> bridge.std__optional_bool_ in
       if let __unwrappedValue = requestPermission {
+        return bridge.create_std__optional_bool_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_bool_ in
+      if let __unwrappedValue = loadOnDeviceModel {
         return bridge.create_std__optional_bool_(__unwrappedValue)
       } else {
         return .init()
@@ -33,6 +39,18 @@ public extension SpeechRecognitionPrewarm {
     return { () -> Bool? in
       if bridge.has_value_std__optional_bool_(self.__requestPermission) {
         let __unwrapped = bridge.get_std__optional_bool_(self.__requestPermission)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
+  var loadOnDeviceModel: Bool? {
+    return { () -> Bool? in
+      if bridge.has_value_std__optional_bool_(self.__loadOnDeviceModel) {
+        let __unwrapped = bridge.get_std__optional_bool_(self.__loadOnDeviceModel)
         return __unwrapped
       } else {
         return nil

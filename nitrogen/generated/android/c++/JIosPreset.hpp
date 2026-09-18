@@ -15,7 +15,7 @@ namespace margelo::nitro::nitrospeech {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "IosPreset" and the the Kotlin enum "IosPreset".
+   * The C++ JNI bridge between the C++ enum "IosPreset" and the Kotlin enum "IosPreset".
    */
   struct JIosPreset final: public jni::JavaClass<JIosPreset> {
   public:

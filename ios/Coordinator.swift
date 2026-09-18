@@ -20,14 +20,18 @@ final class Coordinator {
         }
     }
     
-    func initialize() async {
-        let params = self.recognizerDelegate?.config
-        Log.log("[Coordinator] LocaleManager - init (\(params?.locale))")
+    private func prepareLocaleManager() async {
         if self.localeManager == nil {
             self.localeTask?.cancel()
             self.localeTask = nil
             self.localeManager = await LocaleManager()
         }
+    }
+    
+    func initialize() async {
+        let params = self.recognizerDelegate?.config
+        Log.log("[Coordinator] LocaleManager - init (\(params?.locale))")
+        await prepareLocaleManager()
         guard let localeManager else { return }
         await localeManager.ensureLocale(localeString: params?.locale)
         self.candidates = []
@@ -102,5 +106,13 @@ final class Coordinator {
     
     func getSupportedLocales() -> [String] {
         return localeManager?.supportedLocales ?? []
+    }
+    
+    func getSupportedLocalesReport() async -> SupportedLocales {
+        await prepareLocaleManager()
+        let locales = localeManager?.supportedLocales ?? []
+        // SF locales are preloaded. Speech/Dictation assets install via AssetInventory in prewarm.
+        let installedLocales = localeManager?.installedLocales ?? locales
+        return SupportedLocales(locales: locales, installedLocales: installedLocales)
     }
 }

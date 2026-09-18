@@ -18,6 +18,8 @@ namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
 namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 // Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
+// Forward declaration of `OnDeviceMode` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class OnDeviceMode; }
 // Forward declaration of `PermissionStatus` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
@@ -26,6 +28,8 @@ namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
 // Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
+// Forward declaration of `SupportedLocales` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 
@@ -41,10 +45,12 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 #include "HybridRecognizerSpec.hpp"
 #include "IosPreset.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
+#include "OnDeviceMode.hpp"
 #include "PermissionStatus.hpp"
 #include "SpeechRecognitionConfig.hpp"
 #include "SpeechRecognitionError.hpp"
 #include "SpeechRecognitionPrewarm.hpp"
+#include "SupportedLocales.hpp"
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/PromiseHolder.hpp>
@@ -198,6 +204,21 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.value();
   }
   
+  // pragma MARK: std::optional<OnDeviceMode>
+  /**
+   * Specialized version of `std::optional<OnDeviceMode>`.
+   */
+  using std__optional_OnDeviceMode_ = std::optional<OnDeviceMode>;
+  inline std::optional<OnDeviceMode> create_std__optional_OnDeviceMode_(const OnDeviceMode& value) noexcept {
+    return std::optional<OnDeviceMode>(value);
+  }
+  inline bool has_value_std__optional_OnDeviceMode_(const std::optional<OnDeviceMode>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline OnDeviceMode get_std__optional_OnDeviceMode_(const std::optional<OnDeviceMode>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::optional<double>
   /**
    * Specialized version of `std::optional<double>`.
@@ -286,6 +307,40 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
   }
   inline MutableSpeechRecognitionConfig get_std__optional_MutableSpeechRecognitionConfig_(const std::optional<MutableSpeechRecognitionConfig>& optional) noexcept {
     return optional.value();
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<SupportedLocales>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<SupportedLocales>>`.
+   */
+  using std__shared_ptr_Promise_SupportedLocales__ = std::shared_ptr<Promise<SupportedLocales>>;
+  inline std::shared_ptr<Promise<SupportedLocales>> create_std__shared_ptr_Promise_SupportedLocales__() noexcept {
+    return Promise<SupportedLocales>::create();
+  }
+  inline PromiseHolder<SupportedLocales> wrap_std__shared_ptr_Promise_SupportedLocales__(std::shared_ptr<Promise<SupportedLocales>> promise) noexcept {
+    return PromiseHolder<SupportedLocales>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const SupportedLocales& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const SupportedLocales&)>`.
+   */
+  using Func_void_SupportedLocales = std::function<void(const SupportedLocales& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const SupportedLocales& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_SupportedLocales_Wrapper final {
+  public:
+    explicit Func_void_SupportedLocales_Wrapper(std::function<void(const SupportedLocales& /* result */)>&& func): _function(std::make_unique<std::function<void(const SupportedLocales& /* result */)>>(std::move(func))) {}
+    inline void call(SupportedLocales result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const SupportedLocales& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_SupportedLocales create_Func_void_SupportedLocales(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_SupportedLocales_Wrapper wrap_Func_void_SupportedLocales(Func_void_SupportedLocales value) noexcept {
+    return Func_void_SupportedLocales_Wrapper(std::move(value));
   }
   
   // pragma MARK: std::optional<std::function<void()>>
@@ -494,6 +549,15 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
   }
   inline Result_PermissionStatus_ create_Result_PermissionStatus_(const std::exception_ptr& error) noexcept {
     return Result<PermissionStatus>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<SupportedLocales>>>
+  using Result_std__shared_ptr_Promise_SupportedLocales___ = Result<std::shared_ptr<Promise<SupportedLocales>>>;
+  inline Result_std__shared_ptr_Promise_SupportedLocales___ create_Result_std__shared_ptr_Promise_SupportedLocales___(const std::shared_ptr<Promise<SupportedLocales>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<SupportedLocales>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_SupportedLocales___ create_Result_std__shared_ptr_Promise_SupportedLocales___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<SupportedLocales>>>::withError(error);
   }
   
   // pragma MARK: Result<std::vector<std::string>>

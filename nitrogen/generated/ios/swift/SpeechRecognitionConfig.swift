@@ -18,7 +18,7 @@ public extension SpeechRecognitionConfig {
   /**
    * Create a new instance of `SpeechRecognitionConfig`.
    */
-  init(locale: String?, contextualStrings: [String]?, maskOffensiveWords: Bool?, autoFinishRecognitionMs: Double?, autoFinishProgressIntervalMs: Double?, resetAutoFinishVoiceSensitivity: Double?, disableRepeatingFilter: Bool?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?, iosPreset: IosPreset?, iosAtypicalSpeech: Bool?) {
+  init(locale: String?, contextualStrings: [String]?, maskOffensiveWords: Bool?, onDevice: OnDeviceMode?, autoFinishRecognitionMs: Double?, autoFinishProgressIntervalMs: Double?, resetAutoFinishVoiceSensitivity: Double?, disableRepeatingFilter: Bool?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, androidFormattingPreferQuality: Bool?, androidUseWebSearchModel: Bool?, androidDisableBatchHandling: Bool?, iosAddPunctuation: Bool?, iosPreset: IosPreset?, iosAtypicalSpeech: Bool?) {
     self.init({ () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = locale {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
@@ -40,6 +40,12 @@ public extension SpeechRecognitionConfig {
     }(), { () -> bridge.std__optional_bool_ in
       if let __unwrappedValue = maskOffensiveWords {
         return bridge.create_std__optional_bool_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_OnDeviceMode_ in
+      if let __unwrappedValue = onDevice {
+        return bridge.create_std__optional_OnDeviceMode_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -152,6 +158,11 @@ public extension SpeechRecognitionConfig {
         return nil
       }
     }()
+  }
+  
+  @inline(__always)
+  var onDevice: OnDeviceMode? {
+    return self.__onDevice.value
   }
   
   @inline(__always)

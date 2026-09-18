@@ -6,21 +6,33 @@ final class SFSpeechEngine: RecognizerEngine {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var speechRecognizer: SFSpeechRecognizer?
+    private var resultBatches: [String] = []
 
     private let lg = Lg(prefix: "SFSpeechEngine")
 
-    override func stop() {
-        super.stop()
+    override func stop() throws {
+        try super.stop()
         recognitionRequest?.endAudio()
         recognitionTask?.finish()
     }
     
-    override func prewarm(forPrewarm: Bool, _ options: SpeechRecognitionPrewarm? = nil) async {
+    override func prewarm(
+        forPrewarm: Bool,
+        _ options: SpeechRecognitionPrewarm? = nil
+    ) async {
         speechRecognizer = SFSpeechRecognizer(
             locale: Locale(identifier: self.recognizerDelegate?.config?.locale ?? "en-US")
         )
         if speechRecognizer?.isAvailable != true {
             self.retry(from: "prewarm.isAvailable", isPrewarm: forPrewarm)
+            return
+        }
+        if self.recognizerDelegate?.config?.onDevice == OnDeviceMode.require &&
+           speechRecognizer?.supportsOnDeviceRecognition != true {
+            self.reportError(
+                from: "prewarm.supportsOnDeviceRecognition",
+                code: SpeechRecognitionError.ondevicenotsupported
+            )
             return
         }
         await super.prewarm(forPrewarm: forPrewarm, options)
@@ -34,9 +46,17 @@ final class SFSpeechEngine: RecognizerEngine {
         lg.log("[startSession.prewarm]")
         guard let speechRecognizer else { return }
         
+        let recognizerQ = OperationQueue()
+        recognizerQ.name = Self.queueLabel
+        recognizerQ.maxConcurrentOperationCount = 1
+        recognizerQ.underlyingQueue = queue
+        
+        speechRecognizer.queue = recognizerQ
+        
+        
         recognitionRequest = createRecognitionRequest()
-        lg.log("[startSession.createRecognitionRequest]")
         guard let recognitionRequest else { return }
+        lg.log("[startSession.createRecognitionRequest]")
         
         recognitionTask = speechRecognizer.recognitionTask(
             with: recognitionRequest
@@ -53,8 +73,28 @@ final class SFSpeechEngine: RecognizerEngine {
                     if !disableRepeatingFilter {
                         transcription = Utils.repeatingFilter(transcription)
                     }
-                    // Legacy transcriber collects everything into one batch
-                    self.recognizerDelegate?.result(batches: [transcription])
+                    
+                    let batchInProgress = result.speechRecognitionMetadata?.speechStartTimestamp == nil
+                    
+                    if self.resultBatches.isEmpty {
+                        // add first batch
+                        self.resultBatches.append(transcription)
+                    } else if batchInProgress {
+                        // replace last batch
+                        self.resultBatches[self.resultBatches.count - 1] = transcription
+                    } else {
+                        // batch is completed
+                        self.resultBatches[self.resultBatches.count - 1] = transcription
+                        // reserve a slot for next
+                        self.resultBatches.append("")
+                    }
+                    
+                    var batches = self.resultBatches
+                    if batches.last == "" {
+                        batches.removeLast()
+                    }
+                    
+                    self.recognizerDelegate?.result(batches: batches)
                 }
                 
                 if result.isFinal {
@@ -63,14 +103,15 @@ final class SFSpeechEngine: RecognizerEngine {
             }
             
             if error != nil {
-                if !self.isStopping {
+                if status == .finishing {
+                    // Manual stop, not an error
+                    self.cleanup(from: "startRecognition.recognitionTask.manualStop")
+                } else {
+                    lg.log("[startSession.recognitionTask.error] \(error)")
                     self.reportError(
                         from: "startSession.recognitionTask.error",
                         code: SpeechRecognitionError.recognitiontaskfailed
                     )
-                } else {
-                    // Manual stop, not an error
-                    self.cleanup(from: "startRecognition.recognitionTask.manualStop")
                 }
             }
         }
@@ -92,6 +133,7 @@ final class SFSpeechEngine: RecognizerEngine {
         recognitionRequest = nil
         recognitionTask = nil
         speechRecognizer = nil
+        resultBatches = []
     }
     
     private func createRecognitionRequest() -> SFSpeechAudioBufferRecognitionRequest {
@@ -101,6 +143,13 @@ final class SFSpeechEngine: RecognizerEngine {
         if let contextualStrings = self.recognizerDelegate?.config?.contextualStrings,
            !contextualStrings.isEmpty {
             request.contextualStrings = contextualStrings
+        }
+        
+        // onDevice prefer or required
+        if self.recognizerDelegate?.config?.onDevice != nil {
+            // check happens on prewarm
+            request.requiresOnDeviceRecognition = true
+            lg.log("[createRecognitionRequest.requiresOnDeviceRecognition.true]")
         }
         
         if #available(iOS 16, *) {

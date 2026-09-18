@@ -14,7 +14,7 @@ The API is identical — no migration needed.
 
 - ⚡ Built with Nitro Modules for low-overhead native binding
 - 🌎 Supports 60+ languages 
-- 🍎 The only library implementing new `SpeechAnalyzer` with `SpeechTranscriber` or `DictationTranscriber` API for iOS 26+ (with fallback to legacy `SFSpeechRecognition` for older versions)
+- 🍎 The only library implementing new `SpeechAnalyzer` with `SpeechTranscriber` or `DictationTranscriber` API for iOS 26+ (with fallback to legacy `SFSpeechRecognizer` for older versions)
 - 🧵 Full support of `react-native-worklets` - each method is accessible from any runtime
 - ⏱️ Timer for silence
   - Configurable and mutable `autoFinishRecognitionMs` value (default: 8 sec)
@@ -29,6 +29,8 @@ The API is identical — no migration needed.
 - 🧩 Session Lifecycle methods: `prewarm` and `updateConfig`
 - 👆 Configurable Haptic Feedback on start and finish
 - 🎚️ Speech-quality features: see full list [here](./docs/features/real-time-transcription.md#real-time-transcription)
+- 📴 On-device recognition via `onDevice: 'prefer' | 'require'`
+  - Preload model during `prewarm` with `loadOnDeviceModel`
 - 🔓 Embedded Permission handling
   - Callback `onPermissionDenied` and method `getPermissions`
   - Option `requestPermission` for `prewarm` method
@@ -37,6 +39,7 @@ The API is identical — no migration needed.
 ## Table of Contents
 
 - [Installation](#installation)
+- [Quickstart](#quickstart)
 - [Permissions](#permissions)
 - [Features](#features)
 - [Requirements](#requirements)
@@ -50,6 +53,8 @@ The API is identical — no migration needed.
   - [Multithreading (react-native-worklets)](./docs/features/worklets.md#worklets)
   - [Voice input volume](./docs/features/voice-input-volume.md#voice-input-volume)
   - [Is active](./docs/features/is-recognizer-active.md#is-recognizer-active)
+  - [On-device recognition](./docs/features/on-device.md)
+  - [Supported locales](./docs/features/supported-locales.md#supported-locales)
   - [Direct access to SpeechRecognizer](./docs/examples/speech-recognizer.md#speechrecognizer)
 
 ## Installation
@@ -81,6 +86,26 @@ cd ios && pod install
 ### Android
 
 No additional setup required.
+
+## Quickstart
+
+```typescript
+import { useRecognizer } from 'react-native-nitro-speech'
+
+const { startListening, stopListening } = useRecognizer({
+  onReadyForSpeech: () => console.log('Listening...'),
+  onRecordingStopped: () => console.log('Stopped'),
+  onResult: (textBatches) => console.log('Result:', textBatches.join('\n')),
+  onAutoFinishProgress: (timeLeftMs) =>
+    console.log('Auto-finish in:', timeLeftMs, 'ms'),
+  onError: (code) => console.log('Error:', code),
+  onPermissionDenied: () => console.log('Permission denied'),
+})
+
+startListening({
+  locale: 'en-US',
+})
+```
 
 ## Permissions
 
@@ -117,6 +142,7 @@ Both permissions are required for speech recognition to work on iOS.
 | **Full worklets support**         | [Link 🔗](./docs/features/worklets.md#worklets)                                      | ✅       | ✅       |
 | **New advanced iOS models**       | [Link 🔗](./docs/features/supported-locales.md#ios)                                  | ✅       | ✅       |
 | **Locale support**                | [Link 🔗](./docs/features/supported-locales.md#supported-locales)                    | ✅       | ✅       |
+| **On-device recognition**         | [Link 🔗](./docs/features/on-device.md)                                              | ✅       | ✅       |
 | **Auto-finish on silence**        | [Link 🔗](./docs/features/silence-timer.md#auto-finish-on-silence)                   | ✅       | ✅       |
 | **Auto-finish progress**          | [Link 🔗](./docs/features/silence-timer.md#auto-finish-progress)                     | ✅       | ✅       |
 | **Auto-finish progress interval** | [Link 🔗](./docs/features/silence-timer.md#auto-finish-progress-interval)            | ✅       | ✅       |
@@ -139,7 +165,6 @@ Both permissions are required for speech recognition to work on iOS.
 | **Transcription preset**          | [Link 🔗](./docs/features/real-time-transcription.md#transcription-preset)           | ✅       | Auto     |
 | **Automatic punctuation**         | [Link 🔗](./docs/features/real-time-transcription.md#automatic-punctuation)          | ✅       | Auto     |
 | **Atypical speech hint**          | [Link 🔗](./docs/features/real-time-transcription.md#atypical-speech-hint)           | ✅       | Auto     |
-| **getSupportedLocalesIOS**        | [Link 🔗](./docs/features/supported-locales.md#ios)                                  | ✅       | X        |
 
 ## Requirements
 

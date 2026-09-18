@@ -13,8 +13,12 @@ namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 // Forward declaration of `PermissionStatus` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
+// Forward declaration of `SupportedLocales` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
+// Forward declaration of `OnDeviceMode` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class OnDeviceMode; }
 // Forward declaration of `HapticFeedbackStyle` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class HapticFeedbackStyle; }
 // Forward declaration of `IosPreset` to properly resolve imports.
@@ -43,8 +47,12 @@ namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 #include <NitroModules/JUnit.hpp>
 #include "PermissionStatus.hpp"
 #include "JPermissionStatus.hpp"
+#include "SupportedLocales.hpp"
+#include "JSupportedLocales.hpp"
 #include "SpeechRecognitionConfig.hpp"
 #include "JSpeechRecognitionConfig.hpp"
+#include "OnDeviceMode.hpp"
+#include "JOnDeviceMode.hpp"
 #include "HapticFeedbackStyle.hpp"
 #include "JHapticFeedbackStyle.hpp"
 #include "IosPreset.hpp"
@@ -255,6 +263,22 @@ namespace margelo::nitro::nitrospeech {
     auto __result = method(_javaPart);
     return __result->toCpp();
   }
+  std::shared_ptr<Promise<SupportedLocales>> JHybridRecognizerSpec::getSupportedLocales() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("getSupportedLocales");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<SupportedLocales>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JSupportedLocales>(__boxedResult);
+        __promise->resolve(__result->toCpp());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
   std::vector<std::string> JHybridRecognizerSpec::getSupportedLocalesIOS() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<jni::JArrayClass<jni::JString>>()>("getSupportedLocalesIOS");
     auto __result = method(_javaPart);
@@ -268,6 +292,11 @@ namespace margelo::nitro::nitrospeech {
       }
       return __vector;
     }(__result);
+  }
+  bool JHybridRecognizerSpec::onDeviceRecognitionAvailable(const std::optional<std::string>& locale) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean(jni::alias_ref<jni::JString> /* locale */)>("onDeviceRecognitionAvailable");
+    auto __result = method(_javaPart, locale.has_value() ? jni::make_jstring(locale.value()) : nullptr);
+    return static_cast<bool>(__result);
   }
 
 } // namespace margelo::nitro::nitrospeech

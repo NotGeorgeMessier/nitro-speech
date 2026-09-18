@@ -63,12 +63,21 @@ class RecognitionListenerSession (
                     SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Recognizer busy"
                     SpeechRecognizer.ERROR_SERVER -> "Server error"
                     SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech input"
+                    SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE -> "Language model not installed"
+                    SpeechRecognizer.ERROR_LANGUAGE_NOT_SUPPORTED -> "Language not supported"
                     else -> "Unknown error"
                 }
                 logger.log("onError: $message")
+                val mappedError = when {
+                    config?.onDevice != null && error == SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE ->
+                        SpeechRecognitionError.ONDEVICEMODELNOTINSTALLED
+                    config?.onDevice != null && error == SpeechRecognizer.ERROR_LANGUAGE_NOT_SUPPORTED ->
+                        SpeechRecognitionError.ONDEVICENOTSUPPORTED
+                    else -> SpeechRecognitionError.RECOGNITIONTASKFAILED
+                }
                 onFinishRecognition(
                     null,
-                    SpeechRecognitionError.RECOGNITIONTASKFAILED,
+                    mappedError,
                     true
                 )
                 autoStopper?.stop()

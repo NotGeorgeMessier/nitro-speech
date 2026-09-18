@@ -10,6 +10,7 @@ package com.margelo.nitro.nitrospeech
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import dalvik.annotation.optimization.FastNative
 import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
@@ -163,7 +164,15 @@ abstract class HybridRecognizerSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun getSupportedLocales(): Promise<SupportedLocales>
+  
+  @DoNotStrip
+  @Keep
   abstract fun getSupportedLocalesIOS(): Array<String>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun onDeviceRecognitionAvailable(locale: String?): Boolean
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {
@@ -175,6 +184,7 @@ abstract class HybridRecognizerSpec: HybridObject() {
   @Keep
   protected open class CxxPart(javaPart: HybridRecognizerSpec): HybridObject.CxxPart(javaPart) {
     // C++ JHybridRecognizerSpec::CxxPart::initHybrid(...)
+    @FastNative
     external override fun initHybrid(): HybridData
   }
   override fun createCxxPart(): CxxPart {

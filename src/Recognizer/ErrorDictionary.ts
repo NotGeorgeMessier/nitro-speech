@@ -32,4 +32,13 @@ export const ErrorDictionary: Record<SpeechRecognitionError, Error> = {
     code: SpeechRecognitionError.SessionStartFailed,
     message: 'Speech Recognition failed to start',
   },
+  [SpeechRecognitionError.OnDeviceNotSupported]: {
+    code: SpeechRecognitionError.OnDeviceNotSupported,
+    message: 'On-device speech recognition is not supported on this device',
+  },
+  [SpeechRecognitionError.OnDeviceModelNotInstalled]: {
+    code: SpeechRecognitionError.OnDeviceModelNotInstalled,
+    message:
+      'On-device speech recognition model is not installed for this locale',
+  },
 }

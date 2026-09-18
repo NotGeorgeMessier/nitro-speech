@@ -29,6 +29,9 @@ data class SpeechRecognitionConfig(
   val maskOffensiveWords: Boolean?,
   @DoNotStrip
   @Keep
+  val onDevice: OnDeviceMode?,
+  @DoNotStrip
+  @Keep
   val autoFinishRecognitionMs: Double?,
   @DoNotStrip
   @Keep
@@ -72,6 +75,7 @@ data class SpeechRecognitionConfig(
     return Objects.deepEquals(this.locale, other.locale)
       && Objects.deepEquals(this.contextualStrings, other.contextualStrings)
       && Objects.deepEquals(this.maskOffensiveWords, other.maskOffensiveWords)
+      && Objects.deepEquals(this.onDevice, other.onDevice)
       && Objects.deepEquals(this.autoFinishRecognitionMs, other.autoFinishRecognitionMs)
       && Objects.deepEquals(this.autoFinishProgressIntervalMs, other.autoFinishProgressIntervalMs)
       && Objects.deepEquals(this.resetAutoFinishVoiceSensitivity, other.resetAutoFinishVoiceSensitivity)
@@ -91,6 +95,7 @@ data class SpeechRecognitionConfig(
       locale,
       contextualStrings,
       maskOffensiveWords,
+      onDevice,
       autoFinishRecognitionMs,
       autoFinishProgressIntervalMs,
       resetAutoFinishVoiceSensitivity,
@@ -114,8 +119,8 @@ data class SpeechRecognitionConfig(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(locale: String?, contextualStrings: Array<String>?, maskOffensiveWords: Boolean?, autoFinishRecognitionMs: Double?, autoFinishProgressIntervalMs: Double?, resetAutoFinishVoiceSensitivity: Double?, disableRepeatingFilter: Boolean?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, androidFormattingPreferQuality: Boolean?, androidUseWebSearchModel: Boolean?, androidDisableBatchHandling: Boolean?, iosAddPunctuation: Boolean?, iosPreset: IosPreset?, iosAtypicalSpeech: Boolean?): SpeechRecognitionConfig {
-      return SpeechRecognitionConfig(locale, contextualStrings, maskOffensiveWords, autoFinishRecognitionMs, autoFinishProgressIntervalMs, resetAutoFinishVoiceSensitivity, disableRepeatingFilter, startHapticFeedbackStyle, stopHapticFeedbackStyle, androidFormattingPreferQuality, androidUseWebSearchModel, androidDisableBatchHandling, iosAddPunctuation, iosPreset, iosAtypicalSpeech)
+    private fun fromCpp(locale: String?, contextualStrings: Array<String>?, maskOffensiveWords: Boolean?, onDevice: OnDeviceMode?, autoFinishRecognitionMs: Double?, autoFinishProgressIntervalMs: Double?, resetAutoFinishVoiceSensitivity: Double?, disableRepeatingFilter: Boolean?, startHapticFeedbackStyle: HapticFeedbackStyle?, stopHapticFeedbackStyle: HapticFeedbackStyle?, androidFormattingPreferQuality: Boolean?, androidUseWebSearchModel: Boolean?, androidDisableBatchHandling: Boolean?, iosAddPunctuation: Boolean?, iosPreset: IosPreset?, iosAtypicalSpeech: Boolean?): SpeechRecognitionConfig {
+      return SpeechRecognitionConfig(locale, contextualStrings, maskOffensiveWords, onDevice, autoFinishRecognitionMs, autoFinishProgressIntervalMs, resetAutoFinishVoiceSensitivity, disableRepeatingFilter, startHapticFeedbackStyle, stopHapticFeedbackStyle, androidFormattingPreferQuality, androidUseWebSearchModel, androidDisableBatchHandling, iosAddPunctuation, iosPreset, iosAtypicalSpeech)
     }
   }
 }

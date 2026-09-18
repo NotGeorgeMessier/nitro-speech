@@ -18,6 +18,8 @@ namespace margelo::nitro::nitrospeech { class HybridRecognizerSpec; }
 namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 // Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
+// Forward declaration of `OnDeviceMode` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class OnDeviceMode; }
 // Forward declaration of `PermissionStatus` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
@@ -26,6 +28,8 @@ namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
 // Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
+// Forward declaration of `SupportedLocales` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
 // Forward declaration of `VolumeChangeEvent` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 
@@ -35,10 +39,12 @@ namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
 #include "HybridRecognizerSpec.hpp"
 #include "IosPreset.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
+#include "OnDeviceMode.hpp"
 #include "PermissionStatus.hpp"
 #include "SpeechRecognitionConfig.hpp"
 #include "SpeechRecognitionError.hpp"
 #include "SpeechRecognitionPrewarm.hpp"
+#include "SupportedLocales.hpp"
 #include "VolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>

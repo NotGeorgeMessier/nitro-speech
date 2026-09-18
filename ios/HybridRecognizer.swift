@@ -1,6 +1,7 @@
 import Foundation
 import NitroModules
 import AVFoundation
+import Speech
 
 class HybridRecognizer: HybridRecognizerSpec  {
     var prewarmOptions: SpeechRecognitionPrewarm?
@@ -37,7 +38,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
         prewarmOptions = options
         return Promise.async(.userInitiated) { [weak self] in
             // Ignore when standalone prewarm triggered for active session
-            guard self?.engine?.isActive != true else { return }
+            guard self?.engine == nil || self?.engine?.status == .stopped else { return }
             // Ensure correct engine is selected based on params and ios version
             await self?.ensureEngine(params: defaultParams)
             // try to preload assets and check if speech engine is available on OS level
@@ -54,7 +55,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
     }
     
     func stopListening() {
-        engine?.stop()
+        try? engine?.stop()
     }
     
     func resetAutoFinishTime() {
@@ -78,7 +79,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
     }
 
     func getIsActive() -> Bool {
-        engine?.isActive ?? false
+        return engine?.status == .active
     }
 
     func getVoiceInputVolume() -> VolumeChangeEvent {
@@ -90,30 +91,31 @@ class HybridRecognizer: HybridRecognizerSpec  {
     }
     
     func getPermissions() -> PermissionStatus {
-        // Return early for the speech recognition permission first
-        let speechRecognitionStatus = Permissions.authorizationStatus()
-        if speechRecognitionStatus == PermissionStatus.denied {
-            return PermissionStatus.denied
+        return Permissions.getCombinedStatus()
+    }
+    
+    func getSupportedLocales() -> Promise<SupportedLocales> {
+        return Promise.async(.userInitiated) { [weak self] in
+            await self?.coordinator.getSupportedLocalesReport()
+                ?? SupportedLocales(locales: [], installedLocales: [])
         }
-        if speechRecognitionStatus == PermissionStatus.notRequested {
-            return PermissionStatus.notRequested
-        }
-        
-        // Check micro then
-        let micStatus = Permissions.microphonePermissionStatus()
-        if micStatus == PermissionStatus.denied {
-            return PermissionStatus.denied
-        }
-        if micStatus == PermissionStatus.notRequested {
-            return PermissionStatus.notRequested
-        }
-        
-        // Everything is granted
-        return PermissionStatus.granted
     }
     
     func getSupportedLocalesIOS() -> [String] {
         return self.coordinator.getSupportedLocales()
+    }
+    
+    func onDeviceRecognitionAvailable(locale: String?) -> Bool {
+        let identifier = locale ?? "en-US"
+        if let sfRecognizer = SFSpeechRecognizer(locale: Locale(identifier: identifier)),
+           sfRecognizer.supportsOnDeviceRecognition {
+            return true
+        }
+        if #available(iOS 26.0, *) {
+            // Speech/Dictation service availability; assets are handled separately in prewarm.
+            return SpeechTranscriber.isAvailable
+        }
+        return false
     }
 
     private func ensureEngine(params: SpeechRecognitionConfig?) async {
@@ -166,6 +168,7 @@ extension HybridRecognizer: RecognizerDelegate {
                 locale: config?.locale,
                 contextualStrings: config?.contextualStrings,
                 maskOffensiveWords: config?.maskOffensiveWords,
+                onDevice: config?.onDevice,
                 autoFinishRecognitionMs: newConfig.autoFinishRecognitionMs ?? config?.autoFinishRecognitionMs,
                 autoFinishProgressIntervalMs: newConfig.autoFinishProgressIntervalMs ?? config?.autoFinishProgressIntervalMs,
                 resetAutoFinishVoiceSensitivity: newConfig.resetAutoFinishVoiceSensitivity ?? config?.resetAutoFinishVoiceSensitivity,
@@ -206,7 +209,7 @@ extension HybridRecognizer: RecognizerDelegate {
     }
     
     func autoFinishProgress(timeLeftMs: Double) {
-        self.lg.log("[onAutoFinishProgress] \(timeLeftMs)ms")
+//        self.lg.log("[onAutoFinishProgress] \(timeLeftMs)ms")
         
         if onAutoFinishProgress != nil {
             onAutoFinishProgressFallback = onAutoFinishProgress

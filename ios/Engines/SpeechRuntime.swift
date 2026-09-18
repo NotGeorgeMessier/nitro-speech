@@ -10,9 +10,9 @@ final class SpeechRuntime: TranscriberRuntime {
         self.locale = locale
     }
     
-    func create(config: SpeechRecognitionConfig?) async throws {
+    func create(config: SpeechRecognitionConfig?, loadAssets: Bool?) async throws {
         if !SpeechTranscriber.isAvailable {
-            throw NSError()
+            throw RecognizerError.speechTranscriberNotAvailable
         }
         var speechTranscriptionOptions: Set<SpeechTranscriber.TranscriptionOption> = []
         if config?.maskOffensiveWords == true {
@@ -24,10 +24,11 @@ final class SpeechRuntime: TranscriberRuntime {
             reportingOptions: [.volatileResults, .fastResults],
             attributeOptions: [.audioTimeRange]
         )
-        
-        
 
-        if let transcriber, let installationRequest = try await AssetInventory.assetInstallationRequest(supporting: [transcriber]) {
+        if loadAssets != false,
+           let transcriber,
+           let installationRequest = try await AssetInventory.assetInstallationRequest(supporting: [transcriber])
+        {
             try await installationRequest.downloadAndInstall()
         }
     }

@@ -24,8 +24,8 @@ final class AnalyzerEngine: RecognizerEngine {
         super.init(locale: locale, delegate: delegate)
     }
     
-    override func stop() {
-        super.stop()
+    override func stop() throws {
+        try super.stop()
         inputBuilder?.finish()
         
         Task { [weak self] in
@@ -41,11 +41,17 @@ final class AnalyzerEngine: RecognizerEngine {
         }
     }
     
-    override func prewarm(forPrewarm: Bool, _ options: SpeechRecognitionPrewarm? = nil) async {
+    override func prewarm(
+        forPrewarm: Bool,
+        _ options: SpeechRecognitionPrewarm? = nil
+    ) async {
         await super.prewarm(forPrewarm: forPrewarm, options)
         do {
             // Create transcriber and install assets
-            try await transcriber.create(config: self.recognizerDelegate?.config)
+            try await transcriber.create(
+                config: self.recognizerDelegate?.config,
+                loadAssets: options?.loadOnDeviceModel
+            )
         }
         catch {
             self.retry(from: "prewarm.assets", isPrewarm: forPrewarm)
@@ -125,7 +131,7 @@ final class AnalyzerEngine: RecognizerEngine {
                     inputBuilder?.yield(input)
                 }
             } catch {
-                if Task.isCancelled || self.isStopping {
+                if Task.isCancelled || status == .finishing {
                     return
                 }
                 self.retry(from: "startRecognition.audioProducerTask", isPrewarm: false)
@@ -145,7 +151,7 @@ final class AnalyzerEngine: RecognizerEngine {
                     }
                 )
             } catch {
-                if self.isStopping || error is CancellationError {
+                if status == .finishing || error is CancellationError {
                     return
                 }
                 self.reportError(

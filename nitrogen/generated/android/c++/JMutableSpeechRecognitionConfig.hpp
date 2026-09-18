@@ -19,7 +19,7 @@ namespace margelo::nitro::nitrospeech {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ struct "MutableSpeechRecognitionConfig" and the the Kotlin data class "MutableSpeechRecognitionConfig".
+   * The C++ JNI bridge between the C++ struct "MutableSpeechRecognitionConfig" and the Kotlin data class "MutableSpeechRecognitionConfig".
    */
   struct JMutableSpeechRecognitionConfig final: public jni::JavaClass<JMutableSpeechRecognitionConfig> {
   public:

@@ -27,6 +27,10 @@ public extension SpeechRecognitionError {
         self = .iosspeechpermissionnotdetermined
       case "SessionStartFailed":
         self = .sessionstartfailed
+      case "OnDeviceNotSupported":
+        self = .ondevicenotsupported
+      case "OnDeviceModelNotInstalled":
+        self = .ondevicemodelnotinstalled
       default:
         return nil
     }
@@ -47,6 +51,10 @@ public extension SpeechRecognitionError {
         return "IosSpeechPermissionNotDetermined"
       case .sessionstartfailed:
         return "SessionStartFailed"
+      case .ondevicenotsupported:
+        return "OnDeviceNotSupported"
+      case .ondevicemodelnotinstalled:
+        return "OnDeviceModelNotInstalled"
     }
   }
 }

@@ -15,7 +15,7 @@ namespace margelo::nitro::nitrospeech {
   using namespace facebook;
 
   /**
-   * The C++ JNI bridge between the C++ enum "SpeechRecognitionError" and the the Kotlin enum "SpeechRecognitionError".
+   * The C++ JNI bridge between the C++ enum "SpeechRecognitionError" and the Kotlin enum "SpeechRecognitionError".
    */
   struct JSpeechRecognitionError final: public jni::JavaClass<JSpeechRecognitionError> {
   public:
@@ -57,6 +57,12 @@ namespace margelo::nitro::nitrospeech {
         case SpeechRecognitionError::SESSIONSTARTFAILED:
           static const auto fieldSESSIONSTARTFAILED = clazz->getStaticField<JSpeechRecognitionError>("SESSIONSTARTFAILED");
           return clazz->getStaticFieldValue(fieldSESSIONSTARTFAILED);
+        case SpeechRecognitionError::ONDEVICENOTSUPPORTED:
+          static const auto fieldONDEVICENOTSUPPORTED = clazz->getStaticField<JSpeechRecognitionError>("ONDEVICENOTSUPPORTED");
+          return clazz->getStaticFieldValue(fieldONDEVICENOTSUPPORTED);
+        case SpeechRecognitionError::ONDEVICEMODELNOTINSTALLED:
+          static const auto fieldONDEVICEMODELNOTINSTALLED = clazz->getStaticField<JSpeechRecognitionError>("ONDEVICEMODELNOTINSTALLED");
+          return clazz->getStaticFieldValue(fieldONDEVICEMODELNOTINSTALLED);
         default:
           std::string stringValue = std::to_string(static_cast<int>(value));
           throw std::invalid_argument("Invalid enum value (" + stringValue + "!");
