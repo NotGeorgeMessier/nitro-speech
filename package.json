@@ -30,6 +30,7 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "reinstall": "rm -rf node_modules && bun install",
     "build": "rm -rf lib && rm -f tsconfig.tsbuildinfo && bun tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\" --fix",
     "nitro": "rm -rf nitrogen && npx nitrogen@latest",
@@ -82,8 +83,8 @@
     "prettier": "^3.3.3",
     "react": "19.2.4",
     "react-native": "0.84.1",
-    "react-native-nitro-modules": "0.36.4",
-    "nitrogen": "0.36.4",
+    "react-native-nitro-modules": "0.37.1",
+    "nitrogen": "0.37.1",
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
