@@ -65,7 +65,7 @@
     "url": "https://github.com/NotGeorgeMessier/nitro-speech/issues"
   },
   "author": "George Messier",
-  "homepage": "https://NotGeorgeMessier.github.io/nitro-speech/",
+  "homepage": "https://github.com/NotGeorgeMessier/nitro-speech#readme",
   "license": "MIT",
   "engines": {
     "node": ">=14"
