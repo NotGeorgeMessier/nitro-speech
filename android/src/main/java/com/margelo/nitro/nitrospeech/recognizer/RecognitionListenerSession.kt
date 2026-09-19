@@ -13,7 +13,7 @@ class RecognitionListenerSession (
     private val autoStopper: AutoStopper?,
     private val config: SpeechRecognitionConfig?,
     private val fireVolumeChangeEvent: (event: VolumeChangeEvent) -> Unit,
-    private val onFinishRecognition: (result: ArrayList<String>?, error: SpeechRecognitionError?, recordingStopped: Boolean) -> Unit,
+    private val onFinishRecognition: (result: ArrayList<String>?, error: SpeechRecognitionError?, recordingStopped: Boolean, trace: String?) -> Unit,
 ) {
     private val logger = Logger(disable = false)
     companion object {
@@ -78,7 +78,8 @@ class RecognitionListenerSession (
                 onFinishRecognition(
                     null,
                     mappedError,
-                    true
+                    true,
+                    ErrorTrace.join("RecognitionListenerSession", "onError"),
                 )
                 autoStopper?.stop()
                 autoStopper?.onTimeout()
@@ -86,7 +87,7 @@ class RecognitionListenerSession (
 
             override fun onResults(results: Bundle?) {
                 logger.log("onResults: $resultBatches")
-                onFinishRecognition(resultBatches, null, true)
+                onFinishRecognition(resultBatches, null, true, null)
                 autoStopper?.stop()
                 autoStopper?.onTimeout()
             }
@@ -119,7 +120,7 @@ class RecognitionListenerSession (
                     }
                 }
                 resultBatches = currentBatches
-                onFinishRecognition(currentBatches, null, false)
+                onFinishRecognition(currentBatches, null, false, null)
             }
 
             override fun onEvent(eventType: Int, params: Bundle?) {}     

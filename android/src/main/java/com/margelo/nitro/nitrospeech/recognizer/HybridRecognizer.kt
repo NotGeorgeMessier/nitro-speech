@@ -41,7 +41,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   override var onResult: ((resultBatches: Array<String>) -> Unit)? = null
 
   override var onAutoFinishProgress: ((timeLeftMs: Double) -> Unit)? = null
-  override var onError: ((error: SpeechRecognitionError) -> Unit)? = null
+  override var onError: ((error: SpeechRecognitionError, trace: String?) -> Unit)? = null
   override var onPermissionDenied: (() -> Unit)? = null
   override var onVolumeChange: ((event: VolumeChangeEvent) -> Unit)? = null
 
@@ -71,7 +71,10 @@ class HybridRecognizer: HybridRecognizerSpec() {
       ) {
         is OnDevicePrepareResult.Failed -> {
           // Mirror startListening require failures (e.g. cancel download).
-          onError?.invoke(result.error)
+          onError?.invoke(
+            result.error,
+            ErrorTrace.join("HybridRecognizer", "prewarm", result.trace),
+          )
         }
         OnDevicePrepareResult.UseOnDevice,
         OnDevicePrepareResult.UseFallback -> Unit
@@ -233,7 +236,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
       onFinishRecognition(
         null,
         SpeechRecognitionError.SESSIONSTARTFAILED,
-        true
+        true,
+        ErrorTrace.join("HybridRecognizer", "preparePermissions"),
       )
       return
     }
@@ -246,7 +250,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
       onFinishRecognition(
         null,
         SpeechRecognitionError.SESSIONSTARTFAILED,
-        true
+        true,
+        ErrorTrace.join("HybridRecognizer", "preparePermissions"),
       )
       return
     }
@@ -284,7 +289,12 @@ class HybridRecognizer: HybridRecognizerSpec() {
       OnDevicePrepareResult.UseOnDevice -> true
       OnDevicePrepareResult.UseFallback -> false
       is OnDevicePrepareResult.Failed -> {
-        onFinishRecognition(null, result.error, true)
+        onFinishRecognition(
+          null,
+          result.error,
+          true,
+          ErrorTrace.join("HybridRecognizer", "resolveUseOnDevice", result.trace),
+        )
         null
       }
     }
@@ -309,8 +319,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
             autoStopper,
             config,
             fireVolumeChangeEvent = { event -> fireVolumeChangeEvent(event) },
-            onFinishRecognition = { result, error, recordingStopped ->
-              onFinishRecognition(result, error, recordingStopped)
+            onFinishRecognition = { result, error, recordingStopped, trace ->
+              onFinishRecognition(result, error, recordingStopped, trace)
             }
         )
 
@@ -358,7 +368,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
         onFinishRecognition(
           null,
           SpeechRecognitionError.SESSIONSTARTFAILED,
-          true
+          true,
+          ErrorTrace.join("HybridRecognizer", "start"),
         )
       }
     }
@@ -380,7 +391,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
       onFinishRecognition(
         null,
         SpeechRecognitionError.UNKNOWN,
-        true
+        true,
+        ErrorTrace.join("HybridRecognizer", "cleanup"),
       )
     }
   }
@@ -388,13 +400,17 @@ class HybridRecognizer: HybridRecognizerSpec() {
   private fun onFinishRecognition(
     result: ArrayList<String>?,
     error: SpeechRecognitionError?,
-    recordingStopped: Boolean
+    recordingStopped: Boolean,
+    trace: String? = null,
   ) {
     if (recordingStopped) {
       onRecordingStopped?.invoke()
     }
     if (error != null) {
-      onError?.invoke(error)
+      onError?.invoke(
+        error,
+        trace ?: ErrorTrace.join("HybridRecognizer", "onFinishRecognition"),
+      )
     }
     if (!result.isNullOrEmpty()) {
       onResult?.invoke(result.toTypedArray())

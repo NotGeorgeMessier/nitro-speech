@@ -28,7 +28,10 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 internal sealed class OnDevicePrepareResult {
   data object UseOnDevice : OnDevicePrepareResult()
   data object UseFallback : OnDevicePrepareResult()
-  data class Failed(val error: SpeechRecognitionError) : OnDevicePrepareResult()
+  data class Failed(
+    val error: SpeechRecognitionError,
+    val trace: String,
+  ) : OnDevicePrepareResult()
 }
 
 private enum class DownloadOutcome {
@@ -88,7 +91,10 @@ internal object OnDeviceSupport {
   ): OnDevicePrepareResult {
     if (!isServiceAvailable(context)) {
       return if (mode == OnDeviceMode.REQUIRE) {
-        OnDevicePrepareResult.Failed(SpeechRecognitionError.ONDEVICENOTSUPPORTED)
+        OnDevicePrepareResult.Failed(
+          SpeechRecognitionError.ONDEVICENOTSUPPORTED,
+          ErrorTrace.join("OnDeviceSupport", "prepare"),
+        )
       } else {
         OnDevicePrepareResult.UseFallback
       }
@@ -122,7 +128,10 @@ internal object OnDeviceSupport {
 
     logger.log("onDevice download finished without install (outcome=$outcome)")
     return if (mode == OnDeviceMode.REQUIRE) {
-      OnDevicePrepareResult.Failed(SpeechRecognitionError.ONDEVICEMODELNOTINSTALLED)
+      OnDevicePrepareResult.Failed(
+        SpeechRecognitionError.ONDEVICEMODELNOTINSTALLED,
+        ErrorTrace.join("OnDeviceSupport", "prepare", "downloadModel"),
+      )
     } else {
       OnDevicePrepareResult.UseFallback
     }

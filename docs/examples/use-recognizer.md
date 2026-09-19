@@ -85,8 +85,9 @@ const {
       onAutoFinishProgress: (timeLeftMs) => {
         console.log('Auto-stop in:', timeLeftMs, 'ms');
       },
-      onError: (error) => {
+      onError: (error, trace) => {
         console.log('Error code:', error);
+        console.log('Trace:', trace);
         console.log('Message:', ErrorDictionary[error].message);
       },
       onPermissionDenied: () => {
