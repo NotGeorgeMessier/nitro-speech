@@ -115,14 +115,30 @@ final class AnalyzerEngine: RecognizerEngine {
                     if needsConversion {
                         // Skip analyzing for empty buffers and
                         // Throw error if buffers are inconvertable
-                        guard let convertedBuffer = try AudioBufferConverter.convertBuffer(
-                            converter: converter,
-                            audioFormat: audioFormat,
-                            pcmBuffer: pcmBuffer
-                        ) else {
-                            continue
+                        do {
+                            guard let convertedBuffer = try AudioBufferConverter.convertBuffer(
+                                converter: converter,
+                                audioFormat: audioFormat,
+                                pcmBuffer: pcmBuffer
+                            ) else {
+                                continue
+                            }
+                            bufferForAnalyzer = convertedBuffer
+                        } catch {
+                            if Task.isCancelled || status == .finishing {
+                                return
+                            }
+                            self.reportError(
+                                from: ErrorTrace.join(
+                                    "AnalyzerEngine",
+                                    "startAudioEngine",
+                                    "AudioBufferConverter",
+                                    "convertBuffer"
+                                ),
+                                code: SpeechRecognitionError.sessionstartfailed
+                            )
+                            return
                         }
-                        bufferForAnalyzer = convertedBuffer
                     } else {
                         bufferForAnalyzer = pcmBuffer
                     }
@@ -155,7 +171,7 @@ final class AnalyzerEngine: RecognizerEngine {
                     return
                 }
                 self.reportError(
-                    from: "startRecognition.recognizerTask",
+                    from: ErrorTrace.join("AnalyzerEngine", "startSession", "handleResults"),
                     code: SpeechRecognitionError.recognitiontaskfailed
                 )
             }

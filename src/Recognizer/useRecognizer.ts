@@ -54,8 +54,11 @@ export const useRecognizer = (
     SpeechRecognizer.onAutoFinishProgress = (timeLeftMs: number) => {
       callbacks.onAutoFinishProgress?.(timeLeftMs)
     }
-    SpeechRecognizer.onError = (error: SpeechRecognitionError) => {
-      callbacks.onError?.(error)
+    SpeechRecognizer.onError = (
+      error: SpeechRecognitionError,
+      trace: string
+    ) => {
+      callbacks.onError?.(error, trace)
     }
     SpeechRecognizer.onPermissionDenied = () => {
       callbacks.onPermissionDenied?.()

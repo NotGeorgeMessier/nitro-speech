@@ -149,8 +149,11 @@ export interface Recognizer extends HybridObject<{
   onAutoFinishProgress?: (timeLeftMs: number) => void
   /**
    * Error of the speech recognition.
+   *
+   * @param error - {@linkcode SpeechRecognitionError} code
+   * @param trace - Dot-separated native call-site path, e.g. `RecognizerEngine.startAudioEngine`
    */
-  onError?: (error: SpeechRecognitionError) => void
+  onError?: (error: SpeechRecognitionError, trace: string) => void
   /**
    * The permission to use the microphone or recognize speech has been denied.
    */

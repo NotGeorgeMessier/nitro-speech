@@ -30,7 +30,7 @@ final class SFSpeechEngine: RecognizerEngine {
         if self.recognizerDelegate?.config?.onDevice == OnDeviceMode.require &&
            speechRecognizer?.supportsOnDeviceRecognition != true {
             self.reportError(
-                from: "prewarm.supportsOnDeviceRecognition",
+                from: ErrorTrace.join("SFSpeechEngine", "prewarm"),
                 code: SpeechRecognitionError.ondevicenotsupported
             )
             return
@@ -109,7 +109,7 @@ final class SFSpeechEngine: RecognizerEngine {
                 } else {
                     lg.log("[startSession.recognitionTask.error] \(error)")
                     self.reportError(
-                        from: "startSession.recognitionTask.error",
+                        from: ErrorTrace.join("SFSpeechEngine", "startSession", "recognitionTask"),
                         code: SpeechRecognitionError.recognitiontaskfailed
                     )
                 }

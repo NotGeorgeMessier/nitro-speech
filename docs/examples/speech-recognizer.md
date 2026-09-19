@@ -60,8 +60,9 @@ SpeechRecognizer.onAutoFinishProgress = (timeLeftMs) => {
   console.log('Auto-stop in:', timeLeftMs, 'ms');
 };
 
-SpeechRecognizer.onError = (error) => {
+SpeechRecognizer.onError = (error, trace) => {
   console.log('Error code:', error);
+  console.log('Trace:', trace);
   console.log('Message:', ErrorDictionary[error].message);
 };
 

@@ -87,11 +87,11 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     };
   }
   
-  // pragma MARK: std::function<void(SpeechRecognitionError /* error */)>
-  Func_void_SpeechRecognitionError create_Func_void_SpeechRecognitionError(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroSpeech::Func_void_SpeechRecognitionError::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](SpeechRecognitionError error) mutable -> void {
-      swiftClosure.call(static_cast<int>(error));
+  // pragma MARK: std::function<void(SpeechRecognitionError /* error */, const std::string& /* trace */)>
+  Func_void_SpeechRecognitionError_std__string create_Func_void_SpeechRecognitionError_std__string(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroSpeech::Func_void_SpeechRecognitionError_std__string::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](SpeechRecognitionError error, const std::string& trace) mutable -> void {
+      swiftClosure.call(static_cast<int>(error), trace);
     };
   }
   

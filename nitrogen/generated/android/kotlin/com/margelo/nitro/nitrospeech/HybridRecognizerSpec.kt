@@ -83,13 +83,13 @@ abstract class HybridRecognizerSpec: HybridObject() {
       onAutoFinishProgress = value?.let { it }
     }
   
-  abstract var onError: ((error: SpeechRecognitionError) -> Unit)?
+  abstract var onError: ((error: SpeechRecognitionError, trace: String) -> Unit)?
   
-  private var onError_cxx: Func_void_SpeechRecognitionError?
+  private var onError_cxx: Func_void_SpeechRecognitionError_std__string?
     @Keep
     @DoNotStrip
     get() {
-      return onError?.let { Func_void_SpeechRecognitionError_java(it) }
+      return onError?.let { Func_void_SpeechRecognitionError_std__string_java(it) }
     }
     @Keep
     @DoNotStrip

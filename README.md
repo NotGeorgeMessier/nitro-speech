@@ -98,7 +98,7 @@ const { startListening, stopListening } = useRecognizer({
   onResult: (textBatches) => console.log('Result:', textBatches.join('\n')),
   onAutoFinishProgress: (timeLeftMs) =>
     console.log('Auto-finish in:', timeLeftMs, 'ms'),
-  onError: (code) => console.log('Error:', code),
+  onError: (code, trace) => console.log('Error:', code, trace),
   onPermissionDenied: () => console.log('Permission denied'),
 })
 

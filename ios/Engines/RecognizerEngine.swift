@@ -192,7 +192,7 @@ class RecognizerEngine {
             lg.log("[startAudioEngine.start]")
         } catch {
             self.reportError(
-                from: "Audio Engine",
+                from: ErrorTrace.join(String(describing: type(of: self)), "startAudioEngine"),
                 code: SpeechRecognitionError.sessionstartfailed
             )
         }
@@ -246,7 +246,7 @@ class RecognizerEngine {
         
         
         if let code, let recognizer = self.recognizerDelegate {
-            recognizer.error(error: code)
+            recognizer.error(error: code, trace: from)
         }
     }
     
@@ -268,7 +268,10 @@ class RecognizerEngine {
         
         if authStatus != .authorized {
             // .notDetermined or unknown issue
-            recognizerDelegate.error(error: SpeechRecognitionError.iosspeechpermissionnotdetermined)
+            recognizerDelegate.error(
+                error: SpeechRecognitionError.iosspeechpermissionnotdetermined,
+                trace: ErrorTrace.join(String(describing: type(of: self)), "requestPermissions")
+            )
             return false
         }
         
@@ -323,7 +326,7 @@ class RecognizerEngine {
     private func prewarmAudioSession(forPrewarm: Bool) {
         guard let audioEngine else {
             self.reportError(
-                from: "Audio Engine",
+                from: ErrorTrace.join(String(describing: type(of: self)), "prewarmAudioSession"),
                 code: SpeechRecognitionError.sessionstartfailed
             )
             return
@@ -352,7 +355,7 @@ class RecognizerEngine {
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
             self.reportError(
-                from: "startAudioSession",
+                from: ErrorTrace.join(String(describing: type(of: self)), "startAudioSession"),
                 code: SpeechRecognitionError.sessionstartfailed
             )
         }
