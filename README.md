@@ -40,6 +40,7 @@ The API is identical — no migration needed.
 
 - [Installation](#installation)
 - [Quickstart](#quickstart)
+- [Example app](#example-app)
 - [Permissions](#permissions)
 - [Features](#features)
 - [Requirements](#requirements)
@@ -106,6 +107,10 @@ startListening({
   locale: 'en-US',
 })
 ```
+
+### Example app
+
+A New Architecture React Native CLI example lives in [`apps/example`](./apps/example). See that README for run and test commands.
 
 ## Permissions
 

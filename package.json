@@ -36,7 +36,14 @@
     "nitro": "rm -rf nitrogen && npx nitrogen@latest",
     "localnitro": "rm -rf nitrogen && node ../../../nitro/nitro/packages/nitrogen/lib/index.js",
     "docs:start": "npm --prefix website start",
-    "docs:build": "npm --prefix website run build"
+    "docs:build": "npm --prefix website run build",
+    "test": "npm --prefix apps/example test",
+    "test:harness:android": "npm --prefix apps/example run test:harness:android",
+    "test:harness:ios": "npm --prefix apps/example run test:harness:ios",
+    "example": "npm --prefix apps/example",
+    "example:start": "npm --prefix apps/example start",
+    "example:android": "npm --prefix apps/example run android",
+    "example:ios": "npm --prefix apps/example run ios"
   },
   "keywords": [
     "react-native",
@@ -75,14 +82,14 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@react-native/eslint-config": "0.84.1",
+    "@react-native/eslint-config": "0.87.1",
     "@types/react": "19.2.14",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.3.3",
-    "react": "19.2.4",
-    "react-native": "0.84.1",
+    "react": "19.2.3",
+    "react-native": "0.87.1",
     "react-native-nitro-modules": "0.37.1",
     "nitrogen": "0.37.1",
     "typescript": "^5.8.3"
@@ -116,7 +123,9 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "apps/",
+    "nitrogen/"
   ],
   "prettier": {
     "quoteProps": "consistent",
