@@ -40,6 +40,8 @@
     "test": "npm --prefix apps/example test",
     "test:harness:android": "npm --prefix apps/example run test:harness:android",
     "test:harness:ios": "npm --prefix apps/example run test:harness:ios",
+    "test:ios:native": "bash scripts/test-ios-native.sh",
+    "test:android:native": "bash scripts/test-android-native.sh",
     "example": "npm --prefix apps/example",
     "example:start": "npm --prefix apps/example start",
     "example:android": "npm --prefix apps/example run android",

@@ -49,6 +49,16 @@ npm run test:harness:android
 npm run test:harness:ios
 ```
 
+Native unit tests (no mic / no STT goldens):
+
+```bash
+# from repo root
+npm run test:ios:native
+npm run test:android:native
+```
+
+See [`docs/testing.md`](../../docs/testing.md) for the full coverage matrix.
+
 Override the Android AVD with `HARNESS_ANDROID_EMULATOR`. iOS is simulator-only.
 
 ### Emulator speech contracts

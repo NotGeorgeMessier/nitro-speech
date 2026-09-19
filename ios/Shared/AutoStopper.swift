@@ -1,12 +1,10 @@
 import Foundation
 
 final class AutoStopper {
-    private static let defaultSilenceThresholdMs = 8000.0
-    private static let defaultProgressIntervalMs = 1000.0
-    private static let minProgressIntervalMs = 50.0
+    static let defaultSilenceThresholdMs = 8000.0
+    static let defaultProgressIntervalMs = 1000.0
+    static let minProgressIntervalMs = 50.0
 
-    private let lg = Lg(prefix: "AutoStopper", disable: true)
-    
     private let queue = DispatchQueue(label: "com.margelo.nitrospeech.autostopper")
 
     private var silenceThresholdMs: Double
@@ -41,10 +39,9 @@ final class AutoStopper {
         }
     }
 
-    func resetTimer(from: String) {
+    func resetTimer(from _: String) {
         queue.async { [weak self] in
             guard let self, !self.isStopped else { return }
-            lg.log("[resetTimer] from:\(from)")
             self.didTimeout = false
             self.timeLeftMs = self.silenceThresholdMs
             self.startOrRescheduleTimerLocked()
@@ -54,18 +51,16 @@ final class AutoStopper {
         }
     }
 
-    func updateThreshold(_ newThresholdMs: Double, from: String) {
+    func updateThreshold(_ newThresholdMs: Double, from _: String) {
         queue.async { [weak self] in
             guard let self, !self.isStopped else { return }
-            lg.log("[updateThreshold] from:\(from) newThresholdMs:\(newThresholdMs)")
             self.silenceThresholdMs = Self.clampMs(newThresholdMs)
         }
     }
 
-    func addMsOnce(_ extraMs: Double, from: String) {
+    func addMsOnce(_ extraMs: Double, from _: String) {
         queue.async { [weak self] in
             guard let self, !self.isStopped, extraMs.isFinite else { return }
-            lg.log("[addMsOnce] from:\(from) extraMs:\(extraMs)")
             self.timeLeftMs += extraMs
             self.didTimeout = false
             if self.timeLeftMs > 0, self.timer != nil {
@@ -74,10 +69,9 @@ final class AutoStopper {
         }
     }
 
-    func updateProgressInterval(_ newIntervalMs: Double, from: String) {
+    func updateProgressInterval(_ newIntervalMs: Double, from _: String) {
         queue.async { [weak self] in
             guard let self, !self.isStopped else { return }
-            lg.log("[updateProgressInterval] from:\(from) newIntervalMs:\(newIntervalMs)")
             self.progressIntervalMs = Self.clampMs(newIntervalMs)
             if self.timer != nil {
                 self.startOrRescheduleTimerLocked()
@@ -116,7 +110,6 @@ final class AutoStopper {
 
         timeLeftMs -= progressIntervalMs
         if timeLeftMs > 0 {
-            lg.log("[onProgress] timeLeftMs:\(timeLeftMs)")
             onProgress(timeLeftMs)
             return
         }
@@ -124,7 +117,6 @@ final class AutoStopper {
         timeLeftMs = 0
         didTimeout = true
         cancelTimerLocked()
-        lg.log("[onTimeout]")
         onTimeout()
     }
 
@@ -138,7 +130,7 @@ final class AutoStopper {
         timer = nil
     }
 
-    private static func clampMs(_ value: Double) -> Double {
+    static func clampMs(_ value: Double) -> Double {
         if !value.isFinite {
             return minProgressIntervalMs
         }

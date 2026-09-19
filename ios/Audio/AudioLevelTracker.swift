@@ -10,17 +10,9 @@ struct AudioLevelSample {
 }
 
 final class AudioLevelTracker {
-    private static let meterMinDb: Float = -70
-    private static let meterMaxDb: Float = 0
-    private static let meterAttack: Float = 0.35
-    private static let meterRelease: Float = 0.08
-    private static let defaultAutoStopResetThreshold: Double = 0.4
-
     private var smoothedLevel: Float = 0
 
     var currentSample: AudioLevelSample?
-    
-    private let lg = Lg(prefix: "RecognizerEngine", disable: true)
 
     func reset() {
         smoothedLevel = 0
@@ -34,27 +26,21 @@ final class AudioLevelTracker {
         var rms: Float = 0
         vDSP_rmsqv(samples, 1, &rms, vDSP_Length(frameCount))
 
-        let db = 20 * log10(rms + 0.00001)
-        let raw = (db - Self.meterMinDb) / (Self.meterMaxDb - Self.meterMinDb)
-        let normalized = max(0, min(1, raw))
-
-        let coeff = normalized > smoothedLevel ? Self.meterAttack : Self.meterRelease
-        smoothedLevel += coeff * (normalized - smoothedLevel)
-        
-        var threshold = Self.defaultAutoStopResetThreshold
-        if let autoStopResetThreshold {
-            threshold = max(0, min(1, autoStopResetThreshold))
-        }
+        let db = VolumeMath.db(fromRms: rms)
+        let normalized = VolumeMath.normalized(fromDb: db)
+        smoothedLevel = VolumeMath.smooth(current: smoothedLevel, target: normalized)
+        let threshold = VolumeMath.clampThreshold(autoStopResetThreshold)
 
         currentSample = AudioLevelSample(
-            smoothed: Double(smoothedLevel * 1_000_000).rounded() / 1_000_000,
-            raw: Double(normalized * 1_000_000).rounded() / 1_000_000,
-            db: Double(db * 1_000).rounded() / 1_000,
-            resetTimer: threshold < 1 && Double(normalized) >= threshold
+            smoothed: VolumeMath.round6(smoothedLevel),
+            raw: VolumeMath.round6(normalized),
+            db: VolumeMath.roundDb(db),
+            resetTimer: VolumeMath.shouldResetTimer(
+                normalized: Double(normalized),
+                threshold: threshold
+            )
         )
-        
-        lg.log("[AudioLevelTracker.process] autoStopResetThreshold: \(threshold)")
-        
+
         return currentSample
     }
 }

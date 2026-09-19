@@ -21,6 +21,10 @@ Pod::Spec.new do |s|
     # Implementation (C++ objects)
     "cpp/**/*.{hpp,cpp}",
   ]
+  s.exclude_files = [
+    "ios/Package.swift",
+    "ios/Tests/**/*",
+  ]
 
   load 'nitrogen/generated/ios/NitroSpeech+autolinking.rb'
   add_nitrogen_files(s)

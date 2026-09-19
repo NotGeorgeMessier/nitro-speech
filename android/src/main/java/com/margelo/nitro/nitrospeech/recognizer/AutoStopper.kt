@@ -11,9 +11,14 @@ class AutoStopper(
     val onTimeout: () -> Unit,
 ) {
     companion object {
-        private const val DEFAULT_SILENCE_THRESHOLD_MS = 8000.0
-        private const val DEFAULT_PROGRESS_INTERVAL_MS = 1000.0
-        private const val MIN_PROGRESS_INTERVAL_MS = 50.0
+        internal const val DEFAULT_SILENCE_THRESHOLD_MS = 8000.0
+        internal const val DEFAULT_PROGRESS_INTERVAL_MS = 1000.0
+        internal const val MIN_PROGRESS_INTERVAL_MS = 50.0
+
+        internal fun clampMs(value: Double): Double {
+            if (!value.isFinite()) return MIN_PROGRESS_INTERVAL_MS
+            return max(MIN_PROGRESS_INTERVAL_MS, value)
+        }
     }
 
     private val logger = Logger(disable = false)
@@ -94,10 +99,5 @@ class AutoStopper(
         isTimerScheduled = false
         logger.log("onTimeout | ms: ${System.currentTimeMillis()}")
         onTimeout()
-    }
-
-    private fun clampMs(value: Double): Double {
-        if (!value.isFinite()) return MIN_PROGRESS_INTERVAL_MS
-        return max(MIN_PROGRESS_INTERVAL_MS, value)
     }
 }

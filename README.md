@@ -112,6 +112,8 @@ startListening({
 
 A New Architecture React Native CLI example lives in [`apps/example`](./apps/example). See that README for run and test commands.
 
+How to run all four test layers (Jest, harness, XCTest, Robolectric): [`docs/testing.md`](./docs/testing.md).
+
 ## Permissions
 
 More about permissions [here](./docs/features/permissions.md#permissions)

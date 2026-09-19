@@ -6,8 +6,9 @@ import android.speech.SpeechRecognizer
 import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.SpeechRecognitionError
 import com.margelo.nitro.nitrospeech.VolumeChangeEvent
-import kotlin.math.max
-import kotlin.math.roundToInt
+import com.margelo.nitro.nitrospeech.recognizer.logic.ResultBatchAccumulator
+import com.margelo.nitro.nitrospeech.recognizer.logic.SpeechErrorMapper
+import com.margelo.nitro.nitrospeech.recognizer.logic.VolumeMeter
 
 class RecognitionListenerSession (
     private val autoStopper: AutoStopper?,
@@ -16,36 +17,26 @@ class RecognitionListenerSession (
     private val onFinishRecognition: (result: ArrayList<String>?, error: SpeechRecognitionError?, recordingStopped: Boolean) -> Unit,
 ) {
     private val logger = Logger(disable = false)
-    companion object {
-        private const val SPEECH_LEVEL_THRESHOLD = 0.35
-        private const val FLOOR_RISE_ALPHA = 0.01f
-        private const val FLOOR_FALL_ALPHA = 0.20f
-        private const val PEAK_ATTACK_ALPHA = 0.25f
-        private const val PEAK_DECAY_ALPHA = 0.01f
-        private const val METER_ATTACK = 0.35f
-        private const val METER_RELEASE = 0.08f
-        private const val MIN_SPAN_DB = 6f
-        private const val PRECISION_SCALE = 1_000_000f
-    }
-
-    private var resultBatches: ArrayList<String>? = null
-    private var noiseFloorDb = Float.NaN
-    private var peakDb = Float.NaN
-    private var levelSmoothed = 0f
+    private val volumeMeter = VolumeMeter()
+    private val batchAccumulator = ResultBatchAccumulator(
+        disableRepeatingFilter = config?.disableRepeatingFilter == true,
+        disableBatchHandling = config?.androidDisableBatchHandling == true,
+    )
 
     fun createRecognitionListener(): RecognitionListener {
-        resultBatches = null
+        volumeMeter.reset()
+        batchAccumulator.reset()
         return object : RecognitionListener {
             override fun onReadyForSpeech(params: Bundle?) {}
             override fun onBeginningOfSpeech() {}
             override fun onRmsChanged(rmsdB: Float) {
                 val volumeEvent = getVolume(rmsdB)
                 fireVolumeChangeEvent(volumeEvent)
-                val threshold =
-                    config?.resetAutoFinishVoiceSensitivity?.coerceIn(0.0, 1.0)
-                        ?: SPEECH_LEVEL_THRESHOLD
-                // logger.log("onRmsChanged: ${volumeEvent}")
-                if (threshold < 1 && volumeEvent.rawVolume > threshold) {
+                if (volumeMeter.shouldResetTimer(
+                        volumeEvent.rawVolume,
+                        config?.resetAutoFinishVoiceSensitivity,
+                    )
+                ) {
                     autoStopper?.resetTimer()
                 }
             }
@@ -53,27 +44,15 @@ class RecognitionListenerSession (
             override fun onEndOfSpeech() {}
 
             override fun onError(error: Int) {
-                val message = when (error) {
-                    SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"
-                    SpeechRecognizer.ERROR_CLIENT -> "Client side error"
-                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Insufficient permissions"
-                    SpeechRecognizer.ERROR_NETWORK -> "Network error"
-                    SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Network timeout"
-                    SpeechRecognizer.ERROR_NO_MATCH -> "No match"
-                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Recognizer busy"
-                    SpeechRecognizer.ERROR_SERVER -> "Server error"
-                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech input"
-                    SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE -> "Language model not installed"
-                    SpeechRecognizer.ERROR_LANGUAGE_NOT_SUPPORTED -> "Language not supported"
-                    else -> "Unknown error"
-                }
+                val message = SpeechErrorMapper.message(error)
                 logger.log("onError: $message")
-                val mappedError = when {
-                    config?.onDevice != null && error == SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE ->
+                val mappedError = when (SpeechErrorMapper.map(error, config?.onDevice != null)) {
+                    SpeechErrorMapper.Kind.ON_DEVICE_MODEL_NOT_INSTALLED ->
                         SpeechRecognitionError.ONDEVICEMODELNOTINSTALLED
-                    config?.onDevice != null && error == SpeechRecognizer.ERROR_LANGUAGE_NOT_SUPPORTED ->
+                    SpeechErrorMapper.Kind.ON_DEVICE_NOT_SUPPORTED ->
                         SpeechRecognitionError.ONDEVICENOTSUPPORTED
-                    else -> SpeechRecognitionError.RECOGNITIONTASKFAILED
+                    SpeechErrorMapper.Kind.RECOGNITION_TASK_FAILED ->
+                        SpeechRecognitionError.RECOGNITIONTASKFAILED
                 }
                 onFinishRecognition(
                     null,
@@ -85,8 +64,9 @@ class RecognitionListenerSession (
             }
 
             override fun onResults(results: Bundle?) {
-                logger.log("onResults: $resultBatches")
-                onFinishRecognition(resultBatches, null, true)
+                val currentBatches = batchAccumulator.snapshot()
+                logger.log("onResults: $currentBatches")
+                onFinishRecognition(currentBatches, null, true)
                 autoStopper?.stop()
                 autoStopper?.onTimeout()
             }
@@ -101,94 +81,20 @@ class RecognitionListenerSession (
 
                 autoStopper?.resetTimer()
                 logger.log("onPartialResults[0], add ${matches[0]}")
-                var currentBatches = resultBatches
-                if (currentBatches.isNullOrEmpty()) {
-                    logger.log("onPartialResults[1], NO BATCHES YET | add first")
-                    currentBatches = arrayListOf(matches[0])
-                } else {
-                    logger.log("onPartialResults[1], current batches $currentBatches")
-                    val prevBatchLength = currentBatches[currentBatches.lastIndex].length
-                    val match = if (config?.disableRepeatingFilter == true) matches[0] else repeatingFilter(matches[0])
-                    val matchLength = match.length
-                    if (config?.androidDisableBatchHandling == true || matchLength + 3 < prevBatchLength) {
-                        logger.log("onPartialResults[2], append new batch")
-                        currentBatches.add(match)
-                    } else {
-                        logger.log("onPartialResults[2], update batch, replace #${currentBatches.lastIndex}")
-                        currentBatches[currentBatches.lastIndex] = match
-                    }
-                }
-                resultBatches = currentBatches
-                onFinishRecognition(currentBatches, null, false)
+                val currentBatches = batchAccumulator.onPartial(matches[0]) ?: return
+                onFinishRecognition(ArrayList(currentBatches), null, false)
             }
 
             override fun onEvent(eventType: Int, params: Bundle?) {}     
         }
     }
 
-    // Filters out 2 or more consecutive duplicate words, like "and and"
-    private fun repeatingFilter(text: String): String {
-        var words = text.split(Regex("\\s+")).filter { it.isNotBlank() }
-        if (words.isEmpty()) {
-            return ""
-        }
-
-        val joiner = StringBuilder()
-
-        // 10 - arbitrary number of last substrings that is still unstable
-        // and needs to be filtered. Prev substrings were handled earlier.
-        if (words.size >= 10) {
-            joiner.append(words.take(words.size - 9).joinToString(" "))
-            words = words.takeLast(10)
-        } else {
-            joiner.append(words.first())
-        }
-
-        for (i in words.indices) {
-            if (i == 0) continue
-            // Always add number-containing strings.
-            if (Regex("\\d+").containsMatchIn(words[i])) {
-                joiner.append(" ").append(words[i])
-                continue
-            }
-
-            // Skip consecutive duplicate strings.
-            if (words[i] == words[i - 1]) continue
-            joiner.append(" ").append(words[i])
-        }
-        return joiner.toString()
-    }
-
     private fun getVolume(rmsdB: Float): VolumeChangeEvent {
-        if (!rmsdB.isFinite()) {
-            return VolumeChangeEvent(0.0,0.0,null)
-        }
-
-        if (noiseFloorDb.isNaN()) {
-            noiseFloorDb = rmsdB
-        }
-        if (peakDb.isNaN()) {
-            peakDb = rmsdB + MIN_SPAN_DB
-        }
-
-        val floorAlpha = if (rmsdB < noiseFloorDb) FLOOR_FALL_ALPHA else FLOOR_RISE_ALPHA
-        noiseFloorDb += floorAlpha * (rmsdB - noiseFloorDb)
-
-        val peakAlpha = if (rmsdB > peakDb) PEAK_ATTACK_ALPHA else PEAK_DECAY_ALPHA
-        peakDb += peakAlpha * (rmsdB - peakDb)
-
-        val span = max(peakDb - noiseFloorDb, MIN_SPAN_DB)
-        val raw = ((rmsdB - noiseFloorDb) / span).coerceIn(0f, 1f)
-        val smoothingCoeff = if (raw > levelSmoothed) METER_ATTACK else METER_RELEASE
-        levelSmoothed += smoothingCoeff * (raw - levelSmoothed)
-        val roundedSmoothed = ((levelSmoothed * PRECISION_SCALE).roundToInt() / PRECISION_SCALE).toDouble()
-        val roundedRaw = ((raw * PRECISION_SCALE).roundToInt() / PRECISION_SCALE).toDouble()
-        val db = (rmsdB * 1000).roundToInt() / 1000.0
-
+        val sample = volumeMeter.process(rmsdB)
         return VolumeChangeEvent(
-            smoothedVolume = roundedSmoothed,
-            rawVolume = roundedRaw,
-            db = db
+            smoothedVolume = sample.smoothedVolume,
+            rawVolume = sample.rawVolume,
+            db = sample.db
         )
     }
   }

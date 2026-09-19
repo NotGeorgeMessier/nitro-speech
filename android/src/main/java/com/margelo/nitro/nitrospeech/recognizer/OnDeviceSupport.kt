@@ -18,6 +18,8 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.margelo.nitro.nitrospeech.OnDeviceMode
 import com.margelo.nitro.nitrospeech.SpeechRecognitionError
 import com.margelo.nitro.nitrospeech.SupportedLocales
+import com.margelo.nitro.nitrospeech.recognizer.logic.LocaleTags
+import com.margelo.nitro.nitrospeech.recognizer.logic.OnDevicePrepareLogic
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.resume
@@ -87,23 +89,36 @@ internal object OnDeviceSupport {
     mode: OnDeviceMode,
   ): OnDevicePrepareResult {
     if (!isServiceAvailable(context)) {
-      return if (mode == OnDeviceMode.REQUIRE) {
-        OnDevicePrepareResult.Failed(SpeechRecognitionError.ONDEVICENOTSUPPORTED)
-      } else {
-        OnDevicePrepareResult.UseFallback
-      }
+      return OnDevicePrepareLogic.beforeDownload(
+        serviceAvailable = false,
+        requireOnDevice = mode == OnDeviceMode.REQUIRE,
+        apiLevel = Build.VERSION.SDK_INT,
+        localeInstalled = false,
+      ).toPrepareResult()
     }
 
     // API 31–32: on-device service exists, but checkRecognitionSupport / triggerModelDownload
     // need API 33. Use the on-device recognizer anyway — we just can't verify/install packs.
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+    val preQuery = OnDevicePrepareLogic.beforeDownload(
+      serviceAvailable = true,
+      requireOnDevice = mode == OnDeviceMode.REQUIRE,
+      apiLevel = Build.VERSION.SDK_INT,
+      localeInstalled = false,
+    )
+    if (preQuery != OnDevicePrepareLogic.Decision.NeedsDownload) {
       logger.log("onDevice service available on API <33 — using on-device without pack checks")
-      return OnDevicePrepareResult.UseOnDevice
+      return preQuery.toPrepareResult()
     }
 
     var support = querySupport(context)
-    if (isLocaleListed(support.installed, locale)) {
-      return OnDevicePrepareResult.UseOnDevice
+    val installedDecision = OnDevicePrepareLogic.beforeDownload(
+      serviceAvailable = true,
+      requireOnDevice = mode == OnDeviceMode.REQUIRE,
+      apiLevel = Build.VERSION.SDK_INT,
+      localeInstalled = LocaleTags.isListed(support.installed, locale),
+    )
+    if (installedDecision != OnDevicePrepareLogic.Decision.NeedsDownload) {
+      return installedDecision.toPrepareResult()
     }
 
     // Always attempt download when not installed. Do not trust support-list membership —
@@ -116,25 +131,33 @@ internal object OnDeviceSupport {
     val outcome = downloadModel(context, locale)
 
     support = querySupport(context)
-    if (outcome == DownloadOutcome.SUCCESS || isLocaleListed(support.installed, locale)) {
-      return OnDevicePrepareResult.UseOnDevice
-    }
+    return OnDevicePrepareLogic.afterDownload(
+      requireOnDevice = mode == OnDeviceMode.REQUIRE,
+      downloadSucceeded = outcome == DownloadOutcome.SUCCESS,
+      localeInstalled = LocaleTags.isListed(support.installed, locale),
+    ).toPrepareResult()
+  }
 
-    logger.log("onDevice download finished without install (outcome=$outcome)")
-    return if (mode == OnDeviceMode.REQUIRE) {
-      OnDevicePrepareResult.Failed(SpeechRecognitionError.ONDEVICEMODELNOTINSTALLED)
-    } else {
-      OnDevicePrepareResult.UseFallback
+  private fun OnDevicePrepareLogic.Decision.toPrepareResult(): OnDevicePrepareResult {
+    return when (this) {
+      OnDevicePrepareLogic.Decision.UseOnDevice -> OnDevicePrepareResult.UseOnDevice
+      OnDevicePrepareLogic.Decision.UseFallback -> OnDevicePrepareResult.UseFallback
+      OnDevicePrepareLogic.Decision.NotSupported ->
+        OnDevicePrepareResult.Failed(SpeechRecognitionError.ONDEVICENOTSUPPORTED)
+      OnDevicePrepareLogic.Decision.ModelNotInstalled ->
+        OnDevicePrepareResult.Failed(SpeechRecognitionError.ONDEVICEMODELNOTINSTALLED)
+      OnDevicePrepareLogic.Decision.NeedsDownload ->
+        error("NeedsDownload is not a terminal prepare result")
     }
   }
 
   private fun normalizeLocale(locale: String): String {
-    return locale.replace('_', '-')
+    return LocaleTags.normalize(locale)
   }
 
   private fun isLocaleListed(locales: List<String>, locale: String): Boolean {
-    val target = normalizeLocale(locale)
-    return locales.any { normalizeLocale(it).equals(target, ignoreCase = true) }
+    val target = LocaleTags.normalize(locale)
+    return locales.any { LocaleTags.normalize(it).equals(target, ignoreCase = true) }
   }
 
   private fun resolveActivity(context: Context): Activity? {

@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.margelo.nitro.nitrospeech.PermissionStatus
+import com.margelo.nitro.nitrospeech.recognizer.logic.PermissionMapping
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import androidx.core.content.edit
@@ -63,10 +64,10 @@ class AudioPermissionRequester(
       val prefs = activity.getSharedPreferences(PREFS_NAME, android.content.Context.MODE_PRIVATE)
       val hasRequested = prefs.getBoolean(REQUESTED_KEY, false)
       val granted = ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
-      return when {
-        granted -> PermissionStatus.GRANTED
-        hasRequested -> PermissionStatus.DENIED
-        else -> PermissionStatus.NOT_REQUESTED
+      return when (PermissionMapping.from(granted, hasRequested)) {
+        PermissionMapping.Status.GRANTED -> PermissionStatus.GRANTED
+        PermissionMapping.Status.DENIED -> PermissionStatus.DENIED
+        PermissionMapping.Status.NOT_REQUESTED -> PermissionStatus.NOT_REQUESTED
       }
     }
   }

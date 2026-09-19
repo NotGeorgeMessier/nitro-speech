@@ -2,12 +2,6 @@ import Foundation
 import NitroModules
 import Speech
 
-enum RecognizerBackend {
-    case speechTranscriber
-    case dictationTranscriber
-    case sfSpeech
-}
-
 final class Coordinator {
     weak var recognizerDelegate: RecognizerDelegate?
     private var localeManager: LocaleManager?
@@ -34,38 +28,20 @@ final class Coordinator {
         await prepareLocaleManager()
         guard let localeManager else { return }
         await localeManager.ensureLocale(localeString: params?.locale)
-        self.candidates = []
-        guard #available(iOS 26.0, *) else {
-            if localeManager.SFLocale != nil {
-                self.candidates = [.sfSpeech]
-            }
-            return
-        }
-        
-        if params?.iosPreset == IosPreset.shortform
-        || params?.iosPreset == IosPreset.speed
-        || params?.iosAddPunctuation == false
-        || params?.iosAtypicalSpeech == true {
-            // DictationTranscriber priority
-            if localeManager.dictationLocale != nil {
-                self.candidates.append(.dictationTranscriber)
-            }
-            if localeManager.speechLocale != nil {
-                self.candidates.append(.speechTranscriber)
-            }
-        } else {
-            // SpeechTranscriber priority
-            if localeManager.speechLocale != nil {
-                self.candidates.append(.speechTranscriber)
-            }
-            if localeManager.dictationLocale != nil {
-                self.candidates.append(.dictationTranscriber)
-            }
-        }
-        // Add SF Engine at the end
-        if localeManager.SFLocale != nil {
-            self.candidates.append(.sfSpeech)
-        }
+        self.candidates = EngineCandidateSelector.candidates(
+            ios26Available: {
+                if #available(iOS 26.0, *) { return true }
+                return false
+            }(),
+            preferDictation: EngineCandidateSelector.prefersDictation(
+                iosPreset: params?.iosPreset?.stringValue,
+                addPunctuation: params?.iosAddPunctuation,
+                atypicalSpeech: params?.iosAtypicalSpeech
+            ),
+            hasSpeech: localeManager.speechLocale != nil,
+            hasDictation: localeManager.dictationLocale != nil,
+            hasSF: localeManager.SFLocale != nil
+        )
         Log.log("[Coordinator] candidates: \(self.candidates)")
     }
     

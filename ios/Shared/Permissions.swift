@@ -23,53 +23,51 @@ enum Permissions {
     }
     
     static func authorizationStatus() -> PermissionStatus {
-        switch SFSpeechRecognizer.authorizationStatus() {
-            case .notDetermined: return PermissionStatus.notRequested
-            case .denied: return PermissionStatus.denied
-            case .restricted: return PermissionStatus.denied
-            case .authorized: return PermissionStatus.granted
-            @unknown default: return PermissionStatus.notRequested
-        }
+        toNitro(
+            PermissionMapping.fromSpeechAuthorizationRawValue(
+                SFSpeechRecognizer.authorizationStatus().rawValue
+            )
+        )
     }
     
     static func microphonePermissionStatus() -> PermissionStatus {
         if #available(iOS 17.0, *) {
-            switch AVAudioApplication.shared.recordPermission {
-                case .undetermined: return PermissionStatus.notRequested
-                case .denied: return PermissionStatus.denied
-                case .granted: return PermissionStatus.granted
-                @unknown default: return PermissionStatus.notRequested
-            }
+            return toNitro(
+                PermissionMapping.fromAudioApplicationRecordPermissionRawValue(
+                    AVAudioApplication.shared.recordPermission.rawValue
+                )
+            )
         }
-        switch AVAudioSession.sharedInstance().recordPermission {
-            case .undetermined: return PermissionStatus.notRequested
-            case .denied: return PermissionStatus.denied
-            case .granted: return PermissionStatus.granted
-            @unknown default: return PermissionStatus.notRequested
-        }
+        return toNitro(
+            PermissionMapping.fromAudioSessionRecordPermissionRawValue(
+                AVAudioSession.sharedInstance().recordPermission.rawValue
+            )
+        )
     }
     
     static func getCombinedStatus() -> PermissionStatus {
-        // Return early for the speech recognition permission first
-        let speechRecognitionStatus = Permissions.authorizationStatus()
-        if speechRecognitionStatus == PermissionStatus.denied {
-            return PermissionStatus.denied
+        let speech = PermissionMapping.fromSpeechAuthorizationRawValue(
+            SFSpeechRecognizer.authorizationStatus().rawValue
+        )
+        let microphone: PermissionMapping.Status
+        if #available(iOS 17.0, *) {
+            microphone = PermissionMapping.fromAudioApplicationRecordPermissionRawValue(
+                AVAudioApplication.shared.recordPermission.rawValue
+            )
+        } else {
+            microphone = PermissionMapping.fromAudioSessionRecordPermissionRawValue(
+                AVAudioSession.sharedInstance().recordPermission.rawValue
+            )
         }
-        if speechRecognitionStatus == PermissionStatus.notRequested {
-            return PermissionStatus.notRequested
+        return toNitro(PermissionMapping.combine(speech: speech, microphone: microphone))
+    }
+
+    private static func toNitro(_ status: PermissionMapping.Status) -> PermissionStatus {
+        switch status {
+        case .granted: return PermissionStatus.granted
+        case .denied: return PermissionStatus.denied
+        case .notRequested: return PermissionStatus.notRequested
         }
-        
-        // Check micro then
-        let micStatus = Permissions.microphonePermissionStatus()
-        if micStatus == PermissionStatus.denied {
-            return PermissionStatus.denied
-        }
-        if micStatus == PermissionStatus.notRequested {
-            return PermissionStatus.notRequested
-        }
-        
-        // Everything is granted
-        return PermissionStatus.granted
     }
     
     static func someNotRequested() -> Bool {

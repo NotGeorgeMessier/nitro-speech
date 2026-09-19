@@ -4,11 +4,15 @@ jest.mock('react-native-nitro-modules', () => ({
       recognizer: {
         startListening: jest.fn(),
         stopListening: jest.fn(),
+        resetAutoFinishTime: jest.fn(),
+        addAutoFinishTime: jest.fn(),
+        updateConfig: jest.fn(),
         getPermissions: jest.fn(() => 2),
         getIsActive: jest.fn(() => false),
         getVoiceInputVolume: jest.fn(() => ({
           smoothedVolume: 0,
           rawVolume: 0,
+          db: undefined,
         })),
         onDeviceRecognitionAvailable: jest.fn(() => false),
         prewarm: jest.fn(() => Promise.resolve()),
