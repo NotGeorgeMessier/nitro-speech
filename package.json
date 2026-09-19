@@ -31,8 +31,9 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "reinstall": "rm -rf node_modules && bun install",
-    "build": "rm -rf lib && rm -f tsconfig.tsbuildinfo && bun tsc",
+    "build": "rm -rf lib && rm -f tsconfig.tsbuildinfo && bun tsc && bun run lint:lib",
     "lint": "eslint \"**/*.{js,ts,tsx}\" --fix",
+    "lint:lib": "eslint \"lib/**/*.{js,ts,tsx}\" --fix",
     "nitro": "rm -rf nitrogen && npx nitrogen@latest",
     "localnitro": "rm -rf nitrogen && node ../../../nitro/nitro/packages/nitrogen/lib/index.js",
     "docs:start": "npm --prefix website start",
@@ -112,11 +113,47 @@
           "useTabs": false
         }
       ]
-    }
+    },
+    "overrides": [
+      {
+        "files": [
+          "*.js"
+        ],
+        "parserOptions": {
+          "requireConfigFile": false,
+          "babelOptions": {
+            "configFile": false,
+            "babelrc": false,
+            "presets": []
+          }
+        }
+      },
+      {
+        "files": [
+          "lib/**/*.js"
+        ],
+        "parser": "@typescript-eslint/parser",
+        "plugins": [
+          "@typescript-eslint"
+        ],
+        "rules": {
+          "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+              "argsIgnorePattern": "^_",
+              "destructuredArrayIgnorePattern": "^_"
+            }
+          ],
+          "no-unused-vars": "off",
+          "no-shadow": "off",
+          "@typescript-eslint/no-shadow": 1,
+          "no-undef": "off"
+        }
+      }
+    ]
   },
   "eslintIgnore": [
-    "node_modules/",
-    "lib/"
+    "node_modules/"
   ],
   "prettier": {
     "quoteProps": "consistent",
