@@ -41,7 +41,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   override var onResult: ((resultBatches: Array<String>) -> Unit)? = null
 
   override var onAutoFinishProgress: ((timeLeftMs: Double) -> Unit)? = null
-  override var onError: ((error: SpeechRecognitionError, trace: String) -> Unit)? = null
+  override var onError: ((error: SpeechRecognitionError, trace: String?) -> Unit)? = null
   override var onPermissionDenied: (() -> Unit)? = null
   override var onVolumeChange: ((event: VolumeChangeEvent) -> Unit)? = null
 

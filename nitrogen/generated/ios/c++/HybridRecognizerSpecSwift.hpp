@@ -123,11 +123,11 @@ namespace margelo::nitro::nitrospeech {
     inline void setOnAutoFinishProgress(const std::optional<std::function<void(double /* timeLeftMs */)>>& onAutoFinishProgress) noexcept override {
       _swiftPart.setOnAutoFinishProgress(onAutoFinishProgress);
     }
-    inline std::optional<std::function<void(SpeechRecognitionError /* error */, const std::string& /* trace */)>> getOnError() noexcept override {
+    inline std::optional<std::function<void(SpeechRecognitionError /* error */, const std::optional<std::string>& /* trace */)>> getOnError() noexcept override {
       auto __result = _swiftPart.getOnError();
       return __result;
     }
-    inline void setOnError(const std::optional<std::function<void(SpeechRecognitionError /* error */, const std::string& /* trace */)>>& onError) noexcept override {
+    inline void setOnError(const std::optional<std::function<void(SpeechRecognitionError /* error */, const std::optional<std::string>& /* trace */)>>& onError) noexcept override {
       _swiftPart.setOnError(onError);
     }
     inline std::optional<std::function<void()>> getOnPermissionDenied() noexcept override {

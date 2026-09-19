@@ -255,14 +255,14 @@ open class HybridRecognizerSpec_cxx {
     }
   }
   
-  public final var onError: bridge.std__optional_std__function_void_SpeechRecognitionError____error_____const_std__string_____trace______ {
+  public final var onError: bridge.std__optional_std__function_void_SpeechRecognitionError____error_____const_std__optional_std__string______trace______ {
     @inline(__always)
     get {
-      return { () -> bridge.std__optional_std__function_void_SpeechRecognitionError____error_____const_std__string_____trace______ in
+      return { () -> bridge.std__optional_std__function_void_SpeechRecognitionError____error_____const_std__optional_std__string______trace______ in
         if let __unwrappedValue = self.__implementation.onError {
-          return bridge.create_std__optional_std__function_void_SpeechRecognitionError____error_____const_std__string_____trace______({ () -> bridge.Func_void_SpeechRecognitionError_std__string in
-            let __closureWrapper = Func_void_SpeechRecognitionError_std__string(__unwrappedValue)
-            return bridge.create_Func_void_SpeechRecognitionError_std__string(__closureWrapper.toUnsafe())
+          return bridge.create_std__optional_std__function_void_SpeechRecognitionError____error_____const_std__optional_std__string______trace______({ () -> bridge.Func_void_SpeechRecognitionError_std__optional_std__string_ in
+            let __closureWrapper = Func_void_SpeechRecognitionError_std__optional_std__string_(__unwrappedValue)
+            return bridge.create_Func_void_SpeechRecognitionError_std__optional_std__string_(__closureWrapper.toUnsafe())
           }())
         } else {
           return .init()
@@ -271,13 +271,19 @@ open class HybridRecognizerSpec_cxx {
     }
     @inline(__always)
     set {
-      self.__implementation.onError = { () -> ((_ error: SpeechRecognitionError, _ trace: String) -> Void)? in
-        if bridge.has_value_std__optional_std__function_void_SpeechRecognitionError____error_____const_std__string_____trace______(newValue) {
-          let __unwrapped = bridge.get_std__optional_std__function_void_SpeechRecognitionError____error_____const_std__string_____trace______(newValue)
-          return { () -> (SpeechRecognitionError, String) -> Void in
-            let __wrappedFunction = bridge.wrap_Func_void_SpeechRecognitionError_std__string(__unwrapped)
-            return { (__error: SpeechRecognitionError, __trace: String) -> Void in
-              __wrappedFunction.call(__error.rawValue, std.string(__trace))
+      self.__implementation.onError = { () -> ((_ error: SpeechRecognitionError, _ trace: String?) -> Void)? in
+        if bridge.has_value_std__optional_std__function_void_SpeechRecognitionError____error_____const_std__optional_std__string______trace______(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__function_void_SpeechRecognitionError____error_____const_std__optional_std__string______trace______(newValue)
+          return { () -> (SpeechRecognitionError, String?) -> Void in
+            let __wrappedFunction = bridge.wrap_Func_void_SpeechRecognitionError_std__optional_std__string_(__unwrapped)
+            return { (__error: SpeechRecognitionError, __trace: String?) -> Void in
+              __wrappedFunction.call(__error.rawValue, { () -> bridge.std__optional_std__string_ in
+                if let __unwrappedValue = __trace {
+                  return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
+                } else {
+                  return .init()
+                }
+              }())
             }
           }()
         } else {

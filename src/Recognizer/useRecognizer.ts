@@ -56,7 +56,7 @@ export const useRecognizer = (
     }
     SpeechRecognizer.onError = (
       error: SpeechRecognitionError,
-      trace: string
+      trace?: string
     ) => {
       callbacks.onError?.(error, trace)
     }

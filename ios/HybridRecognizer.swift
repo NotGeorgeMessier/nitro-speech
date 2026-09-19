@@ -14,7 +14,7 @@ class HybridRecognizer: HybridRecognizerSpec  {
     var onResultFallback: (([String]) -> Void)?
     var onAutoFinishProgress: ((Double) -> Void)?
     var onAutoFinishProgressFallback: ((Double) -> Void)?
-    var onError: ((SpeechRecognitionError, String) -> Void)?
+    var onError: ((SpeechRecognitionError, String?) -> Void)?
     var onPermissionDenied: (() -> Void)?
     var onVolumeChange: ((VolumeChangeEvent) -> Void)?
     var onVolumeChangeFallback: ((VolumeChangeEvent) -> Void)?

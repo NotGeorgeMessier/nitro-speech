@@ -37,7 +37,7 @@ namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 #include "JFunc_void_std__vector_std__string_.hpp"
 #include "JFunc_void_double.hpp"
 #include "SpeechRecognitionError.hpp"
-#include "JFunc_void_SpeechRecognitionError_std__string.hpp"
+#include "JFunc_void_SpeechRecognitionError_std__optional_std__string_.hpp"
 #include "JSpeechRecognitionError.hpp"
 #include "VolumeChangeEvent.hpp"
 #include "JFunc_void_VolumeChangeEvent.hpp"
@@ -160,22 +160,22 @@ namespace margelo::nitro::nitrospeech {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_double::javaobject> /* onAutoFinishProgress */)>("setOnAutoFinishProgress_cxx");
     method(_javaPart, onAutoFinishProgress.has_value() ? JFunc_void_double_cxx::fromCpp(onAutoFinishProgress.value()) : nullptr);
   }
-  std::optional<std::function<void(SpeechRecognitionError /* error */, const std::string& /* trace */)>> JHybridRecognizerSpec::getOnError() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void_SpeechRecognitionError_std__string::javaobject>()>("getOnError_cxx");
+  std::optional<std::function<void(SpeechRecognitionError /* error */, const std::optional<std::string>& /* trace */)>> JHybridRecognizerSpec::getOnError() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void_SpeechRecognitionError_std__optional_std__string_::javaobject>()>("getOnError_cxx");
     auto __result = method(_javaPart);
-    return __result != nullptr ? std::make_optional([&]() -> std::function<void(SpeechRecognitionError /* error */, const std::string& /* trace */)> {
-      if (__result->isInstanceOf(JFunc_void_SpeechRecognitionError_std__string_cxx::javaClassStatic())) [[likely]] {
-        auto downcast = jni::static_ref_cast<JFunc_void_SpeechRecognitionError_std__string_cxx::javaobject>(__result);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(SpeechRecognitionError /* error */, const std::optional<std::string>& /* trace */)> {
+      if (__result->isInstanceOf(JFunc_void_SpeechRecognitionError_std__optional_std__string__cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_SpeechRecognitionError_std__optional_std__string__cxx::javaobject>(__result);
         return downcast->cthis()->getFunction();
       } else {
         auto __resultRef = jni::make_global(__result);
-        return JNICallable<JFunc_void_SpeechRecognitionError_std__string, void(SpeechRecognitionError, std::string)>(std::move(__resultRef));
+        return JNICallable<JFunc_void_SpeechRecognitionError_std__optional_std__string_, void(SpeechRecognitionError, std::optional<std::string>)>(std::move(__resultRef));
       }
     }()) : std::nullopt;
   }
-  void JHybridRecognizerSpec::setOnError(const std::optional<std::function<void(SpeechRecognitionError /* error */, const std::string& /* trace */)>>& onError) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_SpeechRecognitionError_std__string::javaobject> /* onError */)>("setOnError_cxx");
-    method(_javaPart, onError.has_value() ? JFunc_void_SpeechRecognitionError_std__string_cxx::fromCpp(onError.value()) : nullptr);
+  void JHybridRecognizerSpec::setOnError(const std::optional<std::function<void(SpeechRecognitionError /* error */, const std::optional<std::string>& /* trace */)>>& onError) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_SpeechRecognitionError_std__optional_std__string_::javaobject> /* onError */)>("setOnError_cxx");
+    method(_javaPart, onError.has_value() ? JFunc_void_SpeechRecognitionError_std__optional_std__string__cxx::fromCpp(onError.value()) : nullptr);
   }
   std::optional<std::function<void()>> JHybridRecognizerSpec::getOnPermissionDenied() {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>()>("getOnPermissionDenied_cxx");

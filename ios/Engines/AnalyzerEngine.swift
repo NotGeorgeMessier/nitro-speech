@@ -115,30 +115,14 @@ final class AnalyzerEngine: RecognizerEngine {
                     if needsConversion {
                         // Skip analyzing for empty buffers and
                         // Throw error if buffers are inconvertable
-                        do {
-                            guard let convertedBuffer = try AudioBufferConverter.convertBuffer(
-                                converter: converter,
-                                audioFormat: audioFormat,
-                                pcmBuffer: pcmBuffer
-                            ) else {
-                                continue
-                            }
-                            bufferForAnalyzer = convertedBuffer
-                        } catch {
-                            if Task.isCancelled || status == .finishing {
-                                return
-                            }
-                            self.reportError(
-                                from: ErrorTrace.join(
-                                    "AnalyzerEngine",
-                                    "startAudioEngine",
-                                    "AudioBufferConverter",
-                                    "convertBuffer"
-                                ),
-                                code: SpeechRecognitionError.sessionstartfailed
-                            )
-                            return
+                        guard let convertedBuffer = try AudioBufferConverter.convertBuffer(
+                            converter: converter,
+                            audioFormat: audioFormat,
+                            pcmBuffer: pcmBuffer
+                        ) else {
+                            continue
                         }
+                        bufferForAnalyzer = convertedBuffer
                     } else {
                         bufferForAnalyzer = pcmBuffer
                     }

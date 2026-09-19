@@ -150,10 +150,12 @@ export interface Recognizer extends HybridObject<{
   /**
    * Error of the speech recognition.
    *
+   * Native always sends `trace`. The argument is optional to consume.
+   *
    * @param error - {@linkcode SpeechRecognitionError} code
    * @param trace - Dot-separated native call-site path, e.g. `RecognizerEngine.startAudioEngine`
    */
-  onError?: (error: SpeechRecognitionError, trace: string) => void
+  onError?: (error: SpeechRecognitionError, trace?: string) => void
   /**
    * The permission to use the microphone or recognize speech has been denied.
    */

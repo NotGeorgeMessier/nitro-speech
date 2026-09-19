@@ -76,8 +76,8 @@ namespace margelo::nitro::nitrospeech {
       virtual void setOnResult(const std::optional<std::function<void(const std::vector<std::string>& /* resultBatches */)>>& onResult) = 0;
       virtual std::optional<std::function<void(double /* timeLeftMs */)>> getOnAutoFinishProgress() = 0;
       virtual void setOnAutoFinishProgress(const std::optional<std::function<void(double /* timeLeftMs */)>>& onAutoFinishProgress) = 0;
-      virtual std::optional<std::function<void(SpeechRecognitionError /* error */, const std::string& /* trace */)>> getOnError() = 0;
-      virtual void setOnError(const std::optional<std::function<void(SpeechRecognitionError /* error */, const std::string& /* trace */)>>& onError) = 0;
+      virtual std::optional<std::function<void(SpeechRecognitionError /* error */, const std::optional<std::string>& /* trace */)>> getOnError() = 0;
+      virtual void setOnError(const std::optional<std::function<void(SpeechRecognitionError /* error */, const std::optional<std::string>& /* trace */)>>& onError) = 0;
       virtual std::optional<std::function<void()>> getOnPermissionDenied() = 0;
       virtual void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) = 0;
       virtual std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> getOnVolumeChange() = 0;
