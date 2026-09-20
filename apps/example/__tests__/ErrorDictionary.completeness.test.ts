@@ -40,4 +40,18 @@ describe('ErrorDictionary completeness vs 4.10 codes', () => {
       'failed',
     );
   });
+
+  it('onError accepts an optional native trace string (4.10 surface)', () => {
+    const traces: Array<string | undefined> = [];
+    const onError = (error: SpeechRecognitionError, trace?: string) => {
+      expect(ErrorDictionary[error]).toBeDefined();
+      traces.push(trace);
+    };
+    onError(SpeechRecognitionError.Unknown);
+    onError(
+      SpeechRecognitionError.SessionStartFailed,
+      'HybridRecognizer.preparePermissions',
+    );
+    expect(traces).toEqual([undefined, 'HybridRecognizer.preparePermissions']);
+  });
 });

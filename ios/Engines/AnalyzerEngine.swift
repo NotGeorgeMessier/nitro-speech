@@ -155,7 +155,7 @@ final class AnalyzerEngine: RecognizerEngine {
                     return
                 }
                 self.reportError(
-                    from: "startRecognition.recognizerTask",
+                    from: ErrorTrace.join("AnalyzerEngine", "startSession", "handleResults"),
                     code: SpeechRecognitionError.recognitiontaskfailed
                 )
             }

@@ -17,6 +17,7 @@ let package = Package(
             sources: [
                 "Logic",
                 "Shared/AutoStopper.swift",
+                "Shared/ErrorTrace.swift",
                 "Audio/AudioLevelTracker.swift",
             ]
         ),

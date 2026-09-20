@@ -30,7 +30,10 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 internal sealed class OnDevicePrepareResult {
   data object UseOnDevice : OnDevicePrepareResult()
   data object UseFallback : OnDevicePrepareResult()
-  data class Failed(val error: SpeechRecognitionError) : OnDevicePrepareResult()
+  data class Failed(
+    val error: SpeechRecognitionError,
+    val trace: String,
+  ) : OnDevicePrepareResult()
 }
 
 private enum class DownloadOutcome {
@@ -131,21 +134,32 @@ internal object OnDeviceSupport {
     val outcome = downloadModel(context, locale)
 
     support = querySupport(context)
-    return OnDevicePrepareLogic.afterDownload(
+    val after = OnDevicePrepareLogic.afterDownload(
       requireOnDevice = mode == OnDeviceMode.REQUIRE,
       downloadSucceeded = outcome == DownloadOutcome.SUCCESS,
       localeInstalled = LocaleTags.isListed(support.installed, locale),
-    ).toPrepareResult()
+    )
+    if (
+      after == OnDevicePrepareLogic.Decision.ModelNotInstalled ||
+      after == OnDevicePrepareLogic.Decision.UseFallback
+    ) {
+      logger.log("onDevice download finished without install (outcome=$outcome)")
+    }
+    return after.toPrepareResult(
+      ErrorTrace.join("OnDeviceSupport", "prepare", "downloadModel"),
+    )
   }
 
-  private fun OnDevicePrepareLogic.Decision.toPrepareResult(): OnDevicePrepareResult {
+  private fun OnDevicePrepareLogic.Decision.toPrepareResult(
+    trace: String = ErrorTrace.join("OnDeviceSupport", "prepare"),
+  ): OnDevicePrepareResult {
     return when (this) {
       OnDevicePrepareLogic.Decision.UseOnDevice -> OnDevicePrepareResult.UseOnDevice
       OnDevicePrepareLogic.Decision.UseFallback -> OnDevicePrepareResult.UseFallback
       OnDevicePrepareLogic.Decision.NotSupported ->
-        OnDevicePrepareResult.Failed(SpeechRecognitionError.ONDEVICENOTSUPPORTED)
+        OnDevicePrepareResult.Failed(SpeechRecognitionError.ONDEVICENOTSUPPORTED, trace)
       OnDevicePrepareLogic.Decision.ModelNotInstalled ->
-        OnDevicePrepareResult.Failed(SpeechRecognitionError.ONDEVICEMODELNOTINSTALLED)
+        OnDevicePrepareResult.Failed(SpeechRecognitionError.ONDEVICEMODELNOTINSTALLED, trace)
       OnDevicePrepareLogic.Decision.NeedsDownload ->
         error("NeedsDownload is not a terminal prepare result")
     }

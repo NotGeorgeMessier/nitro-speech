@@ -69,9 +69,10 @@ function AppContent() {
       onAutoFinishProgress: (timeLeftMs: number) => {
         setProgressMs(timeLeftMs);
       },
-      onError: (code: SpeechRecognitionError) => {
+      onError: (code: SpeechRecognitionError, trace?: string) => {
         const info = ErrorDictionary[code];
-        setError(info?.message ?? `Error ${code}`);
+        const message = info?.message ?? `Error ${code}`;
+        setError(trace ? `${message} (${trace})` : message);
         setIsListening(false);
       },
       onPermissionDenied: () => {

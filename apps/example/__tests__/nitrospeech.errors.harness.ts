@@ -77,11 +77,14 @@ describe('NitroSpeech - Error handling', () => {
   });
 
   it('onError receives LocaleNotSupported for an invalid locale', async () => {
-    const errorDeferred = deferred<SpeechRecognitionError>();
+    const errorDeferred = deferred<{
+      error: SpeechRecognitionError;
+      trace?: string;
+    }>();
     const stopped = deferred();
 
-    SpeechRecognizer.onError = error => {
-      errorDeferred.resolve(error);
+    SpeechRecognizer.onError = (error, trace) => {
+      errorDeferred.resolve({error, trace});
     };
     SpeechRecognizer.onRecordingStopped = () => stopped.resolve();
 
@@ -97,11 +100,19 @@ describe('NitroSpeech - Error handling', () => {
         Platform.OS === 'android'
           ? Math.max(500, remainingAndroidBudgetMs(startedAt) + 2_000)
           : 10_000;
-      const error = await withTimeout(errorDeferred.promise, timeout, 'onError');
-      expect(error).toBe(SpeechRecognitionError.LocaleNotSupported);
-      expect(ErrorDictionary[error].code).toBe(
+      const received = await withTimeout(
+        errorDeferred.promise,
+        timeout,
+        'onError',
+      );
+      expect(received.error).toBe(SpeechRecognitionError.LocaleNotSupported);
+      expect(ErrorDictionary[received.error].code).toBe(
         SpeechRecognitionError.LocaleNotSupported,
       );
+      if (received.trace !== undefined) {
+        expect(typeof received.trace).toBe('string');
+        expect(received.trace.length).toBeGreaterThan(0);
+      }
     } finally {
       if (SpeechRecognizer.getIsActive()) {
         SpeechRecognizer.stopListening();

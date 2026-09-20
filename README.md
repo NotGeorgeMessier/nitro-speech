@@ -6,9 +6,9 @@
 
 ### React Native real-time Speech Recognition Library powered by Nitro Modules
 
-This is `react-native-nitro-speech` package ([npm](https://www.npmjs.com/package/react-native-nitro-speech)). The old name `@gmessier/nitro-speech` will be deprecated soon ([npm](https://www.npmjs.com/package/@gmessier/nitro-speech)). If you are using the old name, please switch to the new one.
+This is `react-native-nitro-speech` package ([npm](https://www.npmjs.com/package/react-native-nitro-speech)). The old name `@gmessier/nitro-speech` was deprecated @0.4.8 ([npm](https://www.npmjs.com/package/@gmessier/nitro-speech)).
 
-The API is identical — no migration needed.
+To compare all React Native speech recognition packages [check this table](./docs/features/packages-comparison.md)
 
 #### Key Features:
 
@@ -99,7 +99,7 @@ const { startListening, stopListening } = useRecognizer({
   onResult: (textBatches) => console.log('Result:', textBatches.join('\n')),
   onAutoFinishProgress: (timeLeftMs) =>
     console.log('Auto-finish in:', timeLeftMs, 'ms'),
-  onError: (code) => console.log('Error:', code),
+  onError: (code, trace) => console.log('Error:', code, trace),
   onPermissionDenied: () => console.log('Permission denied'),
 })
 

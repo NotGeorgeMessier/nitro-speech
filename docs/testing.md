@@ -4,10 +4,10 @@ Four layers. Andrei can run each independently. Native suites do not use a real 
 
 | Layer | Ready? | How to run | What it covers |
 |-------|--------|------------|----------------|
-| **1. JS unit (Jest)** | Ready | `npm test` | ErrorDictionary vs 4.10 codes, PermissionStatus, volume/active helpers, RecognizerRef |
+| **1. JS unit (Jest)** | Ready | `npm test` | ErrorDictionary vs 4.10 codes, optional `onError` trace, PermissionStatus, volume/active helpers, RecognizerRef |
 | **2. JS on-device (Harness)** | Ready | `npm run test:harness:android` / `test:harness:ios` | permissions, lifecycle start/stop, Android ≤3s, iOS silence, errors, on-device prefer |
-| **3. Native unit iOS (XCTest)** | Ready | `npm run test:ios:native` | AutoStopper, repeating filter, volume/RMS, permission mapping, engine selection |
-| **4. Native unit Android (JUnit + Robolectric)** | Ready | `npm run test:android:native` | AutoStopper, filters, volume/RMS, permission mapping, session helpers, on-device decisions |
+| **3. Native unit iOS (XCTest)** | Ready | `npm run test:ios:native` | AutoStopper, repeating filter, volume/RMS, permission mapping, engine selection, ErrorTrace |
+| **4. Native unit Android (JUnit + Robolectric)** | Ready | `npm run test:android:native` | AutoStopper, filters, volume/RMS, permission mapping, session helpers, on-device decisions, ErrorTrace |
 
 Full command list and remaining gaps: see below.
 
@@ -54,7 +54,7 @@ Needs Xcode / Swift. Destination `macOS` is enough (no simulator, no mic).
 
 ## 4. Native Android (JUnit + Robolectric)
 
-Standalone module `tests/android` compiles only Nitro-free Kotlin (`recognizer/logic/*`, `AutoStopper`, `Logger`) plus `android/src/test`.
+Standalone module `tests/android` compiles only Nitro-free Kotlin (`recognizer/logic/*`, `AutoStopper`, `Logger`, `ErrorTrace`) plus `android/src/test`.
 
 ```bash
 npm run test:android:native

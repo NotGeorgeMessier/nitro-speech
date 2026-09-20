@@ -1,6 +1,6 @@
 # Android native unit tests
 
-Robolectric + JUnit for Nitro-free Kotlin (AutoStopper, filters, volume, permissions, on-device decisions). No SpeechRecognizer STT.
+Robolectric + JUnit for Nitro-free Kotlin (AutoStopper, filters, volume, permissions, on-device decisions, ErrorTrace). No SpeechRecognizer STT.
 
 From the repo root:
 

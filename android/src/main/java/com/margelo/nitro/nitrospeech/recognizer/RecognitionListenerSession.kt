@@ -14,7 +14,7 @@ class RecognitionListenerSession (
     private val autoStopper: AutoStopper?,
     private val config: SpeechRecognitionConfig?,
     private val fireVolumeChangeEvent: (event: VolumeChangeEvent) -> Unit,
-    private val onFinishRecognition: (result: ArrayList<String>?, error: SpeechRecognitionError?, recordingStopped: Boolean) -> Unit,
+    private val onFinishRecognition: (result: ArrayList<String>?, error: SpeechRecognitionError?, recordingStopped: Boolean, trace: String?) -> Unit,
 ) {
     private val logger = Logger(disable = false)
     private val volumeMeter = VolumeMeter()
@@ -57,7 +57,8 @@ class RecognitionListenerSession (
                 onFinishRecognition(
                     null,
                     mappedError,
-                    true
+                    true,
+                    ErrorTrace.join("RecognitionListenerSession", "onError"),
                 )
                 autoStopper?.stop()
                 autoStopper?.onTimeout()
@@ -66,7 +67,7 @@ class RecognitionListenerSession (
             override fun onResults(results: Bundle?) {
                 val currentBatches = batchAccumulator.snapshot()
                 logger.log("onResults: $currentBatches")
-                onFinishRecognition(currentBatches, null, true)
+                onFinishRecognition(currentBatches, null, true, null)
                 autoStopper?.stop()
                 autoStopper?.onTimeout()
             }
@@ -82,7 +83,7 @@ class RecognitionListenerSession (
                 autoStopper?.resetTimer()
                 logger.log("onPartialResults[0], add ${matches[0]}")
                 val currentBatches = batchAccumulator.onPartial(matches[0]) ?: return
-                onFinishRecognition(ArrayList(currentBatches), null, false)
+                onFinishRecognition(ArrayList(currentBatches), null, false, null)
             }
 
             override fun onEvent(eventType: Int, params: Bundle?) {}     
