@@ -15,12 +15,12 @@ Full command list and remaining gaps: see below.
 
 ```bash
 npm test
-# from apps/example:
+# from example/:
 npm test
 npm run test:unit
 ```
 
-No device. Uses Jest + a Nitro hybrid mock (`apps/example/jest.setup.js`).
+No device. Uses Jest + a Nitro hybrid mock (`example/jest.setup.js`).
 
 ## 2. Harness
 
@@ -59,7 +59,7 @@ Standalone module `tests/android` compiles only Nitro-free Kotlin (`recognizer/l
 ```bash
 npm run test:android:native
 # or
-./apps/example/android/gradlew -p tests/android testDebugUnitTest
+./example/android/gradlew -p tests/android testDebugUnitTest
 ```
 
 Needs Android SDK. Create `tests/android/local.properties` with `sdk.dir=...` or export `ANDROID_HOME`.

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-GRADLEW="$ROOT/apps/example/android/gradlew"
+GRADLEW="$ROOT/example/android/gradlew"
 
 if [[ ! -x "$GRADLEW" ]]; then
   echo "Missing Gradle wrapper at $GRADLEW"
@@ -12,7 +12,7 @@ fi
 if [[ -z "${ANDROID_HOME:-}" && -z "${ANDROID_SDK_ROOT:-}" ]]; then
   for candidate in \
     "$ROOT/tests/android/local.properties" \
-    "$ROOT/apps/example/android/local.properties"; do
+    "$ROOT/example/android/local.properties"; do
     if [[ -f "$candidate" ]]; then
       sdk_dir="$(sed -n 's/^sdk.dir=//p' "$candidate" | tail -n1 | tr -d '\\')"
       if [[ -n "$sdk_dir" ]]; then

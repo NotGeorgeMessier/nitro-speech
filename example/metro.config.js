@@ -2,7 +2,7 @@ const path = require('node:path');
 const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 
 const projectRoot = __dirname;
-const workspaceRoot = path.resolve(projectRoot, '../..');
+const workspaceRoot = path.resolve(projectRoot, '..');
 
 /**
  * Metro configuration

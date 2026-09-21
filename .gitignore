@@ -46,11 +46,9 @@ android.iml
 # Cocoapods
 #
 example/ios/Pods
-apps/example/ios/Pods
 
 # Ruby
 example/vendor/
-apps/example/vendor/
 
 # node.js
 #
@@ -58,7 +56,7 @@ node_modules/
 npm-debug.log
 yarn-debug.log
 yarn-error.log
-apps/example/.harness/
+example/.harness/
 
 # BUCK
 buck-out/

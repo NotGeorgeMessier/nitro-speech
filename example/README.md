@@ -5,7 +5,7 @@ Minimal React Native CLI app for `react-native-nitro-speech`.
 - React Native **0.87.1** (latest stable at branch time)
 - `react-native-nitro-modules` **0.37.1**
 - New Architecture on
-- Local library via `file:../..`
+- Local library via `file:..`
 
 ## Run
 
@@ -23,14 +23,19 @@ npm run android
 
 ### iOS
 
-Add CocoaPods once, then run:
+iOS 27 / Xcode 27 SDK requires a scene-based lifecycle. This example uses Kirill Zyushko's pattern: `SceneDelegate` creates `UIWindow(windowScene:)` and `AppDelegate.startReactNative(in:)` starts RN. `Info.plist` includes `UIApplicationSceneManifest`.
+
+From this directory, install JS deps and CocoaPods, then run:
 
 ```bash
+npm install
 cd ios && pod install && cd ..
 npm run ios
 ```
 
-`Info.plist` already includes `NSMicrophoneUsageDescription` and `NSSpeechRecognitionUsageDescription`.
+From the repo root: `npm run example:ios` (after `npm install` and `pod install` in `example/`).
+
+`Info.plist` already includes `NSMicrophoneUsageDescription`, `NSSpeechRecognitionUsageDescription`, and `RCTNewArchEnabled`.
 
 Tap **Start listening**. The screen shows permission status, listening state, volume, optional on-device prefer, and any result/error.
 
@@ -57,7 +62,7 @@ npm run test:ios:native
 npm run test:android:native
 ```
 
-See [`docs/testing.md`](../../docs/testing.md) for the full coverage matrix.
+See [`docs/testing.md`](../docs/testing.md) for the full coverage matrix.
 
 Override the Android AVD with `HARNESS_ANDROID_EMULATOR`. iOS is simulator-only.
 

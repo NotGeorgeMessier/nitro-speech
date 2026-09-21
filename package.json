@@ -38,15 +38,15 @@
     "localnitro": "rm -rf nitrogen && node ../../../nitro/nitro/packages/nitrogen/lib/index.js",
     "docs:start": "npm --prefix website start",
     "docs:build": "npm --prefix website run build",
-    "test": "npm --prefix apps/example test",
-    "test:harness:android": "npm --prefix apps/example run test:harness:android",
-    "test:harness:ios": "npm --prefix apps/example run test:harness:ios",
+    "test": "npm --prefix example test",
+    "test:harness:android": "npm --prefix example run test:harness:android",
+    "test:harness:ios": "npm --prefix example run test:harness:ios",
     "test:ios:native": "bash scripts/test-ios-native.sh",
     "test:android:native": "bash scripts/test-android-native.sh",
-    "example": "npm --prefix apps/example",
-    "example:start": "npm --prefix apps/example start",
-    "example:android": "npm --prefix apps/example run android",
-    "example:ios": "npm --prefix apps/example run ios"
+    "example": "npm --prefix example",
+    "example:start": "npm --prefix example start",
+    "example:android": "npm --prefix example run android",
+    "example:ios": "npm --prefix example run ios"
   },
   "keywords": [
     "react-native",
@@ -163,7 +163,7 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "apps/",
+    "example/",
     "nitrogen/"
   ],
   "prettier": {

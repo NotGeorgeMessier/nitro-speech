@@ -2,7 +2,7 @@
   "extends": "@react-native/typescript-config",
   "compilerOptions": {
     "paths": {
-      "react-native-nitro-speech": ["../../src/index.ts"]
+      "react-native-nitro-speech": ["../src/index.ts"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

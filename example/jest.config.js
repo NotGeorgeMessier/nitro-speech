@@ -5,7 +5,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   modulePaths: ['<rootDir>/node_modules'],
   moduleNameMapper: {
-    '^react-native-nitro-speech$': '<rootDir>/../../src/index.ts',
+    '^react-native-nitro-speech$': '<rootDir>/../src/index.ts',
     '^react$': '<rootDir>/node_modules/react',
     '^react-native$': '<rootDir>/node_modules/react-native',
     '^react-native-nitro-modules$':

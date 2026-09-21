@@ -9,7 +9,7 @@ Pure JS. No emulator.
 ```bash
 npm test
 # or
-npm --prefix apps/example test
+npm --prefix example test
 ```
 
 Covers `ErrorDictionary` completeness vs 4.10 codes (including optional `onError` trace), `PermissionStatus`, volume/active helpers, `RecognizerRef` method mapping, and a render smoke test of the listen UI.
@@ -56,7 +56,7 @@ Standalone Gradle project at `tests/android` (does not boot SpeechRecognizer STT
 ```bash
 npm run test:android:native
 # equivalent:
-./apps/example/android/gradlew -p tests/android testDebugUnitTest
+./example/android/gradlew -p tests/android testDebugUnitTest
 ```
 
 Requires Android SDK (`ANDROID_HOME` or `local.properties`). Covers AutoStopper, filters, volume/RMS, permission mapping, locale tags, on-device prepare decisions, result batch helpers, ErrorTrace joining, and the emulator silence → `RecognitionTaskFailed` mapping.
