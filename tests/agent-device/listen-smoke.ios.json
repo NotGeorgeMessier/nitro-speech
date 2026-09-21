@@ -1,0 +1,54 @@
+[
+  {
+    "command": "open",
+    "input": {
+      "app": "NitroSpeechExample",
+      "platform": "ios",
+      "relaunch": true
+    }
+  },
+  {
+    "command": "wait",
+    "input": {
+      "selector": "id=\"toggle-listening-button\" || label=\"Start listening\"",
+      "timeoutMs": 15000
+    }
+  },
+  {
+    "command": "click",
+    "input": {
+      "selector": "id=\"toggle-listening-button\" || label=\"Start listening\"",
+      "settle": true
+    }
+  },
+  {
+    "command": "wait",
+    "input": {
+      "durationMs": 1500
+    }
+  },
+  {
+    "command": "click",
+    "input": {
+      "selector": "id=\"toggle-listening-button\" || label=\"Stop listening\"",
+      "settle": true
+    }
+  },
+  {
+    "command": "wait",
+    "input": {
+      "selector": "id=\"toggle-listening-button\" || label=\"Start listening\"",
+      "timeoutMs": 8000
+    }
+  },
+  {
+    "command": "screenshot",
+    "input": {
+      "path": "tests/agent-device/artifacts/listen-smoke-ios.png"
+    }
+  },
+  {
+    "command": "close",
+    "input": {}
+  }
+]

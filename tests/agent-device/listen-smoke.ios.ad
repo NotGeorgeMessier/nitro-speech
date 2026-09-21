@@ -1,0 +1,17 @@
+# NitroSpeech example Listen smoke (iOS Simulator)
+# Requires the debug app already installed: npm run example:ios
+# Lasting silence is OK on iOS; we still stop after a short hold.
+# UI smoke only — not STT accuracy. Not a CI gate.
+
+context platform=ios
+env APP_ID=NitroSpeechExample
+env HOLD_MS=1500
+
+open ${APP_ID} --relaunch
+wait 'id="toggle-listening-button" || label="Start listening"' 15000
+click 'id="toggle-listening-button" || label="Start listening"'
+wait ${HOLD_MS}
+click 'id="toggle-listening-button" || label="Stop listening"'
+wait 'id="toggle-listening-button" || label="Start listening"' 8000
+screenshot tests/agent-device/artifacts/listen-smoke-ios.png
+close

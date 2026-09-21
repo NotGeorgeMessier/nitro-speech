@@ -1,0 +1,17 @@
+# NitroSpeech example Listen smoke (Android Emulator)
+# Requires the debug app already installed: npm run example:android
+# Silence timeout ~4–5s: start → hold ≤3s → stop.
+# UI smoke only — not STT accuracy. Not a CI gate.
+
+context platform=android
+env APP_ID=com.nitrospeechexample
+env HOLD_MS=1500
+
+open ${APP_ID} --relaunch
+wait 'id="toggle-listening-button" || label="Start listening"' 15000
+click 'id="toggle-listening-button" || label="Start listening"'
+wait ${HOLD_MS}
+click 'id="toggle-listening-button" || label="Stop listening"'
+wait 'id="toggle-listening-button" || label="Start listening"' 8000
+screenshot tests/agent-device/artifacts/listen-smoke-android.png
+close

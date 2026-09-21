@@ -90,3 +90,13 @@ tests/android/.gradle/
 tests/android/build/
 tests/android/local.properties
 ios/.build/
+
+# agent-device local daemon/test artifacts (CLI is a root devDependency, not an app dep)
+.agent-device/
+tests/agent-device/artifacts/
+
+# Cursor: track project MCP + rules only (no local agent state / secrets)
+.cursor/*
+!.cursor/mcp.json
+!.cursor/rules/
+!.cursor/rules/**

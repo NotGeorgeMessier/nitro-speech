@@ -43,6 +43,9 @@
     "test:harness:ios": "npm --prefix example run test:harness:ios",
     "test:ios:native": "bash scripts/test-ios-native.sh",
     "test:android:native": "bash scripts/test-android-native.sh",
+    "test:agent-device:doctor": "agent-device doctor",
+    "test:agent-device:smoke:ios": "bash scripts/agent-device-smoke.sh ios",
+    "test:agent-device:smoke:android": "bash scripts/agent-device-smoke.sh android",
     "example": "npm --prefix example",
     "example:start": "npm --prefix example start",
     "example:android": "npm --prefix example run android",
@@ -87,14 +90,15 @@
   "devDependencies": {
     "@react-native/eslint-config": "0.87.1",
     "@types/react": "19.2.14",
+    "agent-device": "0.21.8",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "nitrogen": "0.37.1",
     "prettier": "^3.3.3",
     "react": "19.2.3",
     "react-native": "0.87.1",
     "react-native-nitro-modules": "0.37.1",
-    "nitrogen": "0.37.1",
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
