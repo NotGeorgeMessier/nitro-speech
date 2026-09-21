@@ -1,6 +1,6 @@
 # NitroSpeech tests
 
-Four layers. Writing tests is enough for this branch — run them locally with the commands below.
+Five layers. Writing tests is enough for this branch — run them locally with the commands below. Layers 1–4 stay in this folder / native trees. Layer 5 (agent-device) lives at repo-root [`tests/agent-device/`](../../tests/agent-device/README.md) and is an external CLI, not an in-app library.
 
 ## 1. JS unit (Jest)
 
@@ -60,6 +60,18 @@ npm run test:android:native
 ```
 
 Requires Android SDK (`ANDROID_HOME` or `local.properties`). Covers AutoStopper, filters, volume/RMS, permission mapping, locale tags, on-device prepare decisions, result batch helpers, ErrorTrace joining, and the emulator silence → `RecognitionTaskFailed` mapping.
+
+## 5. agent-device (installed-app UI)
+
+External CLI/MCP. Not part of the example Jest config. From repo root:
+
+```bash
+npm run test:agent-device:doctor
+npm run test:agent-device:smoke:ios
+npm run test:agent-device:smoke:android
+```
+
+See [`tests/agent-device/README.md`](../../tests/agent-device/README.md).
 
 ## Emulator speech contracts
 

@@ -1,6 +1,6 @@
 # Testing NitroSpeech
 
-Four layers. Andrei can run each independently. Native suites do not use a real microphone or STT accuracy goldens.
+Five layers. Andrei can run each independently. Native suites and agent-device UI smoke do not use STT accuracy goldens.
 
 | Layer | Ready? | How to run | What it covers |
 |-------|--------|------------|----------------|
@@ -8,6 +8,7 @@ Four layers. Andrei can run each independently. Native suites do not use a real 
 | **2. JS on-device (Harness)** | Ready | `npm run test:harness:android` / `test:harness:ios` | permissions, lifecycle start/stop, Android ≤3s, iOS silence, errors, on-device prefer |
 | **3. Native unit iOS (XCTest)** | Ready | `npm run test:ios:native` | AutoStopper, repeating filter, volume/RMS, permission mapping, engine selection, ErrorTrace |
 | **4. Native unit Android (JUnit + Robolectric)** | Ready | `npm run test:android:native` | AutoStopper, filters, volume/RMS, permission mapping, session helpers, on-device decisions, ErrorTrace |
+| **5. agent-device (installed-app UI)** | Ready (local devices) | `npm run test:agent-device:doctor` then Cursor MCP / replay | Example Listen start→stop smoke on sim/emu/device |
 
 Full command list and remaining gaps: see below.
 
@@ -66,10 +67,74 @@ Needs Android SDK. Create `tests/android/local.properties` with `sdk.dir=...` or
 
 The same tests also live on the library source set (`android/src/test`) so `./gradlew :react-native-nitro-speech:testDebugUnitTest` from the example app works after a normal RN Android configure.
 
+## 5. agent-device (Callstack CLI / MCP)
+
+External CLI that drives the **installed** example app. It is **not** a React Native runtime dependency of `example/`. The CLI is lockfile-pinned at the repo root (`agent-device@0.21.8`). Do not tell agents to `npx -y agent-device@latest`.
+
+Use this layer for exploratory Listen UI smoke (open the example, tap Start listening, stop, screenshot). Use Harness / XCTest / Robolectric for in-process lifecycle and native unit contracts. Use Jest for JS units. agent-device does not replace those layers and does not gate STT accuracy.
+
+### Prerequisites
+
+- Node.js **22.12+** (the rest of this repo may run on older Node; the CLI will not)
+- Xcode + `simctl` for iOS Simulator
+- Android SDK + `adb` for Android Emulator / device
+- A **local** Mac/dev machine with those toolchains. Cloud CI VMs without simulators/emulators/devices cannot drive local hardware.
+
+### Install the pinned CLI
+
+```bash
+# from repo root (bun.lock or npm)
+bun install
+# or
+npm install
+
+npm run test:agent-device:doctor
+# equivalent:
+node_modules/.bin/agent-device doctor
+```
+
+### Boot, build, then drive
+
+The debug app must already be installed. agent-device opens whatever is on the device; it does not compile the example.
+
+```bash
+agent-device boot --platform ios      # or android
+npm run example:ios                   # or example:android
+# from example/: npm run ios | android
+```
+
+Then either:
+
+**A. Cursor MCP (preferred for agents)**
+
+1. After `bun install` / `npm install`, enable the `agent-device` server from [`.cursor/mcp.json`](../.cursor/mcp.json) (reconnect MCP in Cursor settings if needed).
+2. Ask Cursor to drive the example Listen flow. The project rule [`.cursor/rules/agent-device.mdc`](../.cursor/rules/agent-device.mdc) tells the agent to start with open, not `--help`.
+
+**B. Replay / batch (human or agent CLI)**
+
+```bash
+agent-device replay tests/agent-device/listen-smoke.ios.ad
+agent-device replay tests/agent-device/listen-smoke.android.ad
+# or
+agent-device batch --platform ios --steps-file tests/agent-device/listen-smoke.ios.json
+```
+
+`npm run test:agent-device:smoke:ios` / `test:agent-device:smoke:android` print those commands. They skip the device unless `AGENT_DEVICE_SMOKE_RUN=1`.
+
+Playbook, selectors, and identifiers: [`tests/agent-device/README.md`](../tests/agent-device/README.md).
+
+Listen controls already have testIDs (`toggle-listening-button`, `listening-status`, …). If a snapshot omits `id=`, use labels (`Start listening` / `Stop listening`) or refs.
+
+Silence contracts when AD drives speech controls — same as Harness:
+
+- iOS Simulator: lasting silence is OK
+- Android Emulator: start → hold **≤3s** → stop, to avoid native speech-timeout
+
 ## Remaining gaps
 
 - HybridRecognizer / engine start paths that need a live `SpeechRecognizer` or `SFSpeechRecognizer` session
-- Real STT accuracy / golden audio (intentionally out of scope)
+- Real STT accuracy / golden audio (intentionally out of scope; Layer 5 is UI smoke only)
 - HapticImpact (needs vibrator / UIKit feedback generator)
 - LocaleManager AssetInventory / on-device model download UI
 - `useRecognizer` React hook lifecycle beyond the example render smoke test
+- Cloud CI for agent-device (needs a Mac/dev machine with a booted sim/emu)

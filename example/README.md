@@ -62,7 +62,16 @@ npm run test:ios:native
 npm run test:android:native
 ```
 
-See [`docs/testing.md`](../docs/testing.md) for the full coverage matrix.
+agent-device (Layer 5, installed-app Listen UI smoke — not a Jest/CI gate):
+
+```bash
+# from repo root, after bun install / npm install
+npm run test:agent-device:doctor
+npm run test:agent-device:smoke:ios      # prints commands; needs a booted sim to actually drive
+npm run test:agent-device:smoke:android
+```
+
+Enable Cursor MCP from `.cursor/mcp.json` and ask the agent to drive the Listen flow. Details: [`docs/testing.md`](../docs/testing.md) and [`tests/agent-device/README.md`](../tests/agent-device/README.md).
 
 Override the Android AVD with `HARNESS_ANDROID_EMULATOR`. iOS is simulator-only.
 
