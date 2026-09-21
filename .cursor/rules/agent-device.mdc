@@ -1,0 +1,24 @@
+---
+description: Use agent-device for app and device automation of the NitroSpeech example
+alwaysApply: true
+---
+
+Use agent-device only for app/device automation tasks.
+
+The app under test is the repo-root example (`example/`), target name **NitroSpeechExample**. Identifiers: iOS `com.nitrospeechexample` / `NitroSpeechExample`; Android `com.nitrospeechexample`. Drive it with the lockfile-pinned CLI at `node_modules/.bin/agent-device` (root `devDependencies`, currently `agent-device@0.21.8`). Prefer MCP tools from `.cursor/mcp.json` or that binary in the integrated terminal. If `agent-device` is not on PATH, resolve `node_modules/.bin/agent-device` instead. Do not silently fall back to `npx -y agent-device@latest`; ask or use the exact pinned version.
+
+For a normal app-driving task, start immediately. Do not probe first with `--help`, `--version`, `devices`, `appstate`, `snapshot`, or `screenshot`; open the requested app in the foreground and continue from its initial interactive snapshot.
+
+Prefer `open -> snapshot -i -> act -> re-snapshot -> verify -> close` where the target supports capture and selectors; otherwise follow target-specific help. Use current refs such as `@e3` for exploration and selectors for durable replay. Keep mutating commands against one session serial. Capture screenshots, logs, network, audio, perf, traces, recordings, and `.ad` replay scripts only when they add evidence.
+
+Default smoke: the nitro-speech **Listen UI**. Open the example, find **Start listening** (`id="toggle-listening-button"` or label `Start listening`), start, wait briefly, stop (`Stop listening` / same testID), re-snapshot, screenshot evidence, close. Other Listen controls: `check-permissions-button`, `prewarm-button`, `toggle-on-device-button`, `listening-status`, `permission-status`. This is UI smoke, not an STT accuracy suite.
+
+Silence / emulator contracts (when AD drives speech controls):
+- **iOS Simulator:** lasting silence is OK; do not treat silence as failure.
+- **Android Emulator:** silence only; native speech-timeout after ~4–5s. After Start listening, hold **≤3s wall-clock**, then Stop, to avoid `ERROR_SPEECH_TIMEOUT`.
+
+If a mic/speech permission sheet appears, `alert accept` (or press the visible Allow control) and continue. Dismiss React Native LogBox/error overlays if they are not the requested behavior; mention them in the summary.
+
+For TV, Fire TV, or Vega OS tasks, read `agent-device help tv`. For exploratory QA, read `agent-device help dogfood`. For logs, network, audio, traces, or runtime failures, read `agent-device help debugging`. For React Native component trees, props/state/hooks, slow renders, or rerenders, read `agent-device help react-devtools`. For React Native JavaScript heap growth, heap snapshots, or retained-object leaks, read `agent-device help cdp`. For React Native apps, overlays, Metro/Fast Refresh blockers, and routing to React DevTools or debugging evidence, read `agent-device help react-native`.
+
+MCP exposes structured tools backed by the agent-device client; it does not expose generic shell execution. MCP-only `help` is not a startup step; call it for specialized work or an unclear command shape.
