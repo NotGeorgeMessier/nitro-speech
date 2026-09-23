@@ -69,11 +69,52 @@ bun add react-native-nitro-speech react-native-nitro-modules
 
 ### Expo
 
-This library works with Expo. You need to run prebuild to generate native code:
+This library works with Expo. Add the config plugin so `npx expo prebuild` writes the iOS usage descriptions, then generate native code.
+
+In `app.json` or `app.config.js` / `app.config.ts`:
+
+```json
+{
+  "expo": {
+    "plugins": ["react-native-nitro-speech"]
+  }
+}
+```
+
+Or with custom iOS permission strings:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "react-native-nitro-speech",
+        {
+          "microphonePermission": "This app needs microphone access for speech recognition",
+          "speechRecognitionPermission": "This app needs speech recognition to convert speech to text"
+        }
+      ]
+    ]
+  }
+}
+```
+
+Then:
 
 ```bash
 npx expo prebuild
 ```
+
+**Plugin options**
+
+| Option | Platform | Default |
+| --- | --- | --- |
+| `microphonePermission` | iOS | `This app needs microphone access for speech recognition` |
+| `speechRecognitionPermission` | iOS | `This app needs speech recognition to convert speech to text` |
+
+The plugin injects `NSMicrophoneUsageDescription` and `NSSpeechRecognitionUsageDescription` into `Info.plist`. Existing values are kept unless you pass an option.
+
+Android `RECORD_AUDIO` and `VIBRATE` (and the speech `RecognitionService` queries entry) are already declared in this library's `AndroidManifest.xml` and merge into your app automatically. The plugin does not add them again.
 
 **Note**: Make sure New Arch is enabled in your Expo configuration before running prebuild.
 
@@ -123,7 +164,9 @@ The library declares the required permission in its `AndroidManifest.xml` (merge
 
 ### iOS
 
-Add the following keys to your app's `Info.plist`:
+Expo: the [config plugin](#expo) writes these keys during prebuild. Override the strings with `microphonePermission` and `speechRecognitionPermission` if needed.
+
+Bare React Native: add the following keys to your app's `Info.plist`:
 
 ```xml
 <key>NSMicrophoneUsageDescription</key>

@@ -23,15 +23,19 @@
     "ios/**/*.cpp",
     "ios/**/*.swift",
     "app.plugin.js",
+    "plugin/src",
+    "plugin/build",
+    "plugin/tsconfig.json",
     "nitro.json",
     "*.podspec",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p plugin",
     "reinstall": "rm -rf node_modules && bun install",
-    "build": "rm -rf lib && rm -f tsconfig.tsbuildinfo && bun tsc && bun run lint:lib",
+    "build": "rm -rf lib && rm -f tsconfig.tsbuildinfo && bun tsc && bun run build:plugin && bun run lint:lib",
+    "build:plugin": "rm -rf plugin/build && bun tsc -p plugin",
     "lint": "eslint \"**/*.{js,ts,tsx}\" --fix",
     "lint:lib": "eslint \"lib/**/*.{js,ts,tsx}\" --fix",
     "nitro": "rm -rf nitrogen && npx nitrogen@latest",
@@ -91,7 +95,16 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-nitro-modules": "*"
+    "react-native-nitro-modules": "*",
+    "expo": "*"
+  },
+  "peerDependenciesMeta": {
+    "expo": {
+      "optional": true
+    }
+  },
+  "expo": {
+    "plugin": "./app.plugin.js"
   },
   "eslintConfig": {
     "root": true,
@@ -153,7 +166,8 @@
     ]
   },
   "eslintIgnore": [
-    "node_modules/"
+    "node_modules/",
+    "plugin/build/"
   ],
   "prettier": {
     "quoteProps": "consistent",
