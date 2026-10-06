@@ -2,7 +2,7 @@
   "mcpServers": {
     "agent-device": {
       "command": "npx",
-      "args": ["--no-install", "agent-device@0.21.8", "mcp"]
+      "args": ["--no-install", "agent-device@0.21.20", "mcp"]
     }
   }
 }

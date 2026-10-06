@@ -5,7 +5,7 @@ alwaysApply: true
 
 Use agent-device only for app/device automation tasks.
 
-The app under test is the repo-root example (`example/`), target name **NitroSpeechExample**. Identifiers: iOS `com.nitrospeechexample` / `NitroSpeechExample`; Android `com.nitrospeechexample`. Drive it with the lockfile-pinned CLI at `node_modules/.bin/agent-device` (root `devDependencies`, currently `agent-device@0.21.8`). Prefer MCP tools from `.cursor/mcp.json` or that binary in the integrated terminal. If `agent-device` is not on PATH, resolve `node_modules/.bin/agent-device` instead. Do not silently fall back to `npx -y agent-device@latest`; ask or use the exact pinned version.
+The app under test is the repo-root example (`example/`), target name **NitroSpeechExample**. Identifiers: iOS `com.nitrospeechexample` / `NitroSpeechExample`; Android `com.nitrospeechexample`. Drive it with the lockfile-pinned CLI at `node_modules/.bin/agent-device` (root `devDependencies`, currently `agent-device@0.21.20`). Prefer MCP tools from `.cursor/mcp.json` or that binary in the integrated terminal. If `agent-device` is not on PATH, resolve `node_modules/.bin/agent-device` instead. Do not silently fall back to `npx -y agent-device@latest`; ask or use the exact pinned version.
 
 For a normal app-driving task, start immediately. Do not probe first with `--help`, `--version`, `devices`, `appstate`, `snapshot`, or `screenshot`; open the requested app in the foreground and continue from its initial interactive snapshot.
 

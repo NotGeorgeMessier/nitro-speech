@@ -2,7 +2,7 @@
 
 External CLI/MCP that drives the **already installed** example app on a simulator, emulator, or device. It is **not** an in-app library of the React Native runtime.
 
-Pinned at the repo root: `agent-device@0.21.8` (lockfile). After `bun install` or `npm install`, use `node_modules/.bin/agent-device`. Do not run `npx -y agent-device@latest`.
+Pinned at the repo root: `agent-device@0.21.20` (lockfile). After `bun install` or `npm install`, use `node_modules/.bin/agent-device`. Do not run `npx -y agent-device@latest`.
 
 This is **UI smoke** (open → Listen start → short hold → stop → screenshot). It is not an STT accuracy suite and is **not a CI gate**. Cloud VMs without hardware cannot drive local simulators.
 

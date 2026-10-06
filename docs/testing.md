@@ -69,7 +69,7 @@ The same tests also live on the library source set (`android/src/test`) so `./gr
 
 ## 5. agent-device (Callstack CLI / MCP)
 
-External CLI that drives the **installed** example app. It is **not** a React Native runtime dependency of `example/`. The CLI is lockfile-pinned at the repo root (`agent-device@0.21.8`). Do not tell agents to `npx -y agent-device@latest`.
+External CLI that drives the **installed** example app. It is **not** a React Native runtime dependency of `example/`. The CLI is lockfile-pinned at the repo root (`agent-device@0.21.20`). Do not tell agents to `npx -y agent-device@latest`.
 
 Use this layer for exploratory Listen UI smoke (open the example, tap Start listening, stop, screenshot). Use Harness / XCTest / Robolectric for in-process lifecycle and native unit contracts. Use Jest for JS units. agent-device does not replace those layers and does not gate STT accuracy.
 
