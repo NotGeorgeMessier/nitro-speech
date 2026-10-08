@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import type { VolumeChangeEvent } from './types'
+import type { VoiceInputVolumeChangeEvent } from './types'
 
 type TSubscriber = () => void
 
 const stateSubscribers = new Set<TSubscriber>()
 const isActiveSubscribers = new Set<TSubscriber>()
 
-const EMPTY_VOLUME_EVENT: VolumeChangeEvent = {
+const EMPTY_VOLUME_EVENT: VoiceInputVolumeChangeEvent = {
   smoothedVolume: 0,
   rawVolume: 0,
   db: undefined,
 }
 
 let isActiveEvent = false
-let state: VolumeChangeEvent = EMPTY_VOLUME_EVENT
+let state: VoiceInputVolumeChangeEvent = EMPTY_VOLUME_EVENT
 
 const isActiveSubscribe = (subscriber: TSubscriber) => {
   isActiveSubscribers.add(subscriber)
@@ -62,12 +62,12 @@ export interface UseVoiceInputVolumeConfig {
 /**
  * @param config.eventsPerSecond - Controls the frequency of the volume change events.
  *
- * @returns Object with {@linkcode VolumeChangeEvent}
+ * @returns Object with {@linkcode VoiceInputVolumeChangeEvent}
  */
 export const useVoiceInputVolume = (config?: UseVoiceInputVolumeConfig) => {
   const eps = config?.eventsPerSecond
   const isActive = useSyncExternalStore(isActiveSubscribe, getIsActive)
-  const event = useRef<VolumeChangeEvent>(EMPTY_VOLUME_EVENT)
+  const event = useRef<VoiceInputVolumeChangeEvent>(EMPTY_VOLUME_EVENT)
   const [_, flip] = useState(false)
 
   const isEPS = typeof eps === 'number' && eps >= 0 && isActive
@@ -123,7 +123,7 @@ export const useVoiceInputVolume = (config?: UseVoiceInputVolumeConfig) => {
  * ```
  */
 export const speechRecognizerVolumeChangeHandler = (
-  event: VolumeChangeEvent
+  event: VoiceInputVolumeChangeEvent
 ) => {
   const updateActive = event.rawVolume > 0
   if (updateActive !== isActiveEvent) {

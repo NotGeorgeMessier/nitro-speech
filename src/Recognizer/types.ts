@@ -3,11 +3,12 @@ import type {
   MutableSpeechRecognitionConfig,
   SpeechRecognitionConfig,
 } from '../specs/SpeechRecognitionConfig'
-import type { VolumeChangeEvent } from '../specs/VolumeChangeEvent'
+import type { VoiceInputVolumeChangeEvent } from '../specs/VoiceInputVolumeChangeEvent'
 import type { SpeechRecognitionPrewarm } from '../specs/SpeechRecognitionPrewarm'
 import type { UseVoiceInputVolumeConfig } from './useVoiceInputVolume'
 import type { SupportedLocales } from '../specs/SupportedLocales'
-export { PermissionStatus } from '../specs/Permissions'
+import { SpeechRecognitionPermissionStatus } from '../specs/Permissions'
+export { SpeechRecognitionPermissionStatus }
 export { SpeechRecognitionError } from '../specs/Errors'
 
 type RecognizerCallbacks = Pick<
@@ -42,9 +43,17 @@ export type {
   SpeechRecognitionConfig,
   SpeechRecognitionPrewarm,
   MutableSpeechRecognitionConfig,
-  VolumeChangeEvent,
+  VoiceInputVolumeChangeEvent,
   SupportedLocales,
   RecognizerCallbacks,
   RecognizerMethods,
   UseVoiceInputVolumeConfig,
 }
+
+/** @deprecated Use SpeechRecognitionPermissionStatus */
+export const PermissionStatus = SpeechRecognitionPermissionStatus
+/** @deprecated Use SpeechRecognitionPermissionStatus */
+export type PermissionStatus = SpeechRecognitionPermissionStatus
+
+/** @deprecated Use VoiceInputVolumeChangeEvent */
+export type VolumeChangeEvent = VoiceInputVolumeChangeEvent

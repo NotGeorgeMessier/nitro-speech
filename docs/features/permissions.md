@@ -52,7 +52,7 @@ Automatically requests permission, nothing to configure.
 
 ### getPermissions
 
-Get the `PermissionStatus` enum:
+Get the `SpeechRecognitionPermissionStatus` enum:
 - `0` - Granted
 - `1` - Denied
 - `2` - Not requested

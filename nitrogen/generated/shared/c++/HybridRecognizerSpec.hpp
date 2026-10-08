@@ -15,16 +15,16 @@
 
 // Forward declaration of `SpeechRecognitionError` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
-// Forward declaration of `VolumeChangeEvent` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
+// Forward declaration of `VoiceInputVolumeChangeEvent` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct VoiceInputVolumeChangeEvent; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 // Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 // Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
-// Forward declaration of `PermissionStatus` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
+// Forward declaration of `SpeechRecognitionPermissionStatus` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionPermissionStatus; }
 // Forward declaration of `SupportedLocales` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
 
@@ -33,12 +33,12 @@ namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
 #include <string>
 #include <vector>
 #include "SpeechRecognitionError.hpp"
-#include "VolumeChangeEvent.hpp"
+#include "VoiceInputVolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include "SpeechRecognitionConfig.hpp"
 #include "SpeechRecognitionPrewarm.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
-#include "PermissionStatus.hpp"
+#include "SpeechRecognitionPermissionStatus.hpp"
 #include "SupportedLocales.hpp"
 
 namespace margelo::nitro::nitrospeech {
@@ -80,8 +80,8 @@ namespace margelo::nitro::nitrospeech {
       virtual void setOnError(const std::optional<std::function<void(SpeechRecognitionError /* error */, const std::optional<std::string>& /* trace */)>>& onError) = 0;
       virtual std::optional<std::function<void()>> getOnPermissionDenied() = 0;
       virtual void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) = 0;
-      virtual std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> getOnVolumeChange() = 0;
-      virtual void setOnVolumeChange(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& onVolumeChange) = 0;
+      virtual std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>> getOnVolumeChange() = 0;
+      virtual void setOnVolumeChange(const std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>>& onVolumeChange) = 0;
 
     public:
       // Methods
@@ -92,8 +92,8 @@ namespace margelo::nitro::nitrospeech {
       virtual void addAutoFinishTime(std::optional<double> additionalTimeMs) = 0;
       virtual void updateConfig(const std::optional<MutableSpeechRecognitionConfig>& newConfig, std::optional<bool> resetAutoFinishTime) = 0;
       virtual bool getIsActive() = 0;
-      virtual VolumeChangeEvent getVoiceInputVolume() = 0;
-      virtual PermissionStatus getPermissions() = 0;
+      virtual VoiceInputVolumeChangeEvent getVoiceInputVolume() = 0;
+      virtual SpeechRecognitionPermissionStatus getPermissions() = 0;
       virtual std::shared_ptr<Promise<SupportedLocales>> getSupportedLocales() = 0;
       virtual std::vector<std::string> getSupportedLocalesIOS() = 0;
       virtual bool onDeviceRecognitionAvailable(const std::optional<std::string>& locale) = 0;

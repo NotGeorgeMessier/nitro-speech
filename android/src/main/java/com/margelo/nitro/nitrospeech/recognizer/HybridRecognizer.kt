@@ -12,12 +12,12 @@ import com.margelo.nitro.NitroModules
 import com.margelo.nitro.core.Promise
 import com.margelo.nitro.nitrospeech.MutableSpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.HybridRecognizerSpec
-import com.margelo.nitro.nitrospeech.PermissionStatus
+import com.margelo.nitro.nitrospeech.SpeechRecognitionPermissionStatus
 import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.SpeechRecognitionError
 import com.margelo.nitro.nitrospeech.SpeechRecognitionPrewarm
 import com.margelo.nitro.nitrospeech.SupportedLocales
-import com.margelo.nitro.nitrospeech.VolumeChangeEvent
+import com.margelo.nitro.nitrospeech.VoiceInputVolumeChangeEvent
 
 @DoNotStrip
 @Keep
@@ -31,7 +31,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   private var isActive: Boolean = false
   private var config: SpeechRecognitionConfig? = null
-  private var volumeChangeEvent: VolumeChangeEvent = VolumeChangeEvent(0.0,0.0,null)
+  private var volumeChangeEvent: VoiceInputVolumeChangeEvent = VoiceInputVolumeChangeEvent(0.0,0.0,null)
   private var autoStopper: AutoStopper? = null
   private var speechRecognizer: android.speech.SpeechRecognizer? = null
   private val mainHandler = Handler(Looper.getMainLooper())
@@ -43,7 +43,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
   override var onAutoFinishProgress: ((timeLeftMs: Double) -> Unit)? = null
   override var onError: ((error: SpeechRecognitionError, trace: String?) -> Unit)? = null
   override var onPermissionDenied: (() -> Unit)? = null
-  override var onVolumeChange: ((event: VolumeChangeEvent) -> Unit)? = null
+  override var onVolumeChange: ((event: VoiceInputVolumeChangeEvent) -> Unit)? = null
 
   @DoNotStrip
   @Keep
@@ -180,15 +180,15 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   @DoNotStrip
   @Keep
-  override fun getVoiceInputVolume(): VolumeChangeEvent {
+  override fun getVoiceInputVolume(): VoiceInputVolumeChangeEvent {
     return volumeChangeEvent
   }
 
   @DoNotStrip
   @Keep
-  override fun getPermissions(): PermissionStatus {
-    val context = NitroModules.applicationContext ?: return PermissionStatus.NOT_REQUESTED
-    val activity = context.currentActivity ?: return PermissionStatus.NOT_REQUESTED
+  override fun getPermissions(): SpeechRecognitionPermissionStatus {
+    val context = NitroModules.applicationContext ?: return SpeechRecognitionPermissionStatus.NOT_REQUESTED
+    val activity = context.currentActivity ?: return SpeechRecognitionPermissionStatus.NOT_REQUESTED
     return AudioPermissionRequester.checkStatus(activity)
   }
 
@@ -385,7 +385,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
       speechRecognizer?.destroy()
       speechRecognizer = null
       // Reset voice meter in JS consumers after stop/error cleanup.
-      fireVolumeChangeEvent(VolumeChangeEvent(0.0,0.0,null))
+      fireVolumeChangeEvent(VoiceInputVolumeChangeEvent(0.0,0.0,null))
     } catch (_: Exception) {
       speechRecognizer = null
       onFinishRecognition(
@@ -417,7 +417,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
     }
   }
 
-  private fun fireVolumeChangeEvent(event: VolumeChangeEvent) {
+  private fun fireVolumeChangeEvent(event: VoiceInputVolumeChangeEvent) {
     logger.log("fireVolumeChangeEvent $event")
     volumeChangeEvent = event
     onVolumeChange?.invoke(event)

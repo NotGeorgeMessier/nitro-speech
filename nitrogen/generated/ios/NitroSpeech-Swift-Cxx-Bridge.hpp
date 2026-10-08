@@ -20,18 +20,18 @@ namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 // Forward declaration of `OnDeviceMode` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class OnDeviceMode; }
-// Forward declaration of `PermissionStatus` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 // Forward declaration of `SpeechRecognitionError` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
+// Forward declaration of `SpeechRecognitionPermissionStatus` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionPermissionStatus; }
 // Forward declaration of `SpeechRecognitionPrewarm` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 // Forward declaration of `SupportedLocales` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
-// Forward declaration of `VolumeChangeEvent` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
+// Forward declaration of `VoiceInputVolumeChangeEvent` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct VoiceInputVolumeChangeEvent; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridNitroSpeechSpec_cxx` to properly resolve imports.
@@ -46,12 +46,12 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 #include "IosPreset.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
 #include "OnDeviceMode.hpp"
-#include "PermissionStatus.hpp"
 #include "SpeechRecognitionConfig.hpp"
 #include "SpeechRecognitionError.hpp"
+#include "SpeechRecognitionPermissionStatus.hpp"
 #include "SpeechRecognitionPrewarm.hpp"
 #include "SupportedLocales.hpp"
-#include "VolumeChangeEvent.hpp"
+#include "VoiceInputVolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/PromiseHolder.hpp>
 #include <NitroModules/Result.hpp>
@@ -469,40 +469,40 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return optional.value();
   }
   
-  // pragma MARK: std::function<void(const VolumeChangeEvent& /* event */)>
+  // pragma MARK: std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>
   /**
-   * Specialized version of `std::function<void(const VolumeChangeEvent&)>`.
+   * Specialized version of `std::function<void(const VoiceInputVolumeChangeEvent&)>`.
    */
-  using Func_void_VolumeChangeEvent = std::function<void(const VolumeChangeEvent& /* event */)>;
+  using Func_void_VoiceInputVolumeChangeEvent = std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>;
   /**
-   * Wrapper class for a `std::function<void(const VolumeChangeEvent& / * event * /)>`, this can be used from Swift.
+   * Wrapper class for a `std::function<void(const VoiceInputVolumeChangeEvent& / * event * /)>`, this can be used from Swift.
    */
-  class Func_void_VolumeChangeEvent_Wrapper final {
+  class Func_void_VoiceInputVolumeChangeEvent_Wrapper final {
   public:
-    explicit Func_void_VolumeChangeEvent_Wrapper(std::function<void(const VolumeChangeEvent& /* event */)>&& func): _function(std::make_unique<std::function<void(const VolumeChangeEvent& /* event */)>>(std::move(func))) {}
-    inline void call(VolumeChangeEvent event) const noexcept {
+    explicit Func_void_VoiceInputVolumeChangeEvent_Wrapper(std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>&& func): _function(std::make_unique<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>>(std::move(func))) {}
+    inline void call(VoiceInputVolumeChangeEvent event) const noexcept {
       _function->operator()(event);
     }
   private:
-    std::unique_ptr<std::function<void(const VolumeChangeEvent& /* event */)>> _function;
+    std::unique_ptr<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>> _function;
   } SWIFT_NONCOPYABLE;
-  Func_void_VolumeChangeEvent create_Func_void_VolumeChangeEvent(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_VolumeChangeEvent_Wrapper wrap_Func_void_VolumeChangeEvent(Func_void_VolumeChangeEvent value) noexcept {
-    return Func_void_VolumeChangeEvent_Wrapper(std::move(value));
+  Func_void_VoiceInputVolumeChangeEvent create_Func_void_VoiceInputVolumeChangeEvent(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_VoiceInputVolumeChangeEvent_Wrapper wrap_Func_void_VoiceInputVolumeChangeEvent(Func_void_VoiceInputVolumeChangeEvent value) noexcept {
+    return Func_void_VoiceInputVolumeChangeEvent_Wrapper(std::move(value));
   }
   
-  // pragma MARK: std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>
+  // pragma MARK: std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>>
   /**
-   * Specialized version of `std::optional<std::function<void(const VolumeChangeEvent& / * event * /)>>`.
+   * Specialized version of `std::optional<std::function<void(const VoiceInputVolumeChangeEvent& / * event * /)>>`.
    */
-  using std__optional_std__function_void_const_VolumeChangeEvent_____event______ = std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>;
-  inline std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> create_std__optional_std__function_void_const_VolumeChangeEvent_____event______(const std::function<void(const VolumeChangeEvent& /* event */)>& value) noexcept {
-    return std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>(value);
+  using std__optional_std__function_void_const_VoiceInputVolumeChangeEvent_____event______ = std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>>;
+  inline std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>> create_std__optional_std__function_void_const_VoiceInputVolumeChangeEvent_____event______(const std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>& value) noexcept {
+    return std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>>(value);
   }
-  inline bool has_value_std__optional_std__function_void_const_VolumeChangeEvent_____event______(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& optional) noexcept {
+  inline bool has_value_std__optional_std__function_void_const_VoiceInputVolumeChangeEvent_____event______(const std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>>& optional) noexcept {
     return optional.has_value();
   }
-  inline std::function<void(const VolumeChangeEvent& /* event */)> get_std__optional_std__function_void_const_VolumeChangeEvent_____event______(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& optional) noexcept {
+  inline std::function<void(const VoiceInputVolumeChangeEvent& /* event */)> get_std__optional_std__function_void_const_VoiceInputVolumeChangeEvent_____event______(const std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>>& optional) noexcept {
     return optional.value();
   }
   
@@ -533,22 +533,22 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     return Result<bool>::withError(error);
   }
   
-  // pragma MARK: Result<VolumeChangeEvent>
-  using Result_VolumeChangeEvent_ = Result<VolumeChangeEvent>;
-  inline Result_VolumeChangeEvent_ create_Result_VolumeChangeEvent_(const VolumeChangeEvent& value) noexcept {
-    return Result<VolumeChangeEvent>::withValue(value);
+  // pragma MARK: Result<VoiceInputVolumeChangeEvent>
+  using Result_VoiceInputVolumeChangeEvent_ = Result<VoiceInputVolumeChangeEvent>;
+  inline Result_VoiceInputVolumeChangeEvent_ create_Result_VoiceInputVolumeChangeEvent_(const VoiceInputVolumeChangeEvent& value) noexcept {
+    return Result<VoiceInputVolumeChangeEvent>::withValue(value);
   }
-  inline Result_VolumeChangeEvent_ create_Result_VolumeChangeEvent_(const std::exception_ptr& error) noexcept {
-    return Result<VolumeChangeEvent>::withError(error);
+  inline Result_VoiceInputVolumeChangeEvent_ create_Result_VoiceInputVolumeChangeEvent_(const std::exception_ptr& error) noexcept {
+    return Result<VoiceInputVolumeChangeEvent>::withError(error);
   }
   
-  // pragma MARK: Result<PermissionStatus>
-  using Result_PermissionStatus_ = Result<PermissionStatus>;
-  inline Result_PermissionStatus_ create_Result_PermissionStatus_(PermissionStatus value) noexcept {
-    return Result<PermissionStatus>::withValue(std::move(value));
+  // pragma MARK: Result<SpeechRecognitionPermissionStatus>
+  using Result_SpeechRecognitionPermissionStatus_ = Result<SpeechRecognitionPermissionStatus>;
+  inline Result_SpeechRecognitionPermissionStatus_ create_Result_SpeechRecognitionPermissionStatus_(SpeechRecognitionPermissionStatus value) noexcept {
+    return Result<SpeechRecognitionPermissionStatus>::withValue(std::move(value));
   }
-  inline Result_PermissionStatus_ create_Result_PermissionStatus_(const std::exception_ptr& error) noexcept {
-    return Result<PermissionStatus>::withError(error);
+  inline Result_SpeechRecognitionPermissionStatus_ create_Result_SpeechRecognitionPermissionStatus_(const std::exception_ptr& error) noexcept {
+    return Result<SpeechRecognitionPermissionStatus>::withError(error);
   }
   
   // pragma MARK: Result<std::shared_ptr<Promise<SupportedLocales>>>

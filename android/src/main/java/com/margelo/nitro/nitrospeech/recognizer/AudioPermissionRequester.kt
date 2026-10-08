@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import com.margelo.nitro.nitrospeech.PermissionStatus
+import com.margelo.nitro.nitrospeech.SpeechRecognitionPermissionStatus
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import androidx.core.content.edit
@@ -34,9 +34,9 @@ class AudioPermissionRequester(
     prefs.edit { putBoolean(REQUESTED_KEY, true) }
   }
 
-  fun check(): Boolean = checkStatus() == PermissionStatus.GRANTED
+  fun check(): Boolean = checkStatus() == SpeechRecognitionPermissionStatus.GRANTED
 
-  fun checkStatus(): PermissionStatus = checkStatus(activity)
+  fun checkStatus(): SpeechRecognitionPermissionStatus = checkStatus(activity)
 
   suspend fun checkAndRequest(): Boolean {
     if (check()) {
@@ -59,14 +59,14 @@ class AudioPermissionRequester(
     const val PREFS_NAME = "nitro_speech_prefs"
     const val REQUESTED_KEY = "audio_permission_requested"
 
-    fun checkStatus(activity: Activity): PermissionStatus {
+    fun checkStatus(activity: Activity): SpeechRecognitionPermissionStatus {
       val prefs = activity.getSharedPreferences(PREFS_NAME, android.content.Context.MODE_PRIVATE)
       val hasRequested = prefs.getBoolean(REQUESTED_KEY, false)
       val granted = ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
       return when {
-        granted -> PermissionStatus.GRANTED
-        hasRequested -> PermissionStatus.DENIED
-        else -> PermissionStatus.NOT_REQUESTED
+        granted -> SpeechRecognitionPermissionStatus.GRANTED
+        hasRequested -> SpeechRecognitionPermissionStatus.DENIED
+        else -> SpeechRecognitionPermissionStatus.NOT_REQUESTED
       }
     }
   }

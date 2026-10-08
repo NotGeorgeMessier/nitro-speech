@@ -5,14 +5,14 @@ import android.speech.RecognitionListener
 import android.speech.SpeechRecognizer
 import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.SpeechRecognitionError
-import com.margelo.nitro.nitrospeech.VolumeChangeEvent
+import com.margelo.nitro.nitrospeech.VoiceInputVolumeChangeEvent
 import kotlin.math.max
 import kotlin.math.roundToInt
 
 class RecognitionListenerSession (
     private val autoStopper: AutoStopper?,
     private val config: SpeechRecognitionConfig?,
-    private val fireVolumeChangeEvent: (event: VolumeChangeEvent) -> Unit,
+    private val fireVolumeChangeEvent: (event: VoiceInputVolumeChangeEvent) -> Unit,
     private val onFinishRecognition: (result: ArrayList<String>?, error: SpeechRecognitionError?, recordingStopped: Boolean, trace: String?) -> Unit,
 ) {
     private val logger = Logger(disable = false)
@@ -160,9 +160,9 @@ class RecognitionListenerSession (
         return joiner.toString()
     }
 
-    private fun getVolume(rmsdB: Float): VolumeChangeEvent {
+    private fun getVolume(rmsdB: Float): VoiceInputVolumeChangeEvent {
         if (!rmsdB.isFinite()) {
-            return VolumeChangeEvent(0.0,0.0,null)
+            return VoiceInputVolumeChangeEvent(0.0,0.0,null)
         }
 
         if (noiseFloorDb.isNaN()) {
@@ -186,7 +186,7 @@ class RecognitionListenerSession (
         val roundedRaw = ((raw * PRECISION_SCALE).roundToInt() / PRECISION_SCALE).toDouble()
         val db = (rmsdB * 1000).roundToInt() / 1000.0
 
-        return VolumeChangeEvent(
+        return VoiceInputVolumeChangeEvent(
             smoothedVolume = roundedSmoothed,
             rawVolume = roundedRaw,
             db = db

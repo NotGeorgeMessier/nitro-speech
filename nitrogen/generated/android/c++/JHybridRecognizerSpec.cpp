@@ -9,10 +9,10 @@
 
 // Forward declaration of `SpeechRecognitionError` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
-// Forward declaration of `VolumeChangeEvent` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
-// Forward declaration of `PermissionStatus` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
+// Forward declaration of `VoiceInputVolumeChangeEvent` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct VoiceInputVolumeChangeEvent; }
+// Forward declaration of `SpeechRecognitionPermissionStatus` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionPermissionStatus; }
 // Forward declaration of `SupportedLocales` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
@@ -39,14 +39,14 @@ namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
 #include "SpeechRecognitionError.hpp"
 #include "JFunc_void_SpeechRecognitionError_std__optional_std__string_.hpp"
 #include "JSpeechRecognitionError.hpp"
-#include "VolumeChangeEvent.hpp"
-#include "JFunc_void_VolumeChangeEvent.hpp"
-#include "JVolumeChangeEvent.hpp"
+#include "VoiceInputVolumeChangeEvent.hpp"
+#include "JFunc_void_VoiceInputVolumeChangeEvent.hpp"
+#include "JVoiceInputVolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
 #include <NitroModules/JUnit.hpp>
-#include "PermissionStatus.hpp"
-#include "JPermissionStatus.hpp"
+#include "SpeechRecognitionPermissionStatus.hpp"
+#include "JSpeechRecognitionPermissionStatus.hpp"
 #include "SupportedLocales.hpp"
 #include "JSupportedLocales.hpp"
 #include "SpeechRecognitionConfig.hpp"
@@ -194,22 +194,22 @@ namespace margelo::nitro::nitrospeech {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void::javaobject> /* onPermissionDenied */)>("setOnPermissionDenied_cxx");
     method(_javaPart, onPermissionDenied.has_value() ? JFunc_void_cxx::fromCpp(onPermissionDenied.value()) : nullptr);
   }
-  std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> JHybridRecognizerSpec::getOnVolumeChange() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void_VolumeChangeEvent::javaobject>()>("getOnVolumeChange_cxx");
+  std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>> JHybridRecognizerSpec::getOnVolumeChange() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JFunc_void_VoiceInputVolumeChangeEvent::javaobject>()>("getOnVolumeChange_cxx");
     auto __result = method(_javaPart);
-    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const VolumeChangeEvent& /* event */)> {
-      if (__result->isInstanceOf(JFunc_void_VolumeChangeEvent_cxx::javaClassStatic())) [[likely]] {
-        auto downcast = jni::static_ref_cast<JFunc_void_VolumeChangeEvent_cxx::javaobject>(__result);
+    return __result != nullptr ? std::make_optional([&]() -> std::function<void(const VoiceInputVolumeChangeEvent& /* event */)> {
+      if (__result->isInstanceOf(JFunc_void_VoiceInputVolumeChangeEvent_cxx::javaClassStatic())) [[likely]] {
+        auto downcast = jni::static_ref_cast<JFunc_void_VoiceInputVolumeChangeEvent_cxx::javaobject>(__result);
         return downcast->cthis()->getFunction();
       } else {
         auto __resultRef = jni::make_global(__result);
-        return JNICallable<JFunc_void_VolumeChangeEvent, void(VolumeChangeEvent)>(std::move(__resultRef));
+        return JNICallable<JFunc_void_VoiceInputVolumeChangeEvent, void(VoiceInputVolumeChangeEvent)>(std::move(__resultRef));
       }
     }()) : std::nullopt;
   }
-  void JHybridRecognizerSpec::setOnVolumeChange(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& onVolumeChange) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_VolumeChangeEvent::javaobject> /* onVolumeChange */)>("setOnVolumeChange_cxx");
-    method(_javaPart, onVolumeChange.has_value() ? JFunc_void_VolumeChangeEvent_cxx::fromCpp(onVolumeChange.value()) : nullptr);
+  void JHybridRecognizerSpec::setOnVolumeChange(const std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>>& onVolumeChange) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<JFunc_void_VoiceInputVolumeChangeEvent::javaobject> /* onVolumeChange */)>("setOnVolumeChange_cxx");
+    method(_javaPart, onVolumeChange.has_value() ? JFunc_void_VoiceInputVolumeChangeEvent_cxx::fromCpp(onVolumeChange.value()) : nullptr);
   }
 
   // Methods
@@ -253,13 +253,13 @@ namespace margelo::nitro::nitrospeech {
     auto __result = method(_javaPart);
     return static_cast<bool>(__result);
   }
-  VolumeChangeEvent JHybridRecognizerSpec::getVoiceInputVolume() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVolumeChangeEvent>()>("getVoiceInputVolume");
+  VoiceInputVolumeChangeEvent JHybridRecognizerSpec::getVoiceInputVolume() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVoiceInputVolumeChangeEvent>()>("getVoiceInputVolume");
     auto __result = method(_javaPart);
     return __result->toCpp();
   }
-  PermissionStatus JHybridRecognizerSpec::getPermissions() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPermissionStatus>()>("getPermissions");
+  SpeechRecognitionPermissionStatus JHybridRecognizerSpec::getPermissions() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JSpeechRecognitionPermissionStatus>()>("getPermissions");
     auto __result = method(_javaPart);
     return __result->toCpp();
   }
