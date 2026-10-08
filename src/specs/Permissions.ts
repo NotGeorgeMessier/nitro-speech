@@ -9,7 +9,7 @@
  * - `DENIED` — at least one permission was explicitly denied by the user.
  * - `NOT_REQUESTED` — permission has never been requested
  */
-export enum PermissionStatus {
+export enum SpeechRecognitionPermissionStatus {
   GRANTED,
   DENIED,
   NOT_REQUESTED,

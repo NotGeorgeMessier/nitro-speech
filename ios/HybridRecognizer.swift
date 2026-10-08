@@ -16,8 +16,8 @@ class HybridRecognizer: HybridRecognizerSpec  {
     var onAutoFinishProgressFallback: ((Double) -> Void)?
     var onError: ((SpeechRecognitionError, String?) -> Void)?
     var onPermissionDenied: (() -> Void)?
-    var onVolumeChange: ((VolumeChangeEvent) -> Void)?
-    var onVolumeChangeFallback: ((VolumeChangeEvent) -> Void)?
+    var onVolumeChange: ((VoiceInputVolumeChangeEvent) -> Void)?
+    var onVolumeChangeFallback: ((VoiceInputVolumeChangeEvent) -> Void)?
     
     private let coordinator = Coordinator()
     private var paramsHash: String?
@@ -82,15 +82,15 @@ class HybridRecognizer: HybridRecognizerSpec  {
         return engine?.status == .active
     }
 
-    func getVoiceInputVolume() -> VolumeChangeEvent {
-        return engine?.getVoiceInputVolume() ?? VolumeChangeEvent(
+    func getVoiceInputVolume() -> VoiceInputVolumeChangeEvent {
+        return engine?.getVoiceInputVolume() ?? VoiceInputVolumeChangeEvent(
             smoothedVolume: 0,
             rawVolume: 0,
             db: nil
         )
     }
     
-    func getPermissions() -> PermissionStatus {
+    func getPermissions() -> SpeechRecognitionPermissionStatus {
         return Permissions.getCombinedStatus()
     }
     
@@ -158,7 +158,7 @@ protocol RecognizerDelegate: AnyObject {
     func autoFinishProgress (timeLeftMs: Double)
     func error (error: SpeechRecognitionError, trace: String)
     func permissionDenied ()
-    func volumeChange (event: VolumeChangeEvent)
+    func volumeChange (event: VoiceInputVolumeChangeEvent)
 }
 
 extension HybridRecognizer: RecognizerDelegate {
@@ -235,7 +235,7 @@ extension HybridRecognizer: RecognizerDelegate {
         self.onPermissionDenied?()
     }
     
-    func volumeChange(event: VolumeChangeEvent) {
+    func volumeChange(event: VoiceInputVolumeChangeEvent) {
 //        self.lg.log("[onVolumeChange] raw: \(event.rawVolume)")
         if onVolumeChange != nil {
             onVolumeChangeFallback = onVolumeChange

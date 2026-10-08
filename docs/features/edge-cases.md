@@ -43,7 +43,7 @@ And in the performance-critical situations use `SpeechRecognizer` with custom wo
 const sharedVolume = useSharedValue(0);
 
 useEffect(() => {
-  const workletizedOnVolumeChange = (event: VolumeChangeEvent) => {
+  const workletizedOnVolumeChange = (event: VoiceInputVolumeChangeEvent) => {
     "worklet";
     sharedVolume.value = event.smoothedVolume;
   };
