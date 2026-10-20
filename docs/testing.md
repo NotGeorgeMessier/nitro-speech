@@ -25,6 +25,8 @@ No device. Uses Jest + a Nitro hybrid mock (`example/jest.setup.js`).
 
 ## 2. Harness
 
+Pinned in `example/package.json` at `react-native-harness@1.6.0` with `@react-native-harness/platform-android@1.6.0` and `@react-native-harness/platform-apple@1.6.0`. `example/rn-harness.config.mjs` is unchanged. 1.6.0 drops the runtime `react-native-url-polyfill` dependency, which read the legacy NativeModules bridge, so the in-app runner can start on this bridgeless RN 0.87 app.
+
 Debug app must already be installed on the emulator/simulator.
 
 ```bash
@@ -69,7 +71,7 @@ The same tests also live on the library source set (`android/src/test`) so `./gr
 
 ## 5. agent-device (Callstack CLI / MCP)
 
-External CLI that drives the **installed** example app. It is **not** a React Native runtime dependency of `example/`. The CLI is lockfile-pinned at the repo root (`agent-device@0.21.20`). Do not tell agents to `npx -y agent-device@latest`.
+External CLI that drives the **installed** example app. It is **not** a React Native runtime dependency of `example/`. The CLI is lockfile-pinned at the repo root (`agent-device@0.21.28`). Do not tell agents to `npx -y agent-device@latest`.
 
 Use this layer for exploratory Listen UI smoke (open the example, tap Start listening, stop, screenshot). Use Harness / XCTest / Robolectric for in-process lifecycle and native unit contracts. Use Jest for JS units. agent-device does not replace those layers and does not gate STT accuracy.
 
@@ -129,6 +131,8 @@ Silence contracts when AD drives speech controls — same as Harness:
 
 - iOS Simulator: lasting silence is OK
 - Android Emulator: start → hold **≤3s** → stop, to avoid native speech-timeout
+
+The checked-in replay files hold **1500 ms**. 0.21.28 gates moving taps and reads iOS React Native accessibility values without a script change. The flows do not scroll, type, or pre-grant permissions. A visible mic/speech sheet is `alert accept`; the `.ad` files omit that step because it fails when no sheet is showing. Details: [`tests/agent-device/README.md`](../tests/agent-device/README.md).
 
 ## Remaining gaps
 

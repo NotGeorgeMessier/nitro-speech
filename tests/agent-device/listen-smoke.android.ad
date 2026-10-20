@@ -1,6 +1,9 @@
 # NitroSpeech example Listen smoke (Android Emulator)
 # Requires the debug app already installed: npm run example:android
 # Silence timeout ~4–5s: start → hold ≤3s → stop.
+# HOLD_MS stays 1500. Do not lengthen it.
+# If a mic/speech sheet is up, accept it from the agent (`alert accept`).
+# A bare `alert accept` in this file fails with alert-not-found when no sheet is showing.
 # UI smoke only — not STT accuracy. Not a CI gate.
 
 context platform=android

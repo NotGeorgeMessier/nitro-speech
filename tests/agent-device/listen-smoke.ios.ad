@@ -1,6 +1,9 @@
 # NitroSpeech example Listen smoke (iOS Simulator)
 # Requires the debug app already installed: npm run example:ios
 # Lasting silence is OK on iOS; we still stop after a short hold.
+# HOLD_MS stays 1500. Do not lengthen it.
+# If a mic/speech sheet is up, accept it from the agent (`alert accept`).
+# A bare `alert accept` in this file fails with alert-not-found when no sheet is showing.
 # UI smoke only — not STT accuracy. Not a CI gate.
 
 context platform=ios
