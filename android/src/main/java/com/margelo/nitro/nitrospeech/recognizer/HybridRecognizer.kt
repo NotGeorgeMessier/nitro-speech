@@ -6,6 +6,9 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.speech.RecognizerIntent
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.NitroModules
@@ -23,18 +26,19 @@ import com.margelo.nitro.nitrospeech.VolumeChangeEvent
 @Keep
 class HybridRecognizer: HybridRecognizerSpec() {
   companion object {
-    private const val POST_RECOGNITION_DELAY = 250L
     private const val DEFAULT_LOCALE = "en-US"
   }
 
   private val logger = Logger(disable = false)
 
   private var isActive: Boolean = false
+  private var isFinishing: Boolean = false
   private var config: SpeechRecognitionConfig? = null
   private var volumeChangeEvent: VolumeChangeEvent = VolumeChangeEvent(0.0,0.0,null)
   private var autoStopper: AutoStopper? = null
   private var speechRecognizer: android.speech.SpeechRecognizer? = null
   private val mainHandler = Handler(Looper.getMainLooper())
+  private val startup = RecognitionStartup(CoroutineScope(Dispatchers.Main.immediate))
 
   override var onReadyForSpeech: (() -> Unit)? = null
   override var onRecordingStopped: (() -> Unit)? = null
@@ -83,8 +87,17 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @Keep
   override fun startListening(params: SpeechRecognitionConfig?) {
     logger.log("startListening: $params")
-    Promise.async {
-      preparePermissions(params, isPrewarm = false)
+    mainHandler.post {
+      if (isActive) return@post
+      startup.start { isCurrent ->
+        try {
+          preparePermissions(params, isPrewarm = false, isCurrent = isCurrent)
+        } catch (error: CancellationException) {
+          throw error
+        } catch (_: Exception) {
+          if (isCurrent()) onFinishRecognition(null, SpeechRecognitionError.SESSIONSTARTFAILED, true)
+        }
+      }
     }
   }
 
@@ -92,16 +105,24 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @Keep
   override fun stopListening() {
     logger.log("stopListening called")
-    if (!isActive) return
-    onFinishRecognition(null, null, true)
-    mainHandler.postDelayed({
-      val context = NitroModules.applicationContext
-      val hapticImpact = config?.stopHapticFeedbackStyle
-      if (context != null) {
-        HapticImpact(hapticImpact).trigger(context)
+    stopListeningIfCurrent { true }
+  }
+
+  private fun stopListeningIfCurrent(isCurrent: () -> Boolean) {
+    mainHandler.post {
+      if (!startup.cancelIfCurrent(isCurrent)) return@post
+      if (!isActive || isFinishing) return@post
+      isFinishing = true
+      autoStopper?.stop()
+      try {
+        speechRecognizer?.stopListening()
+        val context = NitroModules.applicationContext
+        if (context != null) HapticImpact(config?.stopHapticFeedbackStyle).trigger(context)
+      } catch (_: Exception) {
+        cleanup()
+        onFinishRecognition(null, SpeechRecognitionError.RECOGNITIONTASKFAILED, true)
       }
-      cleanup()
-    }, POST_RECOGNITION_DELAY)
+    }
   }
 
   @DoNotStrip
@@ -215,11 +236,20 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @DoNotStrip
   @Keep
   override fun dispose() {
-    stopListening()
+    mainHandler.post {
+      startup.cancel()
+      val wasActive = isActive
+      cleanup()
+      if (wasActive) onRecordingStopped?.invoke()
+    }
   }
 
-  private suspend fun preparePermissions(params: SpeechRecognitionConfig?, isPrewarm: Boolean) {
-    if (isActive) {
+  private suspend fun preparePermissions(
+    params: SpeechRecognitionConfig?,
+    isPrewarm: Boolean,
+    isCurrent: () -> Boolean = { true },
+  ) {
+    if (!isCurrent() || isActive) {
       // Ignore prepare if active
       return
     }
@@ -253,6 +283,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
     val permissionRequester = AudioPermissionRequester(activity)
     val granted = permissionRequester.checkAndRequest()
+    if (!isCurrent()) return
     if (!granted) {
       onPermissionDenied?.invoke()
       return
@@ -261,26 +292,26 @@ class HybridRecognizer: HybridRecognizerSpec() {
       return
     }
     config = params
-    val useOnDevice = resolveUseOnDevice(context)
+    val useOnDevice = resolveUseOnDevice(context, isCurrent)
     if (useOnDevice == null) {
       // Fatal on-device error already reported
       return
     }
-    start(context, useOnDevice)
+    start(context, useOnDevice, isCurrent)
   }
 
   /**
    * @return true = on-device, false = network/default, null = aborted with error
    */
-  private suspend fun resolveUseOnDevice(context: Context): Boolean? {
+  private suspend fun resolveUseOnDevice(context: Context, isCurrent: () -> Boolean): Boolean? {
     val mode = config?.onDevice ?: return false
-    return when (
-      val result = OnDeviceSupport.prepare(
-        context = context,
-        locale = config?.locale ?: DEFAULT_LOCALE,
-        mode = mode,
-      )
-    ) {
+    val result = OnDeviceSupport.prepare(
+      context = context,
+      locale = config?.locale ?: DEFAULT_LOCALE,
+      mode = mode,
+    )
+    if (!isCurrent()) return null
+    return when (result) {
       OnDevicePrepareResult.UseOnDevice -> true
       OnDevicePrepareResult.UseFallback -> false
       is OnDevicePrepareResult.Failed -> {
@@ -290,27 +321,32 @@ class HybridRecognizer: HybridRecognizerSpec() {
     }
   }
 
-  private fun start(context: Context, useOnDevice: Boolean) {
+  private fun start(context: Context, useOnDevice: Boolean, isCurrent: () -> Boolean) {
     mainHandler.post {
+      if (!isCurrent()) return@post
       try {
-        speechRecognizer = OnDeviceSupport.createRecognizer(context, useOnDevice)
+        val recognizer = OnDeviceSupport.createRecognizer(context, useOnDevice)
+        speechRecognizer = recognizer
         logger.log("start useOnDevice=$useOnDevice")
         autoStopper = AutoStopper(
             silenceThresholdMs = config?.autoFinishRecognitionMs,
             progressIntervalMs = config?.autoFinishProgressIntervalMs,
             onProgress = { timeLeftMs ->
-              onAutoFinishProgress?.invoke(timeLeftMs)
+              if (speechRecognizer === recognizer) onAutoFinishProgress?.invoke(timeLeftMs)
             },
             onTimeout = {
-              stopListening()
+              stopListeningIfCurrent { speechRecognizer === recognizer }
             }
         )
         val recognitionListenerSession = RecognitionListenerSession(
             autoStopper,
             config,
-            fireVolumeChangeEvent = { event -> fireVolumeChangeEvent(event) },
+            fireVolumeChangeEvent = { event -> if (speechRecognizer === recognizer) fireVolumeChangeEvent(event) },
             onFinishRecognition = { result, error, recordingStopped ->
-              onFinishRecognition(result, error, recordingStopped)
+              if (speechRecognizer === recognizer) {
+                if (recordingStopped) cleanup()
+                onFinishRecognition(result, error, recordingStopped)
+              }
             }
         )
 
@@ -343,18 +379,20 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
         speechRecognizer?.startListening(intent)
         isActive = true
+        isFinishing = false
         
         val hapticStyle = config?.startHapticFeedbackStyle
 
         HapticImpact(hapticStyle).trigger(context)
         mainHandler.postDelayed({
-          if (isActive) {
+          if (isActive && !isFinishing && speechRecognizer === recognizer) {
             onReadyForSpeech?.invoke()
             onFinishRecognition(arrayListOf(), null, false)
             autoStopper?.resetTimer()
           }
         }, 500)
       } catch (_: Exception) {
+        cleanup()
         onFinishRecognition(
           null,
           SpeechRecognitionError.SESSIONSTARTFAILED,
@@ -366,22 +404,18 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   private fun cleanup() {
     isActive = false
+    isFinishing = false
+    val recognizer = speechRecognizer
+    speechRecognizer = null
     try {
       logger.log("cleanup called")
       autoStopper?.stop()
       autoStopper = null
-      speechRecognizer?.stopListening()
-      speechRecognizer?.destroy()
-      speechRecognizer = null
-      // Reset voice meter in JS consumers after stop/error cleanup.
+      recognizer?.cancel()
+      recognizer?.destroy()
       fireVolumeChangeEvent(VolumeChangeEvent(0.0,0.0,null))
     } catch (_: Exception) {
-      speechRecognizer = null
-      onFinishRecognition(
-        null,
-        SpeechRecognitionError.UNKNOWN,
-        true
-      )
+      onFinishRecognition(null, SpeechRecognitionError.UNKNOWN, true)
     }
   }
 
