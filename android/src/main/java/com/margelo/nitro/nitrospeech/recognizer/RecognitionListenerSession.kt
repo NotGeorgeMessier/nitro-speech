@@ -85,6 +85,10 @@ class RecognitionListenerSession (
             }
 
             override fun onResults(results: Bundle?) {
+                resultBatches = finalRecognitionBatches(
+                    resultBatches,
+                    results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION),
+                )
                 logger.log("onResults: $resultBatches")
                 onFinishRecognition(resultBatches, null, true)
                 autoStopper?.stop()
