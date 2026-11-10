@@ -88,6 +88,7 @@ class RecognitionListenerSession (
                 resultBatches = finalRecognitionBatches(
                     resultBatches,
                     results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION),
+                    filterRepeats = config?.disableRepeatingFilter != true,
                 )
                 logger.log("onResults: $resultBatches")
                 onFinishRecognition(resultBatches, null, true)
@@ -112,7 +113,7 @@ class RecognitionListenerSession (
                 } else {
                     logger.log("onPartialResults[1], current batches $currentBatches")
                     val prevBatchLength = currentBatches[currentBatches.lastIndex].length
-                    val match = if (config?.disableRepeatingFilter == true) matches[0] else repeatingFilter(matches[0])
+                    val match = if (config?.disableRepeatingFilter == true) matches[0] else filterRepeatingWords(matches[0])
                     val matchLength = match.length
                     if (config?.androidDisableBatchHandling == true || matchLength + 3 < prevBatchLength) {
                         logger.log("onPartialResults[2], append new batch")
@@ -128,39 +129,6 @@ class RecognitionListenerSession (
 
             override fun onEvent(eventType: Int, params: Bundle?) {}     
         }
-    }
-
-    // Filters out 2 or more consecutive duplicate words, like "and and"
-    private fun repeatingFilter(text: String): String {
-        var words = text.split(Regex("\\s+")).filter { it.isNotBlank() }
-        if (words.isEmpty()) {
-            return ""
-        }
-
-        val joiner = StringBuilder()
-
-        // 10 - arbitrary number of last substrings that is still unstable
-        // and needs to be filtered. Prev substrings were handled earlier.
-        if (words.size >= 10) {
-            joiner.append(words.take(words.size - 9).joinToString(" "))
-            words = words.takeLast(10)
-        } else {
-            joiner.append(words.first())
-        }
-
-        for (i in words.indices) {
-            if (i == 0) continue
-            // Always add number-containing strings.
-            if (Regex("\\d+").containsMatchIn(words[i])) {
-                joiner.append(" ").append(words[i])
-                continue
-            }
-
-            // Skip consecutive duplicate strings.
-            if (words[i] == words[i - 1]) continue
-            joiner.append(" ").append(words[i])
-        }
-        return joiner.toString()
     }
 
     private fun getVolume(rmsdB: Float): VolumeChangeEvent {
