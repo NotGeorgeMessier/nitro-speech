@@ -14,7 +14,7 @@ The library declares the required permission in its `AndroidManifest.xml` (merge
 
 ### iOS
 
-Expo: add `react-native-nitro-speech` to the `plugins` array in `app.json` / `app.config` (see the README Expo section). The config plugin writes these keys during prebuild.
+Expo: add `react-native-nitro-speech` to the `plugins` array in `app.json` / `app.config` (see the [README Expo section](../../README.md#expo)). The config plugin writes these keys during prebuild.
 
 Bare React Native: add the following keys to your app's `Info.plist`:
 

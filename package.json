@@ -23,19 +23,15 @@
     "ios/**/*.cpp",
     "ios/**/*.swift",
     "app.plugin.js",
-    "plugin/src",
-    "plugin/build",
-    "plugin/tsconfig.json",
     "nitro.json",
     "*.podspec",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit && tsc --noEmit -p plugin",
+    "typecheck": "tsc --noEmit",
     "reinstall": "rm -rf node_modules && bun install",
-    "build": "rm -rf lib && rm -f tsconfig.tsbuildinfo && bun tsc && bun run build:plugin && bun run lint:lib",
-    "build:plugin": "rm -rf plugin/build && bun tsc -p plugin",
+    "build": "rm -rf lib && rm -f tsconfig.tsbuildinfo && bun tsc && bun run lint:lib",
     "lint": "eslint \"**/*.{js,ts,tsx}\" --fix",
     "lint:lib": "eslint \"lib/**/*.{js,ts,tsx}\" --fix",
     "nitro": "rm -rf nitrogen && npx nitrogen@latest",
@@ -103,9 +99,6 @@
       "optional": true
     }
   },
-  "expo": {
-    "plugin": "./app.plugin.js"
-  },
   "eslintConfig": {
     "root": true,
     "extends": [
@@ -166,8 +159,7 @@
     ]
   },
   "eslintIgnore": [
-    "node_modules/",
-    "plugin/build/"
+    "node_modules/"
   ],
   "prettier": {
     "quoteProps": "consistent",

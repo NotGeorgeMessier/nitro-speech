@@ -15,8 +15,6 @@ jsconfig.json
 # Xcode
 #
 build/
-!plugin/build/
-!plugin/build/**
 *.pbxuser
 !default.pbxuser
 *.mode1v3

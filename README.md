@@ -69,7 +69,7 @@ bun add react-native-nitro-speech react-native-nitro-modules
 
 ### Expo
 
-This library works with Expo. Add the config plugin so `npx expo prebuild` writes the iOS usage descriptions, then generate native code.
+This library works with Expo. Add the config plugin so `npx expo prebuild` writes the iOS usage descriptions, then generate native code. `npx expo install react-native-nitro-speech` adds the plugin automatically.
 
 In `app.json` or `app.config.js` / `app.config.ts`:
 
@@ -90,8 +90,8 @@ Or with custom iOS permission strings:
       [
         "react-native-nitro-speech",
         {
-          "microphonePermission": "This app needs microphone access for speech recognition",
-          "speechRecognitionPermission": "This app needs speech recognition to convert speech to text"
+          "microphonePermission": "Allow $(PRODUCT_NAME) to use the microphone for voice input",
+          "speechRecognitionPermission": "Allow $(PRODUCT_NAME) to convert your speech to text"
         }
       ]
     ]
@@ -113,8 +113,6 @@ npx expo prebuild
 | `speechRecognitionPermission` | iOS | `This app needs speech recognition to convert speech to text` |
 
 The plugin injects `NSMicrophoneUsageDescription` and `NSSpeechRecognitionUsageDescription` into `Info.plist`. Existing values are kept unless you pass an option.
-
-Android `RECORD_AUDIO` and `VIBRATE` (and the speech `RecognitionService` queries entry) are already declared in this library's `AndroidManifest.xml` and merge into your app automatically. The plugin does not add them again.
 
 **Note**: Make sure New Arch is enabled in your Expo configuration before running prebuild.
 
