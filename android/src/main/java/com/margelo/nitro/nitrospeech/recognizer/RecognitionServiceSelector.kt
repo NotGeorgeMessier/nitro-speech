@@ -6,8 +6,7 @@ package com.margelo.nitro.nitrospeech.recognizer
  * The platform no-arg factory uses only Settings.Secure `voice_recognition_service`.
  * That setting is empty on some devices that still have a RecognitionService installed
  * (Xiaomi/MIUI, Android 16), and recognition then fails immediately with
- * "no selected voice recognition service". Selection is pure so it can be unit tested
- * without an Android runtime.
+ * "no selected voice recognition service". Selection does not call Android APIs.
  */
 internal data class InstalledRecognitionService(
   val packageName: String,
@@ -59,7 +58,6 @@ internal object RecognitionServiceSelector {
 
   /**
    * Trace passed to `onError` when recognition cannot start because no service exists.
-   * Kept next to [select] so the string the JS callback sees stays covered by the unit test.
    */
   fun missingServiceTrace(): String {
     return ErrorTrace.join(
