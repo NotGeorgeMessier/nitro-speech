@@ -5,7 +5,7 @@
 ### Android
 
 No actions required.
-The library declares the required permission in its `AndroidManifest.xml` (merged automatically):
+The library manifest already declares `RECORD_AUDIO` and `VIBRATE` (merged automatically), and an `android.speech.RecognitionService` query:
 
 ```xml
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -14,7 +14,9 @@ The library declares the required permission in its `AndroidManifest.xml` (merge
 
 ### iOS
 
-Expo: add `react-native-nitro-speech` to the `plugins` array in `app.json` / `app.config` (see the [README Expo section](../../README.md#expo)). The config plugin writes these keys during prebuild.
+Expo: see the [README Expo section](../../README.md#expo). `npx expo install react-native-nitro-speech` adds the plugin to `app.json` automatically.
+
+`microphonePermission` sets `NSMicrophoneUsageDescription` (default `This app needs microphone access for speech recognition`). `speechRecognitionPermission` sets `NSSpeechRecognitionUsageDescription` (default `This app needs speech recognition to convert speech to text`). Omit an option to keep an existing value from `ios.infoPlist` or a hand-edited Info.plist (app.json wins if both set the same key); otherwise the default is used. A non-empty string replaces the value. `false` removes the key. Run `npx expo prebuild` again after changing options.
 
 Bare React Native: add the following keys to your app's `Info.plist`:
 

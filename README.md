@@ -69,9 +69,9 @@ bun add react-native-nitro-speech react-native-nitro-modules
 
 ### Expo
 
-This library works with Expo. Add the config plugin so `npx expo prebuild` writes the iOS usage descriptions, then generate native code. `npx expo install react-native-nitro-speech` adds the plugin automatically.
+`npx expo install react-native-nitro-speech` adds this config plugin to `app.json` automatically. You can also add it yourself.
 
-In `app.json` or `app.config.js` / `app.config.ts`:
+Without options:
 
 ```json
 {
@@ -81,7 +81,7 @@ In `app.json` or `app.config.js` / `app.config.ts`:
 }
 ```
 
-Or with custom iOS permission strings:
+With options:
 
 ```json
 {
@@ -99,20 +99,16 @@ Or with custom iOS permission strings:
 }
 ```
 
-Then:
-
-```bash
-npx expo prebuild
-```
-
-**Plugin options**
-
-| Option | Platform | Default |
+| Option | iOS Info.plist key | Default |
 | --- | --- | --- |
-| `microphonePermission` | iOS | `This app needs microphone access for speech recognition` |
-| `speechRecognitionPermission` | iOS | `This app needs speech recognition to convert speech to text` |
+| `microphonePermission` | `NSMicrophoneUsageDescription` | `This app needs microphone access for speech recognition` |
+| `speechRecognitionPermission` | `NSSpeechRecognitionUsageDescription` | `This app needs speech recognition to convert speech to text` |
 
-The plugin injects `NSMicrophoneUsageDescription` and `NSSpeechRecognitionUsageDescription` into `Info.plist`. Existing values are kept unless you pass an option.
+Omit an option to keep an existing value from app.json `ios.infoPlist` or a hand-edited Info.plist. If both set the same key, the app.json value is kept. Otherwise the default is used. A non-empty string replaces the value. `false` removes the key from Info.plist, the same convention as other Expo permission options (for example expo-camera).
+
+Run `npx expo prebuild` again (or rebuild) after changing plugin options.
+
+Android needs no plugin config. The library manifest already declares `RECORD_AUDIO` and `VIBRATE`, and the `RecognitionService` query.
 
 **Note**: Make sure New Arch is enabled in your Expo configuration before running prebuild.
 
@@ -153,7 +149,7 @@ More about permissions [here](./docs/features/permissions.md#permissions)
 ### Android
 
 No actions required.
-The library declares the required permission in its `AndroidManifest.xml` (merged automatically):
+The library declares these permissions in its `AndroidManifest.xml` (merged automatically). It also includes an `android.speech.RecognitionService` query:
 
 ```xml
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
