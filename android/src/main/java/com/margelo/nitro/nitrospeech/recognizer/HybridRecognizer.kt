@@ -365,6 +365,13 @@ class HybridRecognizer: HybridRecognizerSpec() {
             autoStopper?.resetTimer()
           }
         }, 500)
+      } catch (_: NoRecognitionServiceException) {
+        onFinishRecognition(
+          null,
+          SpeechRecognitionError.SESSIONSTARTFAILED,
+          true,
+          ErrorTrace.join("HybridRecognizer", "start", "OnDeviceSupport.createRecognizer.noRecognitionService"),
+        )
       } catch (_: Exception) {
         onFinishRecognition(
           null,
