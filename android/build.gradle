@@ -149,6 +149,9 @@ dependencies {
 
   // Add a dependency on NitroModules
   implementation project(":react-native-nitro-modules")
+
+  // JVM tests for pure recognizer helpers. Not an instrumented Android test.
+  testImplementation "junit:junit:4.13.2"
 }
 
 if (isNewArchitectureEnabled()) {
