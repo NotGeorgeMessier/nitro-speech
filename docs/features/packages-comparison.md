@@ -9,7 +9,7 @@
 | Web | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | New Architecture | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Nitro Module | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ |
-| Expo config plugin | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ |
+| Expo config plugin | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ |
 | Worklets support | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | iOS 26 SpeechAnalyzer | ✅ | ❌ | ❌ | ❌ | ❌ | ⚠️ (file and SpeechTranscriber only) | ❌ | ❌ |
 
