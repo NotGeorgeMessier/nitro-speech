@@ -218,7 +218,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @DoNotStrip
   @Keep
   override fun dispose() {
-    stopListening()
+      stopListening()
+      super.dispose()
   }
 
   private suspend fun preparePermissions(params: SpeechRecognitionConfig?, isPrewarm: Boolean) {
