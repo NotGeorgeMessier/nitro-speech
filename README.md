@@ -104,9 +104,9 @@ With options:
 | `microphonePermission` | `NSMicrophoneUsageDescription` | `This app needs microphone access for speech recognition` |
 | `speechRecognitionPermission` | `NSSpeechRecognitionUsageDescription` | `This app needs speech recognition to convert speech to text` |
 
-Omit an option to keep an existing value from app.json `ios.infoPlist` or a hand-edited Info.plist. If both set the same key, the app.json value is kept. Otherwise the default is used. A non-empty string replaces the value. `false` removes the key from Info.plist, the same convention as other Expo permission options (for example expo-camera).
+Omit an option to keep an existing value from app.json `ios.infoPlist` or a hand-edited Info.plist (only with `npx expo prebuild --no-clean`). If both set the same key, the app.json value is kept. Otherwise the default is used. A non-empty string replaces the value. `false` removes the key from Info.plist, the same convention as other Expo permission options (for example expo-camera). Do not pass `false` with this library: both keys are required on iOS, and the app terminates at the permission request without them.
 
-Run `npx expo prebuild` again (or rebuild) after changing plugin options.
+Run `npx expo prebuild` to generate native projects, and again after changing plugin options.
 
 Android needs no plugin config. The library manifest already declares `RECORD_AUDIO` and `VIBRATE`, and the `RecognitionService` query.
 
@@ -154,6 +154,12 @@ The library declares these permissions in its `AndroidManifest.xml` (merged auto
 ```xml
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 <uses-permission android:name="android.permission.VIBRATE" />
+
+<queries>
+  <intent>
+    <action android:name="android.speech.RecognitionService" />
+  </intent>
+</queries>
 ```
 
 ### iOS
