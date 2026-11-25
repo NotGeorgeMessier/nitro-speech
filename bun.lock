@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "react-native-nitro-speech",
@@ -17,10 +18,14 @@
         "typescript": "^5.8.3",
       },
       "peerDependencies": {
+        "expo": "*",
         "react": "*",
         "react-native": "*",
         "react-native-nitro-modules": "*",
       },
+      "optionalPeers": [
+        "expo",
+      ],
     },
   },
   "packages": {

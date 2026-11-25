@@ -1,7 +1,7 @@
 /**
  * Contains data about each audio buffer volume.
  */
-export interface VolumeChangeEvent {
+export interface VoiceInputVolumeChangeEvent {
   /**
    * Smoothed voice input volume
    *

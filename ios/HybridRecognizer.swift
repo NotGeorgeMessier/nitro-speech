@@ -14,10 +14,10 @@ class HybridRecognizer: HybridRecognizerSpec  {
     var onResultFallback: (([String]) -> Void)?
     var onAutoFinishProgress: ((Double) -> Void)?
     var onAutoFinishProgressFallback: ((Double) -> Void)?
-    var onError: ((SpeechRecognitionError) -> Void)?
+    var onError: ((SpeechRecognitionError, String?) -> Void)?
     var onPermissionDenied: (() -> Void)?
-    var onVolumeChange: ((VolumeChangeEvent) -> Void)?
-    var onVolumeChangeFallback: ((VolumeChangeEvent) -> Void)?
+    var onVolumeChange: ((VoiceInputVolumeChangeEvent) -> Void)?
+    var onVolumeChangeFallback: ((VoiceInputVolumeChangeEvent) -> Void)?
     
     private let coordinator = Coordinator()
     private var paramsHash: String?
@@ -82,15 +82,15 @@ class HybridRecognizer: HybridRecognizerSpec  {
         return engine?.status == .active
     }
 
-    func getVoiceInputVolume() -> VolumeChangeEvent {
-        return engine?.getVoiceInputVolume() ?? VolumeChangeEvent(
+    func getVoiceInputVolume() -> VoiceInputVolumeChangeEvent {
+        return engine?.getVoiceInputVolume() ?? VoiceInputVolumeChangeEvent(
             smoothedVolume: 0,
             rawVolume: 0,
             db: nil
         )
     }
     
-    func getPermissions() -> PermissionStatus {
+    func getPermissions() -> SpeechRecognitionPermissionStatus {
         return Permissions.getCombinedStatus()
     }
     
@@ -137,7 +137,10 @@ class HybridRecognizer: HybridRecognizerSpec  {
         engine = coordinator.getEngine()
         if engine == nil {
             // Only wrong locale can wipe out all candidates
-            self.onError?(SpeechRecognitionError.localenotsupported)
+            self.onError?(
+                SpeechRecognitionError.localenotsupported,
+                ErrorTrace.join("HybridRecognizer", "ensureEngine")
+            )
             return
         }
     }
@@ -153,9 +156,9 @@ protocol RecognizerDelegate: AnyObject {
     func recordingStopped()
     func result (batches: [String])
     func autoFinishProgress (timeLeftMs: Double)
-    func error (error: SpeechRecognitionError)
+    func error (error: SpeechRecognitionError, trace: String)
     func permissionDenied ()
-    func volumeChange (event: VolumeChangeEvent)
+    func volumeChange (event: VoiceInputVolumeChangeEvent)
 }
 
 extension HybridRecognizer: RecognizerDelegate {
@@ -222,9 +225,9 @@ extension HybridRecognizer: RecognizerDelegate {
         onAutoFinishProgressFallback?(timeLeftMs)
     }
     
-    func error(error: SpeechRecognitionError) {
-        self.lg.log("[onError] \(error)")
-        self.onError?(error)
+    func error(error: SpeechRecognitionError, trace: String) {
+        self.lg.log("[onError] \(error) \(trace)")
+        self.onError?(error, trace)
     }
     
     func permissionDenied() {
@@ -232,7 +235,7 @@ extension HybridRecognizer: RecognizerDelegate {
         self.onPermissionDenied?()
     }
     
-    func volumeChange(event: VolumeChangeEvent) {
+    func volumeChange(event: VoiceInputVolumeChangeEvent) {
 //        self.lg.log("[onVolumeChange] raw: \(event.rawVolume)")
         if onVolumeChange != nil {
             onVolumeChangeFallback = onVolumeChange

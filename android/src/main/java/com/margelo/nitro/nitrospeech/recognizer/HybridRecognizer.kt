@@ -12,12 +12,12 @@ import com.margelo.nitro.NitroModules
 import com.margelo.nitro.core.Promise
 import com.margelo.nitro.nitrospeech.MutableSpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.HybridRecognizerSpec
-import com.margelo.nitro.nitrospeech.PermissionStatus
+import com.margelo.nitro.nitrospeech.SpeechRecognitionPermissionStatus
 import com.margelo.nitro.nitrospeech.SpeechRecognitionConfig
 import com.margelo.nitro.nitrospeech.SpeechRecognitionError
 import com.margelo.nitro.nitrospeech.SpeechRecognitionPrewarm
 import com.margelo.nitro.nitrospeech.SupportedLocales
-import com.margelo.nitro.nitrospeech.VolumeChangeEvent
+import com.margelo.nitro.nitrospeech.VoiceInputVolumeChangeEvent
 
 @DoNotStrip
 @Keep
@@ -31,7 +31,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   private var isActive: Boolean = false
   private var config: SpeechRecognitionConfig? = null
-  private var volumeChangeEvent: VolumeChangeEvent = VolumeChangeEvent(0.0,0.0,null)
+  private var volumeChangeEvent: VoiceInputVolumeChangeEvent = VoiceInputVolumeChangeEvent(0.0,0.0,null)
   private var autoStopper: AutoStopper? = null
   private var speechRecognizer: android.speech.SpeechRecognizer? = null
   private val mainHandler = Handler(Looper.getMainLooper())
@@ -41,9 +41,9 @@ class HybridRecognizer: HybridRecognizerSpec() {
   override var onResult: ((resultBatches: Array<String>) -> Unit)? = null
 
   override var onAutoFinishProgress: ((timeLeftMs: Double) -> Unit)? = null
-  override var onError: ((error: SpeechRecognitionError) -> Unit)? = null
+  override var onError: ((error: SpeechRecognitionError, trace: String?) -> Unit)? = null
   override var onPermissionDenied: (() -> Unit)? = null
-  override var onVolumeChange: ((event: VolumeChangeEvent) -> Unit)? = null
+  override var onVolumeChange: ((event: VoiceInputVolumeChangeEvent) -> Unit)? = null
 
   @DoNotStrip
   @Keep
@@ -71,7 +71,10 @@ class HybridRecognizer: HybridRecognizerSpec() {
       ) {
         is OnDevicePrepareResult.Failed -> {
           // Mirror startListening require failures (e.g. cancel download).
-          onError?.invoke(result.error)
+          onError?.invoke(
+            result.error,
+            ErrorTrace.join("HybridRecognizer", "prewarm", result.trace),
+          )
         }
         OnDevicePrepareResult.UseOnDevice,
         OnDevicePrepareResult.UseFallback -> Unit
@@ -177,15 +180,15 @@ class HybridRecognizer: HybridRecognizerSpec() {
 
   @DoNotStrip
   @Keep
-  override fun getVoiceInputVolume(): VolumeChangeEvent {
+  override fun getVoiceInputVolume(): VoiceInputVolumeChangeEvent {
     return volumeChangeEvent
   }
 
   @DoNotStrip
   @Keep
-  override fun getPermissions(): PermissionStatus {
-    val context = NitroModules.applicationContext ?: return PermissionStatus.NOT_REQUESTED
-    val activity = context.currentActivity ?: return PermissionStatus.NOT_REQUESTED
+  override fun getPermissions(): SpeechRecognitionPermissionStatus {
+    val context = NitroModules.applicationContext ?: return SpeechRecognitionPermissionStatus.NOT_REQUESTED
+    val activity = context.currentActivity ?: return SpeechRecognitionPermissionStatus.NOT_REQUESTED
     return AudioPermissionRequester.checkStatus(activity)
   }
 
@@ -215,7 +218,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
   @DoNotStrip
   @Keep
   override fun dispose() {
-    stopListening()
+      stopListening()
+      super.dispose()
   }
 
   private suspend fun preparePermissions(params: SpeechRecognitionConfig?, isPrewarm: Boolean) {
@@ -233,7 +237,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
       onFinishRecognition(
         null,
         SpeechRecognitionError.SESSIONSTARTFAILED,
-        true
+        true,
+        ErrorTrace.join("HybridRecognizer", "preparePermissions"),
       )
       return
     }
@@ -246,7 +251,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
       onFinishRecognition(
         null,
         SpeechRecognitionError.SESSIONSTARTFAILED,
-        true
+        true,
+        ErrorTrace.join("HybridRecognizer", "preparePermissions"),
       )
       return
     }
@@ -284,7 +290,12 @@ class HybridRecognizer: HybridRecognizerSpec() {
       OnDevicePrepareResult.UseOnDevice -> true
       OnDevicePrepareResult.UseFallback -> false
       is OnDevicePrepareResult.Failed -> {
-        onFinishRecognition(null, result.error, true)
+        onFinishRecognition(
+          null,
+          result.error,
+          true,
+          ErrorTrace.join("HybridRecognizer", "resolveUseOnDevice", result.trace),
+        )
         null
       }
     }
@@ -309,8 +320,8 @@ class HybridRecognizer: HybridRecognizerSpec() {
             autoStopper,
             config,
             fireVolumeChangeEvent = { event -> fireVolumeChangeEvent(event) },
-            onFinishRecognition = { result, error, recordingStopped ->
-              onFinishRecognition(result, error, recordingStopped)
+            onFinishRecognition = { result, error, recordingStopped, trace ->
+              onFinishRecognition(result, error, recordingStopped, trace)
             }
         )
 
@@ -354,11 +365,19 @@ class HybridRecognizer: HybridRecognizerSpec() {
             autoStopper?.resetTimer()
           }
         }, 500)
+      } catch (_: NoRecognitionServiceException) {
+        onFinishRecognition(
+          null,
+          SpeechRecognitionError.SESSIONSTARTFAILED,
+          true,
+          ErrorTrace.join("HybridRecognizer", "start", "OnDeviceSupport.createRecognizer.noRecognitionService"),
+        )
       } catch (_: Exception) {
         onFinishRecognition(
           null,
           SpeechRecognitionError.SESSIONSTARTFAILED,
-          true
+          true,
+          ErrorTrace.join("HybridRecognizer", "start"),
         )
       }
     }
@@ -374,13 +393,14 @@ class HybridRecognizer: HybridRecognizerSpec() {
       speechRecognizer?.destroy()
       speechRecognizer = null
       // Reset voice meter in JS consumers after stop/error cleanup.
-      fireVolumeChangeEvent(VolumeChangeEvent(0.0,0.0,null))
+      fireVolumeChangeEvent(VoiceInputVolumeChangeEvent(0.0,0.0,null))
     } catch (_: Exception) {
       speechRecognizer = null
       onFinishRecognition(
         null,
         SpeechRecognitionError.UNKNOWN,
-        true
+        true,
+        ErrorTrace.join("HybridRecognizer", "cleanup"),
       )
     }
   }
@@ -388,20 +408,24 @@ class HybridRecognizer: HybridRecognizerSpec() {
   private fun onFinishRecognition(
     result: ArrayList<String>?,
     error: SpeechRecognitionError?,
-    recordingStopped: Boolean
+    recordingStopped: Boolean,
+    trace: String? = null,
   ) {
     if (recordingStopped) {
       onRecordingStopped?.invoke()
     }
     if (error != null) {
-      onError?.invoke(error)
+      onError?.invoke(
+        error,
+        trace ?: ErrorTrace.join("HybridRecognizer", "onFinishRecognition"),
+      )
     }
     if (!result.isNullOrEmpty()) {
       onResult?.invoke(result.toTypedArray())
     }
   }
 
-  private fun fireVolumeChangeEvent(event: VolumeChangeEvent) {
+  private fun fireVolumeChangeEvent(event: VoiceInputVolumeChangeEvent) {
     logger.log("fireVolumeChangeEvent $event")
     volumeChangeEvent = event
     onVolumeChange?.invoke(event)

@@ -142,9 +142,10 @@ const {
   onDeviceRecognitionAvailable,
   getSupportedLocales,
 } = useRecognizer({
-  onError: (error) => {
+  onError: (error, trace) => {
     // SpeechRecognitionError.OnDeviceNotSupported
     // SpeechRecognitionError.OnDeviceModelNotInstalled
+    // trace: e.g. HybridRecognizer.prewarm.OnDeviceSupport.prepare
     // ...
   },
   onResult: (batches) => { /* ... */ },

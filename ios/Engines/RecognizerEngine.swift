@@ -114,9 +114,9 @@ class RecognizerEngine {
         recognizerDelegate.softlyUpdateConfig(newConfig: newConfig)
     }
 
-    func getVoiceInputVolume() -> VolumeChangeEvent? {
+    func getVoiceInputVolume() -> VoiceInputVolumeChangeEvent? {
         guard let currentSample = audioLevelTracker.currentSample else { return nil }
-        return VolumeChangeEvent(
+        return VoiceInputVolumeChangeEvent(
             smoothedVolume: currentSample.smoothed,
             rawVolume: currentSample.raw,
             db: currentSample.db
@@ -172,7 +172,7 @@ class RecognizerEngine {
                 // Send buffer volume data
                 recognizerDelegate.volumeChange(
                     event:
-                        VolumeChangeEvent(
+                        VoiceInputVolumeChangeEvent(
                             smoothedVolume: sample.smoothed,
                             rawVolume: sample.raw,
                             db: sample.db
@@ -192,7 +192,7 @@ class RecognizerEngine {
             lg.log("[startAudioEngine.start]")
         } catch {
             self.reportError(
-                from: "Audio Engine",
+                from: ErrorTrace.join(String(describing: type(of: self)), "startAudioEngine"),
                 code: SpeechRecognitionError.sessionstartfailed
             )
         }
@@ -217,7 +217,7 @@ class RecognizerEngine {
         status = .stopped
         self.recognizerDelegate?.volumeChange(
             event:
-                VolumeChangeEvent(
+                VoiceInputVolumeChangeEvent(
                     smoothedVolume: 0,
                     rawVolume: 0,
                     db: nil
@@ -246,7 +246,7 @@ class RecognizerEngine {
         
         
         if let code, let recognizer = self.recognizerDelegate {
-            recognizer.error(error: code)
+            recognizer.error(error: code, trace: from)
         }
     }
     
@@ -268,7 +268,10 @@ class RecognizerEngine {
         
         if authStatus != .authorized {
             // .notDetermined or unknown issue
-            recognizerDelegate.error(error: SpeechRecognitionError.iosspeechpermissionnotdetermined)
+            recognizerDelegate.error(
+                error: SpeechRecognitionError.iosspeechpermissionnotdetermined,
+                trace: ErrorTrace.join(String(describing: type(of: self)), "requestPermissions")
+            )
             return false
         }
         
@@ -323,7 +326,7 @@ class RecognizerEngine {
     private func prewarmAudioSession(forPrewarm: Bool) {
         guard let audioEngine else {
             self.reportError(
-                from: "Audio Engine",
+                from: ErrorTrace.join(String(describing: type(of: self)), "prewarmAudioSession"),
                 code: SpeechRecognitionError.sessionstartfailed
             )
             return
@@ -352,7 +355,7 @@ class RecognizerEngine {
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
             self.reportError(
-                from: "startAudioSession",
+                from: ErrorTrace.join(String(describing: type(of: self)), "startAudioSession"),
                 code: SpeechRecognitionError.sessionstartfailed
             )
         }

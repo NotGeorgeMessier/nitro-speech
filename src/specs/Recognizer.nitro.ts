@@ -3,9 +3,9 @@ import type {
   MutableSpeechRecognitionConfig,
   SpeechRecognitionConfig,
 } from './SpeechRecognitionConfig'
-import type { VolumeChangeEvent } from './VolumeChangeEvent'
+import type { VoiceInputVolumeChangeEvent } from './VoiceInputVolumeChangeEvent'
 import type { SpeechRecognitionPrewarm } from './SpeechRecognitionPrewarm'
-import type { PermissionStatus } from './Permissions'
+import type { SpeechRecognitionPermissionStatus } from './Permissions'
 import type { SpeechRecognitionError } from './Errors'
 import type { SupportedLocales } from './SupportedLocales'
 
@@ -91,12 +91,12 @@ export interface Recognizer extends HybridObject<{
   /**
    * Returns the current voice input volume.
    */
-  getVoiceInputVolume(): VolumeChangeEvent
+  getVoiceInputVolume(): VoiceInputVolumeChangeEvent
 
   /**
-   * Returns {@linkcode PermissionStatus} for the microphone and speech recognition together.
+   * Returns {@linkcode SpeechRecognitionPermissionStatus} for the microphone and speech recognition together.
    */
-  getPermissions(): PermissionStatus
+  getPermissions(): SpeechRecognitionPermissionStatus
 
   /**
    * Returns supported and installed on-device locales.
@@ -149,8 +149,13 @@ export interface Recognizer extends HybridObject<{
   onAutoFinishProgress?: (timeLeftMs: number) => void
   /**
    * Error of the speech recognition.
+   *
+   * Native always sends `trace`. The argument is optional to consume.
+   *
+   * @param error - {@linkcode SpeechRecognitionError} code
+   * @param trace - Dot-separated native call-site path, e.g. `RecognizerEngine.startAudioEngine`
    */
-  onError?: (error: SpeechRecognitionError) => void
+  onError?: (error: SpeechRecognitionError, trace?: string) => void
   /**
    * The permission to use the microphone or recognize speech has been denied.
    */
@@ -158,5 +163,5 @@ export interface Recognizer extends HybridObject<{
   /**
    * Fires with high and arbitrary frequency (many times per second) while audio recording is active.
    */
-  onVolumeChange?: (event: VolumeChangeEvent) => void
+  onVolumeChange?: (event: VoiceInputVolumeChangeEvent) => void
 }

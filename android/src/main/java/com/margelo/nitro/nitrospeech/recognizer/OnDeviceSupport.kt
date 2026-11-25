@@ -3,13 +3,16 @@ package com.margelo.nitro.nitrospeech.recognizer
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.speech.ModelDownloadListener
+import android.speech.RecognitionService
 import android.speech.RecognitionSupport
 import android.speech.RecognitionSupportCallback
 import android.speech.RecognizerIntent
@@ -28,13 +31,18 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 internal sealed class OnDevicePrepareResult {
   data object UseOnDevice : OnDevicePrepareResult()
   data object UseFallback : OnDevicePrepareResult()
-  data class Failed(val error: SpeechRecognitionError) : OnDevicePrepareResult()
+  data class Failed(
+    val error: SpeechRecognitionError,
+    val trace: String,
+  ) : OnDevicePrepareResult()
 }
 
 private enum class DownloadOutcome {
   SUCCESS,
   NOT_INSTALLED,
 }
+
+internal class NoRecognitionServiceException : IllegalStateException()
 
 internal object OnDeviceSupport {
   private val mainHandler = Handler(Looper.getMainLooper())
@@ -67,6 +75,19 @@ internal object OnDeviceSupport {
     if (useOnDevice && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       return SpeechRecognizer.createOnDeviceSpeechRecognizer(context)
     }
+    val selected = Settings.Secure.getString(context.contentResolver, "voice_recognition_service")
+    if (selected.isNullOrEmpty()) {
+      val service = context.packageManager
+        .queryIntentServices(Intent(RecognitionService.SERVICE_INTERFACE), 0)
+        .firstOrNull()?.serviceInfo
+      if (service != null) {
+        return SpeechRecognizer.createSpeechRecognizer(
+          context,
+          ComponentName(service.packageName, service.name),
+        )
+      }
+      throw NoRecognitionServiceException()
+    }
     return SpeechRecognizer.createSpeechRecognizer(context)
   }
 
@@ -88,7 +109,10 @@ internal object OnDeviceSupport {
   ): OnDevicePrepareResult {
     if (!isServiceAvailable(context)) {
       return if (mode == OnDeviceMode.REQUIRE) {
-        OnDevicePrepareResult.Failed(SpeechRecognitionError.ONDEVICENOTSUPPORTED)
+        OnDevicePrepareResult.Failed(
+          SpeechRecognitionError.ONDEVICENOTSUPPORTED,
+          ErrorTrace.join("OnDeviceSupport", "prepare"),
+        )
       } else {
         OnDevicePrepareResult.UseFallback
       }
@@ -122,7 +146,10 @@ internal object OnDeviceSupport {
 
     logger.log("onDevice download finished without install (outcome=$outcome)")
     return if (mode == OnDeviceMode.REQUIRE) {
-      OnDevicePrepareResult.Failed(SpeechRecognitionError.ONDEVICEMODELNOTINSTALLED)
+      OnDevicePrepareResult.Failed(
+        SpeechRecognitionError.ONDEVICEMODELNOTINSTALLED,
+        ErrorTrace.join("OnDeviceSupport", "prepare", "downloadModel"),
+      )
     } else {
       OnDevicePrepareResult.UseFallback
     }
