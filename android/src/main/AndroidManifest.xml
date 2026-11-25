@@ -2,8 +2,6 @@
   <uses-permission android:name="android.permission.RECORD_AUDIO" />
   <uses-permission android:name="android.permission.VIBRATE" />
 
-  <!-- Android 11+ package visibility. Required for queryIntentServices(RecognitionService)
-       when voice_recognition_service is unset and we bind the first installed service. -->
   <queries>
     <intent>
       <action android:name="android.speech.RecognitionService" />

@@ -6,7 +6,6 @@ import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -43,6 +42,8 @@ private enum class DownloadOutcome {
   NOT_INSTALLED,
 }
 
+internal class NoRecognitionServiceException : IllegalStateException()
+
 internal object OnDeviceSupport {
   private val mainHandler = Handler(Looper.getMainLooper())
   private val logger = Logger(disable = false)
@@ -74,70 +75,20 @@ internal object OnDeviceSupport {
     if (useOnDevice && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       return SpeechRecognizer.createOnDeviceSpeechRecognizer(context)
     }
-    return createDefaultRecognizer(context)
-  }
-
-  /**
-   * Binds the platform default recognizer.
-   *
-   * [SpeechRecognizer.createSpeechRecognizer] with no component reads only
-   * [RecognitionServiceSelector.SETTINGS_KEY]. When that setting is empty the
-   * platform logs "no selected voice recognition service" and errors immediately,
-   * even if a [RecognitionService] is installed. In that case bind the first
-   * installed service. A non-empty setting is passed through unchanged, and this
-   * path is not used for [SpeechRecognizer.createOnDeviceSpeechRecognizer].
-   */
-  private fun createDefaultRecognizer(context: Context): SpeechRecognizer {
-    val selected = Settings.Secure.getString(
-      context.contentResolver,
-      RecognitionServiceSelector.SETTINGS_KEY,
-    )
-    // Skip the package scan when a default is already set. Selection does not
-    // consult the installed list in that case, and the scan needs package visibility.
-    val installed = if (selected.isNullOrBlank()) {
-      queryInstalledRecognitionServices(context)
-    } else {
-      emptyList()
-    }
-    return when (val selection = RecognitionServiceSelector.select(selected, installed)) {
-      RecognitionServiceSelection.SystemDefault ->
-        SpeechRecognizer.createSpeechRecognizer(context)
-      is RecognitionServiceSelection.Explicit -> {
-        logger.log(
-          "voice_recognition_service unset; using ${selection.packageName}/${selection.className}",
-        )
-        SpeechRecognizer.createSpeechRecognizer(
+    val selected = Settings.Secure.getString(context.contentResolver, "voice_recognition_service")
+    if (selected.isNullOrEmpty()) {
+      val service = context.packageManager
+        .queryIntentServices(Intent(RecognitionService.SERVICE_INTERFACE), 0)
+        .firstOrNull()?.serviceInfo
+      if (service != null) {
+        return SpeechRecognizer.createSpeechRecognizer(
           context,
-          ComponentName(selection.packageName, selection.className),
+          ComponentName(service.packageName, service.name),
         )
       }
-      RecognitionServiceSelection.NoneAvailable ->
-        throw NoRecognitionServiceException()
+      throw NoRecognitionServiceException()
     }
-  }
-
-  private fun queryInstalledRecognitionServices(
-    context: Context,
-  ): List<InstalledRecognitionService> {
-    val intent = Intent(RecognitionService.SERVICE_INTERFACE)
-    val resolveInfos = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      context.packageManager.queryIntentServices(
-        intent,
-        PackageManager.ResolveInfoFlags.of(0L),
-      )
-    } else {
-      @Suppress("DEPRECATION")
-      context.packageManager.queryIntentServices(intent, 0)
-    }
-    return resolveInfos.mapNotNull { resolveInfo ->
-      val serviceInfo = resolveInfo.serviceInfo ?: return@mapNotNull null
-      val packageName = serviceInfo.packageName
-      val className = serviceInfo.name
-      if (packageName.isNullOrEmpty() || className.isNullOrEmpty()) {
-        return@mapNotNull null
-      }
-      InstalledRecognitionService(packageName = packageName, className = className)
-    }
+    return SpeechRecognizer.createSpeechRecognizer(context)
   }
 
   suspend fun getSupportedLocales(context: Context): SupportedLocales {
