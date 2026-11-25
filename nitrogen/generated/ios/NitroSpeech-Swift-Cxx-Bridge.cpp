@@ -95,10 +95,10 @@ namespace margelo::nitro::nitrospeech::bridge::swift {
     };
   }
   
-  // pragma MARK: std::function<void(const VolumeChangeEvent& /* event */)>
-  Func_void_VolumeChangeEvent create_Func_void_VolumeChangeEvent(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroSpeech::Func_void_VolumeChangeEvent::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const VolumeChangeEvent& event) mutable -> void {
+  // pragma MARK: std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>
+  Func_void_VoiceInputVolumeChangeEvent create_Func_void_VoiceInputVolumeChangeEvent(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroSpeech::Func_void_VoiceInputVolumeChangeEvent::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const VoiceInputVolumeChangeEvent& event) mutable -> void {
       swiftClosure.call(event);
     };
   }

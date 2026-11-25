@@ -325,14 +325,14 @@ open class HybridRecognizerSpec_cxx {
     }
   }
   
-  public final var onVolumeChange: bridge.std__optional_std__function_void_const_VolumeChangeEvent_____event______ {
+  public final var onVolumeChange: bridge.std__optional_std__function_void_const_VoiceInputVolumeChangeEvent_____event______ {
     @inline(__always)
     get {
-      return { () -> bridge.std__optional_std__function_void_const_VolumeChangeEvent_____event______ in
+      return { () -> bridge.std__optional_std__function_void_const_VoiceInputVolumeChangeEvent_____event______ in
         if let __unwrappedValue = self.__implementation.onVolumeChange {
-          return bridge.create_std__optional_std__function_void_const_VolumeChangeEvent_____event______({ () -> bridge.Func_void_VolumeChangeEvent in
-            let __closureWrapper = Func_void_VolumeChangeEvent(__unwrappedValue)
-            return bridge.create_Func_void_VolumeChangeEvent(__closureWrapper.toUnsafe())
+          return bridge.create_std__optional_std__function_void_const_VoiceInputVolumeChangeEvent_____event______({ () -> bridge.Func_void_VoiceInputVolumeChangeEvent in
+            let __closureWrapper = Func_void_VoiceInputVolumeChangeEvent(__unwrappedValue)
+            return bridge.create_Func_void_VoiceInputVolumeChangeEvent(__closureWrapper.toUnsafe())
           }())
         } else {
           return .init()
@@ -341,12 +341,12 @@ open class HybridRecognizerSpec_cxx {
     }
     @inline(__always)
     set {
-      self.__implementation.onVolumeChange = { () -> ((_ event: VolumeChangeEvent) -> Void)? in
-        if bridge.has_value_std__optional_std__function_void_const_VolumeChangeEvent_____event______(newValue) {
-          let __unwrapped = bridge.get_std__optional_std__function_void_const_VolumeChangeEvent_____event______(newValue)
-          return { () -> (VolumeChangeEvent) -> Void in
-            let __wrappedFunction = bridge.wrap_Func_void_VolumeChangeEvent(__unwrapped)
-            return { (__event: VolumeChangeEvent) -> Void in
+      self.__implementation.onVolumeChange = { () -> ((_ event: VoiceInputVolumeChangeEvent) -> Void)? in
+        if bridge.has_value_std__optional_std__function_void_const_VoiceInputVolumeChangeEvent_____event______(newValue) {
+          let __unwrapped = bridge.get_std__optional_std__function_void_const_VoiceInputVolumeChangeEvent_____event______(newValue)
+          return { () -> (VoiceInputVolumeChangeEvent) -> Void in
+            let __wrappedFunction = bridge.wrap_Func_void_VoiceInputVolumeChangeEvent(__unwrapped)
+            return { (__event: VoiceInputVolumeChangeEvent) -> Void in
               __wrappedFunction.call(__event)
             }
           }()
@@ -459,26 +459,26 @@ open class HybridRecognizerSpec_cxx {
   }
   
   @inline(__always)
-  public final func getVoiceInputVolume() -> bridge.Result_VolumeChangeEvent_ {
+  public final func getVoiceInputVolume() -> bridge.Result_VoiceInputVolumeChangeEvent_ {
     do {
       let __result = try self.__implementation.getVoiceInputVolume()
       let __resultCpp = __result
-      return bridge.create_Result_VolumeChangeEvent_(__resultCpp)
+      return bridge.create_Result_VoiceInputVolumeChangeEvent_(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_VolumeChangeEvent_(__exceptionPtr)
+      return bridge.create_Result_VoiceInputVolumeChangeEvent_(__exceptionPtr)
     }
   }
   
   @inline(__always)
-  public final func getPermissions() -> bridge.Result_PermissionStatus_ {
+  public final func getPermissions() -> bridge.Result_SpeechRecognitionPermissionStatus_ {
     do {
       let __result = try self.__implementation.getPermissions()
       let __resultCpp = __result
-      return bridge.create_Result_PermissionStatus_(__resultCpp)
+      return bridge.create_Result_SpeechRecognitionPermissionStatus_(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_PermissionStatus_(__exceptionPtr)
+      return bridge.create_Result_SpeechRecognitionPermissionStatus_(__exceptionPtr)
     }
   }
   

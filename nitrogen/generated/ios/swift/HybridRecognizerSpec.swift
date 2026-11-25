@@ -16,7 +16,7 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
   var onAutoFinishProgress: ((_ timeLeftMs: Double) -> Void)? { get set }
   var onError: ((_ error: SpeechRecognitionError, _ trace: String?) -> Void)? { get set }
   var onPermissionDenied: (() -> Void)? { get set }
-  var onVolumeChange: ((_ event: VolumeChangeEvent) -> Void)? { get set }
+  var onVolumeChange: ((_ event: VoiceInputVolumeChangeEvent) -> Void)? { get set }
 
   // Methods
   func prewarm(defaultParams: SpeechRecognitionConfig?, options: SpeechRecognitionPrewarm?) throws -> Promise<Void>
@@ -26,8 +26,8 @@ public protocol HybridRecognizerSpec_protocol: HybridObject {
   func addAutoFinishTime(additionalTimeMs: Double?) throws -> Void
   func updateConfig(newConfig: MutableSpeechRecognitionConfig?, resetAutoFinishTime: Bool?) throws -> Void
   func getIsActive() throws -> Bool
-  func getVoiceInputVolume() throws -> VolumeChangeEvent
-  func getPermissions() throws -> PermissionStatus
+  func getVoiceInputVolume() throws -> VoiceInputVolumeChangeEvent
+  func getPermissions() throws -> SpeechRecognitionPermissionStatus
   func getSupportedLocales() throws -> Promise<SupportedLocales>
   func getSupportedLocalesIOS() throws -> [String]
   func onDeviceRecognitionAvailable(locale: String?) throws -> Bool

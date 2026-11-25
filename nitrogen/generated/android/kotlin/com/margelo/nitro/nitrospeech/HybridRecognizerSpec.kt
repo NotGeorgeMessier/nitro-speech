@@ -111,13 +111,13 @@ abstract class HybridRecognizerSpec: HybridObject() {
       onPermissionDenied = value?.let { it }
     }
   
-  abstract var onVolumeChange: ((event: VolumeChangeEvent) -> Unit)?
+  abstract var onVolumeChange: ((event: VoiceInputVolumeChangeEvent) -> Unit)?
   
-  private var onVolumeChange_cxx: Func_void_VolumeChangeEvent?
+  private var onVolumeChange_cxx: Func_void_VoiceInputVolumeChangeEvent?
     @Keep
     @DoNotStrip
     get() {
-      return onVolumeChange?.let { Func_void_VolumeChangeEvent_java(it) }
+      return onVolumeChange?.let { Func_void_VoiceInputVolumeChangeEvent_java(it) }
     }
     @Keep
     @DoNotStrip
@@ -156,11 +156,11 @@ abstract class HybridRecognizerSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun getVoiceInputVolume(): VolumeChangeEvent
+  abstract fun getVoiceInputVolume(): VoiceInputVolumeChangeEvent
   
   @DoNotStrip
   @Keep
-  abstract fun getPermissions(): PermissionStatus
+  abstract fun getPermissions(): SpeechRecognitionPermissionStatus
   
   @DoNotStrip
   @Keep

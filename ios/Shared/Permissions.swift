@@ -22,58 +22,58 @@ enum Permissions {
         }
     }
     
-    static func authorizationStatus() -> PermissionStatus {
+    static func authorizationStatus() -> SpeechRecognitionPermissionStatus {
         switch SFSpeechRecognizer.authorizationStatus() {
-            case .notDetermined: return PermissionStatus.notRequested
-            case .denied: return PermissionStatus.denied
-            case .restricted: return PermissionStatus.denied
-            case .authorized: return PermissionStatus.granted
-            @unknown default: return PermissionStatus.notRequested
+            case .notDetermined: return SpeechRecognitionPermissionStatus.notRequested
+            case .denied: return SpeechRecognitionPermissionStatus.denied
+            case .restricted: return SpeechRecognitionPermissionStatus.denied
+            case .authorized: return SpeechRecognitionPermissionStatus.granted
+            @unknown default: return SpeechRecognitionPermissionStatus.notRequested
         }
     }
     
-    static func microphonePermissionStatus() -> PermissionStatus {
+    static func microphonePermissionStatus() -> SpeechRecognitionPermissionStatus {
         if #available(iOS 17.0, *) {
             switch AVAudioApplication.shared.recordPermission {
-                case .undetermined: return PermissionStatus.notRequested
-                case .denied: return PermissionStatus.denied
-                case .granted: return PermissionStatus.granted
-                @unknown default: return PermissionStatus.notRequested
+                case .undetermined: return SpeechRecognitionPermissionStatus.notRequested
+                case .denied: return SpeechRecognitionPermissionStatus.denied
+                case .granted: return SpeechRecognitionPermissionStatus.granted
+                @unknown default: return SpeechRecognitionPermissionStatus.notRequested
             }
         }
         switch AVAudioSession.sharedInstance().recordPermission {
-            case .undetermined: return PermissionStatus.notRequested
-            case .denied: return PermissionStatus.denied
-            case .granted: return PermissionStatus.granted
-            @unknown default: return PermissionStatus.notRequested
+            case .undetermined: return SpeechRecognitionPermissionStatus.notRequested
+            case .denied: return SpeechRecognitionPermissionStatus.denied
+            case .granted: return SpeechRecognitionPermissionStatus.granted
+            @unknown default: return SpeechRecognitionPermissionStatus.notRequested
         }
     }
     
-    static func getCombinedStatus() -> PermissionStatus {
+    static func getCombinedStatus() -> SpeechRecognitionPermissionStatus {
         // Return early for the speech recognition permission first
         let speechRecognitionStatus = Permissions.authorizationStatus()
-        if speechRecognitionStatus == PermissionStatus.denied {
-            return PermissionStatus.denied
+        if speechRecognitionStatus == SpeechRecognitionPermissionStatus.denied {
+            return SpeechRecognitionPermissionStatus.denied
         }
-        if speechRecognitionStatus == PermissionStatus.notRequested {
-            return PermissionStatus.notRequested
+        if speechRecognitionStatus == SpeechRecognitionPermissionStatus.notRequested {
+            return SpeechRecognitionPermissionStatus.notRequested
         }
         
         // Check micro then
         let micStatus = Permissions.microphonePermissionStatus()
-        if micStatus == PermissionStatus.denied {
-            return PermissionStatus.denied
+        if micStatus == SpeechRecognitionPermissionStatus.denied {
+            return SpeechRecognitionPermissionStatus.denied
         }
-        if micStatus == PermissionStatus.notRequested {
-            return PermissionStatus.notRequested
+        if micStatus == SpeechRecognitionPermissionStatus.notRequested {
+            return SpeechRecognitionPermissionStatus.notRequested
         }
         
         // Everything is granted
-        return PermissionStatus.granted
+        return SpeechRecognitionPermissionStatus.granted
     }
     
     static func someNotRequested() -> Bool {
-        return Permissions.authorizationStatus() == PermissionStatus.notRequested ||
-        Permissions.microphonePermissionStatus() == PermissionStatus.notRequested
+        return Permissions.authorizationStatus() == SpeechRecognitionPermissionStatus.notRequested ||
+        Permissions.microphonePermissionStatus() == SpeechRecognitionPermissionStatus.notRequested
     }
 }

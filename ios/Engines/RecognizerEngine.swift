@@ -114,9 +114,9 @@ class RecognizerEngine {
         recognizerDelegate.softlyUpdateConfig(newConfig: newConfig)
     }
 
-    func getVoiceInputVolume() -> VolumeChangeEvent? {
+    func getVoiceInputVolume() -> VoiceInputVolumeChangeEvent? {
         guard let currentSample = audioLevelTracker.currentSample else { return nil }
-        return VolumeChangeEvent(
+        return VoiceInputVolumeChangeEvent(
             smoothedVolume: currentSample.smoothed,
             rawVolume: currentSample.raw,
             db: currentSample.db
@@ -172,7 +172,7 @@ class RecognizerEngine {
                 // Send buffer volume data
                 recognizerDelegate.volumeChange(
                     event:
-                        VolumeChangeEvent(
+                        VoiceInputVolumeChangeEvent(
                             smoothedVolume: sample.smoothed,
                             rawVolume: sample.raw,
                             db: sample.db
@@ -217,7 +217,7 @@ class RecognizerEngine {
         status = .stopped
         self.recognizerDelegate?.volumeChange(
             event:
-                VolumeChangeEvent(
+                VoiceInputVolumeChangeEvent(
                     smoothedVolume: 0,
                     rawVolume: 0,
                     db: nil

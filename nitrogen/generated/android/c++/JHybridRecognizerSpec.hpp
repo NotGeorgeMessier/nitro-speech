@@ -62,8 +62,8 @@ namespace margelo::nitro::nitrospeech {
     void setOnError(const std::optional<std::function<void(SpeechRecognitionError /* error */, const std::optional<std::string>& /* trace */)>>& onError) override;
     std::optional<std::function<void()>> getOnPermissionDenied() override;
     void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) override;
-    std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> getOnVolumeChange() override;
-    void setOnVolumeChange(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& onVolumeChange) override;
+    std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>> getOnVolumeChange() override;
+    void setOnVolumeChange(const std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>>& onVolumeChange) override;
 
   public:
     // Methods
@@ -74,8 +74,8 @@ namespace margelo::nitro::nitrospeech {
     void addAutoFinishTime(std::optional<double> additionalTimeMs) override;
     void updateConfig(const std::optional<MutableSpeechRecognitionConfig>& newConfig, std::optional<bool> resetAutoFinishTime) override;
     bool getIsActive() override;
-    VolumeChangeEvent getVoiceInputVolume() override;
-    PermissionStatus getPermissions() override;
+    VoiceInputVolumeChangeEvent getVoiceInputVolume() override;
+    SpeechRecognitionPermissionStatus getPermissions() override;
     std::shared_ptr<Promise<SupportedLocales>> getSupportedLocales() override;
     std::vector<std::string> getSupportedLocalesIOS() override;
     bool onDeviceRecognitionAvailable(const std::optional<std::string>& locale) override;

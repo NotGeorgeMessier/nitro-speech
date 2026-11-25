@@ -21,7 +21,7 @@
 #include "JFunc_void_std__vector_std__string_.hpp"
 #include "JFunc_void_double.hpp"
 #include "JFunc_void_SpeechRecognitionError_std__optional_std__string_.hpp"
-#include "JFunc_void_VolumeChangeEvent.hpp"
+#include "JFunc_void_VoiceInputVolumeChangeEvent.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::nitrospeech {
@@ -52,7 +52,7 @@ void registerAllNatives() {
   margelo::nitro::nitrospeech::JFunc_void_std__vector_std__string__cxx::registerNatives();
   margelo::nitro::nitrospeech::JFunc_void_double_cxx::registerNatives();
   margelo::nitro::nitrospeech::JFunc_void_SpeechRecognitionError_std__optional_std__string__cxx::registerNatives();
-  margelo::nitro::nitrospeech::JFunc_void_VolumeChangeEvent_cxx::registerNatives();
+  margelo::nitro::nitrospeech::JFunc_void_VoiceInputVolumeChangeEvent_cxx::registerNatives();
 
   // Register Nitro Hybrid Objects
   HybridObjectRegistry::registerHybridObjectConstructor(

@@ -14,8 +14,8 @@ namespace NitroSpeech { class HybridRecognizerSpec_cxx; }
 
 // Forward declaration of `SpeechRecognitionError` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionError; }
-// Forward declaration of `VolumeChangeEvent` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { struct VolumeChangeEvent; }
+// Forward declaration of `VoiceInputVolumeChangeEvent` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { struct VoiceInputVolumeChangeEvent; }
 // Forward declaration of `SpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionConfig; }
 // Forward declaration of `OnDeviceMode` to properly resolve imports.
@@ -28,8 +28,8 @@ namespace margelo::nitro::nitrospeech { enum class IosPreset; }
 namespace margelo::nitro::nitrospeech { struct SpeechRecognitionPrewarm; }
 // Forward declaration of `MutableSpeechRecognitionConfig` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct MutableSpeechRecognitionConfig; }
-// Forward declaration of `PermissionStatus` to properly resolve imports.
-namespace margelo::nitro::nitrospeech { enum class PermissionStatus; }
+// Forward declaration of `SpeechRecognitionPermissionStatus` to properly resolve imports.
+namespace margelo::nitro::nitrospeech { enum class SpeechRecognitionPermissionStatus; }
 // Forward declaration of `SupportedLocales` to properly resolve imports.
 namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
 
@@ -38,7 +38,7 @@ namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
 #include <string>
 #include <vector>
 #include "SpeechRecognitionError.hpp"
-#include "VolumeChangeEvent.hpp"
+#include "VoiceInputVolumeChangeEvent.hpp"
 #include <NitroModules/Promise.hpp>
 #include "SpeechRecognitionConfig.hpp"
 #include "OnDeviceMode.hpp"
@@ -46,7 +46,7 @@ namespace margelo::nitro::nitrospeech { struct SupportedLocales; }
 #include "IosPreset.hpp"
 #include "SpeechRecognitionPrewarm.hpp"
 #include "MutableSpeechRecognitionConfig.hpp"
-#include "PermissionStatus.hpp"
+#include "SpeechRecognitionPermissionStatus.hpp"
 #include "SupportedLocales.hpp"
 
 #include "NitroSpeech-Swift-Cxx-Umbrella.hpp"
@@ -137,11 +137,11 @@ namespace margelo::nitro::nitrospeech {
     inline void setOnPermissionDenied(const std::optional<std::function<void()>>& onPermissionDenied) noexcept override {
       _swiftPart.setOnPermissionDenied(onPermissionDenied);
     }
-    inline std::optional<std::function<void(const VolumeChangeEvent& /* event */)>> getOnVolumeChange() noexcept override {
+    inline std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>> getOnVolumeChange() noexcept override {
       auto __result = _swiftPart.getOnVolumeChange();
       return __result;
     }
-    inline void setOnVolumeChange(const std::optional<std::function<void(const VolumeChangeEvent& /* event */)>>& onVolumeChange) noexcept override {
+    inline void setOnVolumeChange(const std::optional<std::function<void(const VoiceInputVolumeChangeEvent& /* event */)>>& onVolumeChange) noexcept override {
       _swiftPart.setOnVolumeChange(onVolumeChange);
     }
 
@@ -193,7 +193,7 @@ namespace margelo::nitro::nitrospeech {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline VolumeChangeEvent getVoiceInputVolume() override {
+    inline VoiceInputVolumeChangeEvent getVoiceInputVolume() override {
       auto __result = _swiftPart.getVoiceInputVolume();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
@@ -201,7 +201,7 @@ namespace margelo::nitro::nitrospeech {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline PermissionStatus getPermissions() override {
+    inline SpeechRecognitionPermissionStatus getPermissions() override {
       auto __result = _swiftPart.getPermissions();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());

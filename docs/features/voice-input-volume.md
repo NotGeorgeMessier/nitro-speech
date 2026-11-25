@@ -6,9 +6,9 @@ Rich user voice input management.
 - Static method `getVoiceInputVolume()` for getting the current voice input volume
 - Callback `onVolumeChange` for advanced use cases
 
-All returns `VolumeChangeEvent` object.
+All returns `VoiceInputVolumeChangeEvent` object.
 
-### The data `VolumeChangeEvent` explained
+### The data `VoiceInputVolumeChangeEvent` explained
 
 Represents the energy-based volume of each audio buffer.
 
@@ -38,7 +38,7 @@ Values will vary on different devices, however still appropriate for displaying 
 
 ## Hook useVoiceInputVolume
 
-Subscribes to volume changes and returns `VolumeChangeEvent` object.
+Subscribes to volume changes and returns `VoiceInputVolumeChangeEvent` object.
 
 - config property `eventsPerSecond` - The number of volume change events to emit per second.
 

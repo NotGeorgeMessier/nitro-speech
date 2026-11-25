@@ -201,7 +201,7 @@ const workletRuntime = createWorkletRuntime({ name: 'background' });
 
 scheduleOnRuntime(workletRuntime, () => {
   // Background worklet scope...
-  // PermissionStatus enum: 0: GRANTED, 1: DENIED, 2: NOT_REQUESTED
+  // SpeechRecognitionPermissionStatus enum: 0: GRANTED, 1: DENIED, 2: NOT_REQUESTED
   const permissions = RecognizerRef.getPermissions();
   console.log('Permissions:', permissions);
 });
@@ -210,7 +210,7 @@ scheduleOnUI(() => {
   // UI thread scope...
   const isActive = RecognizerRef.getIsActive();
   console.log('Is active:', isActive);
-  // VolumeChangeEvent object: { smoothedVolume: number, rawVolume: number, db: number | undefined }
+  // VoiceInputVolumeChangeEvent object: { smoothedVolume: number, rawVolume: number, db: number | undefined }
   const volumeEvent = RecognizerRef.getVoiceInputVolume();
   console.log('Volume:', volumeEvent);
 });
