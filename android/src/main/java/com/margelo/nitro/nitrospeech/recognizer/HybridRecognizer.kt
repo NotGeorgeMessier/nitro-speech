@@ -370,7 +370,7 @@ class HybridRecognizer: HybridRecognizerSpec() {
           null,
           SpeechRecognitionError.SESSIONSTARTFAILED,
           true,
-          "HybridRecognizer.start.OnDeviceSupport.createRecognizer.noRecognitionService",
+          ErrorTrace.join("HybridRecognizer", "start", "OnDeviceSupport.createRecognizer.noRecognitionService"),
         )
       } catch (_: Exception) {
         onFinishRecognition(
